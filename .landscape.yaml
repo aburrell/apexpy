@@ -1,0 +1,7 @@
+max-line-length: 140
+doc-warnings: yes
+ignore-paths:
+    - docs
+    - ci
+    - tests
+    - setup.py

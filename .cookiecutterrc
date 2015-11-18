@@ -1,0 +1,34 @@
+# This file exists so you can easily regenerate your project.
+#
+# Unfortunately cookiecutter can't use this right away so
+# you have to copy this file to ~/.cookiecutterrc
+
+default_context:
+
+    appveyor:                  'yes'
+    c_extension_optional:      'no'
+    c_extension_support:       'yes'
+    codacy:                    'yes'
+    codeclimate:               'yes'
+    codecov:                   'yes'
+    command_line_interface:    'no'
+    coveralls:                 'yes'
+    distribution_name:         'apexpy'
+    email:                     'cmeeren@gmail.com'
+    full_name:                 'Christer van der Meeren'
+    github_username:           'cmeeren'
+    landscape:                 'yes'
+    package_name:              'apexpy'
+    project_name:              'AACGM-v2 Python library'
+    project_short_description: '"A Python wrapper for modified apex coordinates"'
+    release_date:              '2015-11-18'
+    repo_name:                 'apexpy'
+    requiresio:                'yes'
+    scrutinizer:               'yes'
+    sphinx_theme:              'readthedocs'
+    test_matrix_configurator:  'yes'
+    test_runner:               'pytest'
+    travis:                    'yes'
+    version:                   '0.1.0'
+    website:                   'https://github.com/cmeeren/apexpy'
+    year:                      '2015'

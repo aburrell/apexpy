@@ -1,0 +1,54 @@
+language: python
+python: '3.5'
+sudo: false
+env:
+  global:
+    LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+  matrix:
+    - TOXENV=check
+    - TOXENV=2.7-np1.10,extension-coveralls,coveralls,codecov
+    - TOXENV=2.7-np1.10-nocover
+    - TOXENV=2.7-np1.8,extension-coveralls,coveralls,codecov
+    - TOXENV=2.7-np1.8-nocover
+    - TOXENV=2.7-np1.9,extension-coveralls,coveralls,codecov
+    - TOXENV=2.7-np1.9-nocover
+    - TOXENV=3.3-np1.10,extension-coveralls,coveralls,codecov
+    - TOXENV=3.3-np1.10-nocover
+    - TOXENV=3.3-np1.8,extension-coveralls,coveralls,codecov
+    - TOXENV=3.3-np1.8-nocover
+    - TOXENV=3.3-np1.9,extension-coveralls,coveralls,codecov
+    - TOXENV=3.3-np1.9-nocover
+    - TOXENV=3.4-np1.10,extension-coveralls,coveralls,codecov
+    - TOXENV=3.4-np1.10-nocover
+    - TOXENV=3.4-np1.8,extension-coveralls,coveralls,codecov
+    - TOXENV=3.4-np1.8-nocover
+    - TOXENV=3.4-np1.9,extension-coveralls,coveralls,codecov
+    - TOXENV=3.4-np1.9-nocover
+    - TOXENV=3.5-np1.10,extension-coveralls,coveralls,codecov
+    - TOXENV=3.5-np1.10-nocover
+    - TOXENV=3.5-np1.8,extension-coveralls,coveralls,codecov
+    - TOXENV=3.5-np1.8-nocover
+    - TOXENV=3.5-np1.9,extension-coveralls,coveralls,codecov
+    - TOXENV=3.5-np1.9-nocover
+before_install:
+  - python --version
+  - uname -a
+  - lsb_release -a
+install:
+  - pip install tox
+  - virtualenv --version
+  - easy_install --version
+  - pip --version
+  - tox --version
+script:
+  - tox -v
+after_failure:
+  - more .tox/log/* | cat
+  - more .tox/*/log/* | cat
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+matrix:
+  allow_failures:
+    - env: "TOXENV=check"
