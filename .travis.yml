@@ -31,6 +31,7 @@ env:
     - TOXENV=3.5-np1.9,extension-coveralls,coveralls,codecov
     - TOXENV=3.5-np1.9-nocover
 before_install:
+  - sudo apt-get install gfortran g77
   - python --version
   - uname -a
   - lsb_release -a

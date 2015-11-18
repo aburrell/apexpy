@@ -1,9 +1,63 @@
 version: '{branch}-{build}'
 build: off
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
 environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
+    - TOXENV: '2.7-buildonly-nocover'
+      TOXPYTHON: C:\python27\python.exe
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_HOME: C:\python27
+      PYTHON_VERSION: '2.7'
+      PYTHON_ARCH: '32'
+    - TOXENV: '2.7-buildonly-nocover'
+      TOXPYTHON: C:\python27-x64\python.exe
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_HOME: C:\python27-x64
+      PYTHON_VERSION: '2.7'
+      PYTHON_ARCH: '64'
+    - TOXENV: '3.3-buildonly-nocover'
+      TOXPYTHON: C:\python33\python.exe
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_HOME: C:\python33
+      PYTHON_VERSION: '3.3'
+      PYTHON_ARCH: '32'
+    - TOXENV: '3.3-buildonly-nocover'
+      TOXPYTHON: C:\python33-x64\python.exe
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_HOME: C:\python33-x64
+      PYTHON_VERSION: '3.3'
+      PYTHON_ARCH: '64'
+    - TOXENV: '3.4-buildonly-nocover'
+      TOXPYTHON: C:\python34\python.exe
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_HOME: C:\python34
+      PYTHON_VERSION: '3.4'
+      PYTHON_ARCH: '32'
+    - TOXENV: '3.4-buildonly-nocover'
+      TOXPYTHON: C:\python34-x64\python.exe
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_HOME: C:\python34-x64
+      PYTHON_VERSION: '3.4'
+      PYTHON_ARCH: '64'
+    - TOXENV: '3.5-buildonly-nocover'
+      TOXPYTHON: C:\python35\python.exe
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_HOME: C:\python35
+      PYTHON_VERSION: '3.5'
+      PYTHON_ARCH: '32'
+    - TOXENV: '3.5-buildonly-nocover'
+      TOXPYTHON: C:\python35-x64\python.exe
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_HOME: C:\python35-x64
+      PYTHON_VERSION: '3.5'
+      PYTHON_ARCH: '64'
+    - TOXENV: check
+      PYTHON_HOME: C:\Python27
+      PYTHON_VERSION: '2.7'
+      PYTHON_ARCH: '32'
     - TOXENV: '2.7-np1.10-nocover'
       TOXPYTHON: C:\python27\python.exe
       WINDOWS_SDK_VERSION: v7.0
@@ -151,7 +205,6 @@ install:
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
-  - cmd: SET PATH=%PATH%;C:\MinGW\bin
 test_script:
   - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
 
