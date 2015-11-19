@@ -11,7 +11,7 @@ environment:
       PYTHON_HOME: C:\python27
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '32'
-      MINICONDA_HOME: C:\Miniconda-x64
+      MINICONDA_HOME: C:\Miniconda
     - TOXENV: '2.7-nocover'
       TOXPYTHON: C:\python27-x64\python.exe
       WINDOWS_SDK_VERSION: v7.0
@@ -25,7 +25,7 @@ environment:
       PYTHON_HOME: C:\python33
       PYTHON_VERSION: '3.3'
       PYTHON_ARCH: '32'
-      MINICONDA_HOME: C:\Miniconda-x64
+      MINICONDA_HOME: C:\Miniconda
     - TOXENV: '3.3-nocover'
       TOXPYTHON: C:\python33-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
@@ -39,7 +39,7 @@ environment:
       PYTHON_HOME: C:\python34
       PYTHON_VERSION: '3.4'
       PYTHON_ARCH: '32'
-      MINICONDA_HOME: C:\Miniconda-x64
+      MINICONDA_HOME: C:\Miniconda
     - TOXENV: '3.4-nocover'
       TOXPYTHON: C:\python34-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
@@ -52,7 +52,7 @@ environment:
       PYTHON_HOME: C:\python35
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '32'
-      MINICONDA_HOME: C:\Miniconda-x64
+      MINICONDA_HOME: C:\Miniconda
     - TOXENV: '3.5-nocover'
       TOXPYTHON: C:\python35-x64\python.exe
       PYTHON_HOME: C:\python35-x64
