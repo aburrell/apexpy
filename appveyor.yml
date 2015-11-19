@@ -78,22 +78,25 @@ install:
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   #- conda create -q -p %PYTHON_HOME% python=%PYTHON_VERSION%
-  - '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy'
+  - '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy pytest'
   #- activate %PYTHON_HOME%
   # test that building works before long numpy install
   #- '%PYTHON_HOME%\python setup.py clean --all build_ext --force --inplace --compiler=mingw32'
-  - '%PYTHON_HOME%\Scripts\virtualenv --version'
-  - '%PYTHON_HOME%\Scripts\easy_install --version'
-  - '%PYTHON_HOME%\Scripts\pip --version'
-  - '%PYTHON_HOME%\Scripts\tox --version'
+  #- '%PYTHON_HOME%\Scripts\virtualenv --version'
+  #- '%PYTHON_HOME%\Scripts\easy_install --version'
+  #- '%PYTHON_HOME%\Scripts\pip --version'
+  #- '%PYTHON_HOME%\Scripts\tox --version'
   #- C:\Miniconda-x64\Scripts\conda config --set always_yes yes
   #- C:\Miniconda-x64\Scripts\conda update -q conda
   #- C:\Miniconda-x64\Scripts\conda install -q pip numpy
   #- C:\Miniconda-x64\python setup.py clean --all build_ext --force --inplace --compiler=mingw32
-  - echo [build] >> setup.cfg
-  - echo compiler=mingw32 >> setup.cfg
+  #- echo [build] >> setup.cfg
+  #- echo compiler=mingw32 >> setup.cfg
+  %PYTHON_HOME% setup.py clean --all build_ext --force --inplace --compiler=mingw32
+  %PYTHON_HOME% setup.py develop
 test_script:
-  - '%PYTHON_HOME%\Scripts\tox'
+  #- '%PYTHON_HOME%\Scripts\tox'
+  - '%PYTHON_HOME%\Scripts\py.test'
 
 after_test:
   # if tagged commit, build/upload wheel
