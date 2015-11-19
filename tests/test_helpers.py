@@ -43,9 +43,9 @@ def test_checklat_scalar():
     assert helpers.checklat(90+1e-5) == 90
     assert helpers.checklat(-90-1e-5) == -90
 
-    assert type(helpers.checklat(0.)) == np.float64
-    assert type(helpers.checklat(0)) == np.float64
-    assert type(helpers.checklat(90+1e-5)) == np.float64
+    assert type(helpers.checklat(0.)) == float
+    assert type(helpers.checklat(0)) == int
+    assert type(helpers.checklat(90+1e-5)) == int
 
     with pytest.raises(ValueError):
         helpers.checklat(90+1e-4)
