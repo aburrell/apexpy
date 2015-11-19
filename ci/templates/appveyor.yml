@@ -40,7 +40,7 @@ init:
   #- dir /s /b C:\MinGW*
   #- dir /s /b C:\msys*
 install:
-  #- python -u ci\appveyor-bootstrap.py
+  - python -u ci\appveyor-bootstrap.py
   - set PATH=%PATH%;C:\msys64\mingw64\bin
   - set PATH=%PATH%;%MINICONDA_HOME%\Scripts
   - where conda
