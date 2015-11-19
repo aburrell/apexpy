@@ -9,7 +9,7 @@ environment:
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: 'C:\Miniconda'
       INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments'
-      TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest . && flake8 src tests'
+      TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
 
     - TESTENV: '2.7-nocover-64'
       WINDOWS_SDK_VERSION: v7.0
@@ -64,9 +64,13 @@ init:
   - ps: echo $env:TESTENV
 install:
   - set PATH=%PATH%;C:\msys64\mingw64\bin
+  # remove file which conflicts with installation of package 'readme' on case-insensitive file systems
+  - del %MINICONDA_HOME%\Lib\site-packages\README
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
+  # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
+  - ps: (Get-Content %MINICONDA_HOME%\Lib\site-packages\numpy\distutils\fcompiler\gnu.py) | ForEach-Object { $_ -replace "raise NotImplementedError(\"Only MS compiler supported with gfortran on win64\")", "pass" } | Set-Content %MINICONDA_HOME%\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - where pip
