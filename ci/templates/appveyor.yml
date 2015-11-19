@@ -44,7 +44,7 @@ install:
   - '%PYTHON_HOME%\Scripts\tox --version'
   # test that building works before long numpy install
   - dir C:\Miniconda-x64\Scripts
-  - C:\Miniconda-x64\python install numpy
+  - C:\Miniconda-x64\Scripts\conda install -y numpy
   - C:\Miniconda-x64\python setup.py clean --all build_ext --force --inplace
 test_script:
   - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
