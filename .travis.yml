@@ -1,6 +1,5 @@
 language: python
 python: '3.5'
-sudo: false
 env:
   global:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
@@ -15,7 +14,7 @@ env:
     - TOXENV=3.5,extension-coveralls,coveralls,codecov
     - TOXENV=3.5-nocover
 before_install:
-  - apt-get install gfortran g77
+  - sudo apt-get install gfortran g77
   - python --version
   - uname -a
   - lsb_release -a
