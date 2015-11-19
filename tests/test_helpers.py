@@ -65,7 +65,8 @@ def test_checklat_message():
 def test_checklat_array():
     assert_allclose(helpers.checklat([-90-1e-5, -90, 0, 90, 90+1e-5]), np.array([-90, -90, 0, 90, 90]), rtol=0, atol=1e-8)
 
-    assert type(helpers.checklat([0])) == np.ndarray
+    assert type(helpers.checklat([0])) == list
+    assert type(helpers.checklat(np.array([0]))) == np.ndarray
 
     with pytest.raises(ValueError):
         helpers.checklat([-90-1e-4, -90, 0, 90, 90+1e-5])
