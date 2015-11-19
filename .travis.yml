@@ -6,6 +6,14 @@ python:
   - '3.4'
   - '3.5'
 
+sudo: false
+  
+addons:
+  apt:
+    packages:
+    - python-numpy
+    - gfortran
+
 env:
 
   global:
@@ -13,25 +21,37 @@ env:
 
   matrix:
     - TOXENV=2.7,extension-coveralls,coveralls,codecov
-      TESTSCRIPT=py.test
+      WITH_COVERAGE=yes
+      PY_CCOV=-coverage
+      TESTSCRIPT=py.test --cov --cov-report=term-missing
+
 
     - TOXENV=2.7-nocover
       TESTSCRIPT=py.test
 
     - TOXENV=3.3,extension-coveralls,coveralls,codecov
-      TESTSCRIPT=py.test
+      WITH_COVERAGE=yes
+      PY_CCOV=-coverage
+      TESTSCRIPT=py.test --cov --cov-report=term-missing
+
 
     - TOXENV=3.3-nocover
       TESTSCRIPT=py.test
 
     - TOXENV=3.4,extension-coveralls,coveralls,codecov
-      TESTSCRIPT=py.test
+      WITH_COVERAGE=yes
+      PY_CCOV=-coverage
+      TESTSCRIPT=py.test --cov --cov-report=term-missing
+
 
     - TOXENV=3.4-nocover
       TESTSCRIPT=py.test
 
     - TOXENV=3.5,extension-coveralls,coveralls,codecov
-      TESTSCRIPT=py.test
+      WITH_COVERAGE=yes
+      PY_CCOV=-coverage
+      TESTSCRIPT=py.test --cov --cov-report=term-missing
+
 
     - TOXENV=3.5-nocover
       TESTSCRIPT=py.test
@@ -41,14 +61,13 @@ env:
       INSTALL_EXTRA_DEPS=pip install docutils check-manifest flake8 readme pygments
 
 before_install:
-  - sudo apt-get install gfortran
   - python --version
   - uname -a
   - lsb_release -a
 
 install:
-  - sudo apt-get install python-numpy gfortran
   - $INSTALL_EXTRA_DEPS
+  - pip install pytest-capturelog coveralls pytest-cov
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
 
