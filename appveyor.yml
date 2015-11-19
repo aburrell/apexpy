@@ -68,7 +68,7 @@ install:
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
-  - C:\msys64\usr\bin\bash -lc "pacman -S mingw-w64-i686-gcc*"
+  - C:\msys64\usr\bin\bash -lc "pacman -S$(pacman -Qq | grep  mingw-w64-x86_64-gcc)"
   - set PATH=%PATH%;C:\msys64\usr\bin\
   # test that building works before long numpy install
   - C:\Miniconda-x64\Scripts\conda config --set always_yes yes --set changeps1 no
