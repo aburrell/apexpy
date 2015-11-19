@@ -5,43 +5,60 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
+    - TESTENV: 'check'
+      PYTHON_VERSION: '2.7'
+      MINICONDA_HOME: 'C:\Miniconda'
+      INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments'
+      TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest . && flake8 src tests'
+
     - TESTENV: '2.7-nocover-64'
       WINDOWS_SDK_VERSION: v7.0
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '2.7-nocover-32'
       WINDOWS_SDK_VERSION: v7.0
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
+      TESTSCRIPT: 'py.test'
+
 
     - TESTENV: '3.3-nocover-64'
       WINDOWS_SDK_VERSION: v7.1
       PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda-x64
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.3-nocover-32'
       WINDOWS_SDK_VERSION: v7.1
       PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda
+      TESTSCRIPT: 'py.test'
+
 
     - TESTENV: '3.4-nocover-64'
       WINDOWS_SDK_VERSION: v7.1
       PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda-x64
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.4-nocover-32'
       WINDOWS_SDK_VERSION: v7.0
       PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda
+      TESTSCRIPT: 'py.test'
+
 
     - TESTENV: '3.5-nocover-64'
       PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda-x64
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.5-nocover-32'
       PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda
+      TESTSCRIPT: 'py.test'
 
 init:
   - ps: echo $env:TESTENV
@@ -53,14 +70,11 @@ install:
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - where pip
-  - pip install pytest-cov
+  - '%INSTALL_EXTRA_DEPS%'
   - python setup.py clean --all build_ext --force --inplace --compiler=mingw32
   - python setup.py develop
 test_script:
-  - py.test
-  - python setup.py check --strict --metadata --restructuredtext
-  - check-manifest {toxinidir}
-  - flake8 src tests
+  - '%TESTSCRIPT%'
 
 after_test:
   # if tagged commit, build/upload wheel
@@ -70,8 +84,6 @@ after_test:
 #      %PYTHON_HOME%\Scripts\pip install twine &&
 #      %PYTHON_HOME%\Scripts\twine upload -u %PYPI_USER% -p %PYPI_PASS% dist/*
 #    )
-  # not sure if this is needed
-  #- deactivate
 
 deploy_script:
   - pip install twine
@@ -80,7 +92,7 @@ deploy_script:
       python setup.py register &&
       %MINICONDA_HOME%\Scripts\twine upload -u %PYPI_USER% -p %PYPI_PASS% dist/*
     )
-  
+
 artifacts:
   - path: dist\*
 matrix:
