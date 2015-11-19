@@ -60,8 +60,8 @@ environment:
 init:
   - ps: echo $env:TOXENV
   - ps: ls C:\Python*
-  - dir /s /b C:\MinGW*
-  - dir /s /b C:\msys*
+  #- dir /s /b C:\MinGW*
+  #- dir /s /b C:\msys*
 install:
   - python -u ci\appveyor-bootstrap.py
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
