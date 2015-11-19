@@ -71,7 +71,7 @@ install:
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
   - del C:\pythontest\Lib\site-packages\README
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
-  - ps: (Get-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py) | ForEach-Object { $_ -replace 'raise NotImplementedError("Only MS compiler supported with gfortran on win64")', 'pass' } | Set-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
+  - ps: (Get-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py) -replace 'raise NotImplementedError("Only MS compiler supported with gfortran on win64")', 'pass' | Out-File C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - where pip
