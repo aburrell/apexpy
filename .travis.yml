@@ -21,13 +21,13 @@ env:
 
   matrix:
     - TESTENV=extension-coveralls,coveralls,codecov
-      TESTSCRIPT=py.test --cov --cov-report=term-missing
+      TESTSCRIPT='py.test --cov --cov-report=term-missing'
 
     - TESTENV=nocover
       TESTSCRIPT=py.test
 
     - TESTENV=check
-      TESTSCRIPT=python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests
+      TESTSCRIPT='python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
       INSTALL_EXTRA_DEPS=pip install docutils check-manifest flake8 readme pygments
 
 before_install:
