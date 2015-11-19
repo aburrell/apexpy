@@ -44,23 +44,11 @@ install:
   - set PATH=%PATH%;C:\msys64\mingw64\bin
   #- set PATH=%PATH%;%MINICONDA_HOME%\Scripts
   #- where conda
-  - '%MINICONDA_HOME%\Scripts\conda --version'
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   #- conda create -q -p %PYTHON_HOME% python=%PYTHON_VERSION%
-  - '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy pytest'
-  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION%'
-  - dir C:\pythontest
-  - dir C:\pythontest\libs
-  - '%MINICONDA_HOME%\Scripts\conda install -q -p C:\pythontest libpython'
-  - dir C:\pythontest
-  - dir C:\pythontest\libs
-  - '%MINICONDA_HOME%\Scripts\conda install -q -p C:\pythontest numpy'
-  - dir C:\pythontest
-  - dir C:\pythontest\libs
-  - '%MINICONDA_HOME%\Scripts\conda install -q -p C:\pythontest anaconda'
-  - dir C:\pythontest
-  - dir C:\pythontest\libs
+  #- '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy pytest'
+  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
   #- activate %PYTHON_HOME%
   # test that building works before long numpy install
   #- '%PYTHON_HOME%\python setup.py clean --all build_ext --force --inplace --compiler=mingw32'
@@ -74,11 +62,11 @@ install:
   #- C:\Miniconda-x64\python setup.py clean --all build_ext --force --inplace --compiler=mingw32
   #- echo [build] >> setup.cfg
   #- echo compiler=mingw32 >> setup.cfg
-  - '%PYTHON_HOME%\python.exe setup.py clean --all build_ext --force --inplace --compiler=mingw32'
-  - '%PYTHON_HOME%\python.exe setup.py develop'
+  - C:\pythontest\python.exe setup.py clean --all build_ext --force --inplace --compiler=mingw32
+  - C:\pythontest\python.exe setup.py develop
 test_script:
   #- '%PYTHON_HOME%\Scripts\tox'
-  - '%PYTHON_HOME%\Scripts\py.test'
+  - C:\pythontest\Scripts\py.test -vv --ignore=src --doctest-glob='*.rst'
 
 after_test:
   # if tagged commit, build/upload wheel
