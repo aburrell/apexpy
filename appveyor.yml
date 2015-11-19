@@ -72,15 +72,13 @@ init:
 install:
   - python -u ci\appveyor-bootstrap.py
   - set PATH=%PATH%;C:\msys64\mingw64\bin
-  - set PATH=%PATH%;C:\python27-x64\libs
-  - set C_INCLUDE_PATH=C:\python27-x64\libs
   #- set PATH=%PATH%;%MINICONDA_HOME%\Scripts
   #- where conda
   - '%MINICONDA_HOME%\Scripts\conda --version'
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   #- conda create -q -p %PYTHON_HOME% python=%PYTHON_VERSION%
-  - '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy libpython'
+  - '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy'
   #- activate %PYTHON_HOME%
   # test that building works before long numpy install
   #- '%PYTHON_HOME%\python setup.py clean --all build_ext --force --inplace --compiler=mingw32'
