@@ -30,7 +30,7 @@ environment:
       MINICONDA_HOME: C:\Miniconda-x64
 {% endif %}{% endfor %}
     - TOXENV: check
-      PYTHON_HOME: C:\mcPython27
+      PYTHON_HOME: C:\Python27
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '32'
       MINICONDA_HOME: C:\Miniconda
