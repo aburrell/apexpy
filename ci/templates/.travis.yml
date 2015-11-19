@@ -3,6 +3,7 @@ python: '3.5'
 env:
   global:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+    TOX_USE_SITEPACKAGES=true
   matrix:
     - TOXENV=check
 {% for env, config in tox_environments|dictsort %}
@@ -10,11 +11,13 @@ env:
 
 {% endfor %}
 before_install:
-  - sudo apt-get install gfortran
   - python --version
   - uname -a
   - lsb_release -a
 install:
+  - sudo apt-get install python-numpy gfortran
+  # test that building works before long numpy install
+  - python setup.py clean --all build_ext --force --inplace
   - pip install tox
   - virtualenv --version
   - easy_install --version

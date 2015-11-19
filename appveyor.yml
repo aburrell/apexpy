@@ -5,6 +5,7 @@ cache:
 environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
+    TOX_USE_SITEPACKAGES: true
   matrix:
     - TOXENV: check
       PYTHON_HOME: C:\Python27
@@ -65,6 +66,10 @@ install:
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
+  # test that building works before long numpy install
+  - dir C:\Miniconda-x64\Scripts
+  - C:\Miniconda-x64\python install numpy
+  - C:\Miniconda-x64\python setup.py clean --all build_ext --force --inplace
 test_script:
   - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
 
