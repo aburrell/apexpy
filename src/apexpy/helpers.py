@@ -15,6 +15,8 @@ r2d = 180/np.pi
 
 def checklat(lat, name='lat'):
 
+    lat = np.float64(lat)
+
     if np.all(lat >= -90) and np.all(lat <= 90):
         return lat
 
