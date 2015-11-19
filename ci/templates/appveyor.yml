@@ -41,7 +41,7 @@ init:
   #- dir /s /b C:\msys*
 install:
   - python -u ci\appveyor-bootstrap.py
-  - set PATH=%PATH%;C:\msys64\mingw64\bin
+  #- set PATH=%PATH%;C:\msys64\mingw64\bin
   #- set PATH=%PATH%;%MINICONDA_HOME%\Scripts
   #- where conda
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
@@ -82,8 +82,6 @@ after_test:
 on_failure:
   #- ps: dir "env:"
   #- ps: get-content .tox\*\log\*
-  - dir %PYTHON_HOME%\libs
-  - dir .tox\%TOXENV%\libs
 artifacts:
   - path: dist\*
 matrix:
