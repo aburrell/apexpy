@@ -80,7 +80,6 @@ install:
   - python setup.py develop
 test_script:
   - py.test -vv --ignore=src --doctest-glob='*.rst'
-py  #- '%PYTHON_HOME%\Scripts\tox'
 
 after_test:
   # if tagged commit, build/upload wheel
