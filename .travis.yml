@@ -15,6 +15,7 @@ env:
     - TOXENV=3.5,extension-coveralls,coveralls,codecov
     - TOXENV=3.5-nocover
 before_install:
+  - sudo apt-get install gfortran
   - python --version
   - uname -a
   - lsb_release -a

@@ -11,6 +11,7 @@ env:
 
 {% endfor %}
 before_install:
+  - sudo apt-get install gfortran
   - python --version
   - uname -a
   - lsb_release -a

@@ -43,7 +43,7 @@ install:
   - python -u ci\appveyor-bootstrap.py
   - set PATH=%PATH%;C:\msys64\mingw64\bin
   - set PATH=%PATH%;%PYTHON_HOME%\libs
-  - set C_INCLUDE_PATH=C:\msys64\mingw64\include
+  - set C_INCLUDE_PATH=%PYTHON_HOME%\libs
   #- set PATH=%PATH%;%MINICONDA_HOME%\Scripts
   #- where conda
   - '%MINICONDA_HOME%\Scripts\conda --version'
