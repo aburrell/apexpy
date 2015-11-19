@@ -16,7 +16,8 @@ environment:
       PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
       WITH_COVERAGE: yes
       PY_CCOV: -coverage
-      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
 
     - TOXENV: '2.7-nocover'
@@ -25,7 +26,8 @@ environment:
       MINICONDA_HOME: C:\Miniconda-x64
 
     - TOXENV: '2.7-nocover'
-      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
 
     - TOXENV: '3.3,codecov'
@@ -40,7 +42,8 @@ environment:
       PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
       WITH_COVERAGE: yes
       PY_CCOV: -coverage
-      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda
 
     - TOXENV: '3.3-nocover'
@@ -49,7 +52,8 @@ environment:
       MINICONDA_HOME: C:\Miniconda-x64
 
     - TOXENV: '3.3-nocover'
-      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda
 
     - TOXENV: '3.4,codecov'
@@ -64,7 +68,8 @@ environment:
       PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
       WITH_COVERAGE: yes
       PY_CCOV: -coverage
-      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '3.4'
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda
 
     - TOXENV: '3.4-nocover'
@@ -73,7 +78,8 @@ environment:
       MINICONDA_HOME: C:\Miniconda-x64
 
     - TOXENV: '3.4-nocover'
-      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '3.4'
+      WINDOWS_SDK_VERSION: v7.0
+      PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda
 
     - TOXENV: '3.5,codecov'
@@ -88,6 +94,7 @@ environment:
       PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
       WITH_COVERAGE: yes
       PY_CCOV: -coverage
+
       PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda
 
@@ -97,6 +104,7 @@ environment:
       MINICONDA_HOME: C:\Miniconda-x64
 
     - TOXENV: '3.5-nocover'
+
       PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda
 
