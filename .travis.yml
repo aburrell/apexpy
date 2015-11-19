@@ -1,42 +1,61 @@
 language: python
-python: '3.5'
+
+python:
+  - '2.7'
+  - '3.3'
+  - '3.4'
+  - '3.5'
+
 env:
+
   global:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
-    TOX_USE_SITEPACKAGES=true
+
   matrix:
-    - TOXENV=check
     - TOXENV=2.7,extension-coveralls,coveralls,codecov
+      TESTSCRIPT=py.test
+
     - TOXENV=2.7-nocover
+      TESTSCRIPT=py.test
+
     - TOXENV=3.3,extension-coveralls,coveralls,codecov
+      TESTSCRIPT=py.test
+
     - TOXENV=3.3-nocover
+      TESTSCRIPT=py.test
+
     - TOXENV=3.4,extension-coveralls,coveralls,codecov
+      TESTSCRIPT=py.test
+
     - TOXENV=3.4-nocover
+      TESTSCRIPT=py.test
+
     - TOXENV=3.5,extension-coveralls,coveralls,codecov
+      TESTSCRIPT=py.test
+
     - TOXENV=3.5-nocover
+      TESTSCRIPT=py.test
+
+    - TOXENV=check
+      TESTSCRIPT=python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests
+      INSTALL_EXTRA_DEPS=pip install docutils check-manifest flake8 readme pygments
+
 before_install:
   - sudo apt-get install gfortran
   - python --version
   - uname -a
   - lsb_release -a
+
 install:
   - sudo apt-get install python-numpy gfortran
-  # test that building works before long numpy install
+  - $INSTALL_EXTRA_DEPS
   - python setup.py clean --all build_ext --force --inplace
-  - pip install tox
-  - virtualenv --version
-  - easy_install --version
-  - pip --version
-  - tox --version
+  - python setup.py develop
+
 script:
-  - tox -v
-after_failure:
-  - more .tox/log/* | cat
-  - more .tox/*/log/* | cat
+  - $TESTSCRIPT
+
 notifications:
   email:
     on_success: never
     on_failure: always
-matrix:
-  allow_failures:
-    - env: "TOXENV=check"
