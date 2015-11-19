@@ -5,6 +5,16 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
+    - TESTENV: '3.3-nocover-64'
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_VERSION: '3.3'
+      MINICONDA_HOME: C:\Miniconda-x64
+      TESTSCRIPT: 'py.test'
+    - TESTENV: '3.3-nocover-32'
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_VERSION: '3.3'
+      MINICONDA_HOME: C:\Miniconda
+      TESTSCRIPT: 'py.test'
     - TESTENV: 'check'
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: 'C:\Miniconda'
@@ -24,17 +34,9 @@ environment:
       TESTSCRIPT: 'py.test'
 
 
-    - TESTENV: '3.3-nocover-64'
-      WINDOWS_SDK_VERSION: v7.1
-      PYTHON_VERSION: '3.3'
-      MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'py.test'
 
-    - TESTENV: '3.3-nocover-32'
-      WINDOWS_SDK_VERSION: v7.1
-      PYTHON_VERSION: '3.3'
-      MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'py.test'
+
+
 
 
     - TESTENV: '3.4-nocover-64'
