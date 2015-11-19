@@ -4,45 +4,73 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
-    - TOXENV: '2.7,codecov'      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+    - TOXENV: '2.7,codecov'      
+      WINDOWS_SDK_VERSION: v7.0      
+      PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '2.7,codecov'
-      TOXPYTHON: C:\python27\python.exe      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+      TOXPYTHON: C:\python27\python.exe      
+      WINDOWS_SDK_VERSION: v7.0      
+      PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '2.7-nocover'      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+    - TOXENV: '2.7-nocover'      
+      WINDOWS_SDK_VERSION: v7.0      
+      PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '2.7-nocover'
-      TOXPYTHON: C:\python27\python.exe      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+      TOXPYTHON: C:\python27\python.exe      
+      WINDOWS_SDK_VERSION: v7.0      
+      PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.3,codecov'      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+    - TOXENV: '3.3,codecov'      
+      WINDOWS_SDK_VERSION: v7.1      
+      PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.3,codecov'
-      TOXPYTHON: C:\python33\python.exe      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+      TOXPYTHON: C:\python33\python.exe      
+      WINDOWS_SDK_VERSION: v7.1      
+      PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.3-nocover'      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+    - TOXENV: '3.3-nocover'      
+      WINDOWS_SDK_VERSION: v7.1      
+      PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.3-nocover'
-      TOXPYTHON: C:\python33\python.exe      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+      TOXPYTHON: C:\python33\python.exe      
+      WINDOWS_SDK_VERSION: v7.1      
+      PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.4,codecov'      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.4'
+    - TOXENV: '3.4,codecov'      
+      WINDOWS_SDK_VERSION: v7.1      
+      PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.4,codecov'
-      TOXPYTHON: C:\python34\python.exe      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '3.4'
+      TOXPYTHON: C:\python34\python.exe      
+      WINDOWS_SDK_VERSION: v7.0      
+      PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.4-nocover'      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.4'
+    - TOXENV: '3.4-nocover'      
+      WINDOWS_SDK_VERSION: v7.1      
+      PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.4-nocover'
-      TOXPYTHON: C:\python34\python.exe      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '3.4'
+      TOXPYTHON: C:\python34\python.exe      
+      WINDOWS_SDK_VERSION: v7.0      
+      PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.5,codecov'      PYTHON_VERSION: '3.5'
+    - TOXENV: '3.5,codecov'      
+      PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.5,codecov'
-      TOXPYTHON: C:\python35\python.exe      PYTHON_VERSION: '3.5'
+      TOXPYTHON: C:\python35\python.exe      
+      PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.5-nocover'      PYTHON_VERSION: '3.5'
+    - TOXENV: '3.5-nocover'      
+      PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.5-nocover'
-      TOXPYTHON: C:\python35\python.exe      PYTHON_VERSION: '3.5'
+      TOXPYTHON: C:\python35\python.exe      
+      PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda
     - TOXENV: check
       PYTHON_VERSION: '2.7'
