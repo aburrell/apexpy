@@ -80,6 +80,7 @@ after_test:
 on_failure:
   - ps: dir "env:"
   - ps: get-content .tox\*\log\*
+  - ps: get-content .tox\*\Lib\distutils\distutils.cfg
 artifacts:
   - path: dist\*
 matrix:
