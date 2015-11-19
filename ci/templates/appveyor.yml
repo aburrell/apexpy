@@ -37,16 +37,18 @@ environment:
       MINICONDA_HOME: C:\Miniconda
 init:
   - ps: echo $env:TOXENV
-  - ps: ls C:\Python*
+  #- ps: ls C:\Python*
   #- dir /s /b C:\MinGW*
   #- dir /s /b C:\msys*
 install:
   - set PATH=%PATH%;C:\msys64\mingw64\bin
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
-  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest pytest-cov numpy'
+  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
+  - where pip
+  - pip install pytest-cov
   - python setup.py clean --all build_ext --force --inplace --compiler=mingw32
   - python setup.py develop
 test_script:
