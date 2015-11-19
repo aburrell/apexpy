@@ -84,11 +84,16 @@ class Apex(object):
         self.set_epoch(self.year)
 
         # vectorize fortran functions
-        self._geo2qd = np.frompyfunc(lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180, height, 0)[:2], 3, 2)
-        self._geo2apex = np.frompyfunc(lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 - 180, height, self.refh, 0)[2:4], 3, 2)
-        self._geo2apexall = np.frompyfunc(lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 - 180, height, self.refh, 1), 3, 14)
-        self._qd2geo = np.frompyfunc(lambda qlat, qlon, height, precision: fa.apxq2g(qlat, (qlon + 180) % 360 - 180, height, precision), 4, 3)
-        self._basevec = np.frompyfunc(lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180, height, 1)[2:4], 3, 2)
+        self._geo2qd = np.frompyfunc(
+            lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180, height, 0)[:2], 3, 2)
+        self._geo2apex = np.frompyfunc(
+            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 - 180, height, self.refh, 0)[2:4], 3, 2)
+        self._geo2apexall = np.frompyfunc(
+            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 - 180, height, self.refh, 1), 3, 14)
+        self._qd2geo = np.frompyfunc(
+            lambda qlat, qlon, height, precision: fa.apxq2g(qlat, (qlon + 180) % 360 - 180, height, precision), 4, 3)
+        self._basevec = np.frompyfunc(
+            lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180, height, 1)[2:4], 3, 2)
 
         # vectorize other nonvectorized functions
         self._apex2qd = np.frompyfunc(self._apex2qd_nonvectorized, 3, 2)
@@ -338,7 +343,8 @@ class Apex(object):
             if np.isclose(hA, height, rtol=0, atol=1e-5):  # allow for values that are close
                 hA = height
             else:
-                raise ApexHeightError('height {:.3g} is > apex height {:.3g} for alat {:.3g}'.format(np.max(height), hA, alat))
+                raise ApexHeightError(
+                    'height {:.3g} is > apex height {:.3g} for alat {:.3g}'.format(np.max(height), hA, alat))
 
         qlat = np.sign(alat) * np.arccos(np.sqrt((self.RE + height)/(self.RE + hA)))*r2d
 
@@ -388,7 +394,8 @@ class Apex(object):
             if np.isclose(hA, self.refh, rtol=0, atol=1e-5):  # allow for values that are close
                 hA = self.refh
             else:
-                raise ApexHeightError('apex height ({:.3g}) is < reference height ({:.3g}) for qlat {:.3g}'.format(hA, self.refh, qlat))
+                raise ApexHeightError(
+                    'apex height ({:.3g}) is < reference height ({:.3g}) for qlat {:.3g}'.format(hA, self.refh, qlat))
 
         alat = np.sign(qlat) * np.arccos(np.sqrt((self.RE + self.refh)/(self.RE + hA)))*r2d
 

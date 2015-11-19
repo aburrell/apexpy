@@ -43,7 +43,7 @@ install:
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
   - del C:\pythontest\Lib\site-packages\README
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
-  - ps: (Get-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py) | ForEach-Object { $_ -replace 'raise NotImplementedError(\"Only MS compiler supported with gfortran on win64\")', 'pass' } | Set-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
+  - ps: (Get-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py) | ForEach-Object { $_ -replace 'raise NotImplementedError("Only MS compiler supported with gfortran on win64")', 'pass' } | Set-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - where pip
@@ -67,7 +67,7 @@ deploy_script:
   - python setup.py sdist bdist_wheel
   - IF "%APPVEYOR_REPO_TAG%"=="true" (
       python setup.py register &&
-      %MINICONDA_HOME%\Scripts\twine upload -u %PYPI_USER% -p %PYPI_PASS% dist/*
+      twine upload -u %PYPI_USER% -p %PYPI_PASS% dist/*
     )
 
 artifacts:
