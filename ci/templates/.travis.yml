@@ -11,7 +11,7 @@ env:
 
 {% endfor %}
 before_install:
-  - sudo apt-get install gfortran g77
+  - apt-get install gfortran g77
   - python --version
   - uname -a
   - lsb_release -a
