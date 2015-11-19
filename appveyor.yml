@@ -80,15 +80,12 @@ install:
   #- conda create -q -p %PYTHON_HOME% python=%PYTHON_VERSION%
   - '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy'
   #- activate %PYTHON_HOME%
+  # test that building works before long numpy install
   - '%PYTHON_HOME%\python setup.py clean --all build_ext --force --inplace --compiler=mingw32'
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
-  #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S $(pacman -Qq | grep mingw-w64-x86_64-gcc)"
-  #- dir C:\msys64\mingw64\bin
-  #- C:\msys64\mingw64\bin\mingw-get install gfortran
-  # test that building works before long numpy install
   #- C:\Miniconda-x64\Scripts\conda config --set always_yes yes
   #- C:\Miniconda-x64\Scripts\conda update -q conda
   #- C:\Miniconda-x64\Scripts\conda install -q pip numpy
