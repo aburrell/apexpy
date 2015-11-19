@@ -5,11 +5,6 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
-    - TESTENV: '3.3-nocover-64'
-      WINDOWS_SDK_VERSION: v7.1
-      PYTHON_VERSION: '3.3'
-      MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'py.test'
     - TESTENV: 'check'
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: 'C:\Miniconda'
@@ -29,7 +24,11 @@ environment:
       TESTSCRIPT: 'py.test'
 
 
-
+    - TESTENV: '3.3-nocover-64'
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_VERSION: '3.3'
+      MINICONDA_HOME: C:\Miniconda-x64
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.3-nocover-32'
       WINDOWS_SDK_VERSION: v7.1
@@ -71,7 +70,7 @@ install:
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
   - del C:\pythontest\Lib\site-packages\README
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
-  - ps: (Get-Content C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py) -replace 'raise NotImplementedError("Only MS compiler supported with gfortran on win64")', 'pass' | Out-File C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
+  - python ci\fix-compiler-error.py
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - where pip
