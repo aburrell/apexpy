@@ -20,19 +20,14 @@ env:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
 
   matrix:
-{% for env, config in tox_environments|dictsort %}
-    - TOXENV={{ env }}{% if config.cover %},extension-coveralls,coveralls,codecov{% endif %}
-
-      {% if config.cover %}
+    - TOXENV=extension-coveralls,coveralls,codecov
       WITH_COVERAGE=yes
       PY_CCOV=-coverage
       TESTSCRIPT=py.test --cov --cov-report=term-missing
 
-      {% else %}
+    - TOXENV=nocover
       TESTSCRIPT=py.test
-      {% endif %}
 
-{% endfor %}
     - TOXENV=check
       TESTSCRIPT=python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests
       INSTALL_EXTRA_DEPS=pip install docutils check-manifest flake8 readme pygments

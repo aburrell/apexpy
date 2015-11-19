@@ -20,40 +20,12 @@ env:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
 
   matrix:
-    - TOXENV=2.7,extension-coveralls,coveralls,codecov
+    - TOXENV=extension-coveralls,coveralls,codecov
       WITH_COVERAGE=yes
       PY_CCOV=-coverage
       TESTSCRIPT=py.test --cov --cov-report=term-missing
 
-
-    - TOXENV=2.7-nocover
-      TESTSCRIPT=py.test
-
-    - TOXENV=3.3,extension-coveralls,coveralls,codecov
-      WITH_COVERAGE=yes
-      PY_CCOV=-coverage
-      TESTSCRIPT=py.test --cov --cov-report=term-missing
-
-
-    - TOXENV=3.3-nocover
-      TESTSCRIPT=py.test
-
-    - TOXENV=3.4,extension-coveralls,coveralls,codecov
-      WITH_COVERAGE=yes
-      PY_CCOV=-coverage
-      TESTSCRIPT=py.test --cov --cov-report=term-missing
-
-
-    - TOXENV=3.4-nocover
-      TESTSCRIPT=py.test
-
-    - TOXENV=3.5,extension-coveralls,coveralls,codecov
-      WITH_COVERAGE=yes
-      PY_CCOV=-coverage
-      TESTSCRIPT=py.test --cov --cov-report=term-missing
-
-
-    - TOXENV=3.5-nocover
+    - TOXENV=nocover
       TESTSCRIPT=py.test
 
     - TOXENV=check
