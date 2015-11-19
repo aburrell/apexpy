@@ -79,6 +79,7 @@ after_test:
 on_failure:
   #- ps: dir "env:"
   #- ps: get-content .tox\*\log\*
+  - dir %PYTHON_HOME%\libs
 artifacts:
   - path: dist\*
 matrix:
