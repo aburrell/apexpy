@@ -43,6 +43,7 @@ install:
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
   - del C:\pythontest\Lib\site-packages\README
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
+  - type C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
   - python ci\fix-compiler-error.py
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
