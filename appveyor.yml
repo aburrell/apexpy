@@ -68,8 +68,9 @@ install:
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S $(pacman -Qq | grep mingw-w64-x86_64-gcc)"
-  - set PATH=%PATH%;C:\msys64\usr\bin\
+  #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S $(pacman -Qq | grep mingw-w64-x86_64-gcc)"
+  - C:\MinGW\bin\mingw-get install gfortran
+  - set PATH=%PATH%;C:\MinGW\bin
   # test that building works before long numpy install
   - C:\Miniconda-x64\Scripts\conda config --set always_yes yes --set changeps1 no
   - C:\Miniconda-x64\Scripts\conda update conda
