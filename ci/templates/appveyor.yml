@@ -45,8 +45,8 @@ install:
   - where conda
   - conda --version
   - conda config --set always_yes yes
+  - conda update -q conda
   - conda create -q -p %PYTHON_HOME% python=%PYTHON_VERSION%
-  - conda update -q -p %PYTHON_HOME% conda
   - conda install -q -p %PYTHON_HOME% numpy
   - activate %PYTHON_HOME%
   - python setup.py clean --all build_ext --force --inplace --compiler=mingw32
