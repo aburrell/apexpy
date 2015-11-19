@@ -50,3 +50,12 @@ notifications:
   email:
     on_success: never
     on_failure: always
+
+matrix:
+  exclude:
+    - python: 3.3
+      env: TESTENV=check
+    - python: 3.4
+      env: TESTENV=check
+    - python: 3.5
+      env: TESTENV=check
