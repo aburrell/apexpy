@@ -44,13 +44,13 @@ install:
   - set PATH=%PATH%;C:\msys64\mingw64\bin
   #- set PATH=%PATH%;%MINICONDA_HOME%\Scripts
   #- where conda
-  - %MINICONDA_HOME%\Scripts\conda --version
-  - %MINICONDA_HOME%\Scripts\conda config --set always_yes yes
-  - %MINICONDA_HOME%\Scripts\conda update -q conda
+  - '%MINICONDA_HOME%\Scripts\conda --version'
+  - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
+  - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   #- conda create -q -p %PYTHON_HOME% python=%PYTHON_VERSION%
-  - %MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy
+  - '%MINICONDA_HOME%\Scripts\conda install -q -p %PYTHON_HOME% numpy'
   #- activate %PYTHON_HOME%
-  - %PYTHON_HOME%\python setup.py clean --all build_ext --force --inplace --compiler=mingw32
+  - '%PYTHON_HOME%\python setup.py clean --all build_ext --force --inplace --compiler=mingw32'
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
   - '%PYTHON_HOME%\Scripts\easy_install --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
