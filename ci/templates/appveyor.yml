@@ -9,7 +9,7 @@ environment:
     - TESTENV: '{{ env }}-64'
       {%- if config.python != 'python3.5' %}
 
-      WINDOWS_SDK_VERSION: v7.{{ '1' if config.python[-3] == '3' else '0' }}
+      INSTALL_LIBPYTHON: libpython
       {%- endif %}
 
       PYTHON_VERSION: '{{ config.python[-3:] }}'
@@ -19,7 +19,7 @@ environment:
     - TESTENV: '{{ env }}-32'
       {%- if config.python != 'python3.5' %}
 
-      WINDOWS_SDK_VERSION: v7.{{ '1' if config.python[-1] == '3' else '0' }}
+      INSTALL_LIBPYTHON: libpython
       {%- endif %}
 
       PYTHON_VERSION: '{{ config.python[-3:] }}'
@@ -28,6 +28,7 @@ environment:
 
 {% endif %}{% endfor %}
     - TESTENV: 'check'
+      INSTALL_LIBPYTHON: libpython
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: 'C:\Miniconda'
       TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
@@ -39,7 +40,7 @@ install:
   - set PATH=%PATH%;C:\msys64\mingw64\bin
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
-  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
+  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% %INSTALL_LIBPYTHON% pytest numpy'
   # remove file which conflicts with installation of package 'readme' on case-insensitive file systems
   - del C:\pythontest\Lib\site-packages\README
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
