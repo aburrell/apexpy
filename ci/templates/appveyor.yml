@@ -63,7 +63,7 @@ install:
   - echo [build] >> setup.cfg
   - echo compiler=mingw32 >> setup.cfg
 test_script:
-  - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
+  - '%PYTHON_HOME%\Scripts\tox'
 
 after_test:
   # if tagged commit, build/upload wheel
