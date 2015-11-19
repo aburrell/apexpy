@@ -6,56 +6,56 @@ environment:
     TOX_USE_SITEPACKAGES: true
   matrix:
     - TOXENV: '2.7-nocover'
-      TOXPYTHON: C:\mcpython27\python.exe
+      TOXPYTHON: C:\python27\python.exe
       WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\mcpython27
+      PYTHON_HOME: C:\python27
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '32'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '2.7-nocover'
-      TOXPYTHON: C:\mcpython27-x64\python.exe
+      TOXPYTHON: C:\python27-x64\python.exe
       WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\mcpython27-x64
+      PYTHON_HOME: C:\python27-x64
       PYTHON_VERSION: '2.7'
       PYTHON_ARCH: '64'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.3-nocover'
-      TOXPYTHON: C:\mcpython33\python.exe
+      TOXPYTHON: C:\python33\python.exe
       WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\mcpython33
+      PYTHON_HOME: C:\python33
       PYTHON_VERSION: '3.3'
       PYTHON_ARCH: '32'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.3-nocover'
-      TOXPYTHON: C:\mcpython33-x64\python.exe
+      TOXPYTHON: C:\python33-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\mcpython33-x64
+      PYTHON_HOME: C:\python33-x64
       PYTHON_VERSION: '3.3'
       PYTHON_ARCH: '64'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.4-nocover'
-      TOXPYTHON: C:\mcpython34\python.exe
+      TOXPYTHON: C:\python34\python.exe
       WINDOWS_SDK_VERSION: v7.0
-      PYTHON_HOME: C:\mcpython34
+      PYTHON_HOME: C:\python34
       PYTHON_VERSION: '3.4'
       PYTHON_ARCH: '32'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.4-nocover'
-      TOXPYTHON: C:\mcpython34-x64\python.exe
+      TOXPYTHON: C:\python34-x64\python.exe
       WINDOWS_SDK_VERSION: v7.1
-      PYTHON_HOME: C:\mcpython34-x64
+      PYTHON_HOME: C:\python34-x64
       PYTHON_VERSION: '3.4'
       PYTHON_ARCH: '64'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.5-nocover'
-      TOXPYTHON: C:\mcpython35\python.exe
-      PYTHON_HOME: C:\mcpython35
+      TOXPYTHON: C:\python35\python.exe
+      PYTHON_HOME: C:\python35
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '32'
       MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '3.5-nocover'
-      TOXPYTHON: C:\mcpython35-x64\python.exe
-      PYTHON_HOME: C:\mcpython35-x64
+      TOXPYTHON: C:\python35-x64\python.exe
+      PYTHON_HOME: C:\python35-x64
       PYTHON_VERSION: '3.5'
       PYTHON_ARCH: '64'
       MINICONDA_HOME: C:\Miniconda-x64
