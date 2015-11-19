@@ -62,8 +62,8 @@ install:
   #- C:\Miniconda-x64\python setup.py clean --all build_ext --force --inplace --compiler=mingw32
   #- echo [build] >> setup.cfg
   #- echo compiler=mingw32 >> setup.cfg
-  '%PYTHON_HOME% setup.py clean --all build_ext --force --inplace --compiler=mingw32'
-  '%PYTHON_HOME% setup.py develop'
+  - '%PYTHON_HOME% setup.py clean --all build_ext --force --inplace --compiler=mingw32'
+  - '%PYTHON_HOME% setup.py develop'
 test_script:
   #- '%PYTHON_HOME%\Scripts\tox'
   - '%PYTHON_HOME%\Scripts\py.test'
