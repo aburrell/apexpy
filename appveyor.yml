@@ -5,22 +5,6 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
-    - TESTENV: '3.3-nocover-64'
-      WINDOWS_SDK_VERSION: v7.1
-      PYTHON_VERSION: '3.3'
-      MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'py.test'
-    - TESTENV: '3.3-nocover-32'
-      WINDOWS_SDK_VERSION: v7.1
-      PYTHON_VERSION: '3.3'
-      MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'py.test'
-    - TESTENV: 'check'
-      PYTHON_VERSION: '2.7'
-      MINICONDA_HOME: 'C:\Miniconda'
-      INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments'
-      TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
-
     - TESTENV: '2.7-nocover-64'
       WINDOWS_SDK_VERSION: v7.0
       PYTHON_VERSION: '2.7'
@@ -33,11 +17,17 @@ environment:
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'py.test'
 
+    - TESTENV: '3.3-nocover-64'
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_VERSION: '3.3'
+      MINICONDA_HOME: C:\Miniconda-x64
+      TESTSCRIPT: 'py.test'
 
-
-
-
-
+    - TESTENV: '3.3-nocover-32'
+      WINDOWS_SDK_VERSION: v7.1
+      PYTHON_VERSION: '3.3'
+      MINICONDA_HOME: C:\Miniconda
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.4-nocover-64'
       WINDOWS_SDK_VERSION: v7.1
@@ -51,7 +41,6 @@ environment:
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'py.test'
 
-
     - TESTENV: '3.5-nocover-64'
       PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda-x64
@@ -62,17 +51,22 @@ environment:
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'py.test'
 
+    - TESTENV: 'check'
+      PYTHON_VERSION: '2.7'
+      MINICONDA_HOME: 'C:\Miniconda'
+      TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
+      INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments'
+
 init:
   - ps: echo $env:TESTENV
 install:
   - set PATH=%PATH%;C:\msys64\mingw64\bin
-  # remove file which conflicts with installation of package 'readme' on case-insensitive file systems
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
+  # remove file which conflicts with installation of package 'readme' on case-insensitive file systems
   - del C:\pythontest\Lib\site-packages\README
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
-  - type C:\pythontest\Lib\site-packages\numpy\distutils\fcompiler\gnu.py
   - python ci\fix-compiler-error.py
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
@@ -84,18 +78,12 @@ test_script:
   - '%TESTSCRIPT%'
 
 after_test:
-  # if tagged commit, build/upload wheel
-#  - IF "%TOXENV%"=="2.7-nocover" IF "%PYTHON_ARCH%"=="32" (%WITH_COMPILER% %TOXPYTHON% setup.py sdist)
-#  - IF "%APPVEYOR_REPO_TAG%"=="true" IF NOT "%TOXENV%"=="%TOXENV:nocover=%" (
-#      %WITH_COMPILER% %TOXPYTHON% setup.py bdist_wheel &&
-#      %PYTHON_HOME%\Scripts\pip install twine &&
-#      %PYTHON_HOME%\Scripts\twine upload -u %PYPI_USER% -p %PYPI_PASS% dist/*
-#    )
+  - python setup.py sdist bdist_wheel
 
 deploy_script:
-  - pip install twine
-  - python setup.py sdist bdist_wheel
-  - IF "%APPVEYOR_REPO_TAG%"=="true" (
+  # if tagged commit, build/upload wheel
+  - IF "%APPVEYOR_REPO_TAG%"=="true" IF NOT "%TESTENV%"=="check" (
+      pip install twine &&
       python setup.py register &&
       twine upload -u %PYPI_USER% -p %PYPI_PASS% dist/*
     )
