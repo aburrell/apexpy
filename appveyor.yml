@@ -4,74 +4,102 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
-    - TOXENV: '2.7,codecov'      
-      WINDOWS_SDK_VERSION: v7.0      
-      PYTHON_VERSION: '2.7'
-      MINICONDA_HOME: C:\Miniconda-x64
     - TOXENV: '2.7,codecov'
-      TOXPYTHON: C:\python27\python.exe      
-      WINDOWS_SDK_VERSION: v7.0      
-      PYTHON_VERSION: '2.7'
-      MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '2.7-nocover'      
-      WINDOWS_SDK_VERSION: v7.0      
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
+      WINDOWS_SDK_VERSION: v7.0
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
+
+    - TOXENV: '2.7,codecov'
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
+      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+      MINICONDA_HOME: C:\Miniconda
+
     - TOXENV: '2.7-nocover'
-      TOXPYTHON: C:\python27\python.exe      
-      WINDOWS_SDK_VERSION: v7.0      
+      WINDOWS_SDK_VERSION: v7.0
       PYTHON_VERSION: '2.7'
-      MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.3,codecov'      
-      WINDOWS_SDK_VERSION: v7.1      
-      PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda-x64
+
+    - TOXENV: '2.7-nocover'
+      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '2.7'
+      MINICONDA_HOME: C:\Miniconda
+
     - TOXENV: '3.3,codecov'
-      TOXPYTHON: C:\python33\python.exe      
-      WINDOWS_SDK_VERSION: v7.1      
-      PYTHON_VERSION: '3.3'
-      MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.3-nocover'      
-      WINDOWS_SDK_VERSION: v7.1      
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
+      WINDOWS_SDK_VERSION: v7.1
       PYTHON_VERSION: '3.3'
       MINICONDA_HOME: C:\Miniconda-x64
+
+    - TOXENV: '3.3,codecov'
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
+      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+      MINICONDA_HOME: C:\Miniconda
+
     - TOXENV: '3.3-nocover'
-      TOXPYTHON: C:\python33\python.exe      
-      WINDOWS_SDK_VERSION: v7.1      
+      WINDOWS_SDK_VERSION: v7.1
       PYTHON_VERSION: '3.3'
-      MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.4,codecov'      
-      WINDOWS_SDK_VERSION: v7.1      
-      PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda-x64
+
+    - TOXENV: '3.3-nocover'
+      WINDOWS_SDK_VERSION: v7.1      PYTHON_VERSION: '3.3'
+      MINICONDA_HOME: C:\Miniconda
+
     - TOXENV: '3.4,codecov'
-      TOXPYTHON: C:\python34\python.exe      
-      WINDOWS_SDK_VERSION: v7.0      
-      PYTHON_VERSION: '3.4'
-      MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.4-nocover'      
-      WINDOWS_SDK_VERSION: v7.1      
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
+      WINDOWS_SDK_VERSION: v7.1
       PYTHON_VERSION: '3.4'
       MINICONDA_HOME: C:\Miniconda-x64
+
+    - TOXENV: '3.4,codecov'
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
+      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '3.4'
+      MINICONDA_HOME: C:\Miniconda
+
     - TOXENV: '3.4-nocover'
-      TOXPYTHON: C:\python34\python.exe      
-      WINDOWS_SDK_VERSION: v7.0      
+      WINDOWS_SDK_VERSION: v7.1
       PYTHON_VERSION: '3.4'
-      MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.5,codecov'      
-      PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda-x64
+
+    - TOXENV: '3.4-nocover'
+      WINDOWS_SDK_VERSION: v7.0      PYTHON_VERSION: '3.4'
+      MINICONDA_HOME: C:\Miniconda
+
     - TOXENV: '3.5,codecov'
-      TOXPYTHON: C:\python35\python.exe      
-      PYTHON_VERSION: '3.5'
-      MINICONDA_HOME: C:\Miniconda
-    - TOXENV: '3.5-nocover'      
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
+
       PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda-x64
-    - TOXENV: '3.5-nocover'
-      TOXPYTHON: C:\python35\python.exe      
+
+    - TOXENV: '3.5,codecov'
+      PYTEST_COV_ARGS: '--cov --cov-report=term-missing'
+      WITH_COVERAGE: yes
+      PY_CCOV: -coverage
       PYTHON_VERSION: '3.5'
       MINICONDA_HOME: C:\Miniconda
+
+    - TOXENV: '3.5-nocover'
+
+      PYTHON_VERSION: '3.5'
+      MINICONDA_HOME: C:\Miniconda-x64
+
+    - TOXENV: '3.5-nocover'
+      PYTHON_VERSION: '3.5'
+      MINICONDA_HOME: C:\Miniconda
+
     - TOXENV: check
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
@@ -84,13 +112,13 @@ install:
   - set PATH=%PATH%;C:\msys64\mingw64\bin
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
-  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest numpy'
+  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% libpython pytest pytest-cov numpy'
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - python setup.py clean --all build_ext --force --inplace --compiler=mingw32
   - python setup.py develop
 test_script:
-  - py.test
+  - py.test %PYTEST_COV_ARGS%
 
 after_test:
   # if tagged commit, build/upload wheel
