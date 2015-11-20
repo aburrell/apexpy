@@ -57,6 +57,12 @@ class Apex(object):
     datafile : str
         Path to coefficient file
 
+    Notes
+    ====
+    Fobar.
+
+    Foobar2
+
     '''
 
     def __init__(self, date=None, refh=0, datafile=None):
@@ -425,7 +431,7 @@ class Apex(object):
         Raises
         ======
         ApexHeightError
-            if apex height is < reference height
+            if apex height < reference height
 
         '''
 
