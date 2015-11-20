@@ -23,10 +23,10 @@ class ApexHeightError(ValueError):
 class Apex(object):
     '''Performs coordinate conversions
 
-    The most common methods are :meth:`~Apex.convert` to convert between
-    all supported coordinate systems, :meth:`~Apex.map_to_height` to perform
+    The most common methods are :meth:`~apexpy.Apex.convert` to convert between
+    all supported coordinate systems, :meth:`~apexpy.Apex.map_to_height` to perform
     mapping along a field line to the closest or conjugate hemisphere, and
-    :meth:`~Apex.basevectors_qd` and :meth:`~Apex.basevectors_apex` to
+    :meth:`~apexpy.Apex.basevectors_qd` and :meth:`~apexpy.Apex.basevectors_apex` to
     calculate base vectors.
 
     Parameters
