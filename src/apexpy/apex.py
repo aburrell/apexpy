@@ -447,8 +447,6 @@ class Apex(object):
 
         Returns
         =======
-        If `mlon` has dimension > 0, output is array.
-
         mlt : ndarray or float
             Magnetic local time [0, 24)
 
@@ -481,8 +479,6 @@ class Apex(object):
 
         Returns
         =======
-        If `mlt` has dimension > 0, output is array.
-
         mlon : ndarray or float
             Magnetic longitude [0, 360) (apex and quasi-dipole longitude are always equal)
         '''
@@ -750,8 +746,6 @@ class Apex(object):
 
         Returns
         =======
-        If `alat` has dimension > 0, output is array.
-
         apex : ndarray or float
             Field line apex
         '''
