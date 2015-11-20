@@ -387,10 +387,10 @@ class Apex(object):
         Parameters
         ==========
         mlon : array_like
-            magnetic longitude (apex and quasi-dipole longitude are always equal)
+            Magnetic longitude (apex and quasi-dipole longitude are always equal)
         datetime : :class:`datetime.datetime`
             Date and time
-        ssheight : float
+        ssheight : float, optional
             Altitude in km to use for converting the subsolar point from
             geographic to magnetic coordinates. A high altitude is used
             to ensure the subsolar point is mapped to high latitudes, which
@@ -419,9 +419,10 @@ class Apex(object):
         Parameters
         ==========
         mlt : array_like
-            magnetic local time
+            Magnetic local time
         datetime : :class:`datetime.datetime`
-        ssheight : float
+            Date and time
+        ssheight : float, optional
             Altitude in km to use for converting the subsolar point from
             geographic to magnetic coordinates. A high altitude is used
             to ensure the subsolar point is mapped to high latitudes, which
@@ -448,17 +449,15 @@ class Apex(object):
 
         Parameters
         ==========
-        glat : array_like
-            Geodetic latitude
-        glon : array_like
-            Geodetic longitude
+        glat, glon : array_like
+            Geodetic latitude and longitude
         height : array_like
             Source altitude in km
         newheight : array_like
             Destination altitude in km
-        conjugate : bool
+        conjugate : bool, optional
             Map to `newheight` in the conjugate hemisphere instead of the closest hemisphere
-        precision : float
+        precision : float, optional
             Precision of output (degrees). A negative value of this argument
             produces a low-precision calculation of geodetic lat/lon based only
             on their spherical harmonic representation. A positive value causes
@@ -502,9 +501,9 @@ class Apex(object):
             Longitude
         height : array_like
             Altitude in km
-        coords : {'geo', 'apex', 'qd'}
+        coords : {'geo', 'apex', 'qd'}, optional
             Input coordinate system
-        precision : float
+        precision : float, optional
             Precision of output (degrees) when converting to geo. A negative
             value of this argument produces a low-precision calculation of
             geodetic lat/lon based only on their spherical harmonic representation.
@@ -567,14 +566,14 @@ class Apex(object):
             Longitude
         height : array_like
             Altitude in km
-        coords : {'geo', 'apex', 'qd'}
+        coords : {'geo', 'apex', 'qd'}, optional
             Input coordinate system
-        return_all : bool
+        return_all : bool, optional
             Will also return f3, g1, g2, and g3, and f1 and f2 have 3 components
             (the last one is zero). Requires `lat`, `lon`, `height` to be
             broadcast to 1D (at least one of the parameters must be 1D and the
             other two parameters must be 1D or 0D).
-        precision : float
+        precision : float, optional
             Precision of output (degrees) when converting to geo. A negative
             value of this argument produces a low-precision calculation of
             geodetic lat/lon based only on their spherical harmonic representation.
@@ -618,13 +617,16 @@ class Apex(object):
 
         * If the inputs are scalar (only if ``return_all=False``), the outputs
           are vectors with 2 (f) and 3 (d and e) components.
+
         * If the inputs broadcast to 1D with length N, the outputs are 2xN (f) and
           3xN (d and e) arrays where the columns are the vectors, i.e. ``f1[:, 0]`` is the
           f1 vector corresponding to the first index in the broadcasted input. If
           ``return_all=True``, f is 3xN instead of 2xN.
+
         * If the inputs broadcast to 2D with shape NxM (only if ``return_all=False``),
           the outputs are 2xNxM and 3xNxM arrays where ``f1[:, 0, 0]`` is the f1
           vector corresponding to the index [0, 0] in the broadcasted input.
+
         * Higher dimensions are untested.
 
         References
