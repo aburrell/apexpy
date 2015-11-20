@@ -559,10 +559,11 @@ class Apex(object):
         Returns
         =======
 
-        f1 : ndarray
-        f2 : ndarray
+        f1, f2 : ndarray
+            See notes below on output shapes
 
-        Output shapes:
+        Notes on output shapes
+        ======================
 
         * If the inputs are scalar, the outputs are vectors with 2 components.
 
