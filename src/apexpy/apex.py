@@ -34,7 +34,7 @@ class Apex(object):
 
     Methods
     =======
-    apexpy.Apex.convert
+    `apexpy.Apex.convert`
         High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
     :meth:`Apex.geo2apex`, :meth:`Apex.apex2geo`, :meth:`Apex.geo2qd`, :meth:`Apex.qd2geo`, \
     :meth:`Apex.apex2qd`, :meth:`Apex.qd2apex`, :meth:`Apex.mlon2mlt`, :meth:`Apex.mlt2mlon`
