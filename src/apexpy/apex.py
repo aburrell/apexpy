@@ -110,6 +110,8 @@ class Apex(object):
 
         `lat`, `lon`, `height` must be broadcastable to the same shape.
 
+        If converting to MLT, output latitude is apex.
+
         Parameters
         ==========
         lat : array_like
@@ -141,7 +143,7 @@ class Apex(object):
 
         Returns
         =======
-
+        If input `lat`, `lon` or `height` have dimension > 0, outputs are arrays.
 
         lat : float or array
             Converted latitude
