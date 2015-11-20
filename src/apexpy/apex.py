@@ -562,8 +562,8 @@ class Apex(object):
         f1, f2 : ndarray
             See notes below on output shapes
 
-        Notes
-        =====
+        Note
+        ====
 
         * If the inputs are scalar, the outputs are vectors with 2 components.
 
