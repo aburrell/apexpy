@@ -27,7 +27,7 @@ env:
       TESTSCRIPT='py.test'
 
     - TESTENV=check
-      TESTSCRIPT=python ci/check.sh
+      TESTSCRIPT='python ci/check.sh'
       INSTALL_EXTRA_DEPS='pip install docutils check-manifest flake8 readme pygments'
 
 before_install:
