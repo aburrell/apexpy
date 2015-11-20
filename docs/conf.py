@@ -46,6 +46,6 @@ html_short_title = '%s-%s' % (project, version)
 
 import mock
 import sys
-MOCK_MODULES = ['fortranapex']
+MOCK_MODULES = ['fortranapex', 'apexpy.fortranapex', 'apexpy.apex.fortranapex']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
