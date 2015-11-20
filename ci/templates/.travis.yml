@@ -22,8 +22,6 @@ env:
   matrix:
     - TOXENV=extension-coveralls,coveralls,codecov
       TESTSCRIPT="py.test --cov --cov-report=term-missing"
-      COVERSCRIPT="`coverage combine; coverage report; coverage xml --ignore-errors; codecov []`"
-      WITH_COVERAGE=yes
 
     - TOXENV=nocover
       TESTSCRIPT="py.test"
@@ -40,18 +38,11 @@ install:
 
 script:
   - $TESTSCRIPT
-  - $COVERSCRIPT
+
+after_success:
+  - coveralls
 
 notifications:
   email:
     on_success: never
     on_failure: always
-
-matrix:
-  exclude:
-    - python: 3.3
-      env: TOXENV=check
-    - python: 3.4
-      env: TOXENV=check
-    - python: 3.5
-      env: TOXENV=check
