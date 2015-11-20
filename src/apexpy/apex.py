@@ -25,11 +25,11 @@ class Apex(object):
 
     Parameters
     ==========
-    date : float (decimal year) or instance of :class:`datetime.date` or :class:`datetime.datetime`
+    date : float (decimal year) or instance of :class:`datetime.date` or :class:`datetime.datetime`, optional
         Determines which IGRF coefficients are used in conversions. Uses current date as default.
-    refh : float
+    refh : float, optional
         Reference height in km for apex coordinates (the field lines are mapped to this height)
-    datafile : str
+    datafile : str, optional
         Path to custom coefficient file
 
     Attributes
@@ -94,11 +94,11 @@ class Apex(object):
             Input coordinate system
         dest : {'geo', 'apex', 'qd', 'mlt'}
             Output coordinate system
-        height : array_like
+        height : array_like, optional
             Altitude in km
         datetime : :class:`datetime.datetime`
             Date and time for MLT conversions (required for MLT conversions)
-        precision : float
+        precision : float, optional
             Precision of output (degrees) when converting to geo. A negative
             value of this argument produces a low-precision calculation of
             geodetic lat/lon based only on their spherical harmonic representation.
@@ -107,7 +107,7 @@ class Apex(object):
             the input QD lat/lon to within the specified precision (all
             coordinates being converted to geo are converted to QD first and
             passed through APXG2Q).
-        ssheight : float
+        ssheight : float, optional
             Altitude in km to use for converting the subsolar point from
             geographic to magnetic coordinates. A high altitude is used
             to ensure the subsolar point is mapped to high latitudes, which
@@ -232,10 +232,8 @@ class Apex(object):
 
         Parameters
         ==========
-        glat : array_like
-            Geodetic latitude
-        glon : array_like
-            Geodetic longitude
+        glat, glon : array_like
+            Geodetic latitude and longitude
         height : array_like
             Altitude in km
 
@@ -258,13 +256,11 @@ class Apex(object):
 
         Parameters
         ==========
-        qlat : array_like
-            Quasi-dipole latitude
-        qlon : array_like
-            Quasi-dipole longitude
+        qlat, qlon : array_like
+            Quasi-dipole latitude and longitude
         height : array_like
             Altitude in km
-        precision : float
+        precision : float, optional
             Precision of output (degrees). A negative value of this argument
             produces a low-precision calculation of geodetic lat/lon based only
             on their spherical harmonic representation. A positive value causes
@@ -274,10 +270,8 @@ class Apex(object):
 
         Returns
         =======
-        glat : ndarray or float
-            Geodetic latitude
-        glon : ndarray or float
-            Geodetic longitude
+        glat, glon : ndarray or float
+            Geodetic latitude and longitude
         error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
