@@ -144,13 +144,11 @@ class Apex(object):
         Returns
         =======
 
-        lat : array
-            Converted latitude
-        lon : array
-            Converted longitude (or MLT if converting to MLT)
+        lat, lon : ndarray or float
+            Converted latitude and longitude/MLT
 
         Note
-        ----
+        ====
         If input `lat`, `lon` or `height` have dimension > 0, outputs are arrays.
 
         '''
