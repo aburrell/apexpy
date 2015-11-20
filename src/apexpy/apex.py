@@ -114,8 +114,10 @@ class Apex(object):
 
         Parameters
         ==========
-        lat, lon : array_like
-            Latitude and longitude/MLT
+        lat : array_like
+            Latitude
+        lon : array_like
+            Longitude (MLT if `source` is 'mlt')
         source : {'geo', 'apex', 'qd', 'mlt'}
             Input coordinate system
         dest : {'geo', 'apex', 'qd', 'mlt'}
@@ -205,8 +207,6 @@ class Apex(object):
 
         Returns
         =======
-        If any inputs have dimension > 0, outputs are arrays.
-
         alat, alon : ndarray or float
             Modified apex latitude and longitude
 
@@ -240,13 +240,11 @@ class Apex(object):
 
         Returns
         =======
-        If `alat`, `alon` or `height` have dimension > 0, outputs are arrays.
-
-        glat : float or array
+        glat : ndarray or float
             Geodetic latitude
-        glon : float or array
+        glon : ndarray or float
             Geodetic longitude
-        error : float or array
+        error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
             into geo2qd (APXG2Q)
