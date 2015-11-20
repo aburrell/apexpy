@@ -21,10 +21,10 @@ env:
 
   matrix:
     - TESTENV=extension-coveralls,coveralls,codecov
-      TESTSCRIPT=`py.test --cov --cov-report=term-missing`
+      TESTSCRIPT="py.test --cov --cov-report=term-missing"
 
     - TESTENV=nocover
-      TESTSCRIPT=`py.test`
+      TESTSCRIPT="py.test"
 
 before_install:
   - python --version
