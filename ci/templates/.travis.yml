@@ -43,6 +43,7 @@ after_success:
   - coverage combine
   - coverage report
   - coveralls --merge=extension-coveralls.json []
+  - coveralls
 
 notifications:
   email:
