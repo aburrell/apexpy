@@ -44,4 +44,4 @@ html_sidebars = {
 }
 html_short_title = '%s-%s' % (project, version)
 
-autodoc_mock_imports = ['fortranapex', 'numpy']
+autodoc_mock_imports = ['fortranapex', 'apexpy.fortranapex', 'apexpy.apex.fortranapex']
