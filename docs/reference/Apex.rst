@@ -7,5 +7,6 @@ The ``Apex`` class is used for all the main functionality (converting between co
 
 .. autosummary::
 
-    apex.Apex
+    apex.Apex.convert
+    apex.Apex.map_to_height
 
