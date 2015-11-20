@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 
 import os
+import sys
 
+sys.path.append('../src/')
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -44,4 +46,4 @@ html_sidebars = {
 }
 html_short_title = '%s-%s' % (project, version)
 
-autodoc_mock_imports = ['fortranapex', 'apexpy.fortranapex', 'apexpy.apex.fortranapex']
+autodoc_mock_imports = ['apexpy.fortranapex', 'apexpy.apex.fortranapex']

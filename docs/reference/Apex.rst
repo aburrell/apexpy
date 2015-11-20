@@ -3,5 +3,5 @@ Apex
 
 Documentation for the ``Apex`` class.
 
-.. autoclass:: apexpy.Apex
+.. autoclass:: apexpy
    :members:
