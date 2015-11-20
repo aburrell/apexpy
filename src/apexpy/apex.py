@@ -34,20 +34,11 @@ class Apex(object):
 
     Methods
     -------
-    :meth:`Apex.convert`
+    convert
         High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
-    :meth:`Apex.geo2apex`, :meth:`Apex.apex2geo`, :meth:`Apex.geo2qd`, :meth:`Apex.qd2geo`, \
-    :meth:`Apex.apex2qd`, :meth:`Apex.qd2apex`, :meth:`Apex.mlon2mlt`, :meth:`Apex.mlt2mlon`
-        conversion functions for specific coordinate systems (called by :meth:`Apex.convert`)
-    :meth:`Apex.map_to_height`
-        Maps geodetic coordinates along the magnetic field to a new height in the closest or conjugate hemisphere
-        (for finding footprints, conjugate points, etc.)
-    :meth:`Apex.basevectors_qd`, :meth:`Apex.basevectors_apex`
-        Calculate base vectors
-    :meth:`Apex.get_apex`
+    get_apex
         Compute field line apex from apex latitude
-    :meth:`Apex.set_epoch`, :meth:`Apex.set_refh`
-        Change epoch and reference height for subsequent conversions
+
 
     Attributes
     ----------
