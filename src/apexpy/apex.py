@@ -114,10 +114,8 @@ class Apex(object):
 
         Parameters
         ==========
-        lat : array_like
-            Latitude
-        lon : array_like
-            Longitude (MLT if `source` is 'mlt')
+        lat, lon : array_like
+            Latitude and longitude/MLT
         source : {'geo', 'apex', 'qd', 'mlt'}
             Input coordinate system
         dest : {'geo', 'apex', 'qd', 'mlt'}
@@ -143,13 +141,8 @@ class Apex(object):
 
         Returns
         =======
-
         lat, lon : ndarray or float
             Converted latitude and longitude/MLT
-
-        Note
-        ====
-        If input `lat`, `lon` or `height` have dimension > 0, outputs are arrays.
 
         '''
 
@@ -214,10 +207,8 @@ class Apex(object):
         =======
         If any inputs have dimension > 0, outputs are arrays.
 
-        alat : float or array
-            Modified apex latitude
-        alon : float or array
-            Modified apex longitude
+        alat, alon : ndarray or float
+            Modified apex latitude and longitude
 
         '''
 
