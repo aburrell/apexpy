@@ -272,8 +272,6 @@ class Apex(object):
 
         Returns
         =======
-        If any inputs have dimension > 0, outputs are arrays.
-
         qlat, qlon : ndarray or float
             Quasi-dipole latitude and longitude
 
