@@ -26,7 +26,7 @@ class Apex(object):
     Parameters
     ==========
     date : float (decimal year) or instance of :class:`datetime.date` or :class:`datetime.datetime`
-        IGRF coefficients are used in conversions. Uses current date as default.
+        Determines which IGRF coefficients are used in conversions. Uses current date as default.
     refh : float
         Reference height in km for apex coordinates (the field lines are mapped to this height)
     datafile : str
