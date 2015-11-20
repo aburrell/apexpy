@@ -4,10 +4,9 @@ apexpy.Apex
 The ``Apex`` class is used for all the main functionality (converting between coordinate systems, field line mapping, and calculating base vectors).
 
 .. currentmodule:: apexpy
-.. currentclass:: Apex
 
 .. autosummary::
 
-    Apex.convert
-    Apex.map_to_height
+    apexpy.Apex.convert
+    apexpy.Apex.map_to_height
 
