@@ -310,10 +310,8 @@ class Apex(object):
 
         Parameters
         ==========
-        alat : array_like
-            Modified apex latitude
-        alon : array_like
-            Modified apex longitude
+        alat, alon : array_like
+            Modified apex latitude and longitude
         height : array_like
             Altitude in km
 
@@ -357,10 +355,8 @@ class Apex(object):
 
         Parameters
         ==========
-        qlat : array_like
-            Quasi-dipole latitude
-        qlon : array_like
-            Quasi-dipole longitude
+        qlat, qlon : array_like
+            Quasi-dipole latitude and longitude
         height : array_like
             Altitude in km
 
@@ -402,7 +398,7 @@ class Apex(object):
 
         Returns
         =======
-        ndarray or float
+        mlt : ndarray or float
             Magnetic local time [0, 24)
 
         '''
@@ -434,7 +430,7 @@ class Apex(object):
 
         Returns
         =======
-        ndarray or float
+        mlon : ndarray or float
             Magnetic longitude [0, 360) (apex and quasi-dipole longitude are always equal)
         '''
 
@@ -696,7 +692,7 @@ class Apex(object):
 
         Returns
         =======
-        ndarray or float
+        apex : ndarray or float
             Field line apex in km
         '''
 
