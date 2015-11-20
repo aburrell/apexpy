@@ -40,3 +40,4 @@ html_sidebars = {
 }
 html_short_title = '%s-%s' % (project, version)
 numpydoc_show_class_members=False
+autodoc_member_order='bysource'
