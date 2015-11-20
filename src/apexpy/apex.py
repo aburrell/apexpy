@@ -32,8 +32,8 @@ class Apex(object):
     datafile : str
         Path to custom coefficient file
 
-    Methods2
-    ========
+    Foobar
+    ======
     apexpy.Apex.convert
         High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
     :meth:`Apex.geo2apex`, :meth:`Apex.apex2geo`, :meth:`Apex.geo2qd`, :meth:`Apex.qd2geo`, \
