@@ -17,16 +17,16 @@ from setuptools import find_packages
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:
-    from setuptools import setup
-    from distutils.core import Extension
-    extensions = []
-else:
     from numpy.distutils.core import setup, Extension
     extensions = [
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
                            'src/fortranapex/makeapexsh.f90', 'src/fortranapex/apexsh.f90',
                            'src/fortranapex/checkapexsh.f90'])]
+else:
+    from setuptools import setup
+    from distutils.core import Extension
+    extensions = []
 
 
 def read(*names, **kwargs):
