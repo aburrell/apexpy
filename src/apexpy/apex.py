@@ -559,22 +559,22 @@ class Apex(object):
         Returns
         =======
 
-        f1, f2 : ndarray
-            See notes below on output shapes
+        f1, f2 : ndarray (see note below on output shapes)
 
-        .. note::
+        Note
+        ====
 
-            * If the inputs are scalar, the outputs are vectors with 2 components.
+        * If the inputs are scalar, the outputs are vectors with 2 components.
 
-            * If the inputs broadcast to 1D with length N, the outputs are 2xN arrays
-              where the columns are the vectors, i.e. ``f1[:, 0]`` is the f1 vector
-              corresponding to the first index in the broadcasted input.
+        * If the inputs broadcast to 1D with length N, the outputs are 2xN arrays
+          where the columns are the vectors, i.e. ``f1[:, 0]`` is the f1 vector
+          corresponding to the first index in the broadcasted input.
 
-            * If the inputs broadcast to 2D with shape NxM, the outputs are 2xNxM arrays
-              where ``f1[:, 0, 0]`` is the f1 vector corresponding to the index [0, 0] in
-              the broadcasted input.
+        * If the inputs broadcast to 2D with shape NxM, the outputs are 2xNxM arrays
+          where ``f1[:, 0, 0]`` is the f1 vector corresponding to the index [0, 0] in
+          the broadcasted input.
 
-            * Higher dimensions are untested.
+        * Higher dimensions are untested.
 
         References
         ==========
