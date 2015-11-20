@@ -38,6 +38,21 @@ class Apex(object):
     datafile : str
         Path to custom coefficient file
 
+    Attributes
+    ==========
+    year : float
+        Decimal year used for the IGRF model
+    refh : float
+        Reference height in km for apex coordinates
+    datafile : str
+        Path to coefficient file
+
+    Methods
+    =======
+    convert(self, lat, lon, source, dest, height=0, datetime=None, precision=1e-10, ssheight=50*6371)
+        High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
+
+
     '''
 
     def __init__(self, date=None, refh=0, datafile=None):
