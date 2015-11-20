@@ -88,17 +88,15 @@ class Apex(object):
 
         Parameters
         ==========
-        lat : array_like
-            Latitude
-        lon : array_like
-            Longitude or MLT
+        lat, lon : array_like
+            Latitude and longitude/MLT
         source : {'geo', 'apex', 'qd', 'mlt'}
             Input coordinate system
         dest : {'geo', 'apex', 'qd', 'mlt'}
             Output coordinate system
         height : array_like
             Altitude in km
-        datetime : :class:`~datetime.datetime`
+        datetime : :class:`datetime.datetime`
             Date and time for MLT conversions (required for MLT conversions)
         precision : float
             Precision of output (degrees) when converting to geo. A negative
@@ -199,10 +197,8 @@ class Apex(object):
 
         Parameters
         ==========
-        alat : array_like
-            Modified apex latitude
-        alon : array_like
-            Modified apex longitude
+        alat, alon : array_like
+            Modified apex latitude and longitude
         height : array_like
             Altitude in km
         precision : float
@@ -215,10 +211,8 @@ class Apex(object):
 
         Returns
         =======
-        glat : ndarray or float
-            Geodetic latitude
-        glon : ndarray or float
-            Geodetic longitude
+        glat, glon : ndarray or float
+            Geodetic latitude and longitude
         error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
