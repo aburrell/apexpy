@@ -240,10 +240,8 @@ class Apex(object):
 
         Returns
         =======
-        glat : ndarray or float
-            Geodetic latitude
-        glon : ndarray or float
-            Geodetic longitude
+        glat, glon : ndarray or float
+            Geodetic latitude and longitude
         error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
