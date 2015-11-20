@@ -115,9 +115,6 @@ class Apex(object):
             to ensure the subsolar point is mapped to high latitudes, which
             prevents the South-Atlantic Anomaly (SAA) from influencing the MLT.
 
-        .. note::
-            `lat`, `lon`, `height` must be broadcastable to the same shape.
-
         Returns
         =======
         lat, lon : ndarray or float
@@ -178,10 +175,8 @@ class Apex(object):
 
         Parameters
         ==========
-        glat : array_like
-            Geodetic latitude
-        glon : array_like
-            Geodetic longitude
+        glat, glon : array_like
+            Geodetic latitude and longitude
         height : array_like
             Altitude in km
 
