@@ -23,6 +23,8 @@ class ApexHeightError(ValueError):
 class Apex(object):
     '''Performs coordinate conversions
 
+    ...
+
     Parameters
     ==========
     date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
