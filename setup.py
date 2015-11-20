@@ -14,11 +14,19 @@ from os.path import splitext
 
 from setuptools import find_packages
 
-try:
+# on_rtd is whether we are on readthedocs.org
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if not on_rtd:
     from numpy.distutils.core import setup, Extension
-except ImportError:
+    extensions = []
+else:
     from setuptools import setup
     from distutils.core import Extension
+    extensions = [
+        Extension(name='apexpy.fortranapex',
+                  sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
+                           'src/fortranapex/makeapexsh.f90', 'src/fortranapex/apexsh.f90',
+                           'src/fortranapex/checkapexsh.f90'])]
 
 
 def read(*names, **kwargs):
@@ -27,13 +35,6 @@ def read(*names, **kwargs):
         encoding=kwargs.get('encoding', 'utf8')
     ).read()
 
-
-# enable code coverage for C code
-# We can't use CFLAGS=-coverage in tox.ini, since that may mess with
-# compiling dependencies (e.g. numpy). Therefore we set PY_CCOV=-coverage
-# in tox.ini and copy it to CFLAGS here (after deps have been installed)
-if 'PY_CCOV' in os.environ.keys():
-    os.environ['CFLAGS'] = os.environ['PY_CCOV']
 
 if __name__ == "__main__":
     setup(
@@ -83,12 +84,7 @@ if __name__ == "__main__":
         install_requires=[
             'numpy',
         ],
-        ext_modules=[
-            Extension(name = 'apexpy.fortranapex',
-                      sources = ['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
-                                 'src/fortranapex/makeapexsh.f90', 'src/fortranapex/apexsh.f90',
-                                 'src/fortranapex/checkapexsh.f90'])
-        ],
+        ext_modules=extensions,
         entry_points={
             'console_scripts': [
                 'apexpy = apexpy.__main__:main',
