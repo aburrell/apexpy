@@ -86,7 +86,7 @@ class Apex(object):
             raise IOError('Datafile does not exist: {}'.format(datafile))
 
         self.datafile = datafile
-        '''docstring for datafile'''
+        '''str: docstring for datafile'''
         self.set_epoch(self.year)
 
         # vectorize fortran functions
