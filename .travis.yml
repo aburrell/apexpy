@@ -32,7 +32,7 @@ before_install:
   - lsb_release -a
 
 install:
-  - pip install pytest-capturelog coveralls pytest-cov coverage
+  - pip install pytest-capturelog coveralls pytest-cov coverage codecov
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
 
@@ -44,6 +44,7 @@ after_success:
   - coverage report
   - coveralls --merge=extension-coveralls.json []
   - coveralls
+  - codecov
 
 notifications:
   email:
