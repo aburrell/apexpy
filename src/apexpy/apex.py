@@ -23,7 +23,7 @@ class ApexHeightError(ValueError):
 class Apex(object):
     '''Performs coordinate conversions
 
-    The most common methods are :meth:`~apexpy.Apex.convert` to convert between
+    The most relevant methods are :meth:`~apexpy.Apex.convert` to convert between
     all supported coordinate systems, :meth:`~apexpy.Apex.map_to_height` to perform
     mapping along a field line to the closest or conjugate hemisphere, and
     :meth:`~apexpy.Apex.basevectors_qd` and :meth:`~apexpy.Apex.basevectors_apex` to
@@ -356,12 +356,8 @@ class Apex(object):
 
         Returns
         =======
-        If any inputs have dimension > 0, outputs are arrays.
-
-        qlat : ndarray or float
-            Quasi-dipole latitude
-        qlon : ndarray or float
-            Quasi-dipole longitude
+        qlat, qlon : ndarray or float
+            Quasi-dipole latitude and longitude
 
         Raises
         ======
@@ -407,12 +403,8 @@ class Apex(object):
 
         Returns
         =======
-        If any inputs have dimension > 0, outputs are arrays.
-
-        alat : ndarray or float
-            Modified apex latitude
-        alon : ndarray or float
-            Modified apex longitude
+        alat, alon : ndarray or float
+            Modified apex latitude and longitude
 
         Raises
         ======
@@ -518,8 +510,6 @@ class Apex(object):
 
         Returns
         =======
-        If `glat`, `glon` or `height` have dimension > 0, outputs are arrays.
-
         newglat : ndarray or float
             Geodetic latitude of mapped point
         newglon : ndarray or float
@@ -746,7 +736,7 @@ class Apex(object):
 
         Returns
         =======
-        apex : ndarray or float
+        ndarray or float
             Field line apex
         '''
 
