@@ -69,7 +69,7 @@ artifacts:
   - path: dist\*
 matrix:
   allow_failures:
-    - TOXENV: 'check'
+    - PYTHON_VERSION: '3.5'
 ### To enable remote debugging uncomment this:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 

@@ -22,6 +22,7 @@ env:
   matrix:
     - TESTENV=extension-coveralls,coveralls,codecov
       TESTSCRIPT="py.test --cov --cov-report=term-missing"
+      COVERSCRIPT="coverage report"
 
     - TESTENV=nocover
       TESTSCRIPT="py.test"
@@ -32,12 +33,13 @@ before_install:
   - lsb_release -a
 
 install:
-  - pip install pytest-capturelog coveralls pytest-cov
+  - pip install pytest-capturelog coveralls pytest-cov coverage
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
 
 script:
   - $TESTSCRIPT
+  - $COVERSCRIPT
 
 notifications:
   email:
