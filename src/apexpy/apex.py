@@ -38,8 +38,8 @@ class Apex(object):
     datafile : str
         Path to custom coefficient file
 
-    Methods
-    =======
+    Methods2
+    ========
     convert
         High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
     geo2apex, apex2geo, geo2qd, qd2geo, apex2qd, qd2apex, mlon2mlt, mlt2mlon,
@@ -54,8 +54,8 @@ class Apex(object):
     set_epoch, set_refh
         Change epoch and reference height for subsequent conversions
 
-    Attributes
-    ==========
+    Attributes2
+    ===========
     year : float
         Decimal year used for the IGRF model
     refh : float
