@@ -38,22 +38,7 @@ class Apex(object):
     datafile : str
         Path to custom coefficient file
 
-    Methods
-    =======
-    convert
-        High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
-    get_apex
-        Compute field line apex from apex latitude
 
-
-    Attributes
-    ==========
-    year : float
-        Decimal year used for the IGRF model
-    refh : float
-        Reference height in km for apex coordinates
-    datafile : str
-        Path to coefficient file
 
     '''
 
