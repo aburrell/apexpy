@@ -44,8 +44,7 @@ class Apex(object):
         High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
     get_apex
         Compute field line apex from apex latitude
-    set_epoch, set_refh
-        Change epoch and reference height for subsequent conversions
+
 
     Attributes
     ==========
