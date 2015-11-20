@@ -144,9 +144,9 @@ class Apex(object):
         Returns
         =======
 
-        lat : float or array
+        lat : array
             Converted latitude
-        lon : float or array
+        lon : array
             Converted longitude (or MLT if converting to MLT)
 
         Note
