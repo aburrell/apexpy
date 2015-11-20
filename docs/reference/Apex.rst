@@ -7,5 +7,5 @@ The ``Apex`` class is used for all the main functionality (converting between co
 
 .. autosummary::
 
-    Apex
+    apex.Apex
 
