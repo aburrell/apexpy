@@ -1,8 +1,8 @@
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
 
 from .apex import Apex, ApexHeightError
-import fortranapex, helpers, apex
+from . import fortranapex, helpers
 
 __version__ = "0.1.0"
 
-#__all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']
+__all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']

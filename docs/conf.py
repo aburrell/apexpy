@@ -44,4 +44,7 @@ html_sidebars = {
 }
 html_short_title = '%s-%s' % (project, version)
 
-autodoc_mock_imports = ['apexpy.fortranapex', 'apexpy.apex.fortranapex']
+import mock
+MOCK_MODULES = ['fortranapex']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
