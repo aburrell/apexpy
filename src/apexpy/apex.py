@@ -86,16 +86,12 @@ class Apex(object):
     def convert(self, lat, lon, source, dest, height=0, datetime=None, precision=1e-10, ssheight=50*6371):
         '''Converts between geodetic, modified apex, quasi-dipole and MLT
 
-        `lat`, `lon`, `height` must be broadcastable to the same shape.
-
-        If converting to MLT, output latitude is apex.
-
         Parameters
         ==========
         lat : array_like
             Latitude
         lon : array_like
-            Longitude (MLT if `source` is 'mlt')
+            Longitude or MLT
         source : {'geo', 'apex', 'qd', 'mlt'}
             Input coordinate system
         dest : {'geo', 'apex', 'qd', 'mlt'}
@@ -119,10 +115,16 @@ class Apex(object):
             to ensure the subsolar point is mapped to high latitudes, which
             prevents the South-Atlantic Anomaly (SAA) from influencing the MLT.
 
+        .. note::
+            `lat`, `lon`, `height` must be broadcastable to the same shape.
+
         Returns
         =======
         lat, lon : ndarray or float
             Converted latitude and longitude/MLT
+
+        .. note::
+            If converting to MLT, output latitude is apex.
 
         '''
 
