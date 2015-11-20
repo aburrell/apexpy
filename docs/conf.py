@@ -43,3 +43,16 @@ html_sidebars = {
    '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
 }
 html_short_title = '%s-%s' % (project, version)
+
+
+# mock the fortranapex extension so that autodoc can successfully run
+import sys
+from unittest.mock import MagicMock
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['apexpy.fortranapex']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
