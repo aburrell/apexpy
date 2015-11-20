@@ -26,18 +26,12 @@ env:
     - TESTENV=nocover
       TESTSCRIPT=`py.test`
 
-    - TESTENV=check
-      TESTSCRIPT=`python setup.py check --strict --metadata --restructuredtext ; check-manifest ; flake8 src tests`
-
-      INSTALL_EXTRA_DEPS=`pip install docutils check-manifest flake8 readme pygments`
-
 before_install:
   - python --version
   - uname -a
   - lsb_release -a
 
 install:
-  - $INSTALL_EXTRA_DEPS
   - pip install pytest-capturelog coveralls pytest-cov
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
