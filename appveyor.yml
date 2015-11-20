@@ -68,13 +68,12 @@ install:
   # remove file which conflicts with installation of package 'readme' on case-insensitive file systems
   - del C:\pythontest\Lib\site-packages\README
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
-  # as well as fix python 3.5 compiling
   - python ci\fix-compiler-error.py
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - where pip
   - '%INSTALL_EXTRA_DEPS%'
-  - '%WITH_COMPILER% python setup.py clean --all build_ext --force --inplace --compiler=msvc'
+  - python setup.py clean --all build_ext --force --inplace --compiler=mingw32
   - python setup.py develop
 test_script:
   - '%TESTSCRIPT%'
