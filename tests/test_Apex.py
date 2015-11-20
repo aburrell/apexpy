@@ -299,6 +299,14 @@ def test_convert_invalid_lat():
     assert_allclose(A.convert(90+1e-5, 0, 'geo', 'apex'), A.convert(90, 0, 'geo', 'apex'), rtol=0, atol=1e-8)
 
 
+def test_convert_invalid_transformation():
+    A = Apex(date=2000, refh=300)
+    with pytest.raises(NotImplementedError):
+        A.convert(0, 0, 'foobar', 'geo')
+    with pytest.raises(NotImplementedError):
+        A.convert(0, 0, 'geo', 'foobar')
+
+
 ###============================================================================
 ### Test the geo2apex() method
 ###============================================================================
@@ -465,7 +473,7 @@ def test_apex2qd_invalid_lat():
 
 def test_apex2qd_apexheight_close():
     A = Apex(date=2000, refh=300)
-    A.apex2qd(60, 15, 300+1e-6)
+    A.apex2qd(0, 15, 300+1e-6)
 
 
 def test_apex2qd_apexheight_over():
@@ -662,6 +670,11 @@ def test_map_to_height_conjugate():
     assert_allclose(A.map_to_height(60, 15, 100, 10000, conjugate=True, precision=1e-10), (-25.424892425537109, 27.310417175292969, 1.2074182222931995e-6))
     assert_allclose(A.map_to_height(30, 170, 100, 500, conjugate=True, precision=1e-2), (-13.76642894744873, 164.24259948730469, 0.00056820799363777041))
 
+
+def test_map_to_height_ApexHeightError():
+    A = Apex(date=2000, refh=300)
+    with pytest.raises(ApexHeightError):
+        A.map_to_height(0, 15, 100, 10000)
 
 ###============================================================================
 ### Test basevectors_qd()

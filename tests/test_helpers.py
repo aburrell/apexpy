@@ -146,5 +146,12 @@ def test_subsol():
     assert_allclose(helpers.subsol(dt.datetime(2005, 2, 3, 4, 5, 6)), (-16.505391672592904, 122.17768157084515))
     assert_allclose(helpers.subsol(dt.datetime(2010, 12, 11, 10, 9, 8)), (-23.001554595838947, 26.008999999955023))
 
+    with pytest.raises(ValueError):
+        helpers.subsol(dt.datetime(1600, 12, 31, 23, 59, 59))
+    assert_allclose(helpers.subsol(dt.datetime(1601, 1, 1, 0, 0, 0)), (-23.06239721771427, -178.90131731228584))
+    with pytest.raises(ValueError):
+        helpers.subsol(dt.datetime(2101, 1, 1, 0, 0, 0))
+    assert_allclose(helpers.subsol(dt.datetime(2100, 12, 31, 23, 59, 59)), (-23.021061422069053, -179.23129780639425))
+
 if __name__ == '__main__':
     pytest.main()
