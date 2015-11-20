@@ -5,6 +5,7 @@ The ``Apex`` class is used for all the main functionality (converting between co
 
 .. currentmodule:: apexpy
 .. autosummary::
+    :nosignatures:
     Apex
 
 
