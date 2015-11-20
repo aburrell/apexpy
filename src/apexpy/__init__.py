@@ -1,8 +1,7 @@
 from __future__ import absolute_import
 
 from .apex import Apex, ApexHeightError
-from . import fortranapex, helpers
-import apex
+import fortranapex, helpers, apex
 
 __version__ = "0.1.0"
 
