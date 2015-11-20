@@ -388,7 +388,7 @@ class Apex(object):
         ==========
         mlon : array_like
             magnetic longitude (apex and quasi-dipole longitude are always equal)
-        datetime : :class:`~datetime.datetime`
+        datetime : :class:`datetime.datetime`
             Date and time
         ssheight : float
             Altitude in km to use for converting the subsolar point from
@@ -420,8 +420,7 @@ class Apex(object):
         ==========
         mlt : array_like
             magnetic local time
-        datetime : :class:`~datetime.datetime`
-            Date and time
+        datetime : :class:`datetime.datetime`
         ssheight : float
             Altitude in km to use for converting the subsolar point from
             geographic to magnetic coordinates. A high altitude is used
