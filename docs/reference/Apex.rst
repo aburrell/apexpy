@@ -8,5 +8,5 @@ The ``Apex`` class is used for all the main functionality (converting between co
 .. autosummary::
 
     convert
-    map_to_height -- test
+    map_to_height
 
