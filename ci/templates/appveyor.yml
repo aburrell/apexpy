@@ -46,6 +46,8 @@ install:
   # to stop the unnecessary "Only MS compiler supported with gfortran on win64" error on some configurations (numpy 1.9?)
   # as well as fix python 3.5 compiling
   - python ci\fix-compiler-error.py
+  - gendef - C:\Python35-x64\python35.dll > mingwlib.def
+  - dlltool --dllname C:\Python35-x64\python35.dll --def mingwlib.def --output-lib C:\pythontest\libs\libpython35.a -m i386:x86-64
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - where python
   - where pip
