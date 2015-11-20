@@ -5,7 +5,7 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
-{% for env, config in tox_environments|dictsort|reverse %}{% if config.python in ('python2.6', 'python2.7', 'python3.3', 'python3.4', 'python3.5') and not config.cover %}
+{% for env, config in tox_environments|dictsort %}{% if config.python in ('python2.6', 'python2.7', 'python3.3', 'python3.4', 'python3.5') and not config.cover %}
     - TESTENV: '{{ env }}-64'
       {%- if config.python != 'python3.5' %}
 
