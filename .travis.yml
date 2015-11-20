@@ -29,7 +29,7 @@ env:
     - TESTENV=check
       TESTSCRIPT=`python setup.py check --strict --metadata --restructuredtext ; check-manifest ; flake8 src tests`
 
-      INSTALL_EXTRA_DEPS='pip install docutils check-manifest flake8 readme pygments'
+      INSTALL_EXTRA_DEPS=`pip install docutils check-manifest flake8 readme pygments`
 
 before_install:
   - python --version
@@ -52,9 +52,9 @@ notifications:
 
 matrix:
   exclude:
-    - python: '3.3'
+    - python: 3.3
       env: TESTENV=check
-    - python: '3.4'
+    - python: 3.4
       env: TESTENV=check
-    - python: '3.5'
+    - python: 3.5
       env: TESTENV=check
