@@ -3,12 +3,12 @@
 from __future__ import division, print_function, absolute_import, unicode_literals
 import os
 import numpy as np
-from apexpy import fortranapex as fa
+from . import fortranapex as fa
 
-from apexpy import helpers
+from . import helpers
 import datetime as dt
 
-from apexpy.helpers import d2r, r2d
+from .helpers import d2r, r2d
 
 
 class ApexHeightError(ValueError):
