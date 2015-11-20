@@ -21,46 +21,47 @@ class ApexHeightError(ValueError):
 
 
 class Apex(object):
-    '''Performs coordinate conversions
 
-    Parameters
-    ==========
-    date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
-        IGRF coefficients are used in conversions. Uses current date as default.
-    refh : float
-        Reference height in km for apex coordinates (the field lines are mapped to this height)
-    datafile : str
-        Path to custom coefficient file
-
-    Methods
-    =======
-    :meth:`Apex.convert`
-        High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
-    :meth:`Apex.geo2apex`, :meth:`Apex.apex2geo`, :meth:`Apex.geo2qd`, :meth:`Apex.qd2geo`, \
-    :meth:`Apex.apex2qd`, :meth:`Apex.qd2apex`, :meth:`Apex.mlon2mlt`, :meth:`Apex.mlt2mlon`
-        conversion functions for specific coordinate systems (called by :meth:`Apex.convert`)
-    :meth:`Apex.map_to_height`
-        Maps geodetic coordinates along the magnetic field to a new height in the closest or conjugate hemisphere
-        (for finding footprints, conjugate points, etc.)
-    :meth:`Apex.basevectors_qd`, :meth:`Apex.basevectors_apex`
-        Calculate base vectors
-    :meth:`Apex.get_apex`
-        Compute field line apex from apex latitude
-    :meth:`Apex.set_epoch`, :meth:`Apex.set_refh`
-        Change epoch and reference height for subsequent conversions
-
-    Attributes
-    ==========
-    year : float
-        Decimal year used for the IGRF model
-    refh : float
-        Reference height in km for apex coordinates
-    datafile : str
-        Path to coefficient file
-
-    '''
 
     def __init__(self, date=None, refh=0, datafile=None):
+        '''Performs coordinate conversions
+
+        Parameters
+        ==========
+        date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
+            IGRF coefficients are used in conversions. Uses current date as default.
+        refh : float
+            Reference height in km for apex coordinates (the field lines are mapped to this height)
+        datafile : str
+            Path to custom coefficient file
+
+        Methods
+        =======
+        :meth:`Apex.convert`
+            High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
+        :meth:`Apex.geo2apex`, :meth:`Apex.apex2geo`, :meth:`Apex.geo2qd`, :meth:`Apex.qd2geo`, \
+        :meth:`Apex.apex2qd`, :meth:`Apex.qd2apex`, :meth:`Apex.mlon2mlt`, :meth:`Apex.mlt2mlon`
+            conversion functions for specific coordinate systems (called by :meth:`Apex.convert`)
+        :meth:`Apex.map_to_height`
+            Maps geodetic coordinates along the magnetic field to a new height in the closest or conjugate hemisphere
+            (for finding footprints, conjugate points, etc.)
+        :meth:`Apex.basevectors_qd`, :meth:`Apex.basevectors_apex`
+            Calculate base vectors
+        :meth:`Apex.get_apex`
+            Compute field line apex from apex latitude
+        :meth:`Apex.set_epoch`, :meth:`Apex.set_refh`
+            Change epoch and reference height for subsequent conversions
+
+        Attributes
+        ==========
+        year : float
+            Decimal year used for the IGRF model
+        refh : float
+            Reference height in km for apex coordinates
+        datafile : str
+            Path to coefficient file
+
+        '''
 
         if datafile is None:
             datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
