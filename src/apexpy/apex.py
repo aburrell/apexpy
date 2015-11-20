@@ -305,13 +305,11 @@ class Apex(object):
 
         Returns
         =======
-        If `qlat`, `qlon` or `height` have dimension > 0, outputs are arrays.
-
-        glat : float or array
+        glat : ndarray or float
             Geodetic latitude
-        glon : float or array
+        glon : ndarray or float
             Geodetic longitude
-        error : float or array
+        error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
             into geo2qd (APXG2Q)
@@ -360,9 +358,9 @@ class Apex(object):
         =======
         If any inputs have dimension > 0, outputs are arrays.
 
-        qlat : float or array
+        qlat : ndarray or float
             Quasi-dipole latitude
-        qlon : float or array
+        qlon : ndarray or float
             Quasi-dipole longitude
 
         Raises
@@ -411,9 +409,9 @@ class Apex(object):
         =======
         If any inputs have dimension > 0, outputs are arrays.
 
-        alat : float or array
+        alat : ndarray or float
             Modified apex latitude
-        alon : float or array
+        alon : ndarray or float
             Modified apex longitude
 
         Raises
@@ -451,7 +449,7 @@ class Apex(object):
         =======
         If `mlon` has dimension > 0, output is array.
 
-        mlt : float or array
+        mlt : ndarray or float
             Magnetic local time [0, 24)
 
         '''
@@ -485,7 +483,7 @@ class Apex(object):
         =======
         If `mlt` has dimension > 0, output is array.
 
-        mlon : float or array
+        mlon : ndarray or float
             Magnetic longitude [0, 360) (apex and quasi-dipole longitude are always equal)
         '''
 
@@ -526,11 +524,11 @@ class Apex(object):
         =======
         If `glat`, `glon` or `height` have dimension > 0, outputs are arrays.
 
-        newglat : float or array
+        newglat : ndarray or float
             Geodetic latitude of mapped point
-        newglon : float or array
+        newglon : ndarray or float
             Geodetic longitude of mapped point
-        error : float or array
+        error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
             into geo2qd (APXG2Q)
@@ -754,7 +752,7 @@ class Apex(object):
         =======
         If `alat` has dimension > 0, output is array.
 
-        apex : float or array
+        apex : ndarray or float
             Field line apex
         '''
 
