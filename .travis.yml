@@ -40,7 +40,9 @@ script:
   $TESTSCRIPT
 
 after_success:
-  coveralls
+  - coverage combine
+  - coverage report
+  - coveralls --merge=extension-coveralls.json []
 
 notifications:
   email:
