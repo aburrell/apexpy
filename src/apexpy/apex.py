@@ -3,7 +3,10 @@
 from __future__ import division, print_function, absolute_import, unicode_literals
 import os
 import numpy as np
-from . import fortranapex as fa
+try:
+    from . import fortranapex as fa
+except:
+    pass
 
 from . import helpers
 import datetime as dt
