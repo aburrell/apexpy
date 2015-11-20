@@ -23,6 +23,10 @@ class ApexHeightError(ValueError):
 class Apex(object):
     '''Performs coordinate conversions
 
+    The most common methods are :meth:`convert` to convert between all
+    supported coordinate systems, and :meth:`map_to_height` to perform
+    mapping along a field line to the closest or conjugate hemisphere.
+
     Parameters
     ==========
     date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
