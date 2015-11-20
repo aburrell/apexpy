@@ -50,7 +50,7 @@ install:
   - where python
   - where pip
   - '%INSTALL_EXTRA_DEPS%'
-  - '%WITH_COMPILER% python setup.py clean --all build_ext --force --inplace --compiler=mingw32'
+  - python setup.py clean --all build_ext --force --inplace --compiler=mingw32'
   - python setup.py develop
 test_script:
   - '%TESTSCRIPT%'
