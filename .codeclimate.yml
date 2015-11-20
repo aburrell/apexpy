@@ -1,8 +1,16 @@
 # Save as .codeclimate.yml (note leading .) in project root directory
-languages:
-  Python: true
+engines:
+  fixme:
+    enabled: true
+  pep8:
+    enabled: true
+  radon:
+    enabled: true
+ratings:
+  paths:
+  - "**.py"
 exclude_paths:
-  - "ci/"
-  - "tests/"
-  - "docs/"
+  - "ci/**/*"
+  - "tests/**/*"
+  - "docs/**/*"
   - "setup.py"
