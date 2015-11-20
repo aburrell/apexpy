@@ -29,15 +29,6 @@ class Apex(object):
     :meth:`~apexpy.Apex.basevectors_qd` and :meth:`~apexpy.Apex.basevectors_apex` to
     calculate base vectors.
 
-    Parameters
-    ==========
-    date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
-        IGRF coefficients are used in conversions. Uses current date as default.
-    refh : float
-        Reference height in km for apex coordinates (the field lines are mapped to this height)
-    datafile : str
-        Path to custom coefficient file
-
     Methods
     =======
     convert
@@ -65,6 +56,16 @@ class Apex(object):
     '''
 
     def __init__(self, date=None, refh=0, datafile=None):
+        """
+        Parameters
+        ==========
+        date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
+            IGRF coefficients are used in conversions. Uses current date as default.
+        refh : float
+            Reference height in km for apex coordinates (the field lines are mapped to this height)
+        datafile : str
+            Path to custom coefficient file
+        """
 
         if datafile is None:
             datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
