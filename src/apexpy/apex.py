@@ -439,7 +439,7 @@ class Apex(object):
 
         Returns
         =======
-        mlt : ndarray or float
+        ndarray or float
             Magnetic local time [0, 24)
 
         '''
@@ -471,7 +471,7 @@ class Apex(object):
 
         Returns
         =======
-        mlon : ndarray or float
+        ndarray or float
             Magnetic longitude [0, 360) (apex and quasi-dipole longitude are always equal)
         '''
 
@@ -559,10 +559,8 @@ class Apex(object):
         Returns
         =======
 
-        f1 : array
-            ..
-        f2 : array
-            ..
+        f1 : ndarray
+        f2 : ndarray
 
         Output shapes:
 
@@ -737,7 +735,7 @@ class Apex(object):
         Returns
         =======
         ndarray or float
-            Field line apex
+            Field line apex in km
         '''
 
         alat = helpers.checklat(alat, name='alat')
