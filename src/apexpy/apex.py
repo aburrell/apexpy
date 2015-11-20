@@ -274,10 +274,8 @@ class Apex(object):
         =======
         If any inputs have dimension > 0, outputs are arrays.
 
-        qlat : float or array
-            Quasi-dipole latitude
-        qlon : float or array
-            Quasi-dipole longitude
+        qlat, qlon : ndarray or float
+            Quasi-dipole latitude and longitude
 
         '''
 
