@@ -22,7 +22,7 @@ env:
   matrix:
     - TOXENV=extension-coveralls,coveralls,codecov
       TESTSCRIPT="py.test --cov --cov-report=term-missing"
-      COVERSCRIPT="coverage combine; coverage report; coverage xml --ignore-errors; codecov []"
+      COVERSCRIPT="'coverage combine'; 'coverage report'; 'coverage xml --ignore-errors; codecov []'"
       WITH_COVERAGE=yes
 
     - TOXENV=nocover
