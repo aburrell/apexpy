@@ -20,11 +20,12 @@ env:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
 
   matrix:
-    - TESTENV=extension-coveralls,coveralls,codecov
+    - TOXENV=extension-coveralls,coveralls,codecov
       TESTSCRIPT="py.test --cov --cov-report=term-missing"
-      COVERSCRIPT="coverage report"
+      COVERSCRIPT="coverage combine; coverage report; coverage xml --ignore-errors; codecov []"
+      WITH_COVERAGE=yes
 
-    - TESTENV=nocover
+    - TOXENV=nocover
       TESTSCRIPT="py.test"
 
 before_install:
@@ -49,8 +50,8 @@ notifications:
 matrix:
   exclude:
     - python: 3.3
-      env: TESTENV=check
+      env: TOXENV=check
     - python: 3.4
-      env: TESTENV=check
+      env: TOXENV=check
     - python: 3.5
-      env: TESTENV=check
+      env: TOXENV=check
