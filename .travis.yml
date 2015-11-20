@@ -21,7 +21,7 @@ env:
 
   matrix:
     - TOXENV=extension-coveralls,coveralls,codecov
-      TESTSCRIPT="py.test --cov --cov-report=term-missing"
+      TESTSCRIPT="coverage run --source=apexpy py.test"
 
     - TOXENV=nocover
       TESTSCRIPT="py.test"
@@ -37,10 +37,10 @@ install:
   - python setup.py develop
 
 script:
-  - $TESTSCRIPT
+  $TESTSCRIPT
 
 after_success:
-  - coveralls
+  coveralls
 
 notifications:
   email:
