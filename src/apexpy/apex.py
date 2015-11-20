@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function, absolute_import, unicode_literals
+from __future__ import division, print_function, absolute_import
 import os
 import numpy as np
 
@@ -32,31 +32,6 @@ class Apex(object):
     datafile : str
         Path to custom coefficient file
 
-    Methods
-    =======
-    :meth:`convert`
-        High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
-    :meth:`geo2apex`, :meth:`apex2geo`, :meth:`geo2qd`, :meth:`qd2geo`, \
-    :meth:`apex2qd`, :meth:`qd2apex`, :meth:`mlon2mlt`, :meth:`mlt2mlon`
-        conversion functions for specific coordinate systems (called by :meth:`convert`)
-    :meth:`map_to_height`
-        Maps geodetic coordinates along the magnetic field to a new height in the closest or conjugate hemisphere
-        (for finding footprints, conjugate points, etc.)
-    :meth:`basevectors_qd`, :meth:`basevectors_apex`
-        Calculate base vectors
-    :meth:`get_apex`
-        Compute field line apex from apex latitude
-    :meth:`set_epoch`, :meth:`set_refh`
-        Change epoch and reference height for subsequent conversions
-
-    Attributes
-    ==========
-    year : float
-        Decimal year used for the IGRF model
-    refh : float
-        Reference height in km for apex coordinates
-    datafile : str
-        Path to coefficient file
 
     '''
 
