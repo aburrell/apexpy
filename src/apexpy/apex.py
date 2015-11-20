@@ -11,9 +11,6 @@ import datetime as dt
 from apexpy.helpers import d2r, r2d
 
 
-__all__ = ['Apex', 'ApexHeightError']
-
-
 class ApexHeightError(ValueError):
     pass
 
