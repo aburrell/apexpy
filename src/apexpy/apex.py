@@ -24,7 +24,7 @@ class Apex(object):
     '''Performs coordinate conversions
 
     Parameters
-    ==========
+    ----------
     date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
         IGRF coefficients are used in conversions. Uses current date as default.
     refh : float
@@ -33,7 +33,7 @@ class Apex(object):
         Path to custom coefficient file
 
     Methods
-    =======
+    -------
     :meth:`Apex.convert`
         High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
     :meth:`Apex.geo2apex`, :meth:`Apex.apex2geo`, :meth:`Apex.geo2qd`, :meth:`Apex.qd2geo`, \
@@ -50,7 +50,7 @@ class Apex(object):
         Change epoch and reference height for subsequent conversions
 
     Attributes
-    ==========
+    ----------
     year : float
         Decimal year used for the IGRF model
     refh : float
