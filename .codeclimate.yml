@@ -4,6 +4,7 @@ engines:
     enabled: true
   pep8:
     enabled: true
+    max_line_length: 140
   radon:
     enabled: true
 ratings:
