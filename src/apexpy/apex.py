@@ -3,15 +3,17 @@
 from __future__ import division, print_function, absolute_import, unicode_literals
 import os
 import numpy as np
-try:
-    from . import fortranapex as fa
-except:
-    pass
 
 from . import helpers
 import datetime as dt
 
 from .helpers import d2r, r2d
+
+# below try..catch required for autodoc to work on readthedocs
+try:
+    from . import fortranapex as fa
+except:
+    print("ERROR: fortranapex module could not be imported. apexpy probably won't work")
 
 
 class ApexHeightError(ValueError):
@@ -30,9 +32,8 @@ class Apex(object):
     datafile : str
         Path to custom coefficient file
 
-    Methods:
+    Methods
     =======
-
     :meth:`convert`
         High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
     :meth:`geo2apex`, :meth:`apex2geo`, :meth:`geo2qd`, :meth:`qd2geo`, \

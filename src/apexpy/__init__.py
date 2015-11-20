@@ -1,13 +1,13 @@
 from __future__ import absolute_import
 
 from .apex import Apex, ApexHeightError
+from . import helpers
+# below try..catch required for autodoc to work on readthedocs
 try:
     from . import fortranapex
-except:
-    pass
+except ImportError:
+    print("ERROR: fortranapex module could not be imported. apexpy probably won't work")
 
-
-from . import helpers
 
 __version__ = "0.1.0"
 
