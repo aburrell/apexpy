@@ -7,7 +7,7 @@ python:
   - '3.5'
 
 sudo: false
-  
+
 addons:
   apt:
     packages:
@@ -24,11 +24,11 @@ env:
       TESTSCRIPT='py.test --cov --cov-report=term-missing'
 
     - TESTENV=nocover
-      TESTSCRIPT=py.test
+      TESTSCRIPT='py.test'
 
     - TESTENV=check
-      TESTSCRIPT='python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
-      INSTALL_EXTRA_DEPS=pip install docutils check-manifest flake8 readme pygments
+      TESTSCRIPT=python ci/check.sh
+      INSTALL_EXTRA_DEPS='pip install docutils check-manifest flake8 readme pygments'
 
 before_install:
   - python --version
@@ -51,9 +51,9 @@ notifications:
 
 matrix:
   exclude:
-    - python: 3.3
+    - python: '3.3'
       env: TESTENV=check
-    - python: 3.4
+    - python: '3.4'
       env: TESTENV=check
-    - python: 3.5
+    - python: '3.5'
       env: TESTENV=check
