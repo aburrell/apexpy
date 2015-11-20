@@ -23,15 +23,6 @@ class ApexHeightError(ValueError):
 class Apex(object):
     '''Performs coordinate conversions
 
-    Parameters
-    ==========
-    date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
-        IGRF coefficients are used in conversions. Uses current date as default.
-    refh : float
-        Reference height in km for apex coordinates (the field lines are mapped to this height)
-    datafile : str
-        Path to custom coefficient file
-
     Methods
     =======
     convert
@@ -54,6 +45,17 @@ class Apex(object):
         Compute field line apex from apex latitude
     set_epoch, set_refh
         Change epoch and reference height for subsequent conversions
+
+    Parameters
+    ==========
+    date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
+        IGRF coefficients are used in conversions. Uses current date as default.
+    refh : float
+        Reference height in km for apex coordinates (the field lines are mapped to this height)
+    datafile : str
+        Path to custom coefficient file
+
+
 
     Attributes
     ==========
