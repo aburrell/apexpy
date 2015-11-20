@@ -60,8 +60,7 @@ class Apex(object):
         Decimal year used for the IGRF model
     refh : float
         Reference height in km for apex coordinates
-    datafile : str
-        Path to coefficient file
+
 
     '''
 
@@ -87,6 +86,7 @@ class Apex(object):
             raise IOError('Datafile does not exist: {}'.format(datafile))
 
         self.datafile = datafile
+        '''docstring for datafile'''
         self.set_epoch(self.year)
 
         # vectorize fortran functions
