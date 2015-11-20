@@ -21,41 +21,19 @@ class ApexHeightError(ValueError):
 
 
 class Apex(object):
-    '''Performs coordinate conversions
-
-    The most relevant methods are :meth:`~apexpy.Apex.convert` to convert between
-    all supported coordinate systems, :meth:`~apexpy.Apex.map_to_height` to perform
-    mapping along a field line to the closest or conjugate hemisphere, and
-    :meth:`~apexpy.Apex.basevectors_qd` and :meth:`~apexpy.Apex.basevectors_apex` to
-    calculate base vectors.
+    '''Performs coordinate conversions, field-line mapping and base vector calculations.
 
     Parameters
     ==========
-    date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
+    date : float (decimal year) or instance of :class:`datetime.date` or :class:`datetime.datetime`
         IGRF coefficients are used in conversions. Uses current date as default.
     refh : float
         Reference height in km for apex coordinates (the field lines are mapped to this height)
     datafile : str
         Path to custom coefficient file
 
-    Methods2
-    ========
-    convert
-        High-level, general-purpose conversion between geodetic, modified apex, quasi-dipole and MLT
-    geo2apex, apex2geo, geo2qd, qd2geo, apex2qd, qd2apex, mlon2mlt, mlt2mlon,
-        conversion functions for specific coordinate systems (called by :meth:`~apexpy.Apex.convert`)
-    map_to_height
-        Maps geodetic coordinates along the magnetic field to a new height in the closest or conjugate hemisphere
-        (for finding footprints, conjugate points, etc.)
-    basevectors_qd, basevectors_apex
-        Calculate base vectors
-    get_apex
-        Compute field line apex from apex latitude
-    set_epoch, set_refh
-        Change epoch and reference height for subsequent conversions
-
-    Attributes2
-    ===========
+    Attributes
+    ==========
     year : float
         Decimal year used for the IGRF model
     refh : float
@@ -106,7 +84,7 @@ class Apex(object):
         self._qd2apex = np.frompyfunc(self._qd2apex_nonvectorized, 3, 2)
 
     def convert(self, lat, lon, source, dest, height=0, datetime=None, precision=1e-10, ssheight=50*6371):
-        '''Converts latitude and longitude/MLT between two coordinate systems
+        '''Converts between geodetic, modified apex, quasi-dipole and MLT
 
         `lat`, `lon`, `height` must be broadcastable to the same shape.
 
@@ -285,7 +263,7 @@ class Apex(object):
         return np.float64(qlat), np.float64(qlon)
 
     def qd2geo(self, qlat, qlon, height, precision=1e-10):
-        '''Converts quasi-dipole to geodetic coordinates
+        '''Converts quasi-dipole to geodetic coordinates.
 
         Parameters
         ==========
