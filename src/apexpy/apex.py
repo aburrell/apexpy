@@ -33,9 +33,9 @@ class Apex(object):
     ==========
     date : float (decimal year) or instance of :class:`~datetime.date` or :class:`~datetime.datetime`
         IGRF coefficients are used in conversions. Uses current date as default.
-    refh : Optional[float]
+    refh : float
         Reference height in km for apex coordinates (the field lines are mapped to this height)
-    datafile : Optional[str]
+    datafile : str
         Path to custom coefficient file
 
     Methods
@@ -143,12 +143,15 @@ class Apex(object):
 
         Returns
         =======
-        If input `lat`, `lon` or `height` have dimension > 0, outputs are arrays.
 
         lat : float or array
             Converted latitude
         lon : float or array
             Converted longitude (or MLT if converting to MLT)
+
+        Note
+        ----
+        If input `lat`, `lon` or `height` have dimension > 0, outputs are arrays.
 
         '''
 
