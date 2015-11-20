@@ -201,7 +201,7 @@ class Apex(object):
             Modified apex latitude and longitude
         height : array_like
             Altitude in km
-        precision : float
+        precision : float, optional
             Precision of output (degrees). A negative value of this argument
             produces a low-precision calculation of geodetic lat/lon based only
             on their spherical harmonic representation. A positive value causes
