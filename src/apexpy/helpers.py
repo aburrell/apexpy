@@ -147,10 +147,6 @@ def subsol(datetime):
     sbsllon : float
         Subsolar longitude
 
-    Raises
-    ======
-
-
     Notes
     =====
     Based on formulas in Astronomical Almanac for the year 1996, p. C24.
