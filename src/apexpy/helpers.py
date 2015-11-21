@@ -9,7 +9,6 @@ import time
 import datetime as dt
 
 # constants
-WGS84_a = 6378.1370  #: float : WGS84 semi-major axis (not currently used)
 d2r = np.pi/180
 r2d = 180/np.pi
 
@@ -141,7 +140,7 @@ def gc2gdlat(gclat):
         Geodetic latitude
 
     '''
-    WGS84_e2 = 0.006694379990141317  #: float : WGS84 first eccentricity squared
+    WGS84_e2 = 0.006694379990141317  # WGS84 first eccentricity squared
     return np.rad2deg(-np.arctan(np.tan(np.deg2rad(gclat))/(WGS84_e2 - 1)))
 
 
