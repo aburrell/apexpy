@@ -72,7 +72,7 @@ def test_convert_single_line():
 
 
 def test_convert_stdin_stdout():
-    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015', shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 300', shell=True, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
     p.wait()
     assert b'57.469547, 93.639816' in stdout
