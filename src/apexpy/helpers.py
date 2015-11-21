@@ -16,7 +16,7 @@ r2d = 180/np.pi
 
 
 def checklat(lat, name='lat'):
-    '''Makes sure the latitude is inside [-90, 90], allowing close values (tolerance 1e-4).
+    '''Makes sure the latitude is inside [-90, 90], clipping close values (tolerance 1e-4).
 
     Parameters
     ==========
