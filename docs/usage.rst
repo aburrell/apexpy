@@ -41,7 +41,7 @@ Command-line interface
 
 .. highlight:: none
 
-.. currentmodule: apexpy
+.. pymodule: apexpy
 
 The Python package also installs a command called ``apexpy`` which allows using the :meth:`Apex.convert` method from the command line. The command-line interface allows you to make use of the Python library even if you don't know or use Python. See the reference for :doc:`Command-line interface <reference/cli>` for a list of arguments to the commands. Below are some simple usage examples.
 
@@ -65,7 +65,7 @@ Alternatively, you can skip the files and just use command-line piping::
     57.47612194 93.55719875
 
 
-MLT conversion works in much the same way, but requires both date and time in the ``-d`` argument. If the columns in the input file shown above are apex latitude, longitude and height and you want to convert to MLT, run e.g. ``apexpy  apex mlt -d 20150224140015 -i input.txt -o output.txt`` (note that the date/time is a required parameter). The output file will then look like this::
+MLT conversion works in much the same way, but requires both date and time in the ``-d`` argument. If the columns in the input file shown above are apex latitude, longitude and height and you want to convert to MLT, run e.g. ``apexpy apex mlt -d 20150224140015 -i input.txt -o output.txt`` (note that the date/time is a required parameter). The output file will then look like this::
 
     60 13.7
     61 13.7
