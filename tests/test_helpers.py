@@ -119,6 +119,7 @@ def test_getcosIm_2Darray():
 
 def test_toYearFraction():
     assert_allclose(helpers.toYearFraction(dt.datetime(2001, 1, 1, 0, 0, 0)), 2001)
+    assert_allclose(helpers.toYearFraction(dt.date(2001, 1, 1)), 2001)
     assert_allclose(helpers.toYearFraction(dt.datetime(2002, 1, 1, 0, 0, 0)), 2002)
     assert_allclose(helpers.toYearFraction(dt.datetime(2005, 2, 3, 4, 5, 6)), 2005.090877283105)
     assert_allclose(helpers.toYearFraction(dt.datetime(2005, 12, 11, 10, 9, 8)), 2005.943624682902)
