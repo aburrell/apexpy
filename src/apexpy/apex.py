@@ -558,7 +558,7 @@ class Apex(object):
     def basevectors_apex(self, lat, lon, height, coords='geo', return_all=False, precision=1e-10):
         '''Returns base vectors in quasi-dipole and apex coordinates.
 
-        The vectors are described by Richmond [2005] [2]_.
+        The vectors are described by Richmond [2005] [1]_.
 
         Parameters
         ==========
@@ -595,7 +595,7 @@ class Apex(object):
 
         .. note::
 
-            * If the inputs are scalar (only if if `return_all` is False), the outputs
+            * If the inputs are scalar (only if `return_all` is False), the outputs
               are vectors with 2 (f) and 3 (d and e) components.
 
             * If the inputs broadcast to 1D with length N, the outputs are 2xN (f) and
@@ -603,7 +603,7 @@ class Apex(object):
               f1 vector corresponding to the first index in the broadcasted input. If
               if `return_all` is True, f is 3xN instead of 2xN.
 
-            * If the inputs broadcast to 2D with shape NxM (only if if `return_all` is False),
+            * If the inputs broadcast to 2D with shape NxM (only if `return_all` is False),
               the outputs are 2xNxM and 3xNxM arrays where ``f1[:, 0, 0]`` is the f1
               vector corresponding to the index [0, 0] in the broadcasted input.
 
@@ -612,7 +612,7 @@ class Apex(object):
         References
         ==========
 
-        .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
+        .. [1] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
                geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191
 
