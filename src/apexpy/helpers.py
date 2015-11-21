@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-'''This submodule contains helper functions used by :class:`~apexpy.Apex`'''
+
+'''This module contains helper functions used by :class:`~apexpy.Apex`.
+
+.. autosummary::
+
+'''
 
 from __future__ import division, print_function, absolute_import
 
