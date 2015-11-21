@@ -5,7 +5,7 @@ Usage examples
 Python library
 ==============
 
-For full documentation of the functions, see :doc:`Reference → apex <reference/Apex>`.
+For full documentation of the functions, see :class:`apexpy.Apex` in the reference.
 
     >>> from apexpy import Apex
     >>> A = Apex(date=2015.3)  # datetime objects are also supported
