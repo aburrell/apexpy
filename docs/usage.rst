@@ -42,6 +42,7 @@ Command-line interface
 .. highlight:: none
 
 .. currentmodule:: apexpy.apex
+.. currentclass:: apexpy.apex.Apex
 
 The Python package also installs a command called ``apexpy`` which allows using the :py:meth:`Apex.convert` method from the command line. The command-line interface allows you to make use of the Python library even if you don't know or use Python. See the reference for :doc:`Command-line interface <reference/cli>` for a list of arguments to the commands. Below are some simple usage examples.
 
