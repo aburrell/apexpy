@@ -28,7 +28,7 @@ def checklat(lat, name='lat'):
     Returns
     =======
     lat : ndarray or float
-        latitude where values just outside the range have been
+        Same as input where values just outside the range have been
         clipped to [-90, 90]
 
     Raises
