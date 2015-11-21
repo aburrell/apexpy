@@ -497,10 +497,8 @@ class Apex(object):
 
         Parameters
         ==========
-        lat : array_like
-            Latitude
-        lon : array_like
-            Longitude
+        lat, lon : array_like
+            Latitude and longitude
         height : array_like
             Altitude in km
         coords : {'geo', 'apex', 'qd'}, optional
@@ -562,17 +560,15 @@ class Apex(object):
 
         Parameters
         ==========
-        lat : array_like
-            Latitude
-        lon : array_like
-            Longitude
+        lat, lon : array_like
+            Latitude and longitude
         height : array_like
             Altitude in km
         coords : {'geo', 'apex', 'qd'}, optional
             Input coordinate system
         return_all : bool, optional
             Will also return f3, g1, g2, and g3, and f1 and f2 have 3 components
-            (the last one is zero). Requires `lat`, `lon`, `height` to be
+            (the last component is zero). Requires `lat`, `lon`, and `height` to be
             broadcast to 1D (at least one of the parameters must be 1D and the
             other two parameters must be 1D or 0D).
         precision : float, optional
