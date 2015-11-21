@@ -10,7 +10,7 @@ import datetime as dt
 
 import numpy as np
 
-#import apexpy
+import apexpy
 
 try:
     # Python 3
