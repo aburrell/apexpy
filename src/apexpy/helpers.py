@@ -9,7 +9,7 @@ import time
 import datetime as dt
 
 # constants
-WGS84_e2 = 0.006694379990141317
+WGS84_e2 = 0.006694379990141317  #: blah
 WGS84_a = 6378.137
 d2r = np.pi/180
 r2d = 180/np.pi
