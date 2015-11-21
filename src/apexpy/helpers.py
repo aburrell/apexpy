@@ -16,6 +16,26 @@ r2d = 180/np.pi
 
 
 def checklat(lat, name='lat'):
+    '''Makes sure the latitude is inside [-90, 90], allowing close values.
+
+    Parameters
+    ==========
+    lat : array_like
+        latitude
+    name : str, optional
+        parameter name to use in the exception message
+
+    Returns
+    =======
+    lat : ndarray or float
+        latitude where values just outside the range have been
+        clipped to [-90, 90]
+
+    Raises
+    ======
+    ValueError
+        if any values are too far outside the range [-90, 90]
+    '''
 
     if np.all(np.float64(lat) >= -90) and np.all(np.float64(lat) <= 90):
         return lat
@@ -39,7 +59,7 @@ def checklat(lat, name='lat'):
 
 
 def getsinIm(alat):
-    '''Computes sinIm from modified apex latitude
+    '''Computes sinIm from modified apex latitude.
 
     Parameters
     ==========
@@ -48,11 +68,7 @@ def getsinIm(alat):
 
     Returns
     =======
-
-    If `alat` has dimension > 0, output is array.
-
-    sinIm : float or array
-        ..
+    sinIm : ndarray or float
 
     '''
 
@@ -62,7 +78,7 @@ def getsinIm(alat):
 
 
 def getcosIm(alat):
-    '''Computes cosIm from modified apex latitude
+    '''Computes cosIm from modified apex latitude.
 
     Parameters
     ==========
@@ -71,11 +87,7 @@ def getcosIm(alat):
 
     Returns
     =======
-
-    If `alat` has dimension > 0, output is array.
-
-    cosIm : float or array
-        ..
+    cosIm : ndarray or float
 
     '''
 
@@ -85,19 +97,20 @@ def getcosIm(alat):
 
 
 def toYearFraction(date):
-    '''Converts :class:`~datetime.datetime` to decimal year
-
-    From http://stackoverflow.com/a/6451892/2978652
+    '''Converts :class:`datetime.date` or :class:`datetime.datetime` to decimal year.
 
     Parameters
     ==========
-    date : :class:`~datetime.datetime`
-        ..
+    date : :class:`datetime.date` or :class:`datetime.datetime`
 
     Returns
     =======
     year : float
         Decimal year
+
+    Notes
+    =====
+    The algorithm is taken from http://stackoverflow.com/a/6451892/2978652
 
     '''
 
@@ -116,7 +129,7 @@ def toYearFraction(date):
 
 
 def gc2gdlat(gclat):
-    '''Convert geocentric latitude to geodetic latitude using WGS84.
+    '''Converts geocentric latitude to geodetic latitude using WGS84.
 
     Parameters
     ==========
@@ -125,9 +138,7 @@ def gc2gdlat(gclat):
 
     Returns
     =======
-    If `gclat` has dimension > 0, output is array.
-
-    gdlat : float or array
+    gdlat : ndarray or float
         Geodetic latitude
 
     '''
@@ -139,15 +150,12 @@ def subsol(datetime):
 
     Parameters
     ==========
-    datetime : :class:`~datetime.datetime`
-        ..
+    datetime : :class:`datetime.datetime`
 
     Returns
     =======
-    sbsllat : float
-        Subsolar latitude
-    sbsllon : float
-        Subsolar longitude
+    sbsllat, sbsllon : float
+        Latitude and longitude of subsolar point
 
     Notes
     =====
