@@ -598,8 +598,8 @@ class Apex(object):
             * If the inputs are scalar (only if `return_all` is False), the outputs
               are vectors with 2 (f) and 3 (d and e) components.
 
-            * If the inputs broadcast to 1D with length N, the outputs are 2xN (f) and
-              3xN (d and e) arrays where the columns are the vectors, i.e. ``f1[:, 0]`` is the
+            * If the inputs broadcast to 1D with length :math:`N`, the outputs are 2x:math:`N` (f) and
+              3x:math:`N` (d and e) arrays where the columns are the vectors, i.e. ``f1[:, 0]`` is the
               f1 vector corresponding to the first index in the broadcasted input. If
               if `return_all` is True, f is 3xN instead of 2xN.
 
