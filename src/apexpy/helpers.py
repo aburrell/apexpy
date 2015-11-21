@@ -9,8 +9,8 @@ import time
 import datetime as dt
 
 # constants
-WGS84_e2 = 0.006694379990141317  #: blah
-WGS84_a = 6378.137
+WGS84_e2 = 0.006694379990141317  #: float : WGS84 first eccentricity squared
+WGS84_a = 6378.1370  #: float : WGS84 semi-major axis (not currently used)
 d2r = np.pi/180
 r2d = 180/np.pi
 
