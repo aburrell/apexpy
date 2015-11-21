@@ -18,12 +18,12 @@ teardown_function = setup_function
 
 
 def test_module_invocation():
-    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '20150224', '--height', '300',
+    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015', '--height', '300',
                           '-i', 'tests/test_convert.txt', '-o', 'tests/output.txt'])
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [[57.4761, 93.5572], [58.5332, 93.9607], [59.5852, 94.3897]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.469547, 93.639816], [58.522701, 94.044762], [59.571465, 94.477257]], rtol=1e-4)
 
 
 def test_convert_YYYY():
@@ -32,7 +32,7 @@ def test_convert_YYYY():
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [[57.4761, 93.5572], [58.5332, 93.9607], [59.5852, 94.3897]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.469547, 93.639816], [58.522701, 94.044762], [59.571465, 94.477257]], rtol=1e-4)
 
 
 def test_convert_YYYYMM():
@@ -41,7 +41,7 @@ def test_convert_YYYYMM():
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [[57.4761, 93.5572], [58.5332, 93.9607], [59.5852, 94.3897]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.469547, 93.639816], [58.522701, 94.044762], [59.571465, 94.477257]], rtol=1e-4)
 
 
 def test_convert_YYYYMMDD():
@@ -50,7 +50,7 @@ def test_convert_YYYYMMDD():
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [[57.4761, 93.5572], [58.5332, 93.9607], [59.5852, 94.3897]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.469547, 93.639816], [58.522701, 94.044762], [59.571465, 94.477257]], rtol=1e-4)
 
 
 def test_convert_YYYYMMDDHHMMSS():
@@ -59,7 +59,7 @@ def test_convert_YYYYMMDDHHMMSS():
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [[57.4761, 93.5572], [58.5332, 93.9607], [59.5852, 94.3897]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.469547, 93.639816], [58.522701, 94.044762], [59.571465, 94.477257]], rtol=1e-4)
 
 
 def test_convert_single_line():
@@ -68,14 +68,14 @@ def test_convert_single_line():
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [57.4761, 93.5572], rtol=1e-4)
+    np.testing.assert_allclose(data, [57.469547, 93.639816], rtol=1e-4)
 
 
 def test_convert_stdin_stdout():
     p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015', shell=True, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
     p.wait()
-    assert b'57.47612194 93.55719875' in stdout
+    assert b'57.469547, 93.639816' in stdout
 
 
 def test_convert_mlt():
@@ -84,4 +84,4 @@ def test_convert_mlt():
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [9.057565, 9.790899, 10.524232], rtol=1e-4)
+    np.testing.assert_allclose(data, [57.469547, 1.061383], rtol=1e-4)
