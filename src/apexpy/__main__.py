@@ -32,7 +32,7 @@ def main():
     parser.add_argument('dest', metavar='DEST', choices=['geo', 'apex', 'qd', 'mlt'], help='Convert to {geo, apex, qd, mlt}')
     parser.add_argument('date', metavar='DATE',
                         help='YYYY[MM[DD[HHMMSS]]] date/time for IGRF coefficients, time part required for MLT calculations')
-    parser.add_argument('--height', dest='height', default=0, metavar='HEIGHT', type='float', help='height for conversion')
+    parser.add_argument('--height', dest='height', default=0, metavar='HEIGHT', type=float, help='height for conversion')
     parser.add_argument('--refh', dest='refh', metavar='REFH', type=float,
                         default=0, help='reference height for modified apex coordinates')
 
