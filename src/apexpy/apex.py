@@ -588,48 +588,26 @@ class Apex(object):
         Returns
         =======
 
-        Brackets indicate calling with ``return_all=True``.
+        f1, f2, d1, d2, d3, e1, e2, e3 : ndarray
+            if `return_all` is False
+        f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : ndarray
+            if `return_all` is True
 
-        f1 : array
-            ..
-        f2 : array
-            ..
-        [f3] : array
-             ..
-        [g1] : array
-            ..
-        [g2] : array
-            ..
-        [g3] : array
-            ..
-        d1 : array
-            ..
-        d2 : array
-            ..
-        d3 : array
-            ..
-        e1 : array
-            ..
-        e2 : array
-            ..
-        e3 : array
-            ..
+        .. note::
 
-        Output shapes:
+            * If the inputs are scalar (only if ``return_all=False``), the outputs
+              are vectors with 2 (f) and 3 (d and e) components.
 
-        * If the inputs are scalar (only if ``return_all=False``), the outputs
-          are vectors with 2 (f) and 3 (d and e) components.
+            * If the inputs broadcast to 1D with length N, the outputs are 2xN (f) and
+              3xN (d and e) arrays where the columns are the vectors, i.e. ``f1[:, 0]`` is the
+              f1 vector corresponding to the first index in the broadcasted input. If
+              ``return_all=True``, f is 3xN instead of 2xN.
 
-        * If the inputs broadcast to 1D with length N, the outputs are 2xN (f) and
-          3xN (d and e) arrays where the columns are the vectors, i.e. ``f1[:, 0]`` is the
-          f1 vector corresponding to the first index in the broadcasted input. If
-          ``return_all=True``, f is 3xN instead of 2xN.
+            * If the inputs broadcast to 2D with shape NxM (only if ``return_all=False``),
+              the outputs are 2xNxM and 3xNxM arrays where ``f1[:, 0, 0]`` is the f1
+              vector corresponding to the index [0, 0] in the broadcasted input.
 
-        * If the inputs broadcast to 2D with shape NxM (only if ``return_all=False``),
-          the outputs are 2xNxM and 3xNxM arrays where ``f1[:, 0, 0]`` is the f1
-          vector corresponding to the index [0, 0] in the broadcasted input.
-
-        * Higher dimensions are untested.
+            * Higher dimensions are untested.
 
         References
         ==========
