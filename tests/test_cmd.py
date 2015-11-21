@@ -78,7 +78,7 @@ def test_convert_stdin_stdout():
     assert b'57.47612194 93.55719875' in stdout
 
 
-def test_convert_mlt_a2m():
+def test_convert_mlt():
     p = subprocess.Popen(['apexpy', 'geo', 'mlt', '20150101000000', '--height', '300',
                           '-i', 'tests/test_convert_single_line.txt', '-o', 'tests/output.txt'])
     p.communicate()
