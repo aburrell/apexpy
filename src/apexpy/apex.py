@@ -442,10 +442,7 @@ class Apex(object):
         return (15*np.float64(mlt) - 180 + ssalon + 360) % 360
 
     def map_to_height(self, glat, glon, height, newheight, conjugate=False, precision=1e-10):
-        '''Maps geodetic coordinates along the magnetic field to `newheight` in the closest or conjugate hemisphere
-
-        This is done by converting glat/glon/height to modified apex lat/lon, and converting back
-        to geographic using newheight (if conjugate, use negative apex latitude when converting back)
+        '''Performs mapping along the magnetic field to the closest or conjugate hemisphere.
 
         Parameters
         ==========
@@ -476,6 +473,11 @@ class Apex(object):
             and the qlat/qlon produced by feeding the output glat and glon
             into geo2qd (APXG2Q)
 
+        Notes
+        =====
+        The mapping This is done by converting glat/glon/height to modified apex lat/lon, and converting back
+        to geographic using newheight (if conjugate, use negative apex latitude when converting back)
+
         '''
 
         alat, alon = self.geo2apex(glat, glon, height)
@@ -489,7 +491,7 @@ class Apex(object):
         return newglat, newglon, error
 
     def basevectors_qd(self, lat, lon, height, coords='geo', precision=1e-10):
-        '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates
+        '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates.
 
         The vectors are described by Richmond [2005] [1]_.
 
@@ -554,9 +556,9 @@ class Apex(object):
         return f1, f2
 
     def basevectors_apex(self, lat, lon, height, coords='geo', return_all=False, precision=1e-10):
-        '''Returns base vectors in quasi-dipole (f) and apex (d and e) coordinates at the specified coordinates
+        '''Returns base vectors in quasi-dipole and apex coordinates.
 
-        The vectors are described by Richmond [2005] [1]_.
+        The vectors are described by Richmond [2005] [2]_.
 
         Parameters
         ==========
@@ -632,7 +634,7 @@ class Apex(object):
         References
         ==========
 
-        .. [1] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
+        .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
                geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191
 
