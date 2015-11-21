@@ -25,8 +25,6 @@ from apexpy import helpers
 
 
 def test_constants():
-    assert_allclose(helpers.WGS84_e2, 0.006694379990141317)
-    assert_allclose(helpers.WGS84_a, 6378.137)
     assert_allclose(helpers.d2r, np.pi/180)
     assert_allclose(helpers.r2d, 180/np.pi)
 
