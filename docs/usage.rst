@@ -41,7 +41,7 @@ Command-line interface
 
 .. highlight:: none
 
-The Python package also installs a command called ``apexpy`` which allows using the :meth:`apexpy.Apex.convert <Apex.convert>` method from the command line. The command-line interface allows you to make use of the Python library even if you don't know or use Python. See the reference for :doc:`Command-line interface <reference/cli>` for a list of arguments to the commands. Below are some simple usage examples.
+The Python package also installs a command called ``apexpy`` which allows using the :py:meth:`apexpy.Apex.convert` method from the command line. The command-line interface allows you to make use of the Python library even if you don't know or use Python. See the reference for :doc:`Command-line interface <reference/cli>` for a list of arguments to the commands. Below are some simple usage examples.
 
 Produce a file called e.g. ``input.txt`` with the input latitudes, longitudes and altitudes on each row separated by whitespace::
 
