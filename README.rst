@@ -4,7 +4,7 @@ Overview
 
 |docs| |version|
 
-This is a Python wrapper for the Apex fortran library by Richmond [2005] [1]_, which allows converting between geodetic, modified apex, and quasi-dipole coordinates as well as getting modified apex and quasi-dipole base vectors. MLT calculations are also included. The package is free software (MIT license).
+This is a Python wrapper for the Apex fortran library by Richmond [1995] [1]_, which allows converting between geodetic, modified apex, and quasi-dipole coordinates as well as getting modified apex and quasi-dipole base vectors. MLT calculations are also included. The package is free software (MIT license).
 
 .. [1] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
        Magnetic Apex Coordinates, Journal of geomagnetism and
