@@ -75,7 +75,7 @@ def test_convert_stdin_stdout():
     p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 300', shell=True, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
     p.wait()
-    np.testing.assert_allclose(np.array(stdout.split(', '), dtype=float), [57.469547, 93.639816], rtol=1e-4)
+    np.testing.assert_allclose(np.array(stdout.split(' '), dtype=float), [57.469547, 93.639816], rtol=1e-4)
 
 
 def test_convert_mlt():
@@ -88,31 +88,31 @@ def test_convert_mlt():
 
 
 def test_invalid_date():
-    p = subprocess.Popen('echo 60 15 | apexpy geo apex 201501010', shell=True, stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
+    p = subprocess.Popen('echo 60 15 | apexpy geo apex 201501010', shell=True, stderr=subprocess.PIPE)
+    _, stderr = p.communicate()
     p.wait()
-    assert b'ValueError' in stdout
+    assert b'ValueError' in stderr
 
-    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015010100000', shell=True, stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
+    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015010100000', shell=True, stderr=subprocess.PIPE)
+    _, stderr = p.communicate()
     p.wait()
-    assert b'ValueError' in stdout
+    assert b'ValueError' in stderr
 
 
 def test_mlt_nodatetime():
-    p = subprocess.Popen('echo 60 15 | apexpy geo apex 20150101', shell=True, stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
+    p = subprocess.Popen('echo 60 15 | apexpy geo apex 20150101', shell=True, stderr=subprocess.PIPE)
+    _, stderr = p.communicate()
     p.wait()
-    assert b'ValueError' in stdout
+    assert b'ValueError' in stderr
 
 
 def test_invalid_coord():
-    p = subprocess.Popen('echo 60 15 | apexpy foobar apex 2015', shell=True, stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
+    p = subprocess.Popen('echo 60 15 | apexpy foobar apex 2015', shell=True, stderr=subprocess.PIPE)
+    _, stderr = p.communicate()
     p.wait()
-    assert b'invalid choice' in stdout
+    assert b'invalid choice' in stderr
 
-    p = subprocess.Popen('echo 60 15 | apexpy geo foobar 2015', shell=True, stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
+    p = subprocess.Popen('echo 60 15 | apexpy geo foobar 2015', shell=True, stderr=subprocess.PIPE)
+    _, stderr = p.communicate()
     p.wait()
-    assert b'invalid choice' in stdout
+    assert b'invalid choice' in stderr
