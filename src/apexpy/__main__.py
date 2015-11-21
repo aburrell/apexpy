@@ -49,7 +49,7 @@ def main():
         raise ValueError('full date/time YYYYMMDDHHMMSS required for MLT calculations')
     if 9 <= len(args.date) <= 13:
         raise ValueError('full date/time must be given as YYYYMMDDHHMMSS, not ' + 'YYYYMMDDHHMMSS'[:len(args.date)])
-    datetime = dt.date.strptime(args.date, '%Y%m%d%H%M%S'[:len(args.date)-2])
+    datetime = dt.datetime.strptime(args.date, '%Y%m%d%H%M%S'[:len(args.date)-2])
     A = apexpy.Apex(date=datetime, refh=args.refh)
     lats, lons = A.convert(array[:, 0], array[:, 1], args.source, args.dest, args.height, datetime=datetime)
     np.savetxt(args.file_out, np.column_stack((lats, lons)), fmt='%.8f')
