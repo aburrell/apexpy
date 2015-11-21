@@ -75,7 +75,7 @@ def test_convert_stdin_stdout():
     p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 300', shell=True, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
     p.wait()
-    np.testing.assert_allclose(np.array(stdout.split(' '), dtype=float), [57.469547, 93.639816], rtol=1e-4)
+    np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float), [57.469547, 93.639816], rtol=1e-4)
 
 
 def test_convert_mlt():
@@ -100,7 +100,7 @@ def test_invalid_date():
 
 
 def test_mlt_nodatetime():
-    p = subprocess.Popen('echo 60 15 | apexpy geo apex 20150101', shell=True, stderr=subprocess.PIPE)
+    p = subprocess.Popen('echo 60 15 | apexpy geo mlt 20150101', shell=True, stderr=subprocess.PIPE)
     _, stderr = p.communicate()
     p.wait()
     assert b'ValueError' in stderr
