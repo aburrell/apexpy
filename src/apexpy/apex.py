@@ -660,7 +660,7 @@ class Apex(object):
             return F1, F2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3
 
     def get_apex(self, alat):
-        '''Computes the field line apex for given modified apex latitude
+        '''Computes the field line apex for a given modified apex latitude.
 
         Parameters
         ==========
@@ -680,7 +680,7 @@ class Apex(object):
         return apex
 
     def set_epoch(self, year):
-        '''Updates the epoch for all subsequent conversions
+        '''Updates the epoch for all subsequent conversions.
 
         Parameters
         ==========
@@ -693,7 +693,7 @@ class Apex(object):
         self.year = year
 
     def set_refh(self, refh):
-        '''Updates the apex reference height for all subsequent conversions
+        '''Updates the apex reference height for all subsequent conversions.
 
         The reference height is the height to which field lines will be mapped,
         and is only relevant for conversions involving apex (not quasi-dipole).
