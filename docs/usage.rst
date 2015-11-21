@@ -5,7 +5,7 @@ Usage examples
 Python library
 ==============
 
-For full documentation of the functions, see :class:`apexpy.Apex` in the reference.
+For full documentation of the functions, see the reference for :class:`apexpy.Apex`.
 
     >>> from apexpy import Apex
     >>> A = Apex(date=2015.3)  # datetime objects are also supported
@@ -41,7 +41,7 @@ Command-line interface
 
 .. highlight:: none
 
-The Python package also installs a command called ``apexpy`` which allows using the :meth:`Apex.convert` method from the command line. The command-line interface allows you to make use of the Python library even if you don't know or use Python. See :doc:`Reference → Command-line interface <reference/cli>` for a list of arguments to the commands. Below are some simple usage examples.
+The Python package also installs a command called ``apexpy`` which allows using the :meth:`Apex.convert` method from the command line. The command-line interface allows you to make use of the Python library even if you don't know or use Python. See the reference for :doc:`Command-line interface <reference/cli>` for a list of arguments to the commands. Below are some simple usage examples.
 
 Produce a file called e.g. ``input.txt`` with the input latitudes, longitudes and altitudes on each row separated by whitespace::
 
