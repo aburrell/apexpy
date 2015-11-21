@@ -595,15 +595,15 @@ class Apex(object):
 
         .. note::
 
-            * If the inputs are scalar (only if ``return_all=False``), the outputs
+            * If the inputs are scalar (only if if `return_all` is False), the outputs
               are vectors with 2 (f) and 3 (d and e) components.
 
             * If the inputs broadcast to 1D with length N, the outputs are 2xN (f) and
               3xN (d and e) arrays where the columns are the vectors, i.e. ``f1[:, 0]`` is the
               f1 vector corresponding to the first index in the broadcasted input. If
-              ``return_all=True``, f is 3xN instead of 2xN.
+              if `return_all` is True, f is 3xN instead of 2xN.
 
-            * If the inputs broadcast to 2D with shape NxM (only if ``return_all=False``),
+            * If the inputs broadcast to 2D with shape NxM (only if if `return_all` is False),
               the outputs are 2xNxM and 3xNxM arrays where ``f1[:, 0, 0]`` is the f1
               vector corresponding to the index [0, 0] in the broadcasted input.
 
