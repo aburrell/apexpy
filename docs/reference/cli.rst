@@ -10,22 +10,22 @@ You can get help on the command by running ``apexpy -h``.
 .. code::
 
     $ apexpy -h
-    usage: aacgmv2 convert [-h] [-i FILE_IN] [-o FILE_OUT] [-d YYYYMMDD] [-v] [-t]
-                           [-a] [-b] [-g]
+    usage: apexpy [-h] [--height HEIGHT] [--refh REFH] [-i FILE_IN] [-o FILE_OUT]
+                  SOURCE DEST DATE
+
+    Converts between geodetic, modified apex, quasi-dipole and MLT
+
+    positional arguments:
+      SOURCE                Convert from {geo, apex, qd, mlt}
+      DEST                  Convert to {geo, apex, qd, mlt}
+      DATE                  YYYY[MM[DD[HHMMSS]]] date/time for IGRF coefficients,
+                            time part required for MLT calculations
 
     optional arguments:
       -h, --help            show this help message and exit
+      --height HEIGHT       height for conversion
+      --refh REFH           reference height for modified apex coordinates
       -i FILE_IN, --input FILE_IN
                             input file (stdin if none specified)
       -o FILE_OUT, --output FILE_OUT
                             output file (stdout if none specified)
-      -d YYYYMMDD, --date YYYYMMDD
-                            date for magnetic field model (1900-2020, default:
-                            today)
-      -v, --a2g             invert - convert AACGM to geographic instead of
-                            geographic to AACGM
-      -t, --trace           use field-line tracing instead of coefficients
-      -a, --allowtrace      automatically use field-line tracing above 2000 km
-      -b, --badidea         allow use of coefficients above 2000 km (bad idea!)
-      -g, --geocentric      assume inputs are geocentric with Earth radius 6371.2
-                            km
