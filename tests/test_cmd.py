@@ -78,6 +78,13 @@ def test_convert_stdin_stdout():
     np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float), [57.469547, 93.639816], rtol=1e-4)
 
 
+def test_convert_refh():
+    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 100 --refh=300', shell=True, stdout=subprocess.PIPE)
+    stdout, _ = p.communicate()
+    p.wait()
+    np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float), [55.94841766, 94.1068344], rtol=1e-4)
+
+
 def test_convert_mlt():
     p = subprocess.Popen(['apexpy', 'geo', 'mlt', '20150101000000', '--height', '300',
                           '-i', 'tests/test_convert_single_line.txt', '-o', 'tests/output.txt'])
