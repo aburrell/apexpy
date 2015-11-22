@@ -46,9 +46,9 @@ To set up `apexpy` for local development:
 
    Now you can make your changes locally. Add tests for bugs and new features in the relevant test file in the ``tests`` directory. The tests are run with ``py.test`` and can be written as normal functions (starting with ``test_``) containing a standard ``assert`` statement for testing output.
 
-4. When you're done making changes, run all the checks, doc builder and spell checker with `tox <http://tox.readthedocs.org/en/latest/install.html>`_ [1]_::
+4. When you're done making changes, run ``py.test`` locally if you can::
 
-    tox
+    py.test
 
 5. Commit your changes and push your branch to GitHub::
 
@@ -56,7 +56,7 @@ To set up `apexpy` for local development:
     git commit -m "Brief description of your changes"
     git push origin name-of-your-bugfix-or-feature
 
-6. Submit a pull request through the GitHub website. Pull requests should be made to the ``develop`` branch.
+6. Submit a pull request through the GitHub website. Pull requests should be made to the ``develop`` branch. The continuous integration (CI) testing servers will automatically test the whole codebase, including your changes, for multiple versions of Python on both Windows and Linux.
 
 Pull Request Guidelines
 -----------------------
@@ -65,22 +65,7 @@ If you need some code review or feedback while you're developing the code, just 
 
 For merging, you should:
 
-1. Include passing tests (run ``tox``) [1]_
+1. Include passing tests for your changes
 2. Update/add documentation if relevant
 3. Add a note to ``CHANGELOG.rst`` about the changes
 4. Add yourself to ``AUTHORS.rst``
-
-.. [1] If you don't have all the necessary Python versions available locally or have trouble
-       building NumPy in all the testing environments, you can rely on Travis and
-       AppVeyor - they will run the tests for each change you add in the pull request.
-
-Tips
-----
-
-To run a subset of tests::
-
-    tox -e envname -- py.test -k test_myfeature
-
-To run all the test environments in parallel (you need to ``pip install detox``)::
-
-    detox
