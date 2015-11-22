@@ -85,7 +85,7 @@ class Apex(object):
         self._qd2apex = np.frompyfunc(self._qd2apex_nonvectorized, 3, 2)
 
     def convert(self, lat, lon, source, dest, height=0, datetime=None, precision=1e-10, ssheight=50*6371):
-        '''Converts between geodetic, modified apex, quasi-dipole and MLT
+        '''Converts between geodetic, modified apex, quasi-dipole and MLT.
 
         Parameters
         ==========
@@ -170,7 +170,7 @@ class Apex(object):
         return lat, lon
 
     def geo2apex(self, glat, glon, height):
-        '''Converts geodetic to modified apex coordinates
+        '''Converts geodetic to modified apex coordinates.
 
         Parameters
         ==========
@@ -194,7 +194,7 @@ class Apex(object):
         return np.float64(alat), np.float64(alon)
 
     def apex2geo(self, alat, alon, height, precision=1e-10):
-        '''Converts modified apex to geodetic coordinates
+        '''Converts modified apex to geodetic coordinates.
 
         Parameters
         ==========
@@ -229,7 +229,7 @@ class Apex(object):
         return glat, glon, error
 
     def geo2qd(self, glat, glon, height):
-        '''Converts geodetic to quasi-dipole coordinates
+        '''Converts geodetic to quasi-dipole coordinates.
 
         Parameters
         ==========
@@ -307,7 +307,7 @@ class Apex(object):
         return qlat, qlon
 
     def apex2qd(self, alat, alon, height):
-        '''Converts modified apex to quasi-dipole coordinates
+        '''Converts modified apex to quasi-dipole coordinates.
 
         Parameters
         ==========
@@ -352,7 +352,7 @@ class Apex(object):
         return alat, alon
 
     def qd2apex(self, qlat, qlon, height):
-        '''Converts quasi-dipole to modified apex coordinates
+        '''Converts quasi-dipole to modified apex coordinates.
 
         Parameters
         ==========
