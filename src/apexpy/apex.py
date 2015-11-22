@@ -476,7 +476,7 @@ class Apex(object):
 
         Notes
         =====
-        The mapping This is done by converting glat/glon/height to modified apex lat/lon, and converting back
+        The mapping is done by converting glat/glon/height to modified apex lat/lon, and converting back
         to geographic using newheight (if conjugate, use negative apex latitude when converting back)
 
         '''
@@ -696,13 +696,15 @@ class Apex(object):
     def set_refh(self, refh):
         '''Updates the apex reference height for all subsequent conversions.
 
-        The reference height is the height to which field lines will be mapped,
-        and is only relevant for conversions involving apex (not quasi-dipole).
-
         Parameters
         ==========
         refh : float
             Apex reference height in km
+
+        Notes
+        =====
+        The reference height is the height to which field lines will be mapped,
+        and is only relevant for conversions involving apex (not quasi-dipole).
 
         '''
 
