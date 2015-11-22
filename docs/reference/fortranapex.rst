@@ -1,4 +1,4 @@
 apexpy.fortranapex
 ==================
 
-This submodule contains the interface to the apex Fortran library. The functions are not documented. For the user-friendly wrapper, see :class:`apexpy.Apex`.
+This module is the interface to the apex Fortran library. It is not documented. Use :class:`apexpy.Apex` for all conversions and calculations.
