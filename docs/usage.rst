@@ -51,7 +51,7 @@ Produce a file called e.g. ``input.txt`` with the input latitudes and longitudes
     61 15
     62 15
 
-To convert this to apex using the magnetic field model for the date 2015-01-01 using a height of 300 km, run the command ``apexpy geo apex 20150101 --height 300 -i input.txt -o output.txt`` (in this case you could also just use ``2015`` for the date). The output file will look like this::
+To convert this to apex using the magnetic field model for the date 2015-01-01 using a height of 300 km, run the command ``apexpy geo apex 20150101 --height 300 -i input.txt -o output.txt`` (in this specific example you could also just use ``2015`` or ``201501`` for the date). The output file will look like this::
 
     57.469547, 93.639816
     58.522701, 94.044762
