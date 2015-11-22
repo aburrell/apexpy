@@ -79,7 +79,7 @@ def test_convert_stdin_stdout():
 
 
 def test_convert_refh():
-    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 100 --refh=300', shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2000 --height 100 --refh=300', shell=True, stdout=subprocess.PIPE)
     stdout, _ = p.communicate()
     p.wait()
     np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float), [55.94841766, 94.1068344], rtol=1e-4)
