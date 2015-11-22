@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-from numpy.testing import assert_allclose
+
 import pytest
+from numpy.testing import assert_allclose
 
 import apexpy
 from apexpy import fortranapex as fa
-
 
 ##############################################################################
 # NOTE: the test results (numbers) were obtained by running the code that is #

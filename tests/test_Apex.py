@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, division, unicode_literals, absolute_import
+from __future__ import division, print_function, absolute_import, unicode_literals
 
 import datetime as dt
 
 import numpy as np
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
-from apexpy import Apex, ApexHeightError
-from apexpy import helpers
 from apexpy import fortranapex as fa
+from apexpy import Apex, ApexHeightError, helpers
 
 
 ##############################################################################

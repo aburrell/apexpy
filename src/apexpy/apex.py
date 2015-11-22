@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division, print_function, absolute_import
+
 import os
+import datetime as dt
+
 import numpy as np
 
 from . import helpers
-import datetime as dt
-
 from .helpers import d2r, r2d
 
 # below try..catch required for autodoc to work on readthedocs

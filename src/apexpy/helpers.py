@@ -4,9 +4,10 @@
 
 from __future__ import division, print_function, absolute_import
 
-import numpy as np
 import time
 import datetime as dt
+
+import numpy as np
 
 # constants
 d2r = np.pi/180
