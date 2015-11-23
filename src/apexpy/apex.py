@@ -42,6 +42,17 @@ class Apex(object):
     datafile : str
         Path to coefficient file
 
+    Notes
+    =====
+    The calculations use IGRF-12 with coefficients from 1900 to 2020 [1]_.
+
+    References
+    ==========
+
+    .. [1] Thébault, E. et al. (2015), International Geomagnetic Reference
+           Field: the 12th generation, Earth, Planets and Space, 67(1), 79,
+           doi:10.1186/s40623-015-0228-9.
+
     '''
 
     def __init__(self, date=None, refh=0, datafile=None):
@@ -494,7 +505,7 @@ class Apex(object):
     def basevectors_qd(self, lat, lon, height, coords='geo', precision=1e-10):
         '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates.
 
-        The vectors are described by Richmond [2005] [1]_.
+        The vectors are described by Richmond [2005] [1]_ and Emmert et al. [2010] [2]_.
 
         Parameters
         ==========
@@ -540,6 +551,11 @@ class Apex(object):
                Magnetic Apex Coordinates, Journal of geomagnetism and
                geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
 
+        .. [2] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
+               A computationally compact representation of Magnetic-Apex
+               and Quasi-Dipole coordinates with smooth base vectors,
+               J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
+
         '''
 
         glat, glon = self.convert(lat, lon, coords, 'geo', height=height, precision=precision)
@@ -557,7 +573,7 @@ class Apex(object):
     def basevectors_apex(self, lat, lon, height, coords='geo', return_all=False, precision=1e-10):
         '''Returns base vectors in quasi-dipole and apex coordinates.
 
-        The vectors are described by Richmond [2005] [1]_.
+        The vectors are described by Richmond [2005] [1]_ and Emmert et al. [2010] [2]_.
 
         Parameters
         ==========
@@ -611,7 +627,12 @@ class Apex(object):
 
         .. [1] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
-               geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191
+               geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
+
+        .. [2] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
+               A computationally compact representation of Magnetic-Apex
+               and Quasi-Dipole coordinates with smooth base vectors,
+               J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
 
         '''
 
