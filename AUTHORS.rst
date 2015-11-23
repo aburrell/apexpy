@@ -2,7 +2,7 @@
 Authors
 =======
 
-This python wrapper:
+This python wrapper is made by:
 
 * Karl M. Laundal
 * Christer van der Meeren
