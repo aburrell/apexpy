@@ -675,6 +675,93 @@ def test_map_to_height_ApexHeightError():
     with pytest.raises(ApexHeightError):
         A.map_to_height(0, 15, 100, 10000)
 
+
+###============================================================================
+### Test the map_E_to_height() method
+###============================================================================
+
+
+def test_map_E_to_height():
+    A = Apex(date=2000, refh=300)
+    out_60_15_100_500 = [0.7115211, 2.3562392, 0.57259707]
+    out_60_15_100_500_234 = [1.560284, 3.439154, 0.782339]
+    out_60_15_100_1000 = [0.677964, 2.089811, 0.558601]
+    out_60_15_200_500 = [0.723773, 2.427366, 0.590826]
+    out_60_30_100_500 = [0.686265, 2.375296, 0.600594]
+    out_70_15_100_500 = [0.727605, 2.180817, 0.291414]
+
+    # scalar
+    assert_allclose(A.map_E_to_height(60, 15, 100, 500, [1, 2, 3]), out_60_15_100_500, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 100, 500, [2, 3, 4]), out_60_15_100_500_234, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 100, 1000, [1, 2, 3]), out_60_15_100_1000, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 200, 500, [1, 2, 3]), out_60_15_200_500, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 30, 100, 500, [1, 2, 3]), out_60_30_100_500, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(70, 15, 100, 500, [1, 2, 3]), out_70_15_100_500, rtol=1e-5)
+
+    # vectorize lat
+    assert_allclose(A.map_E_to_height([60, 70], 15, 100, 500, np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_70_15_100_500]).T, rtol=1e-5)
+
+    # vectorize lon
+    assert_allclose(A.map_E_to_height(60, [15, 30], 100, 500, np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_30_100_500]).T, rtol=1e-5)
+
+    # vectorize height
+    assert_allclose(A.map_E_to_height(60, 15, [100, 200], 500, np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_200_500]).T, rtol=1e-5)
+
+    # vectorize newheight
+    assert_allclose(A.map_E_to_height(60, 15, 100, [500, 1000], np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_100_1000]).T, rtol=1e-5)
+
+    # vectorize E
+    assert_allclose(A.map_E_to_height(60, 15, 100, 500, np.array([[1, 2, 3], [2, 3, 4]]).T),
+                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T, rtol=1e-5)
+
+
+###============================================================================
+### Test the map_V_to_height() method
+###============================================================================
+
+
+def test_map_V_to_height():
+    A = Apex(date=2000, refh=300)
+    out_60_15_100_500 = [0.819719, 2.845114, 0.695437]
+    out_60_15_100_500_234 = [1.830277, 4.14345, 0.947624]
+    out_60_15_100_1000 = [0.924577, 3.149964, 0.851343]
+    out_60_15_200_500 = [0.803882, 2.793206, 0.682839]
+    out_60_30_100_500 = [0.761412, 2.878837, 0.736549]
+    out_70_15_100_500 = [0.846819, 2.592572, 0.347919]
+
+    # scalar
+    assert_allclose(A.map_V_to_height(60, 15, 100, 500, [1, 2, 3]), out_60_15_100_500, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 100, 500, [2, 3, 4]), out_60_15_100_500_234, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 100, 1000, [1, 2, 3]), out_60_15_100_1000, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 200, 500, [1, 2, 3]), out_60_15_200_500, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 30, 100, 500, [1, 2, 3]), out_60_30_100_500, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(70, 15, 100, 500, [1, 2, 3]), out_70_15_100_500, rtol=1e-5)
+
+    # vectorize lat
+    assert_allclose(A.map_V_to_height([60, 70], 15, 100, 500, np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_70_15_100_500]).T, rtol=1e-5)
+
+    # vectorize lon
+    assert_allclose(A.map_V_to_height(60, [15, 30], 100, 500, np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_30_100_500]).T, rtol=1e-5)
+
+    # vectorize height
+    assert_allclose(A.map_V_to_height(60, 15, [100, 200], 500, np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_200_500]).T, rtol=1e-5)
+
+    # vectorize newheight
+    assert_allclose(A.map_V_to_height(60, 15, 100, [500, 1000], np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_100_1000]).T, rtol=1e-5)
+
+    # vectorize E
+    assert_allclose(A.map_V_to_height(60, 15, 100, 500, np.array([[1, 2, 3], [2, 3, 4]]).T),
+                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T, rtol=1e-5)
+
+
 ###============================================================================
 ### Test basevectors_qd()
 ###============================================================================

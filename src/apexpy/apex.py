@@ -454,7 +454,7 @@ class Apex(object):
         return (15*np.float64(mlt) - 180 + ssalon + 360) % 360
 
     def map_to_height(self, glat, glon, height, newheight, conjugate=False, precision=1e-10):
-        '''Performs mapping along the magnetic field to the closest or conjugate hemisphere.
+        '''Performs mapping of points along the magnetic field to the closest or conjugate hemisphere.
 
         Parameters
         ==========
@@ -501,6 +501,98 @@ class Apex(object):
             raise ApexHeightError("newheight is > apex height")
 
         return newglat, newglon, error
+
+    def _map_EV_to_height(self, alat, alon, height, newheight, X, EV):
+
+        # make sure X is array of correct shape
+        if not (np.ndim(X) == 1 and np.size(X) == 3) and not (np.ndim(X) == 2 and np.shape(X)[0] == 3):
+            # raise ValueError because if passing e.g. a (6,) ndarray the reshape below will work
+            # even though the input is invalid
+            raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
+        X = np.reshape(X, (3, np.size(X)/3))
+
+        _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
+
+        if EV == 'E':
+            v1 = e1
+            v2 = e2
+        else:
+            v1 = d1
+            v2 = d2
+
+        # make sure v1 and v2 have shape (3, N)
+        v1 = np.reshape(v1, (3, v1.size/3))
+        v2 = np.reshape(v2, (3, v2.size/3))
+
+        X1 = np.sum(X*v1, axis=0)  # E dot e1 or V dot d1
+        X2 = np.sum(X*v2, axis=0)  # E dot e2 or V dot d2
+
+        _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, newheight, coords='apex')
+
+        if EV == 'E':
+            v1 = d1
+            v2 = d2
+        else:
+            v1 = e1
+            v2 = e2
+
+        # make sure v1 and v2 have shape (3, N)
+        v1 = np.reshape(v1, (3, v1.size/3))
+        v2 = np.reshape(v2, (3, v2.size/3))
+
+        X_mapped = X1[np.newaxis, :]*v1 + X2[np.newaxis, :]*v2
+
+        return np.squeeze(X_mapped)
+
+    def map_E_to_height(self, alat, alon, height, newheight, E):
+        '''Performs mapping of electric field along the magnetic field.
+
+        It is assumed that the electric field is perpendicular to B
+
+        Parameters
+        ==========
+        alat, alon : (N,) array_like or float
+            Apex latitude and longitude
+        height : (N,) array_like or float
+            Source altitude in km
+        newheight : (N,) array_like or float
+            Destination altitude in km
+        E : (3,) or (3, N) array_like
+            Electric field (at `alat`, `alon`, `height`) in geodetic east, north, and up components
+
+        Returns
+        =======
+        E : (3, N) or (3,) ndarray
+            The electric field at `newheight` (geodetic east, north, and up components)
+
+        '''
+
+        return self._map_EV_to_height(alat, alon, height, newheight, E, 'E')
+
+    def map_V_to_height(self, alat, alon, height, newheight, V):
+        '''Performs mapping of electric drivt velocity along the magnetic field.
+
+        It is assumed that the electric field is perpendicular to B
+
+        Parameters
+        ==========
+        alat, alon : (N,) array_like or float
+            Apex latitude and longitude
+        height : (N,) array_like or float
+            Source altitude in km
+        newheight : (N,) array_like or float
+            Destination altitude in km
+        V : (3,) or (3, N) array_like
+            Electric drift velocity (at `alat`, `alon`, `height`) in geodetic east, north, and up components
+
+        Returns
+        =======
+        V : (3, N) or (3,) ndarray
+            The electric drivt velocity at `newheight` (geodetic east, north, and up components)
+
+        '''
+
+        return self._map_EV_to_height(alat, alon, height, newheight, V, 'V')
 
     def basevectors_qd(self, lat, lon, height, coords='geo', precision=1e-10):
         '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates.
