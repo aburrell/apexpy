@@ -675,6 +675,8 @@ def test_map_to_height_ApexHeightError():
     with pytest.raises(ApexHeightError):
         A.map_to_height(0, 15, 100, 10000)
 
+# FIXME: arrays
+
 
 ###============================================================================
 ### Test the map_E_to_height() method
