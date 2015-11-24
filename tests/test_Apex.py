@@ -670,12 +670,18 @@ def test_map_to_height_conjugate():
     assert_allclose(A.map_to_height(30, 170, 100, 500, conjugate=True, precision=1e-2), (-13.76642894744873, 164.24259948730469, 0.00056820799363777041))
 
 
+def test_map_to_height_vectorization():
+    A = Apex(date=2000, refh=300)
+    assert_allclose(A.map_to_height([60, 60], 15, 100, 100), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+    assert_allclose(A.map_to_height(60, [15, 15], 100, 100), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+    assert_allclose(A.map_to_height(60, 15, [100, 100], 100), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+    assert_allclose(A.map_to_height(60, 15, 100, [100, 100]), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+
+
 def test_map_to_height_ApexHeightError():
     A = Apex(date=2000, refh=300)
     with pytest.raises(ApexHeightError):
         A.map_to_height(0, 15, 100, 10000)
-
-# FIXME: arrays
 
 
 ###============================================================================
