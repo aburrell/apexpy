@@ -1093,4 +1093,3 @@ def test_set_refh():
 
 if __name__ == '__main__':
     pytest.main()
-#    test_geo2qd_invalid_lat()
