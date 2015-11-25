@@ -555,7 +555,7 @@ class Apex(object):
     def map_E_to_height(self, alat, alon, height, newheight, E):
         '''Performs mapping of electric field along the magnetic field.
 
-        It is assumed that the electric field is perpendicular to B
+        It is assumed that the electric field is perpendicular to B.
 
         Parameters
         ==========
@@ -578,9 +578,9 @@ class Apex(object):
         return self._map_EV_to_height(alat, alon, height, newheight, E, 'E')
 
     def map_V_to_height(self, alat, alon, height, newheight, V):
-        '''Performs mapping of electric drivt velocity along the magnetic field.
+        '''Performs mapping of electric drift velocity along the magnetic field.
 
-        It is assumed that the electric field is perpendicular to B
+        It is assumed that the electric field is perpendicular to B.
 
         Parameters
         ==========
