@@ -509,7 +509,7 @@ class Apex(object):
             # raise ValueError because if passing e.g. a (6,) ndarray the reshape below will work
             # even though the input is invalid
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
-        X = np.reshape(X, (3, np.size(X)/3))
+        X = np.reshape(X, (3, np.size(X)//3))
 
         _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
 
@@ -521,8 +521,8 @@ class Apex(object):
             v2 = d2
 
         # make sure v1 and v2 have shape (3, N)
-        v1 = np.reshape(v1, (3, v1.size/3))
-        v2 = np.reshape(v2, (3, v2.size/3))
+        v1 = np.reshape(v1, (3, v1.size//3))
+        v2 = np.reshape(v2, (3, v2.size//3))
 
         X1 = np.sum(X*v1, axis=0)  # E dot e1 or V dot d1
         X2 = np.sum(X*v2, axis=0)  # E dot e2 or V dot d2
@@ -537,8 +537,8 @@ class Apex(object):
             v2 = e2
 
         # make sure v1 and v2 have shape (3, N)
-        v1 = np.reshape(v1, (3, v1.size/3))
-        v2 = np.reshape(v2, (3, v2.size/3))
+        v1 = np.reshape(v1, (3, v1.size//3))
+        v2 = np.reshape(v2, (3, v2.size//3))
 
         X_mapped = X1[np.newaxis, :]*v1 + X2[np.newaxis, :]*v2
 
@@ -728,14 +728,14 @@ class Apex(object):
             e3 = np.stack(e3, axis=-1)
 
         # make sure arrays are 2D
-        f1 = f1.reshape((2, f1.size/2))
-        f2 = f2.reshape((2, f2.size/2))
-        d1 = d1.reshape((3, d1.size/3))
-        d2 = d2.reshape((3, d2.size/3))
-        d3 = d3.reshape((3, d3.size/3))
-        e1 = e1.reshape((3, e1.size/3))
-        e2 = e2.reshape((3, e2.size/3))
-        e3 = e3.reshape((3, e3.size/3))
+        f1 = f1.reshape((2, f1.size//2))
+        f2 = f2.reshape((2, f2.size//2))
+        d1 = d1.reshape((3, d1.size//3))
+        d2 = d2.reshape((3, d2.size//3))
+        d3 = d3.reshape((3, d3.size//3))
+        e1 = e1.reshape((3, e1.size//3))
+        e2 = e2.reshape((3, e2.size//3))
+        e3 = e3.reshape((3, e3.size//3))
 
         # compute f3, g1, g2, g3
         F1 = np.vstack((f1, np.zeros_like(f1[0])))
