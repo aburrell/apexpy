@@ -511,7 +511,7 @@ class Apex(object):
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
         X = np.reshape(X, (3, np.size(X)/3))
 
-        _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
 
         if EV == 'E':
             v1 = e1
@@ -527,7 +527,7 @@ class Apex(object):
         X1 = np.sum(X*v1, axis=0)  # E dot e1 or V dot d1
         X2 = np.sum(X*v2, axis=0)  # E dot e2 or V dot d2
 
-        _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, newheight, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, newheight, coords='apex')
 
         if EV == 'E':
             v1 = d1
@@ -597,13 +597,13 @@ class Apex(object):
     def basevectors_qd(self, lat, lon, height, coords='geo', precision=1e-10):
         '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates.
 
-        The vectors are described by Richmond [2005] [1]_ and Emmert et al. [2010] [2]_.
+        The vectors are described by Richmond [1995] [1]_ and Emmert et al. [2010] [2]_.
 
         Parameters
         ==========
-        lat, lon : array_like
+        lat, lon : (N,) array_like or float
             Latitude and longitude
-        height : array_like
+        height : (N,) array_like or float
             Altitude in km
         coords : {'geo', 'apex', 'qd'}, optional
             Input coordinate system
@@ -620,21 +620,7 @@ class Apex(object):
         Returns
         =======
 
-        f1, f2 : ndarray (see note below on output shapes)
-
-        .. note::
-
-            * If the inputs are scalar, the outputs are vectors with 2 components.
-
-            * If the inputs broadcast to 1D with length N, the outputs are 2xN arrays
-              where the columns are the vectors, i.e. ``f1[:, 0]`` is the f1 vector
-              corresponding to the first index in the broadcasted input.
-
-            * If the inputs broadcast to 2D with shape NxM, the outputs are 2xNxM arrays
-              where ``f1[:, 0, 0]`` is the f1 vector corresponding to the index [0, 0] in
-              the broadcasted input.
-
-            * Higher dimensions are untested.
+        f1, f2 : (2, N) or (2,) ndarray
 
         References
         ==========
@@ -657,21 +643,21 @@ class Apex(object):
         # if inputs are not scalar, each vector is an array of arrays,
         # so reshape to a single array
         if f1.dtype == object:
-            f1 = np.dstack(f1.flat).reshape([2] + list(f1.shape))
-            f2 = np.dstack(f2.flat).reshape([2] + list(f2.shape))
+            f1 = np.stack(f1, axis=-1)
+            f2 = np.stack(f2, axis=-1)
 
         return f1, f2
 
-    def basevectors_apex(self, lat, lon, height, coords='geo', return_all=False, precision=1e-10):
+    def basevectors_apex(self, lat, lon, height, coords='geo', precision=1e-10):
         '''Returns base vectors in quasi-dipole and apex coordinates.
 
-        The vectors are described by Richmond [2005] [1]_ and Emmert et al. [2010] [2]_.
+        The vectors are described by Richmond [1995] [1]_ and Emmert et al. [2010] [2]_.
 
         Parameters
         ==========
-        lat, lon : array_like
+        lat, lon : (N,) array_like or float
             Latitude and longitude
-        height : array_like
+        height : (N,) array_like or float
             Altitude in km
         coords : {'geo', 'apex', 'qd'}, optional
             Input coordinate system
@@ -693,26 +679,18 @@ class Apex(object):
         Returns
         =======
 
-        f1, f2, d1, d2, d3, e1, e2, e3 : ndarray
-            if `return_all` is False
-        f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : ndarray
-            if `return_all` is True
+        f1, f2 : (2, N) or (2,) ndarray
+        f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : (3, N) or (3,) ndarray
 
-        .. note::
+        .. note:: `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
+                  by Emmert et al. [2010] [2]_. They are calculated by this
+                  Python library according to the following equations in
+                  Richmond [1995] [1]_:
 
-            * If the inputs are scalar (only if `return_all` is False), the outputs
-              are vectors with 2 (f) and 3 (d and e) components.
-
-            * If the inputs broadcast to 1D with length N, the outputs are 2xN (f) and
-              3xN (d and e) arrays where the columns are the vectors, i.e. ``f1[:, 0]`` is the
-              f1 vector corresponding to the first index in the broadcasted input. If
-              if `return_all` is True, f is 3xN instead of 2xN.
-
-            * If the inputs broadcast to 2D with shape NxM (only if `return_all` is False),
-              the outputs are 2xNxM and 3xNxM arrays where ``f1[:, 0, 0]`` is the f1
-              vector corresponding to the index [0, 0] in the broadcasted input.
-
-            * Higher dimensions are untested.
+                   * `g1`: Eqn. 6.3
+                   * `g2`: Eqn. 6.4
+                   * `g3`: Eqn. 6.5
+                   * `f3`: Eqn. 6.8
 
         References
         ==========
@@ -731,6 +709,8 @@ class Apex(object):
         glat, glon = self.convert(lat, lon, coords, 'geo', height=height, precision=precision)
 
         returnvals = self._geo2apexall(glat, glon, height)
+        qlat = np.float64(returnvals[0])
+        alat = np.float64(returnvals[2])
         f1, f2 = returnvals[4:6]
         d1, d2, d3 = returnvals[7:10]
         e1, e2, e3 = returnvals[11:14]
@@ -738,40 +718,37 @@ class Apex(object):
         # if inputs are not scalar, each vector is an array of arrays,
         # so reshape to a single array
         if f1.dtype == object:
-            f1 = np.dstack(f1.flat).reshape([2] + list(f1.shape))
-            f2 = np.dstack(f2.flat).reshape([2] + list(f2.shape))
-            d1 = np.dstack(d1.flat).reshape([3] + list(d1.shape))
-            d2 = np.dstack(d2.flat).reshape([3] + list(d2.shape))
-            d3 = np.dstack(d3.flat).reshape([3] + list(d3.shape))
-            e1 = np.dstack(e1.flat).reshape([3] + list(e1.shape))
-            e2 = np.dstack(e2.flat).reshape([3] + list(e2.shape))
-            e3 = np.dstack(e3.flat).reshape([3] + list(e3.shape))
+            f1 = np.stack(f1, axis=-1)
+            f2 = np.stack(f2, axis=-1)
+            d1 = np.stack(d1, axis=-1)
+            d2 = np.stack(d2, axis=-1)
+            d3 = np.stack(d3, axis=-1)
+            e1 = np.stack(e1, axis=-1)
+            e2 = np.stack(e2, axis=-1)
+            e3 = np.stack(e3, axis=-1)
 
-        if not return_all:
-            return f1, f2, d1, d2, d3, e1, e2, e3
-        else:
+        # make sure arrays are 2D
+        f1 = f1.reshape((2, f1.size/2))
+        f2 = f2.reshape((2, f2.size/2))
+        d1 = d1.reshape((3, d1.size/3))
+        d2 = d2.reshape((3, d2.size/3))
+        d3 = d3.reshape((3, d3.size/3))
+        e1 = e1.reshape((3, e1.size/3))
+        e2 = e2.reshape((3, e2.size/3))
+        e3 = e3.reshape((3, e3.size/3))
 
-            # check that inputs are of the correct shape
-            if np.broadcast(lat, lon, height).nd != 1:
-                raise ValueError(
-                    ('return_all=True requires lat, lon, height to be broadcast '
-                     'to 1D (at least one parameter must be 1D and the other '
-                     'parameters must be 1D or 0D'))
+        # compute f3, g1, g2, g3
+        F1 = np.vstack((f1, np.zeros_like(f1[0])))
+        F2 = np.vstack((f2, np.zeros_like(f2[0])))
+        F = np.cross(F1.T, F2.T).T[-1]
+        cosI = helpers.getcosIm(alat)
+        k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
+        g1 = ((self.RE + np.float64(height))/(self.RE + self.refh))**(3/2)*d1/F
+        g2 = -1/(2*F*np.tan(qlat*d2r))*(k + ((self.RE + np.float64(height))/(self.RE + self.refh))*d2/cosI)
+        g3 = k*F
+        f3 = np.cross(g1.T, g2.T).T
 
-            # compute f3, g1, g2, g3
-            qdlat, qdlon = self.geo2qd(lat, lon, height)
-            alat, alon = self.geo2apex(lat, lon, height)
-            F1 = np.vstack((f1, np.zeros_like(f1[0])))
-            F2 = np.vstack((f2, np.zeros_like(f2[0])))
-            F = np.cross(F1.T, F2.T).T[-1]
-            cosI = helpers.getcosIm(alat)
-            k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
-            g1 = ((self.RE + height)/(self.RE + self.refh))**(3/2)*d1/F
-            g2 = -1/(2*F*np.tan(qdlat*d2r))*(k + ((self.RE + height)/(self.RE + self.refh))*d2/cosI)
-            g3 = k*F
-            f3 = np.cross(g1.T, g2.T).T
-
-            return F1, F2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3
+        return tuple(np.squeeze(x) for x in [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])
 
     def get_apex(self, alat):
         '''Computes the field line apex for a given modified apex latitude.

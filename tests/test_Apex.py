@@ -775,6 +775,8 @@ def test_map_V_to_height():
 ###============================================================================
 
 
+# test coords
+
 def test_basevectors_qd_single_geo():
     A = Apex(date=2000, refh=300)
     assert_allclose(A.basevectors_qd(60, 15, 100, coords='geo'), A._basevec(60, 15, 100))
@@ -792,6 +794,15 @@ def test_basevectors_qd_single_qd():
     assert_allclose(A.basevectors_qd(60, 15, 100, coords='qd', precision=1e-2), A._basevec(glat, glon, 100))
 
 
+# test shapes and vectorization of arguments
+
+def test_basevectors_qd_single_shape():
+    A = Apex(date=2000, refh=300)
+    ret = A.basevectors_qd(60, 15, 100)
+    for r in ret:
+        assert r.shape == (2,)
+
+
 def test_basevectors_qd_vectorization():
     A = Apex(date=2000, refh=300)
     ret = A.basevectors_qd([60, 60, 60, 60], 15, 100, coords='geo')
@@ -805,26 +816,17 @@ def test_basevectors_qd_vectorization():
         assert r.shape == (2, 4)
 
 
+# test 1D array return values
+
 def test_basevectors_qd_1Darray():
     A = Apex(date=2000, refh=300)
     f1, f2 = A.basevectors_qd([0, 30], 15, 100, coords='geo')
-    assert_allclose(f1[:, 0], A._basevec(0, 15, 100)[0])
-    assert_allclose(f2[:, 0], A._basevec(0, 15, 100)[1])
-    assert_allclose(f1[:, 1], A._basevec(30, 15, 100)[0])
-    assert_allclose(f2[:, 1], A._basevec(30, 15, 100)[1])
-
-
-def test_basevectors_qd_2Darray():
-    A = Apex(date=2000, refh=300)
-    f1, f2 = A.basevectors_qd([[0, 30], [60, 89]], 15, 100, coords='geo')
-    assert_allclose(f1[:, 0, 0], A._basevec(0, 15, 100)[0])
-    assert_allclose(f2[:, 0, 0], A._basevec(0, 15, 100)[1])
-    assert_allclose(f1[:, 0, 1], A._basevec(30, 15, 100)[0])
-    assert_allclose(f2[:, 0, 1], A._basevec(30, 15, 100)[1])
-    assert_allclose(f1[:, 1, 0], A._basevec(60, 15, 100)[0])
-    assert_allclose(f2[:, 1, 0], A._basevec(60, 15, 100)[1])
-    assert_allclose(f1[:, 1, 1], A._basevec(89, 15, 100)[0])
-    assert_allclose(f2[:, 1, 1], A._basevec(89, 15, 100)[1])
+    f1_lat0, f2_lat0 = A._basevec(0, 15, 100)
+    f1_lat30, f2_lat30 = A._basevec(30, 15, 100)
+    assert_allclose(f1[:, 0], f1_lat0)
+    assert_allclose(f2[:, 0], f2_lat0)
+    assert_allclose(f1[:, 1], f1_lat30)
+    assert_allclose(f2[:, 1], f2_lat30)
 
 
 ###============================================================================
@@ -832,54 +834,133 @@ def test_basevectors_qd_2Darray():
 ###============================================================================
 
 
+# test against return from _geo2apexall for different coords
+
 def test_basevectors_apex_single_geo():
     A = Apex(date=2000, refh=300)
-    _, _, _, _, f1, f2, _, d1, d2, d3, _, e1, e2, e3 = A._geo2apexall(60, 15, 100)
-    ret = A.basevectors_apex(60, 15, 100, coords='geo', return_all=False)
-    for i in range(len(ret)):
-        assert_allclose(ret[i], (f1, f2, d1, d2, d3, e1, e2, e3)[i])
+
+    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='geo')
+
+    _, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_, e3_ = A._geo2apexall(60, 15, 100)
+
+    assert_allclose(f1, f1_)
+    assert_allclose(f2, f2_)
+    assert_allclose(d1, d1_)
+    assert_allclose(d2, d2_)
+    assert_allclose(d3, d3_)
+    assert_allclose(e1, e1_)
+    assert_allclose(e2, e2_)
+    assert_allclose(e3, e3_)
 
 
 def test_basevectors_apex_single_apex():
     A = Apex(date=2000, refh=300)
+
+    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='apex', precision=1e-2)
+
     glat, glon, _ = A.apex2geo(60, 15, 100, precision=1e-2)
-    _, _, _, _, f1, f2, _, d1, d2, d3, _, e1, e2, e3 = A._geo2apexall(glat, glon, 100)
-    ret = A.basevectors_apex(60, 15, 100, coords='apex', return_all=False, precision=1e-2)
-    for i in range(len(ret)):
-        assert_allclose(ret[i], (f1, f2, d1, d2, d3, e1, e2, e3)[i])
+    _, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_, e3_ = A._geo2apexall(glat, glon, 100)
+
+    assert_allclose(f1, f1_)
+    assert_allclose(f2, f2_)
+    assert_allclose(d1, d1_)
+    assert_allclose(d2, d2_)
+    assert_allclose(d3, d3_)
+    assert_allclose(e1, e1_)
+    assert_allclose(e2, e2_)
+    assert_allclose(e3, e3_)
 
 
 def test_basevectors_apex_single_qd():
     A = Apex(date=2000, refh=300)
+
+    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='qd', precision=1e-2)
+
     glat, glon, _ = A.qd2geo(60, 15, 100, precision=1e-2)
-    _, _, _, _, f1, f2, _, d1, d2, d3, _, e1, e2, e3 = A._geo2apexall(glat, glon, 100)
-    ret = A.basevectors_apex(60, 15, 100, coords='qd', return_all=False, precision=1e-2)
-    for i in range(len(ret)):
-        assert_allclose(ret[i], (f1, f2, d1, d2, d3, e1, e2, e3)[i])
+    _, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_, e3_ = A._geo2apexall(glat, glon, 100)
+
+    assert_allclose(f1, f1_)
+    assert_allclose(f2, f2_)
+    assert_allclose(d1, d1_)
+    assert_allclose(d2, d2_)
+    assert_allclose(d3, d3_)
+    assert_allclose(e1, e1_)
+    assert_allclose(e2, e2_)
+    assert_allclose(e3, e3_)
+
+
+# test shapes and vectorization of arguments
+
+def test_basevectors_apex_single_shape():
+    A = Apex(date=2000, refh=300)
+    ret = A.basevectors_apex(60, 15, 100, precision=1e-2)
+    for r in ret[:2]:
+        assert r.shape == (2,)
+    for r in ret[2:]:
+        assert r.shape == (3,)
 
 
 def test_basevectors_apex_vectorization():
     A = Apex(date=2000, refh=300)
-    ret = A.basevectors_apex([60, 60, 60, 60], 15, 100, coords='geo')
+    ret = A.basevectors_apex([60, 60, 60, 60], 15, 100)
     for r in ret[:2]:
         assert r.shape == (2, 4)
     for r in ret[2:]:
         assert r.shape == (3, 4)
-    ret = A.basevectors_apex(60, [15, 15, 15, 15], 100, coords='geo')
+    ret = A.basevectors_apex(60, [15, 15, 15, 15], 100)
     for r in ret[:2]:
         assert r.shape == (2, 4)
     for r in ret[2:]:
         assert r.shape == (3, 4)
-    ret = A.basevectors_apex(60, 15, [100, 100, 100, 100], coords='geo')
+    ret = A.basevectors_apex(60, 15, [100, 100, 100, 100])
     for r in ret[:2]:
         assert r.shape == (2, 4)
     for r in ret[2:]:
         assert r.shape == (3, 4)
 
 
-def test_basevectors_apex_single():
+# test correct vectorization of height
+def test_basevectors_apex_vectorization_height():
+    A = Apex(date=2000, refh=0)
+    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, [200, 400], coords='geo')
+    _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(60, 15, 200)
+    _, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2, e3_2 = A._geo2apexall(60, 15, 400)
+
+    assert_allclose(f1[:, 0], f1_1)
+    assert_allclose(f2[:, 0], f2_1)
+    assert_allclose(d1[:, 0], d1_1)
+    assert_allclose(d2[:, 0], d2_1)
+    assert_allclose(d3[:, 0], d3_1)
+    assert_allclose(e1[:, 0], e1_1)
+    assert_allclose(e2[:, 0], e2_1)
+    assert_allclose(e3[:, 0], e3_1)
+
+    assert_allclose(f3[:, 0], np.array([-0.088671, -0.018272, 0.993576]), rtol=1e-4)
+    assert_allclose(g1[:, 0], np.array([0.903098, 0.245273, 0.085107]), rtol=1e-4)
+    assert_allclose(g2[:, 0], np.array([-0.103495, 1.072078, 0.01048]), rtol=1e-4)
+    assert_allclose(g3[:, 0], np.array([0, 0, 1.006465]), rtol=1e-4)
+
+    assert_allclose(f1[:, 1], f1_2)
+    assert_allclose(f2[:, 1], f2_2)
+    assert_allclose(d1[:, 1], d1_2)
+    assert_allclose(d2[:, 1], d2_2)
+    assert_allclose(d3[:, 1], d3_2)
+    assert_allclose(e1[:, 1], e1_2)
+    assert_allclose(e2[:, 1], e2_2)
+    assert_allclose(e3[:, 1], e3_2)
+
+    assert_allclose(f3[:, 1], np.array([-0.085415, -0.021176, 0.989645]), rtol=1e-4)
+    assert_allclose(g1[:, 1], np.array([0.902695, 0.246919, 0.083194]), rtol=1e-4)
+    assert_allclose(g2[:, 1], np.array([-0.11051, 1.066094, 0.013274]), rtol=1e-4)
+    assert_allclose(g3[:, 1], np.array([0, 0, 1.010463]), rtol=1e-4)
+
+
+# test scalar return values
+
+def test_basevectors_apex_all_single():
     A = Apex(date=2000, refh=300)
-    f1, f2, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(0, 15, 100, coords='geo', return_all=False)
+
+    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(0, 15, 100, coords='geo')
     _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
 
     assert_allclose(f1, f1_1)
@@ -891,36 +972,17 @@ def test_basevectors_apex_single():
     assert_allclose(e2, e2_1)
     assert_allclose(e3, e3_1)
 
+    assert_allclose(f3, np.array([0.092637, -0.245951, 0.938848]), rtol=1e-4)
+    assert_allclose(g1, np.array([0.939012, 0.073416, -0.07342]), rtol=1e-4)
+    assert_allclose(g2, np.array([0.055389, 1.004155, 0.257594]), rtol=1e-4)
+    assert_allclose(g3, np.array([0, 0, 1.065135]), rtol=1e-4)
 
-def test_basevectors_apex_all_single():
+
+# test 1D array return values
+
+def test_basevectors_apex_all_1Darray():
     A = Apex(date=2000, refh=300)
-
-    with pytest.raises(ValueError):
-        A.basevectors_apex(0, 15, 100, coords='geo', return_all=True)
-
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([0], 15, 100, coords='geo', return_all=True)
-    _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
-
-    assert_allclose(f1[:-1, 0], f1_1)
-    assert_allclose(f1[-1, 0], 0)
-    assert_allclose(f2[:-1, 0], f2_1)
-    assert_allclose(f2[-1, 0], 0)
-    assert_allclose(d1[:, 0], d1_1)
-    assert_allclose(d2[:, 0], d2_1)
-    assert_allclose(d3[:, 0], d3_1)
-    assert_allclose(e1[:, 0], e1_1)
-    assert_allclose(e2[:, 0], e2_1)
-    assert_allclose(e3[:, 0], e3_1)
-
-    assert_allclose(f3[:, 0], np.array([0.092637, -0.245951, 0.938848]), rtol=1e-4)
-    assert_allclose(g1[:, 0], np.array([0.939012, 0.073416, -0.07342]), rtol=1e-4)
-    assert_allclose(g2[:, 0], np.array([0.055389, 1.004155, 0.257594]), rtol=1e-4)
-    assert_allclose(g3[:, 0], np.array([0, 0, 1.065135]), rtol=1e-4)
-
-
-def test_basevectors_apex_1Darray():
-    A = Apex(date=2000, refh=300)
-    f1, f2, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([0, 30], 15, 100, coords='geo', return_all=False)
+    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([0, 30], 15, 100, coords='geo')
     _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
     _, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2, e3_2 = A._geo2apexall(30, 15, 100)
 
@@ -933,42 +995,13 @@ def test_basevectors_apex_1Darray():
     assert_allclose(e2[:, 0], e2_1)
     assert_allclose(e3[:, 0], e3_1)
 
-    assert_allclose(f1[:, 1], f1_2)
-    assert_allclose(f2[:, 1], f2_2)
-    assert_allclose(d1[:, 1], d1_2)
-    assert_allclose(d2[:, 1], d2_2)
-    assert_allclose(d3[:, 1], d3_2)
-    assert_allclose(e1[:, 1], e1_2)
-    assert_allclose(e2[:, 1], e2_2)
-    assert_allclose(e3[:, 1], e3_2)
-
-
-def test_basevectors_apex_all_1Darray():
-    A = Apex(date=2000, refh=300)
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([0, 30], 15, 100, coords='geo', return_all=True)
-    _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
-    _, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2, e3_2 = A._geo2apexall(30, 15, 100)
-
-    assert_allclose(f1[:-1, 0], f1_1)
-    assert_allclose(f1[-1, 0], 0)
-    assert_allclose(f2[:-1, 0], f2_1)
-    assert_allclose(f2[-1, 0], 0)
-    assert_allclose(d1[:, 0], d1_1)
-    assert_allclose(d2[:, 0], d2_1)
-    assert_allclose(d3[:, 0], d3_1)
-    assert_allclose(e1[:, 0], e1_1)
-    assert_allclose(e2[:, 0], e2_1)
-    assert_allclose(e3[:, 0], e3_1)
-
     assert_allclose(f3[:, 0], np.array([0.092637, -0.245951, 0.938848]), rtol=1e-4)
     assert_allclose(g1[:, 0], np.array([0.939012, 0.073416, -0.07342]), rtol=1e-4)
     assert_allclose(g2[:, 0], np.array([0.055389, 1.004155, 0.257594]), rtol=1e-4)
     assert_allclose(g3[:, 0], np.array([0, 0, 1.065135]), rtol=1e-4)
 
-    assert_allclose(f1[:-1, 1], f1_2)
-    assert_allclose(f1[-1, 1], 0)
-    assert_allclose(f2[:-1, 1], f2_2)
-    assert_allclose(f2[-1, 1], 0)
+    assert_allclose(f1[:, 1], f1_2)
+    assert_allclose(f2[:, 1], f2_2)
     assert_allclose(d1[:, 1], d1_2)
     assert_allclose(d2[:, 1], d2_2)
     assert_allclose(d3[:, 1], d3_2)
@@ -982,56 +1015,21 @@ def test_basevectors_apex_all_1Darray():
     assert_allclose(g3[:, 1], np.array([0, 0, 1.160625]), rtol=1e-4)
 
 
-def test_basevectors_apex_2Darray():
+# test that vectors are calculated correctly
+
+def test_basevectors_apex_delta():
     A = Apex(date=2000, refh=300)
-    f1, f2, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([[0, 30], [60, 89]], 15, 100, coords='geo', return_all=False)
-    _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
-    _, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2, e3_2 = A._geo2apexall(30, 15, 100)
-    _, _, _, _, f1_3, f2_3, _, d1_3, d2_3, d3_3, _, e1_3, e2_3, e3_3 = A._geo2apexall(60, 15, 100)
-    _, _, _, _, f1_4, f2_4, _, d1_4, d2_4, d3_4, _, e1_4, e2_4, e3_4 = A._geo2apexall(89, 15, 100)
-
-    assert_allclose(f1[:, 0, 0], f1_1)
-    assert_allclose(f2[:, 0, 0], f2_1)
-    assert_allclose(d1[:, 0, 0], d1_1)
-    assert_allclose(d2[:, 0, 0], d2_1)
-    assert_allclose(d3[:, 0, 0], d3_1)
-    assert_allclose(e1[:, 0, 0], e1_1)
-    assert_allclose(e2[:, 0, 0], e2_1)
-    assert_allclose(e3[:, 0, 0], e3_1)
-
-    assert_allclose(f1[:, 0, 1], f1_2)
-    assert_allclose(f2[:, 0, 1], f2_2)
-    assert_allclose(d1[:, 0, 1], d1_2)
-    assert_allclose(d2[:, 0, 1], d2_2)
-    assert_allclose(d3[:, 0, 1], d3_2)
-    assert_allclose(e1[:, 0, 1], e1_2)
-    assert_allclose(e2[:, 0, 1], e2_2)
-    assert_allclose(e3[:, 0, 1], e3_2)
-
-    assert_allclose(f1[:, 1, 0], f1_3)
-    assert_allclose(f2[:, 1, 0], f2_3)
-    assert_allclose(d1[:, 1, 0], d1_3)
-    assert_allclose(d2[:, 1, 0], d2_3)
-    assert_allclose(d3[:, 1, 0], d3_3)
-    assert_allclose(e1[:, 1, 0], e1_3)
-    assert_allclose(e2[:, 1, 0], e2_3)
-    assert_allclose(e3[:, 1, 0], e3_3)
-
-    assert_allclose(f1[:, 1, 1], f1_4)
-    assert_allclose(f2[:, 1, 1], f2_4)
-    assert_allclose(d1[:, 1, 1], d1_4)
-    assert_allclose(d2[:, 1, 1], d2_4)
-    assert_allclose(d3[:, 1, 1], d3_4)
-    assert_allclose(e1[:, 1, 1], e1_4)
-    assert_allclose(e2[:, 1, 1], e2_4)
-    assert_allclose(e3[:, 1, 1], e3_4)
-
-
-def test_basevectors_apex_all_2Darray():
-    A = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        A.basevectors_apex([[0, 30], [60, 89]], 15, 100, coords='geo', return_all=True)
-
+    for lat in range(0, 90, 10):
+        for lon in range(0, 360, 15):
+            f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([lat], lon, 500)
+            f = [np.append(f1, 0), np.append(f2, 0), f3]
+            g = [g1, g2, g3]
+            d = [d1, d2, d3]
+            e = [e1, e2, e3]
+            for i, j in [(i, j) for i in range(3) for j in range(3)]:
+                delta = 1 if i == j else 0
+                assert_allclose(np.sum(f[i]*g[j]), delta, rtol=0, atol=1e-5)
+                assert_allclose(np.sum(d[i]*e[j]), delta, rtol=0, atol=1e-5)
 
 ###============================================================================
 ### Test the get_apex() method
