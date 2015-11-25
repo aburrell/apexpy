@@ -31,7 +31,7 @@ class Apex(object):
 
     Parameters
     ==========
-    date : float (decimal year) or instance of :class:`datetime.date` or :class:`datetime.datetime`, optional
+    date : float (decimal year) or :class:`datetime.date` or :class:`datetime.datetime`, optional
         Determines which IGRF coefficients are used in conversions. Uses current date as default.
     refh : float, optional
         Reference height in km for apex coordinates (the field lines are mapped to this height)
@@ -105,8 +105,10 @@ class Apex(object):
 
         Parameters
         ==========
-        lat, lon : array_like
-            Latitude and longitude/MLT
+        lat : array_like
+            Latitude
+        lon : array_like
+            Longitude/MLT
         source : {'geo', 'apex', 'qd', 'mlt'}
             Input coordinate system
         dest : {'geo', 'apex', 'qd', 'mlt'}
@@ -132,11 +134,14 @@ class Apex(object):
 
         Returns
         =======
-        lat, lon : ndarray or float
-            Converted latitude and longitude/MLT
+        lat : ndarray or float
+            Converted latitude
+        lat : ndarray or float
+            Converted longitude/MLT
 
-        .. note::
-            If converting to MLT, output latitude is apex.
+        Note
+        ====
+        If converting to MLT, output latitude is apex.
 
         '''
 
