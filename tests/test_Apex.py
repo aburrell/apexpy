@@ -1033,7 +1033,7 @@ def test_basevectors_apex_delta():
     A = Apex(date=2000, refh=300)
     for lat in range(0, 90, 10):
         for lon in range(0, 360, 15):
-            f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([lat], lon, 500)
+            f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(lat, lon, 500)
             f = [np.append(f1, 0), np.append(f2, 0), f3]
             g = [g1, g2, g3]
             d = [d1, d2, d3]
