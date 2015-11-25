@@ -135,13 +135,9 @@ class Apex(object):
         Returns
         =======
         lat : ndarray or float
-            Converted latitude
+            Converted latitude (if converting to MLT, output latitude is apex)
         lat : ndarray or float
             Converted longitude/MLT
-
-        Note
-        ====
-        If converting to MLT, output latitude is apex.
 
         '''
 
@@ -195,15 +191,19 @@ class Apex(object):
 
         Parameters
         ==========
-        glat, glon : array_like
-            Geodetic latitude and longitude
+        glat : array_like
+            Geodetic latitude
+        glon : array_like
+            Geodetic longitude
         height : array_like
             Altitude in km
 
         Returns
         =======
-        alat, alon : ndarray or float
-            Modified apex latitude and longitude
+        alat : ndarray or float
+            Modified apex latitude
+        alon : ndarray or float
+            Modified apex longitude
 
         '''
 
@@ -222,8 +222,10 @@ class Apex(object):
 
         Parameters
         ==========
-        alat, alon : array_like
-            Modified apex latitude and longitude
+        alat : array_like
+            Modified apex latitude
+        alon : array_like
+            Modified apex longitude
         height : array_like
             Altitude in km
         precision : float, optional
@@ -236,8 +238,10 @@ class Apex(object):
 
         Returns
         =======
-        glat, glon : ndarray or float
-            Geodetic latitude and longitude
+        glat : ndarray or float
+            Geodetic latitude
+        glon : ndarray or float
+            Geodetic longitude
         error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
@@ -257,15 +261,19 @@ class Apex(object):
 
         Parameters
         ==========
-        glat, glon : array_like
-            Geodetic latitude and longitude
+        glat : array_like
+            Geodetic latitude
+        glon : array_like
+            Geodetic longitude
         height : array_like
             Altitude in km
 
         Returns
         =======
-        qlat, qlon : ndarray or float
-            Quasi-dipole latitude and longitude
+        qlat : ndarray or float
+            Quasi-dipole latitude
+        qlon : ndarray or float
+            Quasi-dipole longitude
 
         '''
 
@@ -281,8 +289,10 @@ class Apex(object):
 
         Parameters
         ==========
-        qlat, qlon : array_like
-            Quasi-dipole latitude and longitude
+        qlat : array_like
+            Quasi-dipole latitude
+        qlon : array_like
+            Quasi-dipole longitude
         height : array_like
             Altitude in km
         precision : float, optional
@@ -295,8 +305,10 @@ class Apex(object):
 
         Returns
         =======
-        glat, glon : ndarray or float
-            Geodetic latitude and longitude
+        glat : ndarray or float
+            Geodetic latitude
+        glon : ndarray or float
+            Geodetic longitude
         error : ndarray or float
             The angular difference (degrees) between the input QD coordinates
             and the qlat/qlon produced by feeding the output glat and glon
@@ -335,15 +347,19 @@ class Apex(object):
 
         Parameters
         ==========
-        alat, alon : array_like
-            Modified apex latitude and longitude
+        alat : array_like
+            Modified apex latitude
+        alon : array_like
+            Modified apex longitude
         height : array_like
             Altitude in km
 
         Returns
         =======
-        qlat, qlon : ndarray or float
-            Quasi-dipole latitude and longitude
+        qlat : ndarray or float
+            Quasi-dipole latitude
+        qlon : ndarray or float
+            Quasi-dipole longitude
 
         Raises
         ======
@@ -380,15 +396,19 @@ class Apex(object):
 
         Parameters
         ==========
-        qlat, qlon : array_like
-            Quasi-dipole latitude and longitude
+        qlat : array_like
+            Quasi-dipole latitude
+        qlon : array_like
+            Quasi-dipole longitude
         height : array_like
             Altitude in km
 
         Returns
         =======
-        alat, alon : ndarray or float
-            Modified apex latitude and longitude
+        alat : ndarray or float
+            Modified apex latitude
+        alon : ndarray or float
+            Modified apex longitude
 
         Raises
         ======
@@ -404,10 +424,6 @@ class Apex(object):
 
     def mlon2mlt(self, mlon, datetime, ssheight=50*6371):
         '''Computes the magnetic local time at the specified magnetic longitude and UT.
-
-        To compute the MLT, we find the apex longitude of the subsolar point at
-        the given time. Then the MLT of the given point will be computed from
-        the separation in magnetic longitude from this point (1 hour = 15 degrees).
 
         Parameters
         ==========
@@ -426,6 +442,12 @@ class Apex(object):
         mlt : ndarray or float
             Magnetic local time [0, 24)
 
+        Notes
+        =====
+        To compute the MLT, we find the apex longitude of the subsolar point at
+        the given time. Then the MLT of the given point will be computed from
+        the separation in magnetic longitude from this point (1 hour = 15 degrees).
+
         '''
         ssglat, ssglon = helpers.subsol(datetime)
         ssglat = helpers.gc2gdlat(ssglat)
@@ -436,10 +458,6 @@ class Apex(object):
 
     def mlt2mlon(self, mlt, datetime, ssheight=50*6371):
         '''Computes the magnetic longitude at the specified magnetic local time and UT.
-
-        To compute the magnetic longitude, we find the apex longitude of the subsolar point at
-        the given time. Then the magnetic longitude of the given point will be computed from
-        the separation in magnetic local time from this point (1 hour = 15 degrees).
 
         Parameters
         ==========
@@ -457,6 +475,12 @@ class Apex(object):
         =======
         mlon : ndarray or float
             Magnetic longitude [0, 360) (apex and quasi-dipole longitude are always equal)
+
+        Notes
+        =====
+        To compute the magnetic longitude, we find the apex longitude of the subsolar point at
+        the given time. Then the magnetic longitude of the given point will be computed from
+        the separation in magnetic local time from this point (1 hour = 15 degrees).
         '''
 
         ssglat, ssglon = helpers.subsol(datetime)
@@ -471,8 +495,10 @@ class Apex(object):
 
         Parameters
         ==========
-        glat, glon : array_like
-            Geodetic latitude and longitude
+        glat : array_like
+            Geodetic latitude
+        glon : array_like
+            Geodetic longitude
         height : array_like
             Source altitude in km
         newheight : array_like
@@ -564,8 +590,10 @@ class Apex(object):
 
         Parameters
         ==========
-        alat, alon : (N,) array_like or float
-            Apex latitude and longitude
+        alat : (N,) array_like or float
+            Modified apex latitude
+        alon : (N,) array_like or float
+            Modified apex longitude
         height : (N,) array_like or float
             Source altitude in km
         newheight : (N,) array_like or float
@@ -589,8 +617,10 @@ class Apex(object):
 
         Parameters
         ==========
-        alat, alon : (N,) array_like or float
-            Apex latitude and longitude
+        alat : (N,) array_like or float
+            Modified apex latitude
+        alon : (N,) array_like or float
+            Modified apex longitude
         height : (N,) array_like or float
             Source altitude in km
         newheight : (N,) array_like or float
@@ -614,8 +644,10 @@ class Apex(object):
 
         Parameters
         ==========
-        lat, lon : (N,) array_like or float
-            Latitude and longitude
+        lat : (N,) array_like or float
+            Latitude
+        lon : (N,) array_like or float
+            Longitude
         height : (N,) array_like or float
             Altitude in km
         coords : {'geo', 'apex', 'qd'}, optional
@@ -632,12 +664,11 @@ class Apex(object):
 
         Returns
         =======
-
-        f1, f2 : (2, N) or (2,) ndarray
+        f1 : (2, N) or (2,) ndarray
+        f2 : (2, N) or (2,) ndarray
 
         References
         ==========
-
         .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
                geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
@@ -691,21 +722,20 @@ class Apex(object):
 
         Returns
         =======
-
         f1, f2 : (2, N) or (2,) ndarray
         f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : (3, N) or (3,) ndarray
 
-        .. note::
+        Note
+        ====
+        `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
+        by Emmert et al. [2010] [5]_. They are calculated by this
+        Python library according to the following equations in
+        Richmond [1995] [4]_:
 
-            `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
-            by Emmert et al. [2010] [5]_. They are calculated by this
-            Python library according to the following equations in
-            Richmond [1995] [4]_:
-
-            * `g1`: Eqn. 6.3
-            * `g2`: Eqn. 6.4
-            * `g3`: Eqn. 6.5
-            * `f3`: Eqn. 6.8
+        * `g1`: Eqn. 6.3
+        * `g2`: Eqn. 6.4
+        * `g3`: Eqn. 6.5
+        * `f3`: Eqn. 6.8
 
         References
         ==========
