@@ -41,3 +41,4 @@ html_sidebars = {
 html_short_title = '%s-%s' % (project, version)
 autodoc_member_order='bysource'
 napoleon_use_ivar=True
+napoleon_use_admonition_for_notes=True
