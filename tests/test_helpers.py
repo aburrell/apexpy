@@ -77,7 +77,7 @@ def test_checklat_array():
 ### Test getsinIm
 ###============================================================================
 
-def test_getsinIm_single():
+def test_getsinIm_scalar():
     assert_allclose(helpers.getsinIm(60), 0.96076892283052284)
     assert_allclose(helpers.getsinIm(10), 0.33257924500670238)
     assert type(helpers.getsinIm(60)) != np.ndarray
@@ -97,7 +97,7 @@ def test_getsinIm_2Darray():
 ###============================================================================
 
 
-def test_getcosIm_single():
+def test_getcosIm_scalar():
     assert_allclose(helpers.getcosIm(60), 0.27735009811261463)
     assert_allclose(helpers.getcosIm(10), 0.94307531289434765)
     assert type(helpers.getcosIm(60)) != np.ndarray

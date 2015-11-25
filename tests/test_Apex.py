@@ -61,7 +61,7 @@ def test_init_datafile_IOError():
 ### Test the low-level interfaces to the fortran wrappers
 ###============================================================================
 
-def test__geo2qd_single():
+def test__geo2qd_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
@@ -89,7 +89,7 @@ def test__geo2qd_longitude():
             assert_allclose(A._geo2qd(lat, 15+i*360, 100), fa.apxg2q(lat, 15, 100, 0)[:2])
 
 
-def test__geo2apex_single():
+def test__geo2apex_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
@@ -117,7 +117,7 @@ def test__geo2apex_longitude():
             assert_allclose(A._geo2apex(lat, 15+i*360, 100), fa.apxg2all(lat, 15, 100, 300, 0)[2:4])
 
 
-def test__geo2apexall_single():
+def test__geo2apexall_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
@@ -146,7 +146,7 @@ def test__geo2apexall_array():
             assert_allclose(ret[i][1, 1], ret4[i])
 
 
-def test__qd2geo_single():
+def test__qd2geo_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
@@ -176,7 +176,7 @@ def test__qd2geo_longitude():
             assert_allclose(A._qd2geo(lat, 15+i*360, 100, 1e-2), fa.apxq2g(lat, 15, 100, 1e-2))
 
 
-def test__basevec_single():
+def test__basevec_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
@@ -542,7 +542,7 @@ def test_qd2apex_apexheight_over():
 ###============================================================================
 
 
-def test_mlon2mlt_single():
+def test_mlon2mlt_scalar():
     A = Apex(date=2000, refh=300)
     mlon = A.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6))
     assert_allclose(mlon, 23.019260660807291)
@@ -591,7 +591,7 @@ def test_mlon2mlt_range():
 ###============================================================================
 
 
-def test_mlt2mlon_single():
+def test_mlt2mlon_scalar():
     A = Apex(date=2000, refh=300)
     mlt = A.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6))
     assert_allclose(mlt, 14.711090087890625)
@@ -789,18 +789,18 @@ def test_map_V_to_height():
 
 # test coords
 
-def test_basevectors_qd_single_geo():
+def test_basevectors_qd_scalar_geo():
     A = Apex(date=2000, refh=300)
     assert_allclose(A.basevectors_qd(60, 15, 100, coords='geo'), A._basevec(60, 15, 100))
 
 
-def test_basevectors_qd_single_apex():
+def test_basevectors_qd_scalar_apex():
     A = Apex(date=2000, refh=300)
     glat, glon, _ = A.apex2geo(60, 15, 100, precision=1e-2)
     assert_allclose(A.basevectors_qd(60, 15, 100, coords='apex', precision=1e-2), A._basevec(glat, glon, 100))
 
 
-def test_basevectors_qd_single_qd():
+def test_basevectors_qd_scalar_qd():
     A = Apex(date=2000, refh=300)
     glat, glon, _ = A.qd2geo(60, 15, 100, precision=1e-2)
     assert_allclose(A.basevectors_qd(60, 15, 100, coords='qd', precision=1e-2), A._basevec(glat, glon, 100))
@@ -808,7 +808,7 @@ def test_basevectors_qd_single_qd():
 
 # test shapes and vectorization of arguments
 
-def test_basevectors_qd_single_shape():
+def test_basevectors_qd_scalar_shape():
     A = Apex(date=2000, refh=300)
     ret = A.basevectors_qd(60, 15, 100)
     for r in ret:
@@ -828,9 +828,9 @@ def test_basevectors_qd_vectorization():
         assert r.shape == (2, 4)
 
 
-# test 1D array return values
+# test array return values
 
-def test_basevectors_qd_1Darray():
+def test_basevectors_qd_array():
     A = Apex(date=2000, refh=300)
     f1, f2 = A.basevectors_qd([0, 30], 15, 100, coords='geo')
     f1_lat0, f2_lat0 = A._basevec(0, 15, 100)
@@ -848,7 +848,7 @@ def test_basevectors_qd_1Darray():
 
 # test against return from _geo2apexall for different coords
 
-def test_basevectors_apex_single_geo():
+def test_basevectors_apex_scalar_geo():
     A = Apex(date=2000, refh=300)
 
     f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='geo')
@@ -865,7 +865,7 @@ def test_basevectors_apex_single_geo():
     assert_allclose(e3, e3_)
 
 
-def test_basevectors_apex_single_apex():
+def test_basevectors_apex_scalar_apex():
     A = Apex(date=2000, refh=300)
 
     f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='apex', precision=1e-2)
@@ -883,7 +883,7 @@ def test_basevectors_apex_single_apex():
     assert_allclose(e3, e3_)
 
 
-def test_basevectors_apex_single_qd():
+def test_basevectors_apex_scalar_qd():
     A = Apex(date=2000, refh=300)
 
     f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='qd', precision=1e-2)
@@ -903,7 +903,7 @@ def test_basevectors_apex_single_qd():
 
 # test shapes and vectorization of arguments
 
-def test_basevectors_apex_single_shape():
+def test_basevectors_apex_scalar_shape():
     A = Apex(date=2000, refh=300)
     ret = A.basevectors_apex(60, 15, 100, precision=1e-2)
     for r in ret[:2]:
@@ -969,7 +969,7 @@ def test_basevectors_apex_vectorization_height():
 
 # test scalar return values
 
-def test_basevectors_apex_all_single():
+def test_basevectors_apex_scalar():
     A = Apex(date=2000, refh=300)
 
     f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(0, 15, 100, coords='geo')
@@ -992,7 +992,7 @@ def test_basevectors_apex_all_single():
 
 # test 1D array return values
 
-def test_basevectors_apex_all_1Darray():
+def test_basevectors_apex_array():
     A = Apex(date=2000, refh=300)
     f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([0, 30], 15, 100, coords='geo')
     _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
@@ -1044,7 +1044,7 @@ def test_basevectors_apex_delta():
                 assert_allclose(np.sum(d[i]*e[j]), delta, rtol=0, atol=1e-5)
 
 
-def test_basevectors_apex_invalid_single():
+def test_basevectors_apex_invalid_scalar():
     A = Apex(date=2000, refh=10000)
     with warnings.catch_warnings(record=True) as w:
         f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(0, 0, 0)
