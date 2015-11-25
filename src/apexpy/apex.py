@@ -651,8 +651,8 @@ class Apex(object):
         # if inputs are not scalar, each vector is an array of arrays,
         # so reshape to a single array
         if f1.dtype == object:
-            f1 = np.stack(f1, axis=-1)
-            f2 = np.stack(f2, axis=-1)
+            f1 = np.vstack(f1).T
+            f2 = np.vstack(f2).T
 
         return f1, f2
 
@@ -726,14 +726,14 @@ class Apex(object):
         # if inputs are not scalar, each vector is an array of arrays,
         # so reshape to a single array
         if f1.dtype == object:
-            f1 = np.stack(f1, axis=-1)
-            f2 = np.stack(f2, axis=-1)
-            d1 = np.stack(d1, axis=-1)
-            d2 = np.stack(d2, axis=-1)
-            d3 = np.stack(d3, axis=-1)
-            e1 = np.stack(e1, axis=-1)
-            e2 = np.stack(e2, axis=-1)
-            e3 = np.stack(e3, axis=-1)
+            f1 = np.vstack(f1).T
+            f2 = np.vstack(f2).T
+            d1 = np.vstack(d1).T
+            d2 = np.vstack(d2).T
+            d3 = np.vstack(d3).T
+            e1 = np.vstack(e1).T
+            e2 = np.vstack(e2).T
+            e3 = np.vstack(e3).T
 
         # make sure arrays are 2D
         f1 = f1.reshape((2, f1.size//2))
