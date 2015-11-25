@@ -640,7 +640,7 @@ class Apex(object):
     def basevectors_qd(self, lat, lon, height, coords='geo', precision=1e-10):
         '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates.
 
-        The vectors are described by Richmond [1995] [1]_ and Emmert et al. [2010] [2]_.
+        The vectors are described by Richmond [1995] [2]_ and Emmert et al. [2010] [3]_.
 
         Parameters
         ==========
@@ -669,11 +669,11 @@ class Apex(object):
 
         References
         ==========
-        .. [1] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
+        .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
                geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
 
-        .. [2] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
+        .. [3] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
                and Quasi-Dipole coordinates with smooth base vectors,
                J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
@@ -695,7 +695,7 @@ class Apex(object):
     def basevectors_apex(self, lat, lon, height, coords='geo', precision=1e-10):
         '''Returns base vectors in quasi-dipole and apex coordinates.
 
-        The vectors are described by Richmond [1995] [1]_ and Emmert et al. [2010] [2]_.
+        The vectors are described by Richmond [1995] [4]_ and Emmert et al. [2010] [5]_.
 
         Parameters
         ==========
@@ -730,9 +730,9 @@ class Apex(object):
         Note
         ====
         `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
-        by Emmert et al. [2010] [2]_. They are calculated by this
+        by Emmert et al. [2010] [5]_. They are calculated by this
         Python library according to the following equations in
-        Richmond [1995] [1]_:
+        Richmond [1995] [4]_:
 
         * `g1`: Eqn. 6.3
         * `g2`: Eqn. 6.4
@@ -742,11 +742,11 @@ class Apex(object):
         References
         ==========
 
-        .. [1] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
+        .. [4] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
                geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
 
-        .. [2] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
+        .. [5] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
                and Quasi-Dipole coordinates with smooth base vectors,
                J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
