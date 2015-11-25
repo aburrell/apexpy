@@ -3,6 +3,7 @@
 from __future__ import division, print_function, absolute_import
 
 import os
+import warnings
 import datetime as dt
 
 import numpy as np
@@ -15,6 +16,10 @@ try:
     from . import fortranapex as fa
 except:
     print("ERROR: fortranapex module could not be imported. apexpy probably won't work")
+
+
+# make sure invalid warnings are always shown
+warnings.filterwarnings('always', message='.*set to -9999 where*', module='apexpy.apex')
 
 
 class ApexHeightError(ValueError):
@@ -200,6 +205,9 @@ class Apex(object):
         glat = helpers.checklat(glat, name='glat')
 
         alat, alon = self._geo2apex(glat, glon, height)
+
+        if np.any(np.float64(alat) == -9999):
+            warnings.warn('Apex latitude set to -9999 where undefined (apex height may be < reference height)')
 
         # if array is returned, dtype is object, so convert to float
         return np.float64(alat), np.float64(alon)
@@ -747,6 +755,20 @@ class Apex(object):
         g2 = -1/(2*F*np.tan(qlat*d2r))*(k + ((self.RE + np.float64(height))/(self.RE + self.refh))*d2/cosI)
         g3 = k*F
         f3 = np.cross(g1.T, g2.T).T
+
+        if np.any(alat == -9999):
+            warnings.warn(('Base vectors g, d, e, and f3 set to -9999 where apex latitude is undefined '
+                           '(apex height may be < reference height)'))
+            f3 = np.where(alat == -9999, -9999, f3)
+            g1 = np.where(alat == -9999, -9999, g1)
+            g2 = np.where(alat == -9999, -9999, g2)
+            g3 = np.where(alat == -9999, -9999, g3)
+            d1 = np.where(alat == -9999, -9999, d1)
+            d2 = np.where(alat == -9999, -9999, d2)
+            d3 = np.where(alat == -9999, -9999, d3)
+            e1 = np.where(alat == -9999, -9999, e1)
+            e2 = np.where(alat == -9999, -9999, e2)
+            e3 = np.where(alat == -9999, -9999, e3)
 
         return tuple(np.squeeze(x) for x in [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])
 

@@ -3,6 +3,7 @@
 from __future__ import division, print_function, absolute_import, unicode_literals
 
 import datetime as dt
+import warnings
 
 import numpy as np
 import pytest
@@ -336,6 +337,17 @@ def test_geo2apex_invalid_lat():
     A.geo2apex(-90, 0, 0)
 
     assert_allclose(A.geo2apex(90+1e-5, 0, 0), A.geo2apex(90, 0, 0), rtol=0, atol=1e-8)
+
+
+def test_geo2apex_undefined_warning():
+    A = Apex(date=2000, refh=10000)
+    with warnings.catch_warnings(record=True) as w:
+        ret = A.geo2apex(0, 0, 0)
+        A.geo2apex(0, 0, 0)
+        assert ret[0] == -9999
+        assert len(w) == 2
+        assert issubclass(w[-1].category, UserWarning)
+        assert 'set to -9999 where' in str(w[-1].message)
 
 
 ###============================================================================
@@ -1030,6 +1042,31 @@ def test_basevectors_apex_delta():
                 delta = 1 if i == j else 0
                 assert_allclose(np.sum(f[i]*g[j]), delta, rtol=0, atol=1e-5)
                 assert_allclose(np.sum(d[i]*e[j]), delta, rtol=0, atol=1e-5)
+
+
+def test_basevectors_apex_invalid_single():
+    A = Apex(date=2000, refh=10000)
+    with warnings.catch_warnings(record=True) as w:
+        f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(0, 0, 0)
+        A.basevectors_apex(0, 0, 0)
+        assert len(w) == 2
+        assert issubclass(w[-1].category, UserWarning)
+        assert 'set to -9999 where' in str(w[-1].message)
+
+    invalid = [-9999, -9999, -9999]
+    assert not np.allclose(f1, invalid[:2])
+    assert not np.allclose(f2, invalid[:2])
+    assert_allclose(f3, invalid)
+    assert_allclose(g1, invalid)
+    assert_allclose(g2, invalid)
+    assert_allclose(g3, invalid)
+    assert_allclose(d1, invalid)
+    assert_allclose(d2, invalid)
+    assert_allclose(d3, invalid)
+    assert_allclose(e1, invalid)
+    assert_allclose(e2, invalid)
+    assert_allclose(e3, invalid)
+
 
 ###============================================================================
 ### Test the get_apex() method
