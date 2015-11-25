@@ -690,15 +690,17 @@ class Apex(object):
         f1, f2 : (2, N) or (2,) ndarray
         f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : (3, N) or (3,) ndarray
 
-        .. note:: `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
-                  by Emmert et al. [2010] [2]_. They are calculated by this
-                  Python library according to the following equations in
-                  Richmond [1995] [1]_:
+        .. note::
 
-                   * `g1`: Eqn. 6.3
-                   * `g2`: Eqn. 6.4
-                   * `g3`: Eqn. 6.5
-                   * `f3`: Eqn. 6.8
+            `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
+            by Emmert et al. [2010] [2]_. They are calculated by this
+            Python library according to the following equations in
+            Richmond [1995] [1]_:
+
+            * `g1`: Eqn. 6.3
+            * `g2`: Eqn. 6.4
+            * `g3`: Eqn. 6.5
+            * `f3`: Eqn. 6.8
 
         References
         ==========
