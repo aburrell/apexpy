@@ -631,7 +631,7 @@ class Apex(object):
         Returns
         =======
         V : (3, N) or (3,) ndarray
-            The electric drivt velocity at `newheight` (geodetic east, north, and up components)
+            The electric drift velocity at `newheight` (geodetic east, north, and up components)
 
         '''
 
@@ -700,7 +700,9 @@ class Apex(object):
         Parameters
         ==========
         lat, lon : (N,) array_like or float
-            Latitude and longitude
+            Latitude
+        lat : (N,) array_like or float
+            Longitude
         height : (N,) array_like or float
             Altitude in km
         coords : {'geo', 'apex', 'qd'}, optional

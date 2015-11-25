@@ -154,8 +154,10 @@ def subsol(datetime):
 
     Returns
     =======
-    sbsllat, sbsllon : float
-        Latitude and longitude of subsolar point
+    sbsllat : float
+        Latitude of subsolar point
+    sbsllon : float
+        Longitude of subsolar point
 
     Notes
     =====
