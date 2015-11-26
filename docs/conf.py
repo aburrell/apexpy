@@ -8,7 +8,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinx.ext.extlinks'
 ]
 if os.getenv('SPELLCHECK'):
     extensions += 'sphinxcontrib.spelling',
@@ -42,3 +43,5 @@ html_short_title = '%s-%s' % (project, version)
 autodoc_member_order='bysource'
 napoleon_use_ivar=True
 napoleon_use_rtype=False
+
+extlinks = {'doi': ('http://dx.doi.org/%s', 'doi:')}

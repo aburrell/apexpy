@@ -56,7 +56,7 @@ class Apex(object):
 
     .. [1] Thébault, E. et al. (2015), International Geomagnetic Reference
            Field: the 12th generation, Earth, Planets and Space, 67(1), 79,
-           doi:10.1186/s40623-015-0228-9.
+           :doi:`10.1186/s40623-015-0228-9`.
 
     '''
 
@@ -671,12 +671,12 @@ class Apex(object):
         ==========
         .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
-               geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
+               geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
 
         .. [3] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
                and Quasi-Dipole coordinates with smooth base vectors,
-               J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
+               J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
 
         '''
 
@@ -744,12 +744,12 @@ class Apex(object):
 
         .. [4] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
-               geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
+               geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
 
         .. [5] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
                and Quasi-Dipole coordinates with smooth base vectors,
-               J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
+               J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
 
         '''
 
