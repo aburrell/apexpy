@@ -53,15 +53,15 @@ Produce a file called e.g. ``input.txt`` with the input latitudes and longitudes
 
 To convert this to apex using the magnetic field model for the date 2015-01-01 using a height of 300 km, run the command ``apexpy geo apex 20150101 --height 300 -i input.txt -o output.txt`` (in this specific example you could also just use ``2015`` or ``201501`` for the date). The output file will look like this::
 
-    57.469547, 93.639816
-    58.522701, 94.044762
-    59.571465, 94.477257
+    57.46954727 93.63981628
+    58.52270126 94.04476166
+    59.57146454 94.47725677
 
 Alternatively, you can skip the files and just use command-line piping::
 
     $ echo 60 15 | apexpy geo apex 2015 --height 300
-    57.469547, 93.639816
+    57.46954727 93.63981628
 
-MLT conversion works in much the same way, but requires both date and time (``YYYYMMDDHHMMSS``). For example, if you want to find the MLT (and the apex latitude) at geodetic coordinates (60, 15) for midnight on the day 2015-01-01, run ``echo 60 15 | apexpy apex mlt 20150101000000``. The output will look like this::
+MLT conversion works in much the same way, but requires both date and time (``YYYYMMDDHHMMSS``). For example, if you want to find the MLT (and the apex latitude) at geodetic coordinates (60, 15) for midnight on the day 2015-01-01, run ``echo 60 15 | apexpy geo mlt 20150101000000``. The output will look like this::
 
-    57.469547, 1.061383
+    56.59033585 1.03370768
