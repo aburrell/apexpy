@@ -3,7 +3,7 @@ Command-line interface
 
 .. highlight:: none
 
-When you install this package you will get a command called ``apexpy``, which is an interface to the :meth:`~apexpy.Apex.convert` method. See the documentation for these functions for a more thorough explanation of arguments and behaviour.
+When you install this package you will get a command called ``apexpy``, which is an interface to the :meth:`~apexpy.Apex.convert` method. See the documentation for this method for a more thorough explanation of arguments and behaviour.
 
 You can get help on the command by running ``apexpy -h``.
 
