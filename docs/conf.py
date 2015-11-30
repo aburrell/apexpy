@@ -8,7 +8,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon',
+    'sphinxcontrib.napoleon',
     'sphinx.ext.extlinks'
 ]
 if os.getenv('SPELLCHECK'):
