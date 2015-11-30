@@ -641,6 +641,7 @@ class Apex(object):
         '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates.
 
         The vectors are described by Richmond [1995] [2]_ and Emmert et al. [2010] [3]_.
+        The vector components are geodetic east and north.
 
         Parameters
         ==========
@@ -696,6 +697,8 @@ class Apex(object):
         '''Returns base vectors in quasi-dipole and apex coordinates.
 
         The vectors are described by Richmond [1995] [4]_ and Emmert et al. [2010] [5]_.
+        The vector components are geodetic east, north, and up (only east and
+        north for `f1` and `f2`).
 
         Parameters
         ==========
