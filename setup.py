@@ -39,7 +39,7 @@ def read(*names, **kwargs):
 if __name__ == "__main__":
     setup(
         name='apexpy',
-        version='0.1.0',
+        version='1.0.0',
         license='MIT',
         description='A Python wrapper for Apex coordinates',
         long_description='%s\n%s' % (read('README.rst'), re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))),

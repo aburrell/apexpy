@@ -9,6 +9,6 @@ except ImportError:
     print("ERROR: fortranapex module could not be imported. apexpy probably won't work")
 
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 
 __all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']
