@@ -78,11 +78,12 @@ install:
 test_script:
   - '%TESTSCRIPT%'
 
-after_test:
-  - python setup.py sdist bdist_wheel
-
 deploy_script:
   # if tagged commit, build/upload wheel
+  - python setup.py bdist_wheel
+  - IF "%TESTENV%"=="2.7-nocover-64" (
+      python setup.py sdist
+    )
   - IF "%APPVEYOR_REPO_TAG%"=="true" IF NOT "%TESTENV%"=="check" (
       pip install twine &&
       twine upload -u %PYPI_USER% -p %PYPI_PASS% dist/*
