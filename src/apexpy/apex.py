@@ -450,7 +450,6 @@ class Apex(object):
 
         '''
         ssglat, ssglon = helpers.subsol(datetime)
-        ssglat = helpers.gc2gdlat(ssglat)
         ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # np.float64 will ensure lists are converted to arrays
@@ -484,7 +483,6 @@ class Apex(object):
         '''
 
         ssglat, ssglon = helpers.subsol(datetime)
-        ssglat = helpers.gc2gdlat(ssglat)
         ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # np.float64 will ensure lists are converted to arrays
