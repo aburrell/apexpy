@@ -93,7 +93,7 @@ def test_convert_mlt():
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
-    np.testing.assert_allclose(data, [57.469547, 1.061383], rtol=1e-4)
+    np.testing.assert_allclose(data, [57.469547, 1.06324], rtol=1e-4)
 
 
 def test_invalid_date():

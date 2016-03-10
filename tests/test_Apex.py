@@ -545,14 +545,14 @@ def test_qd2apex_apexheight_over():
 def test_mlon2mlt_scalar():
     A = Apex(date=2000, refh=300)
     mlon = A.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6))
-    assert_allclose(mlon, 23.019260660807291)
+    assert_allclose(mlon, 23.019629923502603)
     assert type(mlon) != np.ndarray
 
 
 def test_mlon2mlt_ssheight():
     A = Apex(date=2000, refh=300)
     mlt = A.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6), ssheight=50*2000)
-    assert_allclose(mlt, 23.026371256510416)
+    assert_allclose(mlt, 23.026712036132814)
 
 
 def test_mlon2mlt_1Darray():
@@ -580,9 +580,9 @@ def test_mlon2mlt_offset():
 def test_mlon2mlt_range():
     A = Apex(date=2000, refh=300)
     assert_allclose(A.mlon2mlt(range(0, 361, 30), dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [23.019261, 1.019261, 3.019261, 5.019261, 7.019261,
-                     9.019261, 11.019261, 13.019261, 15.019261, 17.019261,
-                     19.019261, 21.019261, 23.019261],
+                    [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
+                     9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
+                     19.01963, 21.01963, 23.01963],
                     rtol=1e-4)
 
 
@@ -594,24 +594,24 @@ def test_mlon2mlt_range():
 def test_mlt2mlon_scalar():
     A = Apex(date=2000, refh=300)
     mlt = A.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6))
-    assert_allclose(mlt, 14.711090087890625)
+    assert_allclose(mlt, 14.705551147460938)
     assert type(mlt) != np.ndarray
 
 
 def test_mlt2mlon_ssheight():
     A = Apex(date=2000, refh=300)
     mlt = A.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6), ssheight=50*2000)
-    assert_allclose(mlt, 14.60443115234375)
+    assert_allclose(mlt, 14.599319458007812)
 
 
 def test_mlt2mlon_1Darray():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlt2mlon([0, 12], dt.datetime(2000, 2, 3, 4, 5, 6)), [14.71109, 194.71109], rtol=1e-4)
+    assert_allclose(A.mlt2mlon([0, 12], dt.datetime(2000, 2, 3, 4, 5, 6)), [14.705551, 194.705551], rtol=1e-4)
 
 
 def test_mlt2mlon_2Darray():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlt2mlon([[0, 12], [0, 12]], dt.datetime(2000, 2, 3, 4, 5, 6)), [[14.71109, 194.71109], [14.71109, 194.71109]], rtol=1e-4)
+    assert_allclose(A.mlt2mlon([[0, 12], [0, 12]], dt.datetime(2000, 2, 3, 4, 5, 6)), [[14.705551, 194.705551], [14.705551, 194.705551]], rtol=1e-4)
 
 
 def test_mlt2mlon_diffdates():
@@ -629,9 +629,9 @@ def test_mlt2mlon_offset():
 def test_mlt2mlon_range():
     A = Apex(date=2000, refh=300)
     assert_allclose(A.mlt2mlon(range(0, 25, 2), dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [14.71109, 44.71109, 74.71109, 104.71109, 134.71109,
-                     164.71109, 194.71109, 224.71109, 254.71109, 284.71109,
-                     314.71109, 344.71109, 14.71109],
+                    [14.705551, 44.705551, 74.705551, 104.705551, 134.705551,
+                     164.705551, 194.705551, 224.705551, 254.705551, 284.705551,
+                     314.705551, 344.705551, 14.705551],
                     rtol=1e-4)
 
 
