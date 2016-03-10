@@ -39,7 +39,7 @@ Conversion is done by creating an ``Apex`` object and using its methods to perfo
     >>> # can also convert magnetic longitude to mlt
     >>> mlt = A.mlon2mlt(120, dt.datetime(2015, 2, 10, 18, 0, 0))
     >>> mlt
-    20.893299166361491
+    20.893547503153481
 
 If you don't know or use Python, you can also use the command line. See details in the full documentation.
 
