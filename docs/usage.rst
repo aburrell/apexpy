@@ -64,4 +64,4 @@ Alternatively, you can skip the files and just use command-line piping::
 
 MLT conversion works in much the same way, but requires both date and time (``YYYYMMDDHHMMSS``). For example, if you want to find the MLT (and the apex latitude) at geodetic coordinates (60, 15) for midnight on the day 2015-01-01, run ``echo 60 15 | apexpy geo mlt 20150101000000``. The output will look like this::
 
-    56.59033585 1.03370768
+    56.59033585 1.03556417
