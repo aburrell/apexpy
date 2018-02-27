@@ -15,11 +15,13 @@ from .helpers import d2r, r2d
 try:
     from . import fortranapex as fa
 except:
-    print("ERROR: fortranapex module could not be imported. apexpy probably won't work")
+    print("ERROR: fortranapex module could not be imported. apexpy probably"
+          " won't work")
 
 
 # make sure invalid warnings are always shown
-warnings.filterwarnings('always', message='.*set to -9999 where*', module='apexpy.apex')
+warnings.filterwarnings('always', message='.*set to -9999 where*',
+                        module='apexpy.apex')
 
 
 class ApexHeightError(ValueError):
@@ -27,14 +29,17 @@ class ApexHeightError(ValueError):
 
 
 class Apex(object):
-    '''Performs coordinate conversions, field-line mapping and base vector calculations.
+    """Performs coordinate conversions, field-line mapping and base vector
+    calculations.
 
     Parameters
     ==========
     date : float (decimal year) or :class:`datetime.date` or :class:`datetime.datetime`, optional
-        Determines which IGRF coefficients are used in conversions. Uses current date as default.
+        Determines which IGRF coefficients are used in conversions. Uses
+        current date as default.
     refh : float, optional
-        Reference height in km for apex coordinates (the field lines are mapped to this height)
+        Reference height in km for apex coordinates (the field lines are mapped
+        to this height)
     datafile : str, optional
         Path to custom coefficient file
 
@@ -58,7 +63,7 @@ class Apex(object):
            Field: the 12th generation, Earth, Planets and Space, 67(1), 79,
            :doi:`10.1186/s40623-015-0228-9`.
 
-    '''
+    """
 
     def __init__(self, date=None, refh=0, datafile=None):
 
@@ -66,7 +71,7 @@ class Apex(object):
             datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
 
         self.RE = 6371.009  # mean Earth radius
-        self.set_refh(refh)  # reference height
+        self.set_refh(refh) # reference height
 
         if date is None:
             self.year = helpers.toYearFraction(dt.datetime.now())
@@ -86,22 +91,31 @@ class Apex(object):
 
         # vectorize fortran functions
         self._geo2qd = np.frompyfunc(
-            lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180, height, 0)[:2], 3, 2)
+            lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180,
+                                                 height, 0)[:2], 3, 2)
         self._geo2apex = np.frompyfunc(
-            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 - 180, height, self.refh, 0)[2:4], 3, 2)
+            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 -
+                                                   180, height, self.refh,
+                                                   0)[2:4], 3, 2)
         self._geo2apexall = np.frompyfunc(
-            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 - 180, height, self.refh, 1), 3, 14)
+            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 -
+                                                   180, height, self.refh,
+                                                   1), 3, 14)
         self._qd2geo = np.frompyfunc(
-            lambda qlat, qlon, height, precision: fa.apxq2g(qlat, (qlon + 180) % 360 - 180, height, precision), 4, 3)
+            lambda qlat, qlon, height, precision: fa.apxq2g(qlat, (qlon + 180)
+                                                            % 360 - 180, height,
+                                                            precision), 4, 3)
         self._basevec = np.frompyfunc(
-            lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180, height, 1)[2:4], 3, 2)
+            lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180,
+                                                 height, 1)[2:4], 3, 2)
 
         # vectorize other nonvectorized functions
         self._apex2qd = np.frompyfunc(self._apex2qd_nonvectorized, 3, 2)
         self._qd2apex = np.frompyfunc(self._qd2apex_nonvectorized, 3, 2)
 
-    def convert(self, lat, lon, source, dest, height=0, datetime=None, precision=1e-10, ssheight=50*6371):
-        '''Converts between geodetic, modified apex, quasi-dipole and MLT.
+    def convert(self, lat, lon, source, dest, height=0, datetime=None,
+                precision=1e-10, ssheight=50*6371):
+        """Converts between geodetic, modified apex, quasi-dipole and MLT.
 
         Parameters
         ==========
@@ -120,7 +134,8 @@ class Apex(object):
         precision : float, optional
             Precision of output (degrees) when converting to geo. A negative
             value of this argument produces a low-precision calculation of
-            geodetic lat/lon based only on their spherical harmonic representation.
+            geodetic lat/lon based only on their spherical harmonic
+            representation.
             A positive value causes the underlying Fortran routine to iterate
             until feeding the output geo lat/lon into geo2qd (APXG2Q) reproduces
             the input QD lat/lon to within the specified precision (all
@@ -139,7 +154,7 @@ class Apex(object):
         lat : ndarray or float
             Converted longitude/MLT
 
-        '''
+        """
 
         if datetime is None and ('mlt' in [source, dest]):
             raise ValueError('datetime must be given for MLT calculations')
@@ -182,12 +197,14 @@ class Apex(object):
             lat, lon = self.apex2qd(lat, lon, height=height)
         # no other transformations are implemented
         else:
-            raise NotImplementedError('Unknown coordinate transformation: {} -> {}'.format(source, dest))
+            estr = 'Unknown coordinate transformation: '
+            estr += '{} -> {}'.format(source, dest)
+            raise NotImplementedError(estr)
 
         return lat, lon
 
     def geo2apex(self, glat, glon, height):
-        '''Converts geodetic to modified apex coordinates.
+        """Converts geodetic to modified apex coordinates.
 
         Parameters
         ==========
@@ -205,20 +222,21 @@ class Apex(object):
         alon : ndarray or float
             Modified apex longitude
 
-        '''
+        """
 
         glat = helpers.checklat(glat, name='glat')
 
         alat, alon = self._geo2apex(glat, glon, height)
 
         if np.any(np.float64(alat) == -9999):
-            warnings.warn('Apex latitude set to -9999 where undefined (apex height may be < reference height)')
+            warnings.warn('Apex latitude set to -9999 where undefined '
+                          '(apex height may be < reference height)')
 
         # if array is returned, dtype is object, so convert to float
         return np.float64(alat), np.float64(alon)
 
     def apex2geo(self, alat, alon, height, precision=1e-10):
-        '''Converts modified apex to geodetic coordinates.
+        """Converts modified apex to geodetic coordinates.
 
         Parameters
         ==========
@@ -247,7 +265,7 @@ class Apex(object):
             and the qlat/qlon produced by feeding the output glat and glon
             into geo2qd (APXG2Q)
 
-        '''
+        """
 
         alat = helpers.checklat(alat, name='alat')
 
@@ -257,7 +275,7 @@ class Apex(object):
         return glat, glon, error
 
     def geo2qd(self, glat, glon, height):
-        '''Converts geodetic to quasi-dipole coordinates.
+        """Converts geodetic to quasi-dipole coordinates.
 
         Parameters
         ==========
@@ -275,7 +293,7 @@ class Apex(object):
         qlon : ndarray or float
             Quasi-dipole longitude
 
-        '''
+        """
 
         glat = helpers.checklat(glat, name='glat')
 
@@ -285,7 +303,7 @@ class Apex(object):
         return np.float64(qlat), np.float64(qlon)
 
     def qd2geo(self, qlat, qlon, height, precision=1e-10):
-        '''Converts quasi-dipole to geodetic coordinates.
+        """Converts quasi-dipole to geodetic coordinates.
 
         Parameters
         ==========
@@ -314,7 +332,7 @@ class Apex(object):
             and the qlat/qlon produced by feeding the output glat and glon
             into geo2qd (APXG2Q)
 
-        '''
+        """
 
         qlat = helpers.checklat(qlat, name='qlat')
 
@@ -329,21 +347,25 @@ class Apex(object):
 
         # convert modified apex to quasi-dipole:
         qlon = alon
-        hA = (self.RE + self.refh)/(np.cos(alat*d2r)**2) - self.RE  # apex height
+        # apex height
+        hA = (self.RE + self.refh) / (np.cos(alat * d2r)**2) - self.RE
 
         if hA < height:
-            if np.isclose(hA, height, rtol=0, atol=1e-5):  # allow for values that are close
+            if np.isclose(hA, height, rtol=0, atol=1e-5):
+                # allow for values that are close
                 hA = height
             else:
-                raise ApexHeightError(
-                    'height {:.3g} is > apex height {:.3g} for alat {:.3g}'.format(np.max(height), hA, alat))
+                estr = 'height {:.3g} is > apex height '.format(np.max(height))
+                estr += '{:.3g} for alat {:.3g}'.format(hA, alat)
+                raise ApexHeightError(estr)
 
-        qlat = np.sign(alat) * np.arccos(np.sqrt((self.RE + height)/(self.RE + hA)))*r2d
+        qlat = np.sign(alat) * np.arccos(np.sqrt((self.RE + height) /
+                                                 (self.RE + hA))) * r2d
 
         return qlat, qlon
 
     def apex2qd(self, alat, alon, height):
-        '''Converts modified apex to quasi-dipole coordinates.
+        """Converts modified apex to quasi-dipole coordinates.
 
         Parameters
         ==========
@@ -366,7 +388,7 @@ class Apex(object):
         ApexHeightError
             if `height` > apex height
 
-        '''
+        """
 
         qlat, qlon = self._apex2qd(alat, alon, height)
 
@@ -381,18 +403,21 @@ class Apex(object):
         hA = (self.RE + height)/(np.cos(qlat*d2r)**2) - self.RE  # apex height
 
         if hA < self.refh:
-            if np.isclose(hA, self.refh, rtol=0, atol=1e-5):  # allow for values that are close
+            if np.isclose(hA, self.refh, rtol=0, atol=1e-5):
+                # allow for values that are close
                 hA = self.refh
             else:
-                raise ApexHeightError(
-                    'apex height ({:.3g}) is < reference height ({:.3g}) for qlat {:.3g}'.format(hA, self.refh, qlat))
+                estr = 'apex height ({:.3g}) is < reference height '.format(hA)
+                estr += '({:.3g}) for qlat {:.3g}'.format(self.refh, qlat)
+                raise ApexHeightError(estr)
 
-        alat = np.sign(qlat) * np.arccos(np.sqrt((self.RE + self.refh)/(self.RE + hA)))*r2d
+        alat = np.sign(qlat) * np.arccos(np.sqrt((self.RE + self.refh) /
+                                                 (self.RE + hA)))*r2d
 
         return alat, alon
 
     def qd2apex(self, qlat, qlon, height):
-        '''Converts quasi-dipole to modified apex coordinates.
+        """Converts quasi-dipole to modified apex coordinates.
 
         Parameters
         ==========
@@ -415,7 +440,7 @@ class Apex(object):
         ApexHeightError
             if apex height < reference height
 
-        '''
+        """
 
         alat, alon = self._qd2apex(qlat, qlon, height)
 
@@ -423,12 +448,14 @@ class Apex(object):
         return np.float64(alat), np.float64(alon)
 
     def mlon2mlt(self, mlon, datetime, ssheight=50*6371):
-        '''Computes the magnetic local time at the specified magnetic longitude and UT.
+        """Computes the magnetic local time at the specified magnetic longitude
+        and UT.
 
         Parameters
         ==========
         mlon : array_like
-            Magnetic longitude (apex and quasi-dipole longitude are always equal)
+            Magnetic longitude (apex and quasi-dipole longitude are always 
+            equal)
         datetime : :class:`datetime.datetime`
             Date and time
         ssheight : float, optional
@@ -446,9 +473,10 @@ class Apex(object):
         =====
         To compute the MLT, we find the apex longitude of the subsolar point at
         the given time. Then the MLT of the given point will be computed from
-        the separation in magnetic longitude from this point (1 hour = 15 degrees).
+        the separation in magnetic longitude from this point (1 hour = 15
+        degrees).
 
-        '''
+        """
         ssglat, ssglon = helpers.subsol(datetime)
         ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
@@ -456,7 +484,8 @@ class Apex(object):
         return (180 + np.float64(mlon) - ssalon)/15 % 24
 
     def mlt2mlon(self, mlt, datetime, ssheight=50*6371):
-        '''Computes the magnetic longitude at the specified magnetic local time and UT.
+        """Computes the magnetic longitude at the specified magnetic local time
+        and UT.
 
         Parameters
         ==========
@@ -473,14 +502,16 @@ class Apex(object):
         Returns
         =======
         mlon : ndarray or float
-            Magnetic longitude [0, 360) (apex and quasi-dipole longitude are always equal)
+            Magnetic longitude [0, 360) (apex and quasi-dipole longitude are
+            always equal)
 
         Notes
         =====
-        To compute the magnetic longitude, we find the apex longitude of the subsolar point at
-        the given time. Then the magnetic longitude of the given point will be computed from
-        the separation in magnetic local time from this point (1 hour = 15 degrees).
-        '''
+        To compute the magnetic longitude, we find the apex longitude of the
+        subsolar point at the given time. Then the magnetic longitude of the
+        given point will be computed from the separation in magnetic local time
+        from this point (1 hour = 15 degrees).
+        """
 
         ssglat, ssglon = helpers.subsol(datetime)
         ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
@@ -488,8 +519,10 @@ class Apex(object):
         # np.float64 will ensure lists are converted to arrays
         return (15*np.float64(mlt) - 180 + ssalon + 360) % 360
 
-    def map_to_height(self, glat, glon, height, newheight, conjugate=False, precision=1e-10):
-        '''Performs mapping of points along the magnetic field to the closest or conjugate hemisphere.
+    def map_to_height(self, glat, glon, height, newheight, conjugate=False,
+                      precision=1e-10):
+        """Performs mapping of points along the magnetic field to the closest
+        or conjugate hemisphere.
 
         Parameters
         ==========
@@ -502,7 +535,8 @@ class Apex(object):
         newheight : array_like
             Destination altitude in km
         conjugate : bool, optional
-            Map to `newheight` in the conjugate hemisphere instead of the closest hemisphere
+            Map to `newheight` in the conjugate hemisphere instead of the
+            closest hemisphere
         precision : float, optional
             Precision of output (degrees). A negative value of this argument
             produces a low-precision calculation of geodetic lat/lon based only
@@ -524,16 +558,18 @@ class Apex(object):
 
         Notes
         =====
-        The mapping is done by converting glat/glon/height to modified apex lat/lon, and converting back
-        to geographic using newheight (if conjugate, use negative apex latitude when converting back)
+        The mapping is done by converting glat/glon/height to modified apex
+        lat/lon, and converting back to geographic using newheight (if
+        conjugate, use negative apex latitude when converting back)
 
-        '''
+        """
 
         alat, alon = self.geo2apex(glat, glon, height)
         if conjugate:
             alat = -alat
         try:
-            newglat, newglon, error = self.apex2geo(alat, alon, newheight, precision=precision)
+            newglat, newglon, error = self.apex2geo(alat, alon, newheight,
+                                                    precision=precision)
         except ApexHeightError:
             raise ApexHeightError("newheight is > apex height")
 
@@ -542,13 +578,15 @@ class Apex(object):
     def _map_EV_to_height(self, alat, alon, height, newheight, X, EV):
 
         # make sure X is array of correct shape
-        if not (np.ndim(X) == 1 and np.size(X) == 3) and not (np.ndim(X) == 2 and np.shape(X)[0] == 3):
-            # raise ValueError because if passing e.g. a (6,) ndarray the reshape below will work
-            # even though the input is invalid
+        if(not (np.ndim(X) == 1 and np.size(X) == 3) and
+           not (np.ndim(X) == 2 and np.shape(X)[0] == 3)):
+            # raise ValueError because if passing e.g. a (6,) ndarray the
+            # reshape below will work even though the input is invalid
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
         X = np.reshape(X, (3, np.size(X)//3))
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, \
+                                                alon, height, coords='apex')
 
         if EV == 'E':
             v1 = e1
@@ -564,7 +602,8 @@ class Apex(object):
         X1 = np.sum(X*v1, axis=0)  # E dot e1 or V dot d1
         X2 = np.sum(X*v2, axis=0)  # E dot e2 or V dot d2
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, newheight, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, \
+                                                alon, newheight, coords='apex')
 
         if EV == 'E':
             v1 = d1
@@ -582,7 +621,7 @@ class Apex(object):
         return np.squeeze(X_mapped)
 
     def map_E_to_height(self, alat, alon, height, newheight, E):
-        '''Performs mapping of electric field along the magnetic field.
+        """Performs mapping of electric field along the magnetic field.
 
         It is assumed that the electric field is perpendicular to B.
 
@@ -597,19 +636,21 @@ class Apex(object):
         newheight : (N,) array_like or float
             Destination altitude in km
         E : (3,) or (3, N) array_like
-            Electric field (at `alat`, `alon`, `height`) in geodetic east, north, and up components
+            Electric field (at `alat`, `alon`, `height`) in geodetic east,
+            north, and up components
 
         Returns
         =======
         E : (3, N) or (3,) ndarray
-            The electric field at `newheight` (geodetic east, north, and up components)
+            The electric field at `newheight` (geodetic east, north, and up
+            components)
 
-        '''
+        """
 
         return self._map_EV_to_height(alat, alon, height, newheight, E, 'E')
 
     def map_V_to_height(self, alat, alon, height, newheight, V):
-        '''Performs mapping of electric drift velocity along the magnetic field.
+        """Performs mapping of electric drift velocity along the magnetic field.
 
         It is assumed that the electric field is perpendicular to B.
 
@@ -624,22 +665,26 @@ class Apex(object):
         newheight : (N,) array_like or float
             Destination altitude in km
         V : (3,) or (3, N) array_like
-            Electric drift velocity (at `alat`, `alon`, `height`) in geodetic east, north, and up components
+            Electric drift velocity (at `alat`, `alon`, `height`) in geodetic
+            east, north, and up components
 
         Returns
         =======
         V : (3, N) or (3,) ndarray
-            The electric drift velocity at `newheight` (geodetic east, north, and up components)
+            The electric drift velocity at `newheight` (geodetic east, north,
+            and up components)
 
-        '''
+        """
 
         return self._map_EV_to_height(alat, alon, height, newheight, V, 'V')
 
     def basevectors_qd(self, lat, lon, height, coords='geo', precision=1e-10):
-        '''Returns quasi-dipole base vectors f1 and f2 at the specified coordinates.
+        """Returns quasi-dipole base vectors f1 and f2 at the specified
+        coordinates.
 
-        The vectors are described by Richmond [1995] [2]_ and Emmert et al. [2010] [3]_.
-        The vector components are geodetic east and north.
+        The vectors are described by Richmond [1995] [2]_ and
+        Emmert et al. [2010] [3]_.  The vector components are geodetic east and
+        north.
 
         Parameters
         ==========
@@ -654,7 +699,8 @@ class Apex(object):
         precision : float, optional
             Precision of output (degrees) when converting to geo. A negative
             value of this argument produces a low-precision calculation of
-            geodetic lat/lon based only on their spherical harmonic representation.
+            geodetic lat/lon based only on their spherical harmonic
+            representation.
             A positive value causes the underlying Fortran routine to iterate
             until feeding the output geo lat/lon into geo2qd (APXG2Q) reproduces
             the input QD lat/lon to within the specified precision (all
@@ -677,9 +723,10 @@ class Apex(object):
                and Quasi-Dipole coordinates with smooth base vectors,
                J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
 
-        '''
+        """
 
-        glat, glon = self.convert(lat, lon, coords, 'geo', height=height, precision=precision)
+        glat, glon = self.convert(lat, lon, coords, 'geo', height=height,
+                                  precision=precision)
 
         f1, f2 = self._basevec(glat, glon, height)
 
@@ -692,11 +739,11 @@ class Apex(object):
         return f1, f2
 
     def basevectors_apex(self, lat, lon, height, coords='geo', precision=1e-10):
-        '''Returns base vectors in quasi-dipole and apex coordinates.
+        """Returns base vectors in quasi-dipole and apex coordinates.
 
-        The vectors are described by Richmond [1995] [4]_ and Emmert et al. [2010] [5]_.
-        The vector components are geodetic east, north, and up (only east and
-        north for `f1` and `f2`).
+        The vectors are described by Richmond [1995] [4]_ and
+        Emmert et al. [2010] [5]_.  The vector components are geodetic east,
+        north, and up (only east and north for `f1` and `f2`).
 
         Parameters
         ==========
@@ -710,13 +757,14 @@ class Apex(object):
             Input coordinate system
         return_all : bool, optional
             Will also return f3, g1, g2, and g3, and f1 and f2 have 3 components
-            (the last component is zero). Requires `lat`, `lon`, and `height` to be
-            broadcast to 1D (at least one of the parameters must be 1D and the
-            other two parameters must be 1D or 0D).
+            (the last component is zero). Requires `lat`, `lon`, and `height`
+            to be broadcast to 1D (at least one of the parameters must be 1D
+            and the other two parameters must be 1D or 0D).
         precision : float, optional
             Precision of output (degrees) when converting to geo. A negative
             value of this argument produces a low-precision calculation of
-            geodetic lat/lon based only on their spherical harmonic representation.
+            geodetic lat/lon based only on their spherical harmonic
+            representation.
             A positive value causes the underlying Fortran routine to iterate
             until feeding the output geo lat/lon into geo2qd (APXG2Q) reproduces
             the input QD lat/lon to within the specified precision (all
@@ -752,9 +800,10 @@ class Apex(object):
                and Quasi-Dipole coordinates with smooth base vectors,
                J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
 
-        '''
+        """
 
-        glat, glon = self.convert(lat, lon, coords, 'geo', height=height, precision=precision)
+        glat, glon = self.convert(lat, lon, coords, 'geo', height=height,
+                                  precision=precision)
 
         returnvals = self._geo2apexall(glat, glon, height)
         qlat = np.float64(returnvals[0])
@@ -791,14 +840,18 @@ class Apex(object):
         F = np.cross(F1.T, F2.T).T[-1]
         cosI = helpers.getcosIm(alat)
         k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
-        g1 = ((self.RE + np.float64(height))/(self.RE + self.refh))**(3/2)*d1/F
-        g2 = -1/(2*F*np.tan(qlat*d2r))*(k + ((self.RE + np.float64(height))/(self.RE + self.refh))*d2/cosI)
+        g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh))**(3/2) \
+             * d1 / F
+        g2 = -1.0 / (2.0 * F * np.tan(qlat * d2r)) * \
+             (k + ((self.RE + np.float64(height)) / (self.RE + self.refh))
+              * d2 / cosI)
         g3 = k*F
         f3 = np.cross(g1.T, g2.T).T
 
         if np.any(alat == -9999):
-            warnings.warn(('Base vectors g, d, e, and f3 set to -9999 where apex latitude is undefined '
-                           '(apex height may be < reference height)'))
+            warnings.warn(('Base vectors g, d, e, and f3 set to -9999 where '
+                           'apex latitude is undefined (apex height may be < '
+                           'reference height)'))
             f3 = np.where(alat == -9999, -9999, f3)
             g1 = np.where(alat == -9999, -9999, g1)
             g2 = np.where(alat == -9999, -9999, g2)
@@ -810,10 +863,11 @@ class Apex(object):
             e2 = np.where(alat == -9999, -9999, e2)
             e3 = np.where(alat == -9999, -9999, e3)
 
-        return tuple(np.squeeze(x) for x in [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])
+        return tuple(np.squeeze(x) for x in
+                     [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])
 
     def get_apex(self, alat):
-        '''Computes the field line apex for a given modified apex latitude.
+        """Computes the field line apex for a given modified apex latitude.
 
         Parameters
         ==========
@@ -824,29 +878,29 @@ class Apex(object):
         =======
         apex : ndarray or float
             Field line apex in km
-        '''
+        """
 
         alat = helpers.checklat(alat, name='alat')
 
-        apex = (self.RE + self.refh)/np.cos(d2r*alat)**2 - self.RE
+        apex = (self.RE + self.refh) / np.cos(d2r * alat)**2 - self.RE
 
         return apex
 
     def set_epoch(self, year):
-        '''Updates the epoch for all subsequent conversions.
+        """Updates the epoch for all subsequent conversions.
 
         Parameters
         ==========
         year : float
             Decimal year
 
-        '''
+        """
 
         fa.loadapxsh(self.datafile, np.float(year))
         self.year = year
 
     def set_refh(self, refh):
-        '''Updates the apex reference height for all subsequent conversions.
+        """Updates the apex reference height for all subsequent conversions.
 
         Parameters
         ==========
@@ -858,6 +912,6 @@ class Apex(object):
         The reference height is the height to which field lines will be mapped,
         and is only relevant for conversions involving apex (not quasi-dipole).
 
-        '''
+        """
 
         self.refh = refh

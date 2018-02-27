@@ -1,5 +1,4 @@
 graft docs
-graft examples
 graft src
 graft ci
 graft tests
@@ -7,8 +6,6 @@ graft tests
 include .bumpversion.cfg
 include .coveragerc
 include .cookiecutterrc
-include .isort.cfg
-include .pylintrc
 include pytest.ini
 
 include AUTHORS.rst
@@ -19,4 +16,4 @@ include README.rst
 
 include tox.ini .travis.yml appveyor.yml .codeclimate.yml .landscape.yaml
 
-global-exclude *.py[cod] __pycache__ *.so *.dylib
+global-exclude *.py[cod~] __pycache__ *.so *.dylib

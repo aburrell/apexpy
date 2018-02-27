@@ -21,7 +21,8 @@ if not on_rtd:
     extensions = [
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
-                           'src/fortranapex/makeapexsh.f90', 'src/fortranapex/apexsh.f90',
+                           'src/fortranapex/makeapexsh.f90',
+                           'src/fortranapex/apexsh.f90',
                            'src/fortranapex/checkapexsh.f90'])]
 else:
     from setuptools import setup
@@ -39,13 +40,15 @@ def read(*names, **kwargs):
 if __name__ == "__main__":
     setup(
         name='apexpy',
-        version='1.0.1',
+        version='1.0.2',
         license='MIT',
         description='A Python wrapper for Apex coordinates',
-        long_description='%s\n%s' % (read('README.rst'), re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))),
-        author='Christer van der Meeren',
-        author_email='cmeeren@gmail.com',
-        url='https://github.com/cmeeren/apexpy',
+        long_description='%s\n%s' % (read('README.rst'),
+                                     re.sub(':[a-z]+:`~?(.*?)`', r'``\1``',
+                                            read('CHANGELOG.rst'))),
+        author='Christer van der Meeren; Angeline G. Burrell',
+        author_email='agb073000@utdallas.edu',
+        url='https://github.com/aburrell/apexpy',
         packages=find_packages('src'),
         package_dir={'': 'src'},
         py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
@@ -59,6 +62,7 @@ if __name__ == "__main__":
             'Operating System :: Unix',
             'Operating System :: POSIX',
             'Operating System :: Microsoft :: Windows',
+            'Operating System :: Macintosh :: Sierra',
             'Programming Language :: Python',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',

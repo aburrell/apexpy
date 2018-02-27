@@ -20,7 +20,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 project = u'Apex Python library'
 year = u'2015'
-author = u'Christer van der Meeren'
+author = u'Christer van der Meeren, Angeline G. Burrell'
 copyright = '{0}, {1}'.format(year, author)
 version = release = u'1.0.1'
 # on_rtd is whether we are on readthedocs.org

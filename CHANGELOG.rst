@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.0.2 (2018-02-27)
+-----------------------------------------
+
+* Extend character limit for allowable data file path, and update documentation to reflect a change in maintainers.  Also updated testing implimentation, reduced fortran compiler warnings, and improved PEP8 compliance.
+
 1.0.1 (2016-03-10)
 -----------------------------------------
 
