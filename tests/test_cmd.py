@@ -32,7 +32,8 @@ def test_module_invocation():
 
 
 def test_convert_YYYY():
-    p = subprocess.Popen(['apexpy', 'geo', 'apex', '2015', '--height', '300',
+    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
+                          '--height', '300',
                           '-i', 'tests/test_convert.txt', '-o',
                           'tests/output.txt'])
     p.communicate()
@@ -44,9 +45,9 @@ def test_convert_YYYY():
 
 
 def test_convert_YYYYMM():
-    p = subprocess.Popen(['apexpy', 'geo', 'apex', '201501', '--height', '300',
-                          '-i', 'tests/test_convert.txt', '-o',
-                          'tests/output.txt'])
+    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '201501',
+                          '--height', '300', '-i', 'tests/test_convert.txt',
+                          '-o', 'tests/output.txt'])
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
@@ -56,9 +57,9 @@ def test_convert_YYYYMM():
 
 
 def test_convert_YYYYMMDD():
-    p = subprocess.Popen(['apexpy', 'geo', 'apex', '20150101', '--height',
-                          '300', '-i', 'tests/test_convert.txt', '-o',
-                          'tests/output.txt'])
+    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '20150101',
+                          '--height', '300', '-i', 'tests/test_convert.txt',
+                          '-o', 'tests/output.txt'])
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
@@ -68,9 +69,9 @@ def test_convert_YYYYMMDD():
 
 
 def test_convert_YYYYMMDDHHMMSS():
-    p = subprocess.Popen(['apexpy', 'geo', 'apex', '20150101000000', '--height',
-                          '300', '-i', 'tests/test_convert.txt', '-o',
-                          'tests/output.txt'])
+    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
+                          '20150101000000', '--height', '300', '-i',
+                          'tests/test_convert.txt', '-o', 'tests/output.txt'])
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
@@ -80,9 +81,10 @@ def test_convert_YYYYMMDDHHMMSS():
 
 
 def test_convert_single_line():
-    p = subprocess.Popen(['apexpy', 'geo', 'apex', '20150101000000', '--height',
-                          '300', '-i', 'tests/test_convert_single_line.txt',
-                          '-o', 'tests/output.txt'])
+    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
+                          '20150101000000', '--height', '300', '-i',
+                          'tests/test_convert_single_line.txt', '-o',
+                          'tests/output.txt'])
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
@@ -107,9 +109,10 @@ def test_convert_refh():
 
 
 def test_convert_mlt():
-    p = subprocess.Popen(['apexpy', 'geo', 'mlt', '20150101000000', '--height',
-                          '300', '-i', 'tests/test_convert_single_line.txt',
-                          '-o', 'tests/output.txt'])
+    p = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'mlt',
+                          '20150101000000', '--height', '300', '-i',
+                          'tests/test_convert_single_line.txt', '-o',
+                          'tests/output.txt'])
     p.communicate()
     p.wait()
     data = np.loadtxt('tests/output.txt')
@@ -139,7 +142,8 @@ def test_mlt_nodatetime():
 
 
 def test_invalid_coord():
-    p = subprocess.Popen('echo 60 15 | apexpy foobar apex 2015', shell=True, stderr=subprocess.PIPE)
+    p = subprocess.Popen('echo 60 15 | apexpy foobar apex 2015', shell=True,
+                         stderr=subprocess.PIPE)
     _, stderr = p.communicate()
     p.wait()
     assert b'invalid choice' in stderr
