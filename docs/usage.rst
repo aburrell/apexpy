@@ -8,13 +8,12 @@ Python library
 For full documentation of the functions, see the reference for :class:`apexpy.Apex`.
 
     >>> from apexpy import Apex
+    >>> from __future__ import print_function
     >>> A = Apex(date=2015.3)  # datetime objects are also supported
     >>> # geo to apex, scalar input
     >>> mlat, mlon = A.convert(60, 15, 'geo', 'apex', height=300)
-    >>> mlat
-    57.469573974609375
-    >>> mlon
-    93.633583068847656
+    >>> print("{:.12f}, {:.12f}".format(mlat, mlon))
+    57.469573974609, 93.633583068848
     >>> # apex to geo, array input
     >>> glat, glon = A.convert([90, -90], 0, 'apex', 'geo', height=0)
     >>> glat
@@ -24,10 +23,8 @@ For full documentation of the functions, see the reference for :class:`apexpy.Ap
     >>> # geo to MLT
     >>> import datetime as dt
     >>> mlat, mlt = A.convert(60, 15, 'geo', 'mlt', datetime=dt.datetime(2015, 2, 10, 18, 0, 0))
-    >>> mlat
-    56.590423583984375
-    >>> mlt
-    19.107855542500815
+    >>> print("{:.12f}, {:.12f}".format(mlat, mlt))
+    56.590423583984, 19.108103879293
     >>> # can also convert magnetic longitude to mlt
     >>> mlt = A.mlon2mlt(120, dt.datetime(2015, 2, 10, 18, 0, 0))
     >>> mlt
