@@ -40,7 +40,7 @@ def read(*names, **kwargs):
 if __name__ == "__main__":
     setup(
         name='apexpy',
-        version='1.0.1',
+        version='1.0.2',
         license='MIT',
         description='A Python wrapper for Apex coordinates',
         long_description='%s\n%s' % (read('README.rst'),
