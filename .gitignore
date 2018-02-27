@@ -68,6 +68,7 @@ docs/_build
 *.lo
 *.o
 *.obj
+*.dSYM
 
 # Precompiled Headers
 *.gch
