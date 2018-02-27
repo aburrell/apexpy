@@ -7,13 +7,13 @@ Bug reports, feature suggestions and other contributions are greatly appreciated
 Short version
 =============
 
-* Submit bug reports and feature requests at `GitHub <https://github.com/cmeeren/apexpy/issues>`_
+* Submit bug reports and feature requests at `GitHub <https://github.com/aburrell/apexpy/issues>`_
 * Make pull requests to the ``develop`` branch
 
 Bug reports
 ===========
 
-When `reporting a bug <https://github.com/cmeeren/apexpy/issues>`_ please include:
+When `reporting a bug <https://github.com/aburrell/apexpy/issues>`_ please include:
 
 * Your operating system name and version
 * Any details about your local setup that might be helpful in troubleshooting
@@ -22,7 +22,7 @@ When `reporting a bug <https://github.com/cmeeren/apexpy/issues>`_ please includ
 Feature requests and feedback
 =============================
 
-The best way to send feedback is to file an issue at `GitHub <https://github.com/cmeeren/apexpy/issues>`_.
+The best way to send feedback is to file an issue at `GitHub <https://github.com/aburrell/apexpy/issues>`_.
 
 If you are proposing a feature:
 
