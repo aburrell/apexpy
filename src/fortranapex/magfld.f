@@ -703,15 +703,15 @@ C          g(n,m) for 2005
      3                 672.51,-379.86,-136.54,-151.34, 38.73, -6.88,
      +                       -6.94,   -2.35,  1.44,  0.89,  0.28,   5*0,
      4                      100.00,-168.05,-14.58, 12.30,-18.11,  5.01,
-     +                     	    -0.15, -0.31, -0.38, -0.43,   6*0,
-     5                     	   -13.55, 14.58,  9.37, 10.17,-10.76,
-     +                     	     3.06,  0.29,  0.96,  1.18,   7*0,
-     6                     		  -86.36,  5.42,  9.36, -1.25,
-     +                     	     0.29, -0.79, -0.30, -0.37,   8*0,
-     7                     			   1.94,-11.25,  8.76,
-     +                     	     2.06,  0.53,  0.46,  0.75,   9*0,
-     8                     				 -4.87, -6.66,
-     +                     	     3.77,  1.80, -0.35, -0.26,  10*0,
+     +                          -0.15, -0.31, -0.38, -0.43,   6*0,
+     5                         -13.55, 14.58,  9.37, 10.17,-10.76,
+     +                           3.06,  0.29,  0.96,  1.18,   7*0,
+     6                         -86.36,  5.42,  9.36, -1.25,
+     +                           0.29, -0.79, -0.30, -0.37,   8*0,
+     7                           1.94,-11.25,  8.76,
+     +                           2.06,  0.53,  0.46,  0.75,   9*0,
+     8                          -4.87, -6.66,
+     +                           3.77,  1.80, -0.35, -0.26,  10*0,
      9                                                          -9.22/
       DATA (GY1D(I),I=4871,4950) /
      +                                -0.21,  0.16, -0.36,  0.35,  11*0,
@@ -1466,13 +1466,13 @@ C          Trap out of range date:
       MM = M+1
       I1 = I+1
       IF (IY .LT. NEPO) THEN                                                ! interpolate (m>0 terms)
-	GB(I)  = (GYR(NN,MM,IY) +
+        GB(I)  = (GYR(NN,MM,IY) +
      +           (GYR(NN,MM,IY1)-GYR(NN,MM,IY))*TO5) * F
-	GB(I1) = (HYR(NN,MM,IY) +
+        GB(I1) = (HYR(NN,MM,IY) +
      +           (HYR(NN,MM,IY1)-HYR(NN,MM,IY))*TO5) * F
       ELSE                                                                  ! extrapolate (m>0 terms)
-	GB(I)  = (GYR(NN,MM,IY) +GT (NN,MM)    *T  ) * F
-	GB(I1) = (HYR(NN,MM,IY) +HT (NN,MM)    *T  ) * F
+        GB(I)  = (GYR(NN,MM,IY) +GT (NN,MM)    *T  ) * F
+        GB(I1) = (HYR(NN,MM,IY) +HT (NN,MM)    *T  ) * F
       ENDIF
       RNN = REAL(NN)
       GV(I)  = GB(I)  / RNN
@@ -1587,13 +1587,13 @@ C          Oct 1995 (Barnes): Added ICHG
       DATA IENTYP/-10000/
  
       IF (IENTY .EQ. 1) THEN
-	IS   = 1
-	RLAT = GLAT * DTOR
-	CT   = SIN (RLAT)
-	ST   = COS (RLAT)
-	RLON = GLON * DTOR
-	CP   = COS (RLON)
-	SP   = SIN (RLON)
+        IS   = 1
+        RLAT = GLAT * DTOR
+        CT   = SIN (RLAT)
+        ST   = COS (RLAT)
+        RLON = GLON * DTOR
+        CP   = COS (RLON)
+        SP   = SIN (RLON)
         CALL GD2CART (GLAT,GLON,ALT,XXX,YYY,ZZZ)
         XXX = XXX/RE
         YYY = YYY/RE
@@ -1614,12 +1614,12 @@ C          Oct 1995 (Barnes): Added ICHG
  
       IF (IENTY .NE. IENTYP .OR. ICHG .EQ. 1) THEN
         IENTYP = IENTY
-	ICHG = 0
+        ICHG = 0
         IF (IENTY .NE. 3) THEN
-	  DO 10 I=1,LAST
+          DO 10 I=1,LAST
    10     G(I) = GB(I)
         ELSE
-	  DO 20 I=1,LAST
+          DO 20 I=1,LAST
    20     G(I) = GV(I)
         ENDIF
       ENDIF

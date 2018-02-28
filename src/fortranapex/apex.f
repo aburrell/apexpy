@@ -48,7 +48,7 @@ C          Nov 2009: Change definition of earth's mean radius (RE) from 6371.2
 C                    to the WGS84 value (6371.0088), by J.T. Emmert, NRL
 C
 C------------------------------------------------------------------------------
-C		    Reference Spheroid Change                March 2004
+C                Reference Spheroid Change                March 2004
 C
 C   Apex geomagnetic coordinates are based on the International Reference
 C   Geomagnetic Field (IGRF) which involves the earth's shape when converting
@@ -80,9 +80,9 @@ C   This term is part of an eighth order Lagrange expansion formula (Astron.
 C   J.  Vol. 66, p. 15-16, 1961) designed to give eight digit conversion
 C   accuracy.  The following table summarizes the relevant spheroids:
 C
-C   	 a           b           e**2          Source
+C        a           b           e**2          Source
 C        ----------- -----------  -----------  --------------
-C   	 -           -        0.006722670  Astron J. 1961
+C        -           -        0.006722670  Astron J. 1961
 C        6378.160 km 6356.775 km  0.006701642  IAU-1966
 C        6378.137 km 6356.752 km  0.006694478  WGS-1984
 C
@@ -245,16 +245,16 @@ C          (from which gradients steer the tracing)
       NSTP = NSTP + 1
 
       IF (NSTP .LT. MAXS) THEN
-	CALL ITRACE (IAPX)                               ! trace along field line
-	IF (IAPX .EQ. 1) GO TO 10
-	CALL FNDAPX (ALT,ZMAG,A,ALAT,ALON)               ! (IAPX=2) => passed max radius; find its coordinates
+        CALL ITRACE (IAPX)                              ! trace along field line
+        IF (IAPX .EQ. 1) GO TO 10
+        CALL FNDAPX (ALT,ZMAG,A,ALAT,ALON)              ! (IAPX=2) => passed max radius; find its coordinates
       ELSE
-	RHO = SQRT (Y(1)*Y(1) + Y(2)*Y(2))               ! too many steps; get apex from dipole approximation
-	CALL CONVRT (3,XLAT,HT,RHO,Y(3))
-	XLON = RTOD*ATAN2 (Y(2),Y(1))
-	CALL FELDG (1,XLAT,XLON,HT,BNRTH,BEAST,BDOWN,BABS)
-	CALL DIPAPX  (XLAT,XLON,HT,BNRTH,BEAST,BDOWN,A,ALON)
-	ALAT = -SGN*RTOD*ACOS (SQRT(1./A))
+        RHO = SQRT (Y(1)*Y(1) + Y(2)*Y(2))              ! too many steps; get apex from dipole approximation
+        CALL CONVRT (3,XLAT,HT,RHO,Y(3))
+        XLON = RTOD*ATAN2 (Y(2),Y(1))
+        CALL FELDG (1,XLAT,XLON,HT,BNRTH,BEAST,BDOWN,BABS)
+        CALL DIPAPX  (XLAT,XLON,HT,BNRTH,BEAST,BDOWN,A,ALON)
+        ALAT = -SGN*RTOD*ACOS (SQRT(1./A))
       ENDIF
 
       RETURN
@@ -323,69 +323,69 @@ C          Cartesian component magnetic field (partial) derivitives steer the tr
       YP(3,4) = SGN*BZ/BB
 
       IF (NSTP .LE. 7) THEN
-	DO 10 I=1,3
-	IF (NSTP .EQ. 1) THEN
-	  D2        = DS/2.
-	  D6        = DS/6.
-	  D12       = DS/12.
-	  D24       = DS/24.
-	  YP(I,1)   = YP(I,4)
-	  YOLD(I)   = Y(I)
-	  YAPX(I,1) = Y(I)
-	  Y(I)      = YOLD(I) + DS*YP(I,1)
+        DO 10 I=1,3
+        IF (NSTP .EQ. 1) THEN
+          D2        = DS/2.
+          D6        = DS/6.
+          D12       = DS/12.
+          D24       = DS/24.
+          YP(I,1)   = YP(I,4)
+          YOLD(I)   = Y(I)
+          YAPX(I,1) = Y(I)
+          Y(I)      = YOLD(I) + DS*YP(I,1)
 
-	ELSE IF (NSTP .EQ. 2) THEN
-	  YP(I,2) = YP(I,4)
-	  Y(I)    = YOLD(I) + D2*(YP(I,2)+YP(I,1))
+        ELSE IF (NSTP .EQ. 2) THEN
+          YP(I,2) = YP(I,4)
+          Y(I)    = YOLD(I) + D2*(YP(I,2)+YP(I,1))
 
-	ELSE IF (NSTP .EQ. 3) THEN
-	  Y(I) = YOLD(I) + D6*(2.*YP(I,4)+YP(I,2)+3.*YP(I,1))
+        ELSE IF (NSTP .EQ. 3) THEN
+          Y(I) = YOLD(I) + D6*(2.*YP(I,4)+YP(I,2)+3.*YP(I,1))
 
-	ELSE IF (NSTP .EQ. 4) THEN
-	  YP(I,2)   = YP(I,4)
-	  YAPX(I,2) = Y(I)
-	  YOLD(I)   = Y(I)
-	  Y(I)      = YOLD(I) + D2*(3.*YP(I,2)-YP(I,1))
+        ELSE IF (NSTP .EQ. 4) THEN
+          YP(I,2)   = YP(I,4)
+          YAPX(I,2) = Y(I)
+          YOLD(I)   = Y(I)
+          Y(I)      = YOLD(I) + D2*(3.*YP(I,2)-YP(I,1))
 
-	ELSE IF (NSTP .EQ. 5) THEN
-	  Y(I) = YOLD(I) + D12*(5.*YP(I,4)+8.*YP(I,2)-YP(I,1))
+        ELSE IF (NSTP .EQ. 5) THEN
+          Y(I) = YOLD(I) + D12*(5.*YP(I,4)+8.*YP(I,2)-YP(I,1))
 
-	ELSE IF (NSTP .EQ. 6) THEN
-	  YP(I,3)   = YP(I,4)
-	  YOLD(I)   = Y(I)
-	  YAPX(I,3) = Y(I)
-	  Y(I)      = YOLD(I) + D12*(23.*YP(I,3)-16.*YP(I,2)+5.*YP(I,1))
+        ELSE IF (NSTP .EQ. 6) THEN
+          YP(I,3)   = YP(I,4)
+          YOLD(I)   = Y(I)
+          YAPX(I,3) = Y(I)
+          Y(I)      = YOLD(I) + D12*(23.*YP(I,3)-16.*YP(I,2)+5.*YP(I,1))
 
-	ELSE IF (NSTP .EQ. 7) THEN
-	  YAPX(I,1) = YAPX(I, 2)
-	  YAPX(I,2) = YAPX(I, 3)
-	  Y(I)      = YOLD(I) + D24*(9.*YP(I,4) + 19.*YP(I,3) -
+        ELSE IF (NSTP .EQ. 7) THEN
+          YAPX(I,1) = YAPX(I, 2)
+          YAPX(I,2) = YAPX(I, 3)
+          Y(I)      = YOLD(I) + D24*(9.*YP(I,4) + 19.*YP(I,3) -
      +                               5.*YP(I,2) +     YP(I,1))
-	  YAPX(I,3) = Y(I)
-	ENDIF
+          YAPX(I,3) = Y(I)
+        ENDIF
    10   CONTINUE
-	IF (NSTP .EQ. 6 .OR. NSTP .EQ. 7) THEN        ! signal if apex passed
-	  RC = RDUS (YAPX(1,3), YAPX(2,3), YAPX(3,3))
-	  RP = RDUS (YAPX(1,2), YAPX(2,2), YAPX(3,2))
-	  IF (RC .LT. RP) IAPX = 2
-	ENDIF
+        IF (NSTP .EQ. 6 .OR. NSTP .EQ. 7) THEN        ! signal if apex passed
+          RC = RDUS (YAPX(1,3), YAPX(2,3), YAPX(3,3))
+          RP = RDUS (YAPX(1,2), YAPX(2,2), YAPX(3,2))
+          IF (RC .LT. RP) IAPX = 2
+        ENDIF
 
       ELSE                 ! NSTP > 7
 
-	DO 30 I=1,3
-	YAPX(I,1) = YAPX(I,2)
-	YAPX(I,2) = Y(I)
-	YOLD(I)   = Y(I)
-	Y(I)      = YOLD(I) + D24*(55.*YP(I,4) - 59.*YP(I,3) +
+        DO 30 I=1,3
+        YAPX(I,1) = YAPX(I,2)
+        YAPX(I,2) = Y(I)
+        YOLD(I)   = Y(I)
+        Y(I)      = YOLD(I) + D24*(55.*YP(I,4) - 59.*YP(I,3) +
      +                             37.*YP(I,2) -  9.*YP(I,1))
-	YAPX(I,3) = Y(I)
+        YAPX(I,3) = Y(I)
 
-	DO 20 J=1,3
+        DO 20 J=1,3
    20   YP(I,J) = YP(I,J+1)
    30   CONTINUE
-	RC = RDUS (   Y(1),    Y(2),    Y(3))
-	RP = RDUS (YOLD(1), YOLD(2), YOLD(3))
-	IF (RC .LT. RP) IAPX = 2
+        RC = RDUS (   Y(1),    Y(2),    Y(3))
+        RP = RDUS (YOLD(1), YOLD(2), YOLD(3))
+        IF (RC .LT. RP) IAPX = 2
       ENDIF
 
       RETURN
@@ -469,17 +469,17 @@ C          most recently fit location will reduce the interpolation span.
       ABDOB = ABS(BDA/BA)
 
       IF (ABDOB .GT. 2.E-6) THEN
-	IF (NITR .LT. 4) THEN        ! 4 was chosen because tests rarely required 2 iterations
-	  NITR      = NITR + 1
-	  YAPX(1,2) = Y(1)
-	  YAPX(2,2) = Y(2)
-	  YAPX(3,2) = Y(3)
-	  BD(2)     = BDA
-	  GO TO 20
-	ELSE
-	  WRITE (0,'(''APEX: Imprecise fit of apex: |Bdown/B| ='',1PE7.1
+        IF (NITR .LT. 4) THEN        ! 4 was chosen because tests rarely required 2 iterations
+          NITR      = NITR + 1
+          YAPX(1,2) = Y(1)
+          YAPX(2,2) = Y(2)
+          YAPX(3,2) = Y(3)
+          BD(2)     = BDA
+          GO TO 20
+        ELSE
+         WRITE (0,'(''APEX: Imprecise fit of apex: |Bdown/B| ='',1PE7.1
      +    )') ABDOB
-	ENDIF
+        ENDIF
       ENDIF
 
 C          Ensure altitude of the Apex is at least the initial altitude when
@@ -488,9 +488,9 @@ C          hemisphere (sign) is inferred from the sign of the dip angle at the
 C          starting point
       A = (REQ + AMAX1(ALT,HTA)) / REQ
       IF (A .LT. 1.) THEN
-	WRITE (0,'(''APEX: A can not be less than 1; A, REQ, HTA: '',1P3
+        WRITE (0,'(''APEX: A can not be less than 1; A, REQ, HTA: '',1P3
      +E15.7)') A,REQ,HTA
-	CALL EXIT (1)
+        CALL EXIT (1)
       ENDIF
       RASQ = ACOS (SQRT(1./A))*RTOD
       ALAT = SIGN (RASQ,ZMAG)
@@ -584,9 +584,9 @@ C                    to the WGS84 value (6371.0088), by J.T. Emmert, NRL.
 
       BHOR = SQRT(BNORTH*BNORTH + BEAST*BEAST)
       IF (BHOR .EQ. 0.) THEN
-	ALON = 0.
-	A    = 1.E34
-	RETURN
+        ALON = 0.
+        A    = 1.E34
+        RETURN
       ENDIF
       COTTD  = BDOWN*.5/BHOR
       STD    = 1./SQRT(1.+COTTD*COTTD)
