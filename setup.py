@@ -1,38 +1,29 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import
 
 import io
-import os
 import re
 from glob import glob
-from os.path import basename
-from os.path import dirname
-from os.path import join
-from os.path import relpath
-from os.path import splitext
+from os import path, environ
 
-from setuptools import find_packages
+from setuptools import setup, find_packages
+from distutils.core import Extension
 
-# on_rtd is whether we are on readthedocs.org
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if not on_rtd:
-    from numpy.distutils.core import setup, Extension
+# Include extensions only when not on readthedocs.org
+if environ.get('READTHEDOCS', None) == 'True':
+    extensions = []
+else:
     extensions = [
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
                            'src/fortranapex/makeapexsh.f90',
                            'src/fortranapex/apexsh.f90',
                            'src/fortranapex/checkapexsh.f90'])]
-else:
-    from setuptools import setup
-    from distutils.core import Extension
-    extensions = []
-
 
 def read(*names, **kwargs):
     return io.open(
-        join(dirname(__file__), *names),
+        path.join(path.dirname(__file__), *names),
         encoding=kwargs.get('encoding', 'utf8')
     ).read()
 
@@ -51,11 +42,13 @@ if __name__ == "__main__":
         url='https://github.com/aburrell/apexpy',
         packages=find_packages('src'),
         package_dir={'': 'src'},
-        py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
+        py_modules=[path.splitext(path.basename(pp))[0]
+                    for pp in glob('src/*.py')],
         package_data={'apexpy': ['apexsh.dat']},
         zip_safe=False,
         classifiers=[
-            # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+            # complete classifier list:
+            # http://pypi.python.org/pypi?%3Aaction=list_classifiers
             'Development Status :: 5 - Production/Stable',
             'Intended Audience :: Science/Research',
             'License :: OSI Approved :: MIT License',
