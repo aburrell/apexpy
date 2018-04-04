@@ -7,13 +7,15 @@ import re
 from glob import glob
 from os import path, environ
 
-from setuptools import setup, find_packages
-from distutils.core import Extension
+from setuptools import find_packages
 
 # Include extensions only when not on readthedocs.org
 if environ.get('READTHEDOCS', None) == 'True':
+    from setuptools import setup
+    from distutils.core import Extension
     extensions = []
 else:
+    from numpy.distutils.core import setup, Extension
     extensions = [
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
