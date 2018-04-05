@@ -6,9 +6,10 @@ from . import helpers
 try:
     from . import fortranapex
 except ImportError:
-    print("ERROR: fortranapex module could not be imported. apexpy probably won't work")
+    print("ERROR: fortranapex module could not be imported. " +
+          "apexpy probably won't work")
 
 
-__version__ = "1.0.1"
+__version__ = "1.0.3"
 
 __all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']
