@@ -2,9 +2,9 @@ language: python
 
 python:
   - '2.7'
-  - '3.3'
   - '3.4'
   - '3.5'
+  - '3.6'
 
 sudo: false
 
@@ -32,7 +32,7 @@ before_install:
   - lsb_release -a
 
 install:
-  - pip install coveralls pytest-cov coverage codecov
+  - pip install pytest-capturelog coveralls pytest-cov coverage codecov
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
 
