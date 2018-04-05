@@ -181,7 +181,7 @@ def subsol(datetime):
     yr = year - 2000
 
     nleap = int(np.floor((year - 1601.0) / 4.0))
-    nleap = nleap - 99
+    nleap -= 99
     if year <= 1900:
         ncent = int(np.floor((year - 1601.0) / 100.0))
         ncent = 3 - ncent
@@ -193,17 +193,11 @@ def subsol(datetime):
     # Days (including fraction) since 12 UT on January 1 of IYR:
     df = (ut / 86400.0 - 1.5) + doy
 
-    # Addition to Mean longitude of Sun since January 1 of IYR:
-    lf = 0.9856474 * df
-
-    # Addition to Mean anomaly since January 1 of IYR:
-    gf = 0.9856003 * df
-
     # Mean longitude of Sun:
-    lmean = l0 + lf
+    lmean = l0 + 0.9856474 * df
 
     # Mean anomaly in radians:
-    grad = np.radians(g0 + gf)
+    grad = np.radians(g0 + 0.9856003 * df)
 
     # Ecliptic longitude:
     lmrad = np.radians(lmean + 1.915 * np.sin(grad)
@@ -225,7 +219,7 @@ def subsol(datetime):
     etdeg = etdeg - 360.0 * nrot
 
     # Subsolar longitude:
-    sslon = 180.0 - ut / 240.0 + etdeg # Earth rotates one degree every 240 s.
+    sslon = 180.0 - (ut / 240.0 + etdeg) # Earth rotates one degree every 240 s.
     nrot = round(sslon / 360.0)
     sslon = sslon - 360.0 * nrot
 
