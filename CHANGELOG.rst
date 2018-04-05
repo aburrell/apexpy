@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.0.3 (2018-04-05
+1.0.3 (2018-04-05)
 -----------------------------------------
 * Updated badges and added DOI
 * Added tests for python 3.6
