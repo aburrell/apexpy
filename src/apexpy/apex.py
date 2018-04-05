@@ -340,26 +340,6 @@ class Apex(object):
         # if array is returned, dtype is object, so convert to float
         return np.float64(glat), np.float64(glon), np.float64(error)
 
-    def calc_apex_height(self, height, lat):
-        """ Calculate apex height
-
-        Parameters
-        -----------
-        height : (float)
-            Height above the surface of the earth in km
-        lat : (float)
-            Latitude in degrees
-
-        Returns
-        ----------
-        apex_height : (float)
-            Height of the field line apex in km
-        """
-        cos_lat_squared = np.cos(np.radians(alat))**2
-        apex_height = (self.RE + height) / cos_lat_squared - self.RE
-
-        return apex_height
-
     def _apex2qd_nonvectorized(self, alat, alon, height):
         """Convert from apex to quasi-dipole (not-vectorised)
 
@@ -386,7 +366,7 @@ class Apex(object):
         qlon = alon
 
         # apex height
-        hA = calc_apex_height(self.refh, lat)
+        hA = get_apex(self.refh, lat)
 
         if hA < height:
             if np.isclose(hA, height, rtol=0, atol=1e-5):
@@ -438,7 +418,7 @@ class Apex(object):
         qlat = helpers.checklat(qlat, name='qlat')
 
         alon = qlon
-        hA = calc_apex_height(height, qlat) - self.RE  # apex height
+        hA = get_apex(height, qlat) - self.RE  # apex height
 
         if hA < self.refh:
             if np.isclose(hA, self.refh, rtol=0, atol=1e-5):
@@ -906,24 +886,26 @@ class Apex(object):
                      [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])
 
     def get_apex(self, alat):
-        """Computes the field line apex for a given modified apex latitude.
+        """ Calculate apex height
 
         Parameters
-        ==========
-        alat : array_like
-            Modified apex latitude
+        -----------
+        height : (float)
+            Height above the surface of the earth in km
+        lat : (float)
+            Latitude in degrees
 
         Returns
-        =======
-        apex : ndarray or float
-            Field line apex in km
+        ----------
+        apex_height : (float)
+            Height of the field line apex in km
         """
-
         alat = helpers.checklat(alat, name='alat')
 
-        apex = calc_apex_height(self.refh, alat)
+        cos_lat_squared = np.cos(np.radians(alat))**2
+        apex_height = (self.RE + height) / cos_lat_squared - self.RE
 
-        return apex
+        return apex_height
 
     def set_epoch(self, year):
         """Updates the epoch for all subsequent conversions.
