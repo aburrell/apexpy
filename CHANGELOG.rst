@@ -7,6 +7,7 @@ Changelog
 * Updated badges and added DOI
 * Added tests for python 3.6
 * Removed tests for python 3.3
+* Made some PEP8 changes
 
 1.0.2 (2018-02-27)
 -----------------------------------------

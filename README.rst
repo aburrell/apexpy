@@ -95,9 +95,9 @@ Badges
     :alt: Requirements Status
     :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=master
 
-.. |coveralls| image:: https://coveralls.io/repos/aburrell/apexpy/badge.svg?branch=master&service=github
+.. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=master
     :alt: Coverage Status
-    :target: https://coveralls.io/github/aburrell/apexpy
+    :target: https://coveralls.io/github/aburrell/apexpy?branch=master
 
 .. |codecov| image:: https://codecov.io/github/aburrell/apexpy/coverage.svg?branch=master
     :alt: Coverage Status
