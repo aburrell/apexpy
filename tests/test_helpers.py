@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function, absolute_import, unicode_literals
+from __future__ import division, absolute_import, unicode_literals
 
 import datetime as dt
 
@@ -61,7 +61,8 @@ def test_checklat_message():
 
 
 def test_checklat_array():
-    assert_allclose(helpers.checklat([-90-1e-5, -90, 0, 90, 90+1e-5]), np.array([-90, -90, 0, 90, 90]), rtol=0, atol=1e-8)
+    assert_allclose(helpers.checklat([-90-1e-5, -90, 0, 90, 90+1e-5]),
+                    np.array([-90, -90, 0, 90, 90]), rtol=0, atol=1e-8)
 
     assert type(helpers.checklat([0])) == list
     assert type(helpers.checklat(np.array([0]))) == np.ndarray
@@ -84,12 +85,14 @@ def test_getsinIm_scalar():
 
 
 def test_getsinIm_1Darray():
-    assert_allclose(helpers.getsinIm([60, 10]), [0.96076892283052284, 0.33257924500670238])
+    assert_allclose(helpers.getsinIm([60, 10]),
+                    [0.96076892283052284, 0.33257924500670238])
 
 
 def test_getsinIm_2Darray():
-    assert_allclose(helpers.getsinIm([[60, 10], [60, 10]]), [[0.96076892283052284, 0.33257924500670238],
-                                                             [0.96076892283052284, 0.33257924500670238]])
+    assert_allclose(helpers.getsinIm([[60, 10], [60, 10]]),
+                    [[0.96076892283052284, 0.33257924500670238],
+                     [0.96076892283052284, 0.33257924500670238]])
 
 
 ###============================================================================
@@ -104,12 +107,14 @@ def test_getcosIm_scalar():
 
 
 def test_getcosIm_1Darray():
-    assert_allclose(helpers.getcosIm([60, 10]), [0.27735009811261463, 0.94307531289434765])
+    assert_allclose(helpers.getcosIm([60, 10]),
+                    [0.27735009811261463, 0.94307531289434765])
 
 
 def test_getcosIm_2Darray():
-    assert_allclose(helpers.getcosIm([[60, 10], [60, 10]]), [[0.27735009811261463, 0.94307531289434765],
-                                                             [0.27735009811261463, 0.94307531289434765]])
+    assert_allclose(helpers.getcosIm([[60, 10], [60, 10]]),
+                    [[0.27735009811261463, 0.94307531289434765],
+                     [0.27735009811261463, 0.94307531289434765]])
 
 
 ###============================================================================
@@ -118,11 +123,15 @@ def test_getcosIm_2Darray():
 
 
 def test_toYearFraction():
-    assert_allclose(helpers.toYearFraction(dt.datetime(2001, 1, 1, 0, 0, 0)), 2001)
+    assert_allclose(helpers.toYearFraction(dt.datetime(2001, 1, 1, 0, 0, 0)),
+                    2001)
     assert_allclose(helpers.toYearFraction(dt.date(2001, 1, 1)), 2001)
-    assert_allclose(helpers.toYearFraction(dt.datetime(2002, 1, 1, 0, 0, 0)), 2002)
-    assert_allclose(helpers.toYearFraction(dt.datetime(2005, 2, 3, 4, 5, 6)), 2005.090877283105)
-    assert_allclose(helpers.toYearFraction(dt.datetime(2005, 12, 11, 10, 9, 8)), 2005.943624682902)
+    assert_allclose(helpers.toYearFraction(dt.datetime(2002, 1, 1, 0, 0, 0)),
+                    2002)
+    assert_allclose(helpers.toYearFraction(dt.datetime(2005, 2, 3, 4, 5, 6)),
+                    2005.090877283105)
+    assert_allclose(helpers.toYearFraction(dt.datetime(2005, 12, 11, 10, 9, 8)),
+                    2005.943624682902)
 
 
 ###============================================================================
@@ -142,15 +151,19 @@ def test_gc2gdlat():
 ###============================================================================
 
 def test_subsol():
-    assert_allclose(helpers.subsol(dt.datetime(2005, 2, 3, 4, 5, 6)), (-16.505391672592904, 122.17768157084515))
-    assert_allclose(helpers.subsol(dt.datetime(2010, 12, 11, 10, 9, 8)), (-23.001554595838947, 26.008999999955023))
+    assert_allclose(helpers.subsol(dt.datetime(2005, 2, 3, 4, 5, 6)),
+                    (-16.505391672592904, 122.17768157084515))
+    assert_allclose(helpers.subsol(dt.datetime(2010, 12, 11, 10, 9, 8)),
+                    (-23.001554595838947, 26.008999999955023))
 
     with pytest.raises(ValueError):
         helpers.subsol(dt.datetime(1600, 12, 31, 23, 59, 59))
-    assert_allclose(helpers.subsol(dt.datetime(1601, 1, 1, 0, 0, 0)), (-23.06239721771427, -178.90131731228584))
+    assert_allclose(helpers.subsol(dt.datetime(1601, 1, 1, 0, 0, 0)),
+                    (-23.06239721771427, -178.90131731228584))
     with pytest.raises(ValueError):
         helpers.subsol(dt.datetime(2101, 1, 1, 0, 0, 0))
-    assert_allclose(helpers.subsol(dt.datetime(2100, 12, 31, 23, 59, 59)), (-23.021061422069053, -179.23129780639425))
+    assert_allclose(helpers.subsol(dt.datetime(2100, 12, 31, 23, 59, 59)),
+                    (-23.021061422069053, -179.23129780639425))
 
 if __name__ == '__main__':
     pytest.main()
