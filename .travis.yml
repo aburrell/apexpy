@@ -15,16 +15,8 @@ addons:
     - gfortran
 
 env:
-
   global:
     LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
-
-  matrix:
-    - TOXENV=extension-coveralls,coveralls,codecov
-      TESTSCRIPT="py.test --cov=apexpy --cov-report=term-missing"
-
-    - TOXENV=nocover
-      TESTSCRIPT="py.test"
 
 before_install:
   - python --version
@@ -35,10 +27,11 @@ install:
   - pip install pytest-capturelog coveralls pytest-cov coverage codecov
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
+  - pip install tox-travis
 
 script:
-  $TESTSCRIPT
-
+  - tox
+  - coverage run --source apexpy -m py.test
 after_success:
   - coverage combine
   - coverage report
