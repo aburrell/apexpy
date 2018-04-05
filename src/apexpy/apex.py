@@ -366,7 +366,7 @@ class Apex(object):
         qlon = alon
 
         # apex height
-        hA = get_apex(self.refh, lat)
+        hA = self.get_apex(alat)
 
         if hA < height:
             if np.isclose(hA, height, rtol=0, atol=1e-5):
@@ -418,7 +418,7 @@ class Apex(object):
         qlat = helpers.checklat(qlat, name='qlat')
 
         alon = qlon
-        hA = get_apex(height, qlat) - self.RE  # apex height
+        hA = self.get_apex(qlat, height) # apex height
 
         if hA < self.refh:
             if np.isclose(hA, self.refh, rtol=0, atol=1e-5):
@@ -885,24 +885,27 @@ class Apex(object):
         return tuple(np.squeeze(x) for x in
                      [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])
 
-    def get_apex(self, alat):
+    def get_apex(self, lat, height=None):
         """ Calculate apex height
 
         Parameters
         -----------
-        height : (float)
-            Height above the surface of the earth in km
         lat : (float)
             Latitude in degrees
+        height : (float or NoneType)
+            Height above the surface of the earth in km or NoneType to use
+            reference height (default=None)
 
         Returns
         ----------
         apex_height : (float)
             Height of the field line apex in km
         """
-        alat = helpers.checklat(alat, name='alat')
+        lat = helpers.checklat(lat, name='alat')
+        if height is None:
+            height = self.refh
 
-        cos_lat_squared = np.cos(np.radians(alat))**2
+        cos_lat_squared = np.cos(np.radians(lat))**2
         apex_height = (self.RE + height) / cos_lat_squared - self.RE
 
         return apex_height
