@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function, absolute_import, unicode_literals
+from __future__ import division, absolute_import, unicode_literals
 
 import datetime as dt
 import warnings
@@ -711,32 +711,48 @@ def test_map_E_to_height():
     out_70_15_100_500 = [0.727605, 2.180817, 0.291414]
 
     # scalar
-    assert_allclose(A.map_E_to_height(60, 15, 100, 500, [1, 2, 3]), out_60_15_100_500, rtol=1e-5)
-    assert_allclose(A.map_E_to_height(60, 15, 100, 500, [2, 3, 4]), out_60_15_100_500_234, rtol=1e-5)
-    assert_allclose(A.map_E_to_height(60, 15, 100, 1000, [1, 2, 3]), out_60_15_100_1000, rtol=1e-5)
-    assert_allclose(A.map_E_to_height(60, 15, 200, 500, [1, 2, 3]), out_60_15_200_500, rtol=1e-5)
-    assert_allclose(A.map_E_to_height(60, 30, 100, 500, [1, 2, 3]), out_60_30_100_500, rtol=1e-5)
-    assert_allclose(A.map_E_to_height(70, 15, 100, 500, [1, 2, 3]), out_70_15_100_500, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 100, 500, [1, 2, 3]),
+                    out_60_15_100_500, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 100, 500, [2, 3, 4]),
+                    out_60_15_100_500_234, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 100, 1000, [1, 2, 3]),
+                    out_60_15_100_1000, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 200, 500, [1, 2, 3]),
+                    out_60_15_200_500, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 30, 100, 500, [1, 2, 3]),
+                    out_60_30_100_500, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(70, 15, 100, 500, [1, 2, 3]),
+                    out_70_15_100_500, rtol=1e-5)
 
     # vectorize lat
-    assert_allclose(A.map_E_to_height([60, 70], 15, 100, 500, np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_70_15_100_500]).T, rtol=1e-5)
+    assert_allclose(A.map_E_to_height([60, 70], 15, 100, 500,
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_70_15_100_500]).T,
+                    rtol=1e-5)
 
     # vectorize lon
-    assert_allclose(A.map_E_to_height(60, [15, 30], 100, 500, np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_60_30_100_500]).T, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, [15, 30], 100, 500,
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_30_100_500]).T,
+                    rtol=1e-5)
 
     # vectorize height
-    assert_allclose(A.map_E_to_height(60, 15, [100, 200], 500, np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_60_15_200_500]).T, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, [100, 200], 500,
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_200_500]).T,
+                    rtol=1e-5)
 
     # vectorize newheight
-    assert_allclose(A.map_E_to_height(60, 15, 100, [500, 1000], np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_60_15_100_1000]).T, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 100, [500, 1000],
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_100_1000]).T,
+                    rtol=1e-5)
 
     # vectorize E
-    assert_allclose(A.map_E_to_height(60, 15, 100, 500, np.array([[1, 2, 3], [2, 3, 4]]).T),
-                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T, rtol=1e-5)
+    assert_allclose(A.map_E_to_height(60, 15, 100, 500,
+                                      np.array([[1, 2, 3], [2, 3, 4]]).T),
+                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
+                    rtol=1e-5)
 
 
 ###============================================================================
@@ -754,32 +770,48 @@ def test_map_V_to_height():
     out_70_15_100_500 = [0.846819, 2.592572, 0.347919]
 
     # scalar
-    assert_allclose(A.map_V_to_height(60, 15, 100, 500, [1, 2, 3]), out_60_15_100_500, rtol=1e-5)
-    assert_allclose(A.map_V_to_height(60, 15, 100, 500, [2, 3, 4]), out_60_15_100_500_234, rtol=1e-5)
-    assert_allclose(A.map_V_to_height(60, 15, 100, 1000, [1, 2, 3]), out_60_15_100_1000, rtol=1e-5)
-    assert_allclose(A.map_V_to_height(60, 15, 200, 500, [1, 2, 3]), out_60_15_200_500, rtol=1e-5)
-    assert_allclose(A.map_V_to_height(60, 30, 100, 500, [1, 2, 3]), out_60_30_100_500, rtol=1e-5)
-    assert_allclose(A.map_V_to_height(70, 15, 100, 500, [1, 2, 3]), out_70_15_100_500, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 100, 500, [1, 2, 3]),
+                    out_60_15_100_500, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 100, 500, [2, 3, 4]),
+                    out_60_15_100_500_234, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 100, 1000, [1, 2, 3]),
+                    out_60_15_100_1000, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 200, 500, [1, 2, 3]),
+                    out_60_15_200_500, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 30, 100, 500, [1, 2, 3]),
+                    out_60_30_100_500, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(70, 15, 100, 500, [1, 2, 3]),
+                    out_70_15_100_500, rtol=1e-5)
 
     # vectorize lat
-    assert_allclose(A.map_V_to_height([60, 70], 15, 100, 500, np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_70_15_100_500]).T, rtol=1e-5)
+    assert_allclose(A.map_V_to_height([60, 70], 15, 100, 500,
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_70_15_100_500]).T,
+                    rtol=1e-5)
 
     # vectorize lon
-    assert_allclose(A.map_V_to_height(60, [15, 30], 100, 500, np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_60_30_100_500]).T, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, [15, 30], 100, 500,
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_30_100_500]).T,
+                    rtol=1e-5)
 
     # vectorize height
-    assert_allclose(A.map_V_to_height(60, 15, [100, 200], 500, np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_60_15_200_500]).T, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, [100, 200], 500,
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_200_500]).T,
+                    rtol=1e-5)
 
     # vectorize newheight
-    assert_allclose(A.map_V_to_height(60, 15, 100, [500, 1000], np.array([[1, 2, 3]]*2).T),
-                    np.array([out_60_15_100_500, out_60_15_100_1000]).T, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 100, [500, 1000],
+                                      np.array([[1, 2, 3]]*2).T),
+                    np.array([out_60_15_100_500, out_60_15_100_1000]).T,
+                    rtol=1e-5)
 
     # vectorize E
-    assert_allclose(A.map_V_to_height(60, 15, 100, 500, np.array([[1, 2, 3], [2, 3, 4]]).T),
-                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T, rtol=1e-5)
+    assert_allclose(A.map_V_to_height(60, 15, 100, 500,
+                                      np.array([[1, 2, 3], [2, 3, 4]]).T),
+                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
+                    rtol=1e-5)
 
 
 ###============================================================================
@@ -791,20 +823,23 @@ def test_map_V_to_height():
 
 def test_basevectors_qd_scalar_geo():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.basevectors_qd(60, 15, 100, coords='geo'), A._basevec(60, 15, 100))
+    assert_allclose(A.basevectors_qd(60, 15, 100, coords='geo'),
+                    A._basevec(60, 15, 100))
 
 
 def test_basevectors_qd_scalar_apex():
     A = Apex(date=2000, refh=300)
     glat, glon, _ = A.apex2geo(60, 15, 100, precision=1e-2)
-    assert_allclose(A.basevectors_qd(60, 15, 100, coords='apex', precision=1e-2), A._basevec(glat, glon, 100))
+    assert_allclose(A.basevectors_qd(60, 15, 100, coords='apex',
+                                     precision=1e-2),
+                    A._basevec(glat, glon, 100))
 
 
 def test_basevectors_qd_scalar_qd():
     A = Apex(date=2000, refh=300)
     glat, glon, _ = A.qd2geo(60, 15, 100, precision=1e-2)
-    assert_allclose(A.basevectors_qd(60, 15, 100, coords='qd', precision=1e-2), A._basevec(glat, glon, 100))
-
+    assert_allclose(A.basevectors_qd(60, 15, 100, coords='qd', precision=1e-2),
+                    A._basevec(glat, glon, 100))
 
 # test shapes and vectorization of arguments
 
@@ -851,9 +886,11 @@ def test_basevectors_qd_array():
 def test_basevectors_apex_scalar_geo():
     A = Apex(date=2000, refh=300)
 
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='geo')
+    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+     e3) = A.basevectors_apex(60, 15, 100, coords='geo')
 
-    _, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_, e3_ = A._geo2apexall(60, 15, 100)
+    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
+     e3_) = A._geo2apexall(60, 15, 100)
 
     assert_allclose(f1, f1_)
     assert_allclose(f2, f2_)
@@ -868,10 +905,12 @@ def test_basevectors_apex_scalar_geo():
 def test_basevectors_apex_scalar_apex():
     A = Apex(date=2000, refh=300)
 
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='apex', precision=1e-2)
+    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+     e3) = A.basevectors_apex(60, 15, 100, coords='apex', precision=1e-2)
 
     glat, glon, _ = A.apex2geo(60, 15, 100, precision=1e-2)
-    _, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_, e3_ = A._geo2apexall(glat, glon, 100)
+    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
+     e3_) = A._geo2apexall(glat, glon, 100)
 
     assert_allclose(f1, f1_)
     assert_allclose(f2, f2_)
@@ -886,10 +925,12 @@ def test_basevectors_apex_scalar_apex():
 def test_basevectors_apex_scalar_qd():
     A = Apex(date=2000, refh=300)
 
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, 100, coords='qd', precision=1e-2)
+    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+     e3) = A.basevectors_apex(60, 15, 100, coords='qd', precision=1e-2)
 
     glat, glon, _ = A.qd2geo(60, 15, 100, precision=1e-2)
-    _, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_, e3_ = A._geo2apexall(glat, glon, 100)
+    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
+     e3_) = A._geo2apexall(glat, glon, 100)
 
     assert_allclose(f1, f1_)
     assert_allclose(f2, f2_)
@@ -934,9 +975,12 @@ def test_basevectors_apex_vectorization():
 # test correct vectorization of height
 def test_basevectors_apex_vectorization_height():
     A = Apex(date=2000, refh=0)
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(60, 15, [200, 400], coords='geo')
-    _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(60, 15, 200)
-    _, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2, e3_2 = A._geo2apexall(60, 15, 400)
+    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+     e3) = A.basevectors_apex(60, 15, [200, 400], coords='geo')
+    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
+     e3_1) = A._geo2apexall(60, 15, 200)
+    (_, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2,
+     e3_2) = A._geo2apexall(60, 15, 400)
 
     assert_allclose(f1[:, 0], f1_1)
     assert_allclose(f2[:, 0], f2_1)
@@ -947,9 +991,12 @@ def test_basevectors_apex_vectorization_height():
     assert_allclose(e2[:, 0], e2_1)
     assert_allclose(e3[:, 0], e3_1)
 
-    assert_allclose(f3[:, 0], np.array([-0.088671, -0.018272, 0.993576]), rtol=1e-4)
-    assert_allclose(g1[:, 0], np.array([0.903098, 0.245273, 0.085107]), rtol=1e-4)
-    assert_allclose(g2[:, 0], np.array([-0.103495, 1.072078, 0.01048]), rtol=1e-4)
+    assert_allclose(f3[:, 0], np.array([-0.088671, -0.018272, 0.993576]),
+                    rtol=1e-4)
+    assert_allclose(g1[:, 0], np.array([0.903098, 0.245273, 0.085107]),
+                    rtol=1e-4)
+    assert_allclose(g2[:, 0], np.array([-0.103495, 1.072078, 0.01048]),
+                    rtol=1e-4)
     assert_allclose(g3[:, 0], np.array([0, 0, 1.006465]), rtol=1e-4)
 
     assert_allclose(f1[:, 1], f1_2)
@@ -961,9 +1008,12 @@ def test_basevectors_apex_vectorization_height():
     assert_allclose(e2[:, 1], e2_2)
     assert_allclose(e3[:, 1], e3_2)
 
-    assert_allclose(f3[:, 1], np.array([-0.085415, -0.021176, 0.989645]), rtol=1e-4)
-    assert_allclose(g1[:, 1], np.array([0.902695, 0.246919, 0.083194]), rtol=1e-4)
-    assert_allclose(g2[:, 1], np.array([-0.11051, 1.066094, 0.013274]), rtol=1e-4)
+    assert_allclose(f3[:, 1], np.array([-0.085415, -0.021176, 0.989645]),
+                    rtol=1e-4)
+    assert_allclose(g1[:, 1], np.array([0.902695, 0.246919, 0.083194]),
+                    rtol=1e-4)
+    assert_allclose(g2[:, 1], np.array([-0.11051, 1.066094, 0.013274]),
+                    rtol=1e-4)
     assert_allclose(g3[:, 1], np.array([0, 0, 1.010463]), rtol=1e-4)
 
 
@@ -972,8 +1022,10 @@ def test_basevectors_apex_vectorization_height():
 def test_basevectors_apex_scalar():
     A = Apex(date=2000, refh=300)
 
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(0, 15, 100, coords='geo')
-    _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
+    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+     e3) = A.basevectors_apex(0, 15, 100, coords='geo')
+    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
+     e3_1) = A._geo2apexall(0, 15, 100)
 
     assert_allclose(f1, f1_1)
     assert_allclose(f2, f2_1)
@@ -994,9 +1046,12 @@ def test_basevectors_apex_scalar():
 
 def test_basevectors_apex_array():
     A = Apex(date=2000, refh=300)
-    f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex([0, 30], 15, 100, coords='geo')
-    _, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1, e3_1 = A._geo2apexall(0, 15, 100)
-    _, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2, e3_2 = A._geo2apexall(30, 15, 100)
+    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+     e3) = A.basevectors_apex([0, 30], 15, 100, coords='geo')
+    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
+     e3_1) = A._geo2apexall(0, 15, 100)
+    (_, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2,
+     e3_2) = A._geo2apexall(30, 15, 100)
 
     assert_allclose(f1[:, 0], f1_1)
     assert_allclose(f2[:, 0], f2_1)
@@ -1007,9 +1062,12 @@ def test_basevectors_apex_array():
     assert_allclose(e2[:, 0], e2_1)
     assert_allclose(e3[:, 0], e3_1)
 
-    assert_allclose(f3[:, 0], np.array([0.092637, -0.245951, 0.938848]), rtol=1e-4)
-    assert_allclose(g1[:, 0], np.array([0.939012, 0.073416, -0.07342]), rtol=1e-4)
-    assert_allclose(g2[:, 0], np.array([0.055389, 1.004155, 0.257594]), rtol=1e-4)
+    assert_allclose(f3[:, 0], np.array([0.092637, -0.245951, 0.938848]),
+                    rtol=1e-4)
+    assert_allclose(g1[:, 0], np.array([0.939012, 0.073416, -0.07342]),
+                    rtol=1e-4)
+    assert_allclose(g2[:, 0], np.array([0.055389, 1.004155, 0.257594]),
+                    rtol=1e-4)
     assert_allclose(g3[:, 0], np.array([0, 0, 1.065135]), rtol=1e-4)
 
     assert_allclose(f1[:, 1], f1_2)
@@ -1021,9 +1079,12 @@ def test_basevectors_apex_array():
     assert_allclose(e2[:, 1], e2_2)
     assert_allclose(e3[:, 1], e3_2)
 
-    assert_allclose(f3[:, 1], np.array([-0.036618, -0.071019, 0.861604]), rtol=1e-4)
-    assert_allclose(g1[:, 1], np.array([0.844391, 0.015353, 0.037152]), rtol=1e-4)
-    assert_allclose(g2[:, 1], np.array([0.050808, 1.02131, 0.086342]), rtol=1e-4)
+    assert_allclose(f3[:, 1], np.array([-0.036618, -0.071019, 0.861604]),
+                    rtol=1e-4)
+    assert_allclose(g1[:, 1], np.array([0.844391, 0.015353, 0.037152]),
+                    rtol=1e-4)
+    assert_allclose(g2[:, 1], np.array([0.050808, 1.02131, 0.086342]),
+                    rtol=1e-4)
     assert_allclose(g3[:, 1], np.array([0, 0, 1.160625]), rtol=1e-4)
 
 
@@ -1033,7 +1094,8 @@ def test_basevectors_apex_delta():
     A = Apex(date=2000, refh=300)
     for lat in range(0, 90, 10):
         for lon in range(0, 360, 15):
-            f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(lat, lon, 500)
+            (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+             e3) = A.basevectors_apex(lat, lon, 500)
             f = [np.append(f1, 0), np.append(f2, 0), f3]
             g = [g1, g2, g3]
             d = [d1, d2, d3]
@@ -1047,7 +1109,8 @@ def test_basevectors_apex_delta():
 def test_basevectors_apex_invalid_scalar():
     A = Apex(date=2000, refh=10000)
     with warnings.catch_warnings(record=True) as w:
-        f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 = A.basevectors_apex(0, 0, 0)
+        (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+         e3) = A.basevectors_apex(0, 0, 0)
         A.basevectors_apex(0, 0, 0)
         assert len(w) == 2
         assert issubclass(w[-1].category, UserWarning)
