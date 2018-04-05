@@ -22,6 +22,7 @@ before_install:
   - python --version
   - uname -a
   - lsb_release -a
+  - pip install numpy
 
 install:
   - pip install pytest-capturelog coveralls pytest-cov coverage codecov
