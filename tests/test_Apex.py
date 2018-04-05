@@ -65,7 +65,8 @@ def test__geo2qd_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(A._geo2qd(lat, lon, 100), fa.apxg2q(lat, lon, 100, 0)[:2])
+            assert_allclose(A._geo2qd(lat, lon, 100),
+                            fa.apxg2q(lat, lon, 100, 0)[:2])
 
 
 def test__geo2qd_array():
@@ -75,8 +76,10 @@ def test__geo2qd_array():
     lat2, lon2 = fa.apxg2q(30, 15, 200, 0)[:2]
     lat3, lon3 = fa.apxg2q(60, 15, 300, 0)[:2]
     lat4, lon4 = fa.apxg2q(90, 15, 400, 0)[:2]
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]], dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]], dtype=float))
+    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
+                                                 dtype=float))
+    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
+                                                 dtype=float))
 
 
 def test__geo2qd_longitude():
@@ -86,14 +89,16 @@ def test__geo2qd_longitude():
     assert_allclose(A._geo2qd(60, -180, 100), A._geo2qd(60, 180, 100))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(A._geo2qd(lat, 15+i*360, 100), fa.apxg2q(lat, 15, 100, 0)[:2])
+            assert_allclose(A._geo2qd(lat, 15+i*360, 100),
+                            fa.apxg2q(lat, 15, 100, 0)[:2])
 
 
 def test__geo2apex_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(A._geo2apex(lat, lon, 100), fa.apxg2all(lat, lon, 100, 300, 0)[2:4])
+            assert_allclose(A._geo2apex(lat, lon, 100),
+                            fa.apxg2all(lat, lon, 100, 300, 0)[2:4])
 
 
 def test__geo2apex_array():
@@ -103,18 +108,23 @@ def test__geo2apex_array():
     lat2, lon2 = fa.apxg2all(30, 15, 200, 300, 0)[2:4]
     lat3, lon3 = fa.apxg2all(60, 15, 300, 300, 0)[2:4]
     lat4, lon4 = fa.apxg2all(90, 15, 400, 300, 0)[2:4]
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]], dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]], dtype=float))
+    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
+                                                 dtype=float))
+    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
+                                                 dtype=float))
 
 
 def test__geo2apex_longitude():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A._geo2apex(60, 180, 100), fa.apxg2all(60, 180, 100, 300, 0)[2:4])
-    assert_allclose(A._geo2apex(60, -180, 100), fa.apxg2all(60, -180, 100, 300, 0)[2:4])
+    assert_allclose(A._geo2apex(60, 180, 100),
+                    fa.apxg2all(60, 180, 100, 300, 0)[2:4])
+    assert_allclose(A._geo2apex(60, -180, 100),
+                    fa.apxg2all(60, -180, 100, 300, 0)[2:4])
     assert_allclose(A._geo2apex(60, -180, 100), A._geo2apex(60, 180, 100))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(A._geo2apex(lat, 15+i*360, 100), fa.apxg2all(lat, 15, 100, 300, 0)[2:4])
+            assert_allclose(A._geo2apex(lat, 15+i*360, 100),
+                            fa.apxg2all(lat, 15, 100, 300, 0)[2:4])
 
 
 def test__geo2apexall_scalar():
@@ -137,7 +147,9 @@ def test__geo2apexall_array():
     for i in range(len(ret)):
         try:
             # ret[i] is array of floats
-            assert_allclose(ret[i].astype(float), np.array([[ret1[i], ret2[i]], [ret3[i], ret4[i]]], dtype=float))
+            assert_allclose(ret[i].astype(float),
+                            np.array([[ret1[i], ret2[i]], [ret3[i], ret4[i]]],
+                                     dtype=float))
         except:
             # ret[i] is array of arrays
             assert_allclose(ret[i][0, 0], ret1[i])
@@ -151,36 +163,46 @@ def test__qd2geo_scalar():
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
             for prec in [-1, 1e-2, 1e-10]:
-                assert_allclose(A._qd2geo(lat, lon, 100, prec), fa.apxq2g(lat, lon, 100, prec))
+                assert_allclose(A._qd2geo(lat, lon, 100, prec),
+                                fa.apxq2g(lat, lon, 100, prec))
 
 
 def test__qd2geo_array():
     A = Apex(date=2000, refh=300)
-    lats, lons, errs = A._qd2geo([[0, 30], [60, 90]], 15, [[100, 200], [300, 400]], 1e-2)
+    lats, lons, errs = A._qd2geo([[0, 30], [60, 90]], 15,
+                                 [[100, 200], [300, 400]], 1e-2)
     lat1, lon1, err1 = fa.apxq2g(0, 15, 100, 1e-2)
     lat2, lon2, err2 = fa.apxq2g(30, 15, 200, 1e-2)
     lat3, lon3, err3 = fa.apxq2g(60, 15, 300, 1e-2)
     lat4, lon4, err4 = fa.apxq2g(90, 15, 400, 1e-2)
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]], dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]], dtype=float))
-    assert_allclose(errs.astype(float), np.array([[err1, err2], [err3, err4]], dtype=float))
+    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
+                                                 dtype=float))
+    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
+                                                 dtype=float))
+    assert_allclose(errs.astype(float), np.array([[err1, err2], [err3, err4]],
+                                                 dtype=float))
 
 
 def test__qd2geo_longitude():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A._qd2geo(60, 180, 100, 1e-2), fa.apxq2g(60, 180, 100, 1e-2))
-    assert_allclose(A._qd2geo(60, -180, 100, 1e-2), fa.apxq2g(60, -180, 100, 1e-2))
-    assert_allclose(A._qd2geo(60, -180, 100, 1e-2), A._qd2geo(60, 180, 100, 1e-2))
+    assert_allclose(A._qd2geo(60, 180, 100, 1e-2),
+                    fa.apxq2g(60, 180, 100, 1e-2))
+    assert_allclose(A._qd2geo(60, -180, 100, 1e-2),
+                    fa.apxq2g(60, -180, 100, 1e-2))
+    assert_allclose(A._qd2geo(60, -180, 100, 1e-2),
+                    A._qd2geo(60, 180, 100, 1e-2))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(A._qd2geo(lat, 15+i*360, 100, 1e-2), fa.apxq2g(lat, 15, 100, 1e-2))
+            assert_allclose(A._qd2geo(lat, 15+i*360, 100, 1e-2),
+                            fa.apxq2g(lat, 15, 100, 1e-2))
 
 
 def test__basevec_scalar():
     A = Apex(date=2000, refh=300)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(A._basevec(lat, lon, 100), fa.apxg2q(lat, lon, 100, 1)[2:4])
+            assert_allclose(A._basevec(lat, lon, 100),
+                            fa.apxg2q(lat, lon, 100, 1)[2:4])
 
 
 def test__basevec_array():
@@ -207,7 +229,8 @@ def test__basevec_longitude():
     assert_allclose(A._basevec(60, -180, 100), A._basevec(60, 180, 100))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(A._basevec(lat, 15+i*360, 100), fa.apxg2q(lat, 15, 100, 1)[2:4])
+            assert_allclose(A._basevec(lat, 15+i*360, 100),
+                            fa.apxg2q(lat, 15, 100, 1)[2:4])
 
 
 ###============================================================================
@@ -217,12 +240,14 @@ def test__basevec_longitude():
 
 def test_convert_geo2apex():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'geo', 'apex', height=100), A.geo2apex(60, 15, 100))
+    assert_allclose(A.convert(60, 15, 'geo', 'apex', height=100),
+                    A.geo2apex(60, 15, 100))
 
 
 def test_convert_geo2qd():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'geo', 'qd', height=100), A.geo2qd(60, 15, 100))
+    assert_allclose(A.convert(60, 15, 'geo', 'qd', height=100),
+                    A.geo2qd(60, 15, 100))
 
 
 def test_convert_geo2mlt_nodate():
@@ -234,57 +259,77 @@ def test_convert_geo2mlt_nodate():
 def test_convert_geo2mlt():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'geo', 'mlt', height=100, ssheight=2e5, datetime=datetime)[1], A.mlon2mlt(A.geo2apex(60, 15, 100)[1], datetime, ssheight=2e5))
+    assert_allclose(A.convert(60, 15, 'geo', 'mlt', height=100, ssheight=2e5,
+                              datetime=datetime)[1],
+                    A.mlon2mlt(A.geo2apex(60, 15, 100)[1], datetime,
+                               ssheight=2e5))
 
 
 def test_convert_apex2geo():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'apex', 'geo', height=100, precision=1e-2), A.apex2geo(60, 15, 100, precision=1e-2)[:-1])
+    assert_allclose(A.convert(60, 15, 'apex', 'geo', height=100,
+                              precision=1e-2), A.apex2geo(60, 15, 100,
+                                                          precision=1e-2)[:-1])
 
 
 def test_convert_apex2qd():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'apex', 'qd', height=100), A.apex2qd(60, 15, height=100))
+    assert_allclose(A.convert(60, 15, 'apex', 'qd', height=100),
+                    A.apex2qd(60, 15, height=100))
 
 
 def test_convert_apex2mlt():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'apex', 'mlt', height=100, datetime=datetime, ssheight=2e5)[1], A.mlon2mlt(15, datetime, ssheight=2e5))
+    assert_allclose(A.convert(60, 15, 'apex', 'mlt', height=100,
+                              datetime=datetime, ssheight=2e5)[1],
+                    A.mlon2mlt(15, datetime, ssheight=2e5))
 
 
 def test_convert_qd2geo():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'qd', 'geo', height=100, precision=1e-2), A.qd2geo(60, 15, 100, precision=1e-2)[:-1])
+    assert_allclose(A.convert(60, 15, 'qd', 'geo', height=100, precision=1e-2),
+                    A.qd2geo(60, 15, 100, precision=1e-2)[:-1])
 
 
 def test_convert_qd2apex():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'qd', 'apex', height=100), A.qd2apex(60, 15, height=100))
+    assert_allclose(A.convert(60, 15, 'qd', 'apex', height=100),
+                    A.qd2apex(60, 15, height=100))
 
 
 def test_convert_qd2mlt():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'qd', 'mlt', height=100, datetime=datetime, ssheight=2e5)[1], A.mlon2mlt(15, datetime, ssheight=2e5))
+    assert_allclose(A.convert(60, 15, 'qd', 'mlt', height=100,
+                              datetime=datetime, ssheight=2e5)[1],
+                    A.mlon2mlt(15, datetime, ssheight=2e5))
 
 
 def test_convert_mlt2geo():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'mlt', 'geo', height=100, datetime=datetime, precision=1e-2, ssheight=2e5), A.apex2geo(60, A.mlt2mlon(15, datetime, ssheight=2e5), 100, precision=1e-2)[:-1])
+    assert_allclose(A.convert(60, 15, 'mlt', 'geo', height=100,
+                              datetime=datetime, precision=1e-2, ssheight=2e5),
+                    A.apex2geo(60, A.mlt2mlon(15, datetime, ssheight=2e5), 100,
+                               precision=1e-2)[:-1])
 
 
 def test_convert_mlt2apex():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'mlt', 'apex', height=100, datetime=datetime, ssheight=2e5), (60, A.mlt2mlon(15, datetime, ssheight=2e5)))
+    assert_allclose(A.convert(60, 15, 'mlt', 'apex', height=100,
+                              datetime=datetime, ssheight=2e5),
+                    (60, A.mlt2mlon(15, datetime, ssheight=2e5)))
 
 
 def test_convert_mlt2qd():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'mlt', 'qd', height=100, datetime=datetime, ssheight=2e5), A.apex2qd(60, A.mlt2mlon(15, datetime, ssheight=2e5), height=100))
+    assert_allclose(A.convert(60, 15, 'mlt', 'qd', height=100,
+                              datetime=datetime, ssheight=2e5),
+                    A.apex2qd(60, A.mlt2mlon(15, datetime, ssheight=2e5),
+                              height=100))
 
 
 def test_convert_invalid_lat():
@@ -296,7 +341,8 @@ def test_convert_invalid_lat():
     A.convert(90, 0, 'geo', 'geo')
     A.convert(-90, 0, 'geo', 'geo')
 
-    assert_allclose(A.convert(90+1e-5, 0, 'geo', 'apex'), A.convert(90, 0, 'geo', 'apex'), rtol=0, atol=1e-8)
+    assert_allclose(A.convert(90+1e-5, 0, 'geo', 'apex'),
+                    A.convert(90, 0, 'geo', 'apex'), rtol=0, atol=1e-8)
 
 
 def test_convert_invalid_transformation():
@@ -336,7 +382,8 @@ def test_geo2apex_invalid_lat():
     A.geo2apex(90, 0, 0)
     A.geo2apex(-90, 0, 0)
 
-    assert_allclose(A.geo2apex(90+1e-5, 0, 0), A.geo2apex(90, 0, 0), rtol=0, atol=1e-8)
+    assert_allclose(A.geo2apex(90+1e-5, 0, 0), A.geo2apex(90, 0, 0), rtol=0,
+                    atol=1e-8)
 
 
 def test_geo2apex_undefined_warning():
@@ -359,7 +406,8 @@ def test_apex2geo():
     A = Apex(date=2000, refh=300)
     lat, lon, error = A.apex2geo(60, 15, 100, precision=1e-2)
     assert_allclose((lat, lon, error),
-                    A.qd2geo(*A.apex2qd(60, 15, 100), height=100, precision=1e-2))
+                    A.qd2geo(*A.apex2qd(60, 15, 100), height=100,
+                             precision=1e-2))
     assert type(lat) != np.ndarray
     assert type(lon) != np.ndarray
     assert type(error) != np.ndarray
@@ -381,7 +429,8 @@ def test_apex2geo_invalid_lat():
     A.apex2geo(90, 0, 0, 1e-2)
     A.apex2geo(-90, 0, 0, 1e-2)
 
-    assert_allclose(A.apex2geo(90+1e-5, 0, 0, 1e-2), A.apex2geo(90, 0, 0, 1e-2), rtol=0, atol=1e-8)
+    assert_allclose(A.apex2geo(90+1e-5, 0, 0, 1e-2), A.apex2geo(90, 0, 0, 1e-2),
+                    rtol=0, atol=1e-8)
 
 
 ###============================================================================
@@ -413,7 +462,8 @@ def test_geo2qd_invalid_lat():
     A.geo2qd(90, 0, 0)
     A.geo2qd(-90, 0, 0)
 
-    assert_allclose(A.geo2qd(90+1e-5, 0, 0), A.geo2qd(90, 0, 0), rtol=0, atol=1e-8)
+    assert_allclose(A.geo2qd(90+1e-5, 0, 0), A.geo2qd(90, 0, 0), rtol=0,
+                    atol=1e-8)
 
 
 ###============================================================================
@@ -446,7 +496,8 @@ def test_qd2geo_invalid_lat():
     A.qd2geo(90, 0, 0, precision=1e-2)
     A.qd2geo(-90, 0, 0, precision=1e-2)
 
-    assert_allclose(A.qd2geo(90+1e-5, 0, 0, 1e-2), A.qd2geo(90, 0, 0, 1e-2), rtol=0, atol=1e-8)
+    assert_allclose(A.qd2geo(90+1e-5, 0, 0, 1e-2), A.qd2geo(90, 0, 0, 1e-2),
+                    rtol=0, atol=1e-8)
 
 
 ###============================================================================
@@ -479,7 +530,8 @@ def test_apex2qd_invalid_lat():
     A.apex2qd(90, 0, 0)
     A.apex2qd(-90, 0, 0)
 
-    assert_allclose(A.apex2qd(90+1e-5, 0, 0), A.apex2qd(90, 0, 0), rtol=0, atol=1e-8)
+    assert_allclose(A.apex2qd(90+1e-5, 0, 0), A.apex2qd(90, 0, 0), rtol=0,
+                    atol=1e-8)
 
 
 def test_apex2qd_apexheight_close():
@@ -523,7 +575,8 @@ def test_qd2apex_invalid_lat():
     A.qd2apex(90, 0, 0)
     A.qd2apex(-90, 0, 0)
 
-    assert_allclose(A.qd2apex(90+1e-5, 0, 0), A.qd2apex(90, 0, 0), rtol=0, atol=1e-8)
+    assert_allclose(A.qd2apex(90+1e-5, 0, 0), A.qd2apex(90, 0, 0), rtol=0,
+                    atol=1e-8)
 
 
 def test_qd2apex_apexheight_close():
@@ -557,17 +610,22 @@ def test_mlon2mlt_ssheight():
 
 def test_mlon2mlt_1Darray():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlon2mlt([0, 180], dt.datetime(2000, 2, 3, 4, 5, 6)), [23.019261, 11.019261], rtol=1e-4)
+    assert_allclose(A.mlon2mlt([0, 180], dt.datetime(2000, 2, 3, 4, 5, 6)),
+                    [23.019261, 11.019261], rtol=1e-4)
 
 
 def test_mlon2mlt_2Darray():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlon2mlt([[0, 180], [0, 180]], dt.datetime(2000, 2, 3, 4, 5, 6)), [[23.019261, 11.019261], [23.019261, 11.019261]], rtol=1e-4)
+    assert_allclose(A.mlon2mlt([[0, 180], [0, 180]],
+                               dt.datetime(2000, 2, 3, 4, 5, 6)),
+                    [[23.019261, 11.019261], [23.019261, 11.019261]], rtol=1e-4)
 
 
 def test_mlon2mlt_diffdates():
     A = Apex(date=2000, refh=300)
-    assert A.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6)) != A.mlon2mlt(0, dt.datetime(2000, 2, 3, 5, 5, 6))
+    dtime1 = dt.datetime(2000, 2, 3, 4, 5, 6)
+    dtime2 = dt.datetime(2000, 2, 3, 5, 5, 6)
+    assert A.mlon2mlt(0, dtime1) != A.mlon2mlt(0, dtime2)
 
 
 def test_mlon2mlt_offset():
@@ -579,7 +637,8 @@ def test_mlon2mlt_offset():
 
 def test_mlon2mlt_range():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlon2mlt(range(0, 361, 30), dt.datetime(2000, 2, 3, 4, 5, 6)),
+    assert_allclose(A.mlon2mlt(range(0, 361, 30),
+                               dt.datetime(2000, 2, 3, 4, 5, 6)),
                     [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
                      9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
                      19.01963, 21.01963, 23.01963],
@@ -606,17 +665,23 @@ def test_mlt2mlon_ssheight():
 
 def test_mlt2mlon_1Darray():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlt2mlon([0, 12], dt.datetime(2000, 2, 3, 4, 5, 6)), [14.705551, 194.705551], rtol=1e-4)
+    assert_allclose(A.mlt2mlon([0, 12], dt.datetime(2000, 2, 3, 4, 5, 6)),
+                    [14.705551, 194.705551], rtol=1e-4)
 
 
 def test_mlt2mlon_2Darray():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlt2mlon([[0, 12], [0, 12]], dt.datetime(2000, 2, 3, 4, 5, 6)), [[14.705551, 194.705551], [14.705551, 194.705551]], rtol=1e-4)
+    assert_allclose(A.mlt2mlon([[0, 12], [0, 12]],
+                               dt.datetime(2000, 2, 3, 4, 5, 6)),
+                    [[14.705551, 194.705551], [14.705551, 194.705551]],
+                    rtol=1e-4)
 
 
 def test_mlt2mlon_diffdates():
     A = Apex(date=2000, refh=300)
-    assert A.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6)) != A.mlt2mlon(0, dt.datetime(2000, 2, 3, 5, 5, 6))
+    dtime1 = dt.datetime(2000, 2, 3, 4, 5, 6)
+    dtime2 = dt.datetime(2000, 2, 3, 5, 5, 6)
+    assert A.mlt2mlon(0, dtime1) != A.mlt2mlon(0, dtime2)
 
 
 def test_mlt2mlon_offset():
@@ -628,7 +693,8 @@ def test_mlt2mlon_offset():
 
 def test_mlt2mlon_range():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.mlt2mlon(range(0, 25, 2), dt.datetime(2000, 2, 3, 4, 5, 6)),
+    assert_allclose(A.mlt2mlon(range(0, 25, 2),
+                               dt.datetime(2000, 2, 3, 4, 5, 6)),
                     [14.705551, 44.705551, 74.705551, 104.705551, 134.705551,
                      164.705551, 194.705551, 224.705551, 254.705551, 284.705551,
                      314.705551, 344.705551, 14.705551],
@@ -667,27 +733,43 @@ def test_mlt2mlon2mlt():
 
 def test_map_to_height():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.map_to_height(60, 15, 100, 10000, conjugate=False, precision=1e-10), (31.841459274291992, 17.916629791259766, 0))
-    assert_allclose(A.map_to_height(30, 170, 100, 500, conjugate=False, precision=1e-2), (25.727252960205078, 169.60546875, 0.00017655163537710905))
+    assert_allclose(A.map_to_height(60, 15, 100, 10000, conjugate=False,
+                                    precision=1e-10),
+                    (31.841459274291992, 17.916629791259766, 0))
+    assert_allclose(A.map_to_height(30, 170, 100, 500, conjugate=False,
+                                    precision=1e-2),
+                    (25.727252960205078, 169.60546875, 0.00017655163537710905))
 
 
 def test_map_to_height_same_height():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.map_to_height(60, 15, 100, 100, conjugate=False, precision=1e-10), (60, 15, 3.4150946248701075e-6), rtol=1e-5)
+    assert_allclose(A.map_to_height(60, 15, 100, 100, conjugate=False,
+                                    precision=1e-10),
+                    (60, 15, 3.4150946248701075e-6), rtol=1e-5)
 
 
 def test_map_to_height_conjugate():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.map_to_height(60, 15, 100, 10000, conjugate=True, precision=1e-10), (-25.424892425537109, 27.310417175292969, 1.2074182222931995e-6))
-    assert_allclose(A.map_to_height(30, 170, 100, 500, conjugate=True, precision=1e-2), (-13.76642894744873, 164.24259948730469, 0.00056820799363777041))
+    assert_allclose(A.map_to_height(60, 15, 100, 10000, conjugate=True,
+                                    precision=1e-10),
+                    (-25.424892425537109, 27.310417175292969,
+                     1.2074182222931995e-6))
+    assert_allclose(A.map_to_height(30, 170, 100, 500, conjugate=True,
+                                    precision=1e-2),
+                    (-13.76642894744873, 164.24259948730469,
+                     0.00056820799363777041))
 
 
 def test_map_to_height_vectorization():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.map_to_height([60, 60], 15, 100, 100), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
-    assert_allclose(A.map_to_height(60, [15, 15], 100, 100), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
-    assert_allclose(A.map_to_height(60, 15, [100, 100], 100), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
-    assert_allclose(A.map_to_height(60, 15, 100, [100, 100]), ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+    assert_allclose(A.map_to_height([60, 60], 15, 100, 100),
+                    ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+    assert_allclose(A.map_to_height(60, [15, 15], 100, 100),
+                    ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+    assert_allclose(A.map_to_height(60, 15, [100, 100], 100),
+                    ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
+    assert_allclose(A.map_to_height(60, 15, 100, [100, 100]),
+                    ([60]*2, [15]*2, [3.4150946248701075e-6]*2), rtol=1e-5)
 
 
 def test_map_to_height_ApexHeightError():
