@@ -22,7 +22,7 @@ project = u'Apex Python library'
 year = u'2015'
 author = u'Christer van der Meeren, Angeline G. Burrell'
 copyright = '{0}, {1}'.format(year, author)
-version = release = u'1.0.1'
+version = release = u'1.0.3'
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 

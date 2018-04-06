@@ -5,7 +5,7 @@ environment:
   global:
     WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
-{% for env, config in tox_environments|dictsort %}{% if config.python in ('python2.6', 'python2.7', 'python3.3', 'python3.4', 'python3.5') and not config.cover %}
+{% for env, config in tox_environments|dictsort %}{% if config.python in ('python2.6', 'python2.7', 'python3.4', 'python3.5', 'python3.6') and not config.cover %}
     - TESTENV: '{{ env }}-64'
       {%- if config.python != 'python3.5' %}
 
@@ -70,6 +70,10 @@ artifacts:
 matrix:
   allow_failures:
     - PYTHON_VERSION: '3.5'
+    - TESTENV: '2.7-nocover-64'
+    - TESTENV: '3.5-nocover-64'
+    - TESTENV: '3.6-nocover-64'
+    - TESTENV: 'check'
 ### To enable remote debugging uncomment this:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 

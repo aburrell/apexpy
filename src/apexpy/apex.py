@@ -9,7 +9,6 @@ import datetime as dt
 import numpy as np
 
 from . import helpers
-from .helpers import d2r, r2d
 
 # below try..catch required for autodoc to work on readthedocs
 try:
@@ -34,9 +33,9 @@ class Apex(object):
 
     Parameters
     ==========
-    date : float (decimal year) or :class:`datetime.date` or :class:`datetime.datetime`, optional
+    date : float, :class:`dt.date`, or :class:`dt.datetime`, optional
         Determines which IGRF coefficients are used in conversions. Uses
-        current date as default.
+        current date as default.  If float, use decimal year.
     refh : float, optional
         Reference height in km for apex coordinates (the field lines are mapped
         to this height)
@@ -342,13 +341,32 @@ class Apex(object):
         return np.float64(glat), np.float64(glon), np.float64(error)
 
     def _apex2qd_nonvectorized(self, alat, alon, height):
+        """Convert from apex to quasi-dipole (not-vectorised)
+
+        Parameters
+        -----------
+        alat : (float)
+            Apex latitude in degrees
+        alon : (float)
+            Apex longitude in degrees
+        height : (float)
+            Height in km
+
+        Returns
+        ---------
+        qlat : (float)
+            Quasi-dipole latitude in degrees
+        qlon : (float)
+            Quasi-diplole longitude in degrees
+        """
 
         alat = helpers.checklat(alat, name='alat')
 
         # convert modified apex to quasi-dipole:
         qlon = alon
+
         # apex height
-        hA = (self.RE + self.refh) / (np.cos(alat * d2r)**2) - self.RE
+        hA = self.get_apex(alat)
 
         if hA < height:
             if np.isclose(hA, height, rtol=0, atol=1e-5):
@@ -359,8 +377,8 @@ class Apex(object):
                 estr += '{:.3g} for alat {:.3g}'.format(hA, alat)
                 raise ApexHeightError(estr)
 
-        qlat = np.sign(alat) * np.arccos(np.sqrt((self.RE + height) /
-                                                 (self.RE + hA))) * r2d
+        qlat = np.sign(alat) * np.degrees(np.arccos(np.sqrt((self.RE + height) /
+                                                            (self.RE + hA))))
 
         return qlat, qlon
 
@@ -400,7 +418,7 @@ class Apex(object):
         qlat = helpers.checklat(qlat, name='qlat')
 
         alon = qlon
-        hA = (self.RE + height)/(np.cos(qlat*d2r)**2) - self.RE  # apex height
+        hA = self.get_apex(qlat, height) # apex height
 
         if hA < self.refh:
             if np.isclose(hA, self.refh, rtol=0, atol=1e-5):
@@ -411,8 +429,9 @@ class Apex(object):
                 estr += '({:.3g}) for qlat {:.3g}'.format(self.refh, qlat)
                 raise ApexHeightError(estr)
 
-        alat = np.sign(qlat) * np.arccos(np.sqrt((self.RE + self.refh) /
-                                                 (self.RE + hA)))*r2d
+        alat = np.sign(qlat) * np.degrees(np.arccos(np.sqrt((self.RE +
+                                                             self.refh) /
+                                                            (self.RE + hA))))
 
         return alat, alon
 
@@ -842,7 +861,7 @@ class Apex(object):
         k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
         g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh))**(3/2) \
              * d1 / F
-        g2 = -1.0 / (2.0 * F * np.tan(qlat * d2r)) * \
+        g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * \
              (k + ((self.RE + np.float64(height)) / (self.RE + self.refh))
               * d2 / cosI)
         g3 = k*F
@@ -866,25 +885,30 @@ class Apex(object):
         return tuple(np.squeeze(x) for x in
                      [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])
 
-    def get_apex(self, alat):
-        """Computes the field line apex for a given modified apex latitude.
+    def get_apex(self, lat, height=None):
+        """ Calculate apex height
 
         Parameters
-        ==========
-        alat : array_like
-            Modified apex latitude
+        -----------
+        lat : (float)
+            Latitude in degrees
+        height : (float or NoneType)
+            Height above the surface of the earth in km or NoneType to use
+            reference height (default=None)
 
         Returns
-        =======
-        apex : ndarray or float
-            Field line apex in km
+        ----------
+        apex_height : (float)
+            Height of the field line apex in km
         """
+        lat = helpers.checklat(lat, name='alat')
+        if height is None:
+            height = self.refh
 
-        alat = helpers.checklat(alat, name='alat')
+        cos_lat_squared = np.cos(np.radians(lat))**2
+        apex_height = (self.RE + height) / cos_lat_squared - self.RE
 
-        apex = (self.RE + self.refh) / np.cos(d2r * alat)**2 - self.RE
-
-        return apex
+        return apex_height
 
     def set_epoch(self, year):
         """Updates the epoch for all subsequent conversions.

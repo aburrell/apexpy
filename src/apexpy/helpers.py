@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 
-'''This module contains helper functions used by :class:`~apexpy.Apex`.'''
+"""This module contains helper functions used by :class:`~apexpy.Apex`."""
 
 from __future__ import division, print_function, absolute_import
 
 import time
 import datetime as dt
-
 import numpy as np
 
-# constants
-d2r = np.pi/180
-r2d = 180/np.pi
-
-
 def checklat(lat, name='lat'):
-    '''Makes sure the latitude is inside [-90, 90], clipping close values (tolerance 1e-4).
+    """Makes sure the latitude is inside [-90, 90], clipping close values
+    (tolerance 1e-4).
 
     Parameters
     ==========
@@ -34,7 +29,7 @@ def checklat(lat, name='lat'):
     ======
     ValueError
         if any values are too far outside the range [-90, 90]
-    '''
+    """
 
     if np.all(np.float64(lat) >= -90) and np.all(np.float64(lat) <= 90):
         return lat
@@ -58,7 +53,7 @@ def checklat(lat, name='lat'):
 
 
 def getsinIm(alat):
-    '''Computes sinIm from modified apex latitude.
+    """Computes sinIm from modified apex latitude.
 
     Parameters
     ==========
@@ -69,15 +64,15 @@ def getsinIm(alat):
     =======
     sinIm : ndarray or float
 
-    '''
+    """
 
     alat = np.float64(alat)
 
-    return 2*np.sin(alat*d2r)/np.sqrt(4 - 3*np.cos(alat*d2r)**2)
+    return 2*np.sin(np.radians(alat))/np.sqrt(4 - 3*np.cos(np.radians(alat))**2)
 
 
 def getcosIm(alat):
-    '''Computes cosIm from modified apex latitude.
+    """Computes cosIm from modified apex latitude.
 
     Parameters
     ==========
@@ -88,15 +83,16 @@ def getcosIm(alat):
     =======
     cosIm : ndarray or float
 
-    '''
+    """
 
     alat = np.float64(alat)
 
-    return np.cos(alat*d2r)/np.sqrt(4 - 3*np.cos(alat*d2r)**2)
+    return np.cos(np.radians(alat))/np.sqrt(4 - 3*np.cos(np.radians(alat))**2)
 
 
 def toYearFraction(date):
-    '''Converts :class:`datetime.date` or :class:`datetime.datetime` to decimal year.
+    """Converts :class:`datetime.date` or :class:`datetime.datetime` to decimal
+    year.
 
     Parameters
     ==========
@@ -111,10 +107,10 @@ def toYearFraction(date):
     =====
     The algorithm is taken from http://stackoverflow.com/a/6451892/2978652
 
-    '''
+    """
 
     def sinceEpoch(date):
-        '''returns seconds since epoch'''
+        """returns seconds since epoch"""
         return time.mktime(date.timetuple())
     year = date.year
     startOfThisYear = dt.datetime(year=year, month=1, day=1)
@@ -128,7 +124,7 @@ def toYearFraction(date):
 
 
 def gc2gdlat(gclat):
-    '''Converts geocentric latitude to geodetic latitude using WGS84.
+    """Converts geocentric latitude to geodetic latitude using WGS84.
 
     Parameters
     ==========
@@ -140,13 +136,13 @@ def gc2gdlat(gclat):
     gdlat : ndarray or float
         Geodetic latitude
 
-    '''
+    """
     WGS84_e2 = 0.006694379990141317  # WGS84 first eccentricity squared
     return np.rad2deg(-np.arctan(np.tan(np.deg2rad(gclat))/(WGS84_e2 - 1)))
 
 
 def subsol(datetime):
-    '''Finds subsolar geocentric latitude and longitude.
+    """Finds subsolar geocentric latitude and longitude.
 
     Parameters
     ==========
@@ -173,79 +169,58 @@ def subsol(datetime):
     After Fortran code by A. D. Richmond, NCAR. Translated from IDL
     by K. Laundal.
 
-    '''
-
-    from numpy import sin, cos, pi, arctan2, arcsin
-
+    """
     # convert to year, day of year and seconds since midnight
     year = datetime.year
     doy = datetime.timetuple().tm_yday
-    ut = datetime.hour*3600 + datetime.minute*60 + datetime.second
+    ut = datetime.hour * 3600 + datetime.minute * 60 + datetime.second
 
     if not 1601 <= year <= 2100:
         raise ValueError('Year must be in [1601, 2100]')
 
     yr = year - 2000
 
-    nleap = np.floor((year-1601)/4)
-    nleap = nleap - 99
+    nleap = int(np.floor((year - 1601.0) / 4.0))
+    nleap -= 99
     if year <= 1900:
-        ncent = np.floor((year-1601)/100)
+        ncent = int(np.floor((year - 1601.0) / 100.0))
         ncent = 3 - ncent
         nleap = nleap + ncent
 
-    l0 = -79.549 + (-0.238699*(yr-4*nleap) + 3.08514e-2*nleap)
-
-    g0 = -2.472 + (-0.2558905*(yr-4*nleap) - 3.79617e-2*nleap)
+    l0 = -79.549 + (-0.238699 * (yr - 4.0 * nleap) + 3.08514e-2 * nleap)
+    g0 = -2.472 + (-0.2558905 * (yr - 4.0 * nleap) - 3.79617e-2 * nleap)
 
     # Days (including fraction) since 12 UT on January 1 of IYR:
-    df = (ut/86400 - 1.5) + doy
-
-    # Addition to Mean longitude of Sun since January 1 of IYR:
-    lf = 0.9856474*df
-
-    # Addition to Mean anomaly since January 1 of IYR:
-    gf = 0.9856003*df
+    df = (ut / 86400.0 - 1.5) + doy
 
     # Mean longitude of Sun:
-    l = l0 + lf
+    lmean = l0 + 0.9856474 * df
 
-    # Mean anomaly:
-    g = g0 + gf
-    grad = g*pi/180
+    # Mean anomaly in radians:
+    grad = np.radians(g0 + 0.9856003 * df)
 
     # Ecliptic longitude:
-    lmbda = l + 1.915*sin(grad) + 0.020*sin(2*grad)
-    lmrad = lmbda*pi/180
-    sinlm = sin(lmrad)
+    lmrad = np.radians(lmean + 1.915 * np.sin(grad)
+                       + 0.020 * np.sin(2.0 * grad))
+    sinlm = np.sin(lmrad)
 
-    # Days (including fraction) since 12 UT on January 1 of 2000:
-    n = df + 365*yr + nleap
-
-    # Obliquity of ecliptic:
-    epsilon = 23.439 - 4e-7*n
-    epsrad = epsilon*pi/180
+    # Obliquity of ecliptic in radians:
+    epsrad = np.radians(23.439 - 4e-7 * (df + 365 * yr + nleap))
 
     # Right ascension:
-    alpha = arctan2(cos(epsrad)*sinlm, cos(lmrad)) * 180/pi
+    alpha = np.degrees(np.arctan2(np.cos(epsrad) * sinlm, np.cos(lmrad)))
 
-    # Declination:
-    delta = arcsin(sin(epsrad)*sinlm) * 180/pi
-
-    # Subsolar latitude:
-    sslat = delta
+    # Declination, which is also the subsolar latitude:
+    sslat = np.degrees(np.arcsin(np.sin(epsrad) * sinlm))
 
     # Equation of time (degrees):
-    etdeg = l - alpha
-    nrot = round(etdeg/360)
-    etdeg = etdeg - 360*nrot
-
-    # Apparent time (degrees):
-    aptime = ut/240 + etdeg    # Earth rotates one degree every 240 s.
+    etdeg = lmean - alpha
+    nrot = round(etdeg / 360.0)
+    etdeg = etdeg - 360.0 * nrot
 
     # Subsolar longitude:
-    sslon = 180 - aptime
-    nrot = round(sslon/360)
-    sslon = sslon - 360*nrot
+    sslon = 180.0 - (ut / 240.0 + etdeg) # Earth rotates one degree every 240 s.
+    nrot = round(sslon / 360.0)
+    sslon = sslon - 360.0 * nrot
 
     return sslat, sslon
