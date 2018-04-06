@@ -4,16 +4,21 @@ Overview
 
 |docs| |version|
 
-This is a Python wrapper for the Apex fortran library by Emmert et al. [2010] [1]_, which allows converting between geodetic, modified apex, and quasi-dipole coordinates as well as getting modified apex and quasi-dipole base vectors (Richmond [1995] [2]_). MLT calculations are also included. The package is free software (MIT license).
+This is a Python wrapper for the Apex fortran library by
+Emmert et al. [2010] [1]_, which allows converting between geodetic, modified
+apex, and quasi-dipole coordinates as well as getting modified apex and
+quasi-dipole base vectors (Richmond [1995] [2]_). MLT calculations are also
+included. The package is free software (MIT license).
 
 Quick start
 ===========
 
-Install (requires NumPy)::
+Install (requires NumPy before installation)::
 
     pip install apexpy
 
-Conversion is done by creating an ``Apex`` object and using its methods to perform the desired calculations. Some simple examples::
+Conversion is done by creating an ``Apex`` object and using its methods to
+perform the desired calculations. Some simple examples::
 
     >>> from apexpy import Apex
     >>> from __future__ import print_function
@@ -78,36 +83,36 @@ Badges
     :target: https://readthedocs.org/projects/apexpy
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/cmeeren/apexpy.svg?branch=master
+.. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/cmeeren/apexpy
+    :target: https://travis-ci.org/aburrell/apexpy
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/cmeeren/apexpy?branch=master&svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/aburrell/apexpy?branch=master&svg=true
     :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/cmeeren/apexpy
+    :target: https://ci.appveyor.com/project/aburrell/apexpy
 
-.. |requires| image:: https://requires.io/github/cmeeren/apexpy/requirements.svg?branch=master
+.. |requires| image:: https://requires.io/github/aburrell/apexpy/requirements.svg?branch=master
     :alt: Requirements Status
-    :target: https://requires.io/github/cmeeren/apexpy/requirements/?branch=master
+    :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=master
 
-.. |coveralls| image:: https://coveralls.io/repos/cmeeren/apexpy/badge.svg?branch=master&service=github
+.. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=master
     :alt: Coverage Status
-    :target: https://coveralls.io/github/cmeeren/apexpy
+    :target: https://coveralls.io/github/aburrell/apexpy?branch=master
 
-.. |codecov| image:: https://codecov.io/github/cmeeren/apexpy/coverage.svg?branch=master
+.. |codecov| image:: https://codecov.io/github/aburrell/apexpy/coverage.svg?branch=master
     :alt: Coverage Status
-    :target: https://codecov.io/github/cmeeren/apexpy
+    :target: https://codecov.io/github/aburrell/apexpy
 
-.. |landscape| image:: https://landscape.io/github/cmeeren/apexpy/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/cmeeren/apexpy/master
+.. |landscape| image:: https://landscape.io/github/aburrell/apexpy/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/aburrell/apexpy/master
     :alt: Code Quality Status
 
 .. |codacy| image:: https://img.shields.io/codacy/af7fdf6be28841f283dfdbc1c01fa82a.svg?style=flat
-    :target: https://www.codacy.com/app/cmeeren/apexpy
+    :target: https://www.codacy.com/app/aburrell/apexpy
     :alt: Codacy Code Quality Status
 
 .. |codeclimate| image:: https://codeclimate.com/github/cmeeren/apexpy/badges/gpa.svg
-   :target: https://codeclimate.com/github/cmeeren/apexpy
+   :target: https://codeclimate.com/github/aburrell/apexpy
    :alt: CodeClimate Quality Status
 .. |version| image:: https://img.shields.io/pypi/v/apexpy.svg?style=flat
     :alt: PyPI Package latest release
@@ -129,6 +134,6 @@ Badges
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/apexpy
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/cmeeren/apexpy/master.svg?style=flat
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/aburrell/apexpy/master.svg?style=flat
     :alt: Scrutinizer Status
-    :target: https://scrutinizer-ci.com/g/cmeeren/apexpy/
+    :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
