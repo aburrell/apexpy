@@ -2,7 +2,7 @@
 Overview
 ========
 
-|docs| |version|
+|docs| |version| |doi|
 
 This is a Python wrapper for the Apex fortran library by
 Emmert et al. [2010] [1]_, which allows converting between geodetic, modified
@@ -137,3 +137,6 @@ Badges
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/aburrell/apexpy/master.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
+
+.. |doi| image:: https://www.zenodo.org/badge/46420037.svg
+   :target: https://www.zenodo.org/badge/latestdoi/46420037
