@@ -16,6 +16,11 @@ if environ.get('READTHEDOCS', None) == 'True':
     extensions = []
 else:
     from numpy.distutils.core import setup, Extension
+    
+    # Statically link libgfortran so users don't need to install it
+    environ['LDFLAGS']='-static-libgfortran'
+    environ['FFLAGS']='-O3 -fPIC -static-libgfortran'
+    
     extensions = [
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
