@@ -16,8 +16,14 @@ if environ.get('READTHEDOCS', None) == 'True':
     extensions = []
 else:
     from numpy.distutils.core import setup, Extension
+
+    static = 0
+    if(environ.get('WHEELS', None) == 'True' and
+       environ.get('OSTYPE', None) != 'darwin'):
+        static = 1
+    
     extensions = [
-        Extension(name='apexpy.fortranapex',
+        Extension(name='apexpy.fortranapex', extra_compile_args=static,
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
                            'src/fortranapex/makeapexsh.f90',
                            'src/fortranapex/apexsh.f90',
@@ -64,6 +70,7 @@ if __name__ == "__main__":
             'Programming Language :: Python :: 3.3',
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: Implementation :: CPython',
             'Topic :: Scientific/Engineering :: Physics',
             'Topic :: Utilities',
