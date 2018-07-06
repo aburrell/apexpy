@@ -7,7 +7,7 @@ FC 	= gfortran
 LD      = $(FC)
 LDFLAGS = #-ipo
 FFLAGS 	= -O3 -fPIC #-ipo -check bounds -check pointer -check uninit
-SFLAGS  = -static
+SFLAGS  = -static #-libgfortran -static-libgcc (AGB, static should work?)
 STATIC  = 0
 
 ifneq ($(STATIC),0)
