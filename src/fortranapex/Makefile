@@ -7,6 +7,12 @@ FC 	= gfortran
 LD      = $(FC)
 LDFLAGS = #-ipo
 FFLAGS 	= -O3 -fPIC #-ipo -check bounds -check pointer -check uninit
+SFLAGS  = -static
+STATIC  = 0
+
+ifneq ($(STATIC),0)
+	LDFLAGS += $(SFLAGS)
+endif
 
 #MKL_INCLUDE = -I/global/apps/intel/mkl/10.1.0.015/include/
 LIBS 	= #-L/global/apps/intel/mkl/10.1.0.015/ -shared-intel -Wl,--start-group /global/apps/intel/mkl/10.1.0.015/lib/em64t/libmkl_intel_lp6\4.a /global/apps/intel/mkl/10.1.0.015/lib/em64t/libmkl_core.a
