@@ -24,7 +24,7 @@ else:
 
     extensions = [
         Extension(name='apexpy.fortranapex',
-                  extra_compile_args="STATIC=%d".format(static),
+                  extra_compile_args="LDFLAGS=-static",
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
                            'src/fortranapex/makeapexsh.f90',
                            'src/fortranapex/apexsh.f90',
