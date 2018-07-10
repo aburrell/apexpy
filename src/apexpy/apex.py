@@ -14,8 +14,9 @@ from . import helpers
 try:
     from . import fortranapex as fa
 except:
-    print("ERROR: fortranapex module could not be imported. apexpy probably"
-          " won't work")
+    print("ERROR: fortranapex module could not be imported, so apexpy probably"
+          " won't work.  Make sure you have a gfortran compiler. Wheels "
+          "installation assumes your compiler lives in /opt/local/bin")
 
 
 # make sure invalid warnings are always shown
