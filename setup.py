@@ -16,15 +16,9 @@ if environ.get('READTHEDOCS', None) == 'True':
     extensions = []
 else:
     from numpy.distutils.core import setup, Extension
-    import sys
-
-    static = 0
-    if 'bdist_wheel' in sys.argv and environ.get('OSTYPE', None) != 'darwin':
-        static = 1
 
     extensions = [
         Extension(name='apexpy.fortranapex',
-                  extra_compile_args="LDFLAGS=-static",
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
                            'src/fortranapex/makeapexsh.f90',
                            'src/fortranapex/apexsh.f90',
