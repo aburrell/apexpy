@@ -977,11 +977,11 @@ class Apex(object):
                          ctypes.byref(BNRTH),ctypes.byref(BEAST),
                          ctypes.byref(BDOWN),ctypes.byref(BABS)
                         )
-
-        return BABS.value
+        # BABS is in guass, so convert to tesla
+        return BABS.value / 10000.0
 
     def get_babs(self, glat, glon, height):
-        """Returns the magnitude of the IGRF magnetic field.
+        """Returns the magnitude of the IGRF magnetic field in tesla.
 
         Parameters
         ==========
