@@ -1279,5 +1279,53 @@ def test_set_refh():
     assert_allclose(ret_500, fa.apxg2all(60, 15, 100, 500, 0)[2:4])
 
 
+###============================================================================
+### Test the get_babs() method
+###============================================================================
+
+
+def test_get_babs():
+    inputs = [[[80],[100],[300]],[range(50,90,8),range(0,360,80),[300]*5],
+              [90.0,0,1000]]
+    temp1 = np.array([4.22045410e-05, 5.15672743e-05, 4.98150200e-05,
+                     5.06769359e-05, 4.91028428e-05])
+    expected = [[5.1303124427795412e-05], temp1, [3.793962299823761e-05]]
+
+    A = Apex(date=2018.1, refh=0)
+    for i in range(len(inputs)):
+        outputs = A.get_babs(*inputs[i])
+        if isinstance(outputs,np.float64):
+            outputs = [outputs]
+        for j,output in enumerate(outputs):
+            assert_allclose(output, expected[i][j], rtol=0, atol=1e-5)
+
+
+###============================================================================
+### Test the apex_bvectors() method
+###============================================================================
+
+
+def test_apex_bvectors():
+    inputs = [[80,81],[100,120],[100,200]]
+
+    expected = (np.array([5.94623305e-05,  5.95450722e-05]),
+                np.array([[ 0.02008877,  0.00303204],
+                          [ 0.03571109,  0.03377986],
+                          [-0.94045794, -0.89848483]]),
+                np.array([  5.26919505e-05,   4.81377429e-05]),
+                np.array([[ 0.02266997,  0.00375055],
+                          [ 0.04029961,  0.04178477],
+                          [-1.0612973 , -1.1114012 ]])
+               )
+
+    A = Apex(date=2018.1, refh=0)
+
+    outputs = A.apex_bvectors(*inputs,coords='geo', precision=1e-10)
+    for i,output in enumerate(outputs):
+        for j in range(output.size):
+            assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,
+                            atol=1e-5)
+
+
 if __name__ == '__main__':
     pytest.main()
