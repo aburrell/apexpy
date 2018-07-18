@@ -15,11 +15,8 @@ from apexpy import fortranapex as fa
 ##############################################################################
 
 
-fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
-
-
 def test_apxg2q():
-
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
     qlat, qlon, f1, f2, f = fa.apxg2q(60, 15, 100, 1)
     assert_allclose(qlat, 56.531288146972656)
     assert_allclose(qlon, 94.1068344116211)
@@ -29,6 +26,7 @@ def test_apxg2q():
 
 
 def test_apxg2all():
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
     qlat, qlon, mlat, mlon, f1, f2, f, d1, d2, d3, d, e1, e2, e3 = fa.apxg2all(60, 15, 100, 300, 1)
     assert_allclose(qlat, 56.531288146972656)
     assert_allclose(qlon, 94.1068344116211)
@@ -47,6 +45,7 @@ def test_apxg2all():
 
 
 def test_apxq2g():
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
     glat, glon, error = fa.apxq2g(60, 15, 100, 1e-2)
     assert_allclose(glat, 50.97946548461914)
     assert_allclose(glon, -66.16902923583984)
@@ -54,6 +53,7 @@ def test_apxq2g():
 
 
 def test_g2q2d():
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 179]:
             qlat, qlon, _, _, _ = fa.apxg2q(lat, lon, 100, 0)
@@ -63,6 +63,7 @@ def test_g2q2d():
 
 
 def test_apxq2g_lowprecision():
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
     glat, glon, error = fa.apxq2g(60, 15, 100, -1)
     assert_allclose(glat, 51.00891876220703)
     assert_allclose(glon, -66.11973571777344)
