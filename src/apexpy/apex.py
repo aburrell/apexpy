@@ -17,6 +17,8 @@ except:
     print("ERROR: fortranapex module could not be imported. apexpy probably"
           " won't work")
 
+import ctypes
+
 
 # make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to -9999 where*',
@@ -64,10 +66,14 @@ class Apex(object):
 
     """
 
-    def __init__(self, date=None, refh=0, datafile=None):
+    def __init__(self, date=None, refh=0, datafile=None, fortranlib=None):
 
         if datafile is None:
             datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
+
+        if fortranlib is None:
+            temp = os.path.dirname(__file__)
+            fortranlib = os.path.join(temp,'fortranapex.so')
 
         self.RE = 6371.009  # mean Earth radius
         self.set_refh(refh) # reference height
@@ -85,7 +91,13 @@ class Apex(object):
         if not os.path.isfile(datafile):
             raise IOError('Datafile does not exist: {}'.format(datafile))
 
+        if not os.path.isfile(fortranlib):
+            raise IOError('Datafile does not exist: {}'.format(fortranlib))
+
         self.datafile = datafile
+        self.fortranlib = fortranlib
+        self._cfa = ctypes.CDLL(fortranlib)
+
         self.set_epoch(self.year)
 
         # vectorize fortran functions
@@ -111,6 +123,8 @@ class Apex(object):
         # vectorize other nonvectorized functions
         self._apex2qd = np.frompyfunc(self._apex2qd_nonvectorized, 3, 2)
         self._qd2apex = np.frompyfunc(self._qd2apex_nonvectorized, 3, 2)
+        self._get_babs = np.frompyfunc(self._get_babs_nonvectorized, 3, 1)
+
 
     def convert(self, lat, lon, source, dest, height=0, datetime=None,
                 precision=1e-10, ssheight=50*6371):
@@ -920,7 +934,12 @@ class Apex(object):
 
         """
 
+        # f2py
         fa.loadapxsh(self.datafile, np.float(year))
+        # ctypes
+        date = ctypes.c_float(year)
+        self._cfa.cofrm_(ctypes.byref(date))
+
         self.year = year
 
     def set_refh(self, refh):
@@ -939,3 +958,121 @@ class Apex(object):
         """
 
         self.refh = refh
+
+    def _get_babs_nonvectorized(self, glat, glon, height):
+
+        # setup input args for feldg
+        IENTY = ctypes.c_int(1)
+        GLAT  = ctypes.c_float(glat)
+        GLON  = ctypes.c_float(glon)
+        ALT   = ctypes.c_float(height)
+        # setup output args for feldg
+        BNRTH = ctypes.c_float(0)
+        BEAST = ctypes.c_float(0)
+        BDOWN = ctypes.c_float(0)
+        BABS  = ctypes.c_float(0)
+
+        self._cfa.feldg_(ctypes.byref(IENTY),ctypes.byref(GLAT),
+                         ctypes.byref(GLON),ctypes.byref(ALT),
+                         ctypes.byref(BNRTH),ctypes.byref(BEAST),
+                         ctypes.byref(BDOWN),ctypes.byref(BABS)
+                        )
+
+        return BABS.value
+
+    def get_babs(self, glat, glon, height):
+        """Returns the magnitude of the IGRF magnetic field.
+
+        Parameters
+        ==========
+        glat : array_like
+            Geodetic latitude
+        glon : array_like
+            Geodetic longitude
+        height : array_like
+            Altitude in km
+
+        Returns
+        =======
+        babs : ndarray or float
+            Magnitude of the IGRF magnetic field
+
+        """
+
+        babs = self._get_babs(glat, glon, height)
+
+        # if array is returned, the dtype is object, so convert to float
+        return np.float64(babs)
+
+    def apex_bvectors(self, lat, lon, height, coords='geo', precision=1e-10):
+        """Returns the magnetic field vectors in apex coordinates.
+
+        The apex magnetic field vectors described by Richmond [1995] [4]_ and
+        Emmert et al. [2010] [5]_, specfically the Be3 and Bd3 components. The
+        vector components are geodetic east, north, and up.
+
+        Parameters
+        ==========
+        lat, lon : (N,) array_like or float
+            Latitude
+        lat : (N,) array_like or float
+            Longitude
+        height : (N,) array_like or float
+            Altitude in km
+        coords : {'geo', 'apex', 'qd'}, optional
+            Input coordinate system
+        precision : float, optional
+            Precision of output (degrees) when converting to geo. A negative
+            value of this argument produces a low-precision calculation of
+            geodetic lat/lon based only on their spherical harmonic
+            representation.
+            A positive value causes the underlying Fortran routine to iterate
+            until feeding the output geo lat/lon into geo2qd (APXG2Q) reproduces
+            the input QD lat/lon to within the specified precision (all
+            coordinates being converted to geo are converted to QD first and
+            passed through APXG2Q).
+
+        Returns
+        =======
+        Be3: (1, N) or (1,) ndarray
+        e3 : (3, N) or (3,) ndarray
+        Bd3: (1, N) or (1,) ndarray
+        d3 : (3, N) or (3,) ndarray
+
+        Note
+        ====
+        Be3 is not equivalent to the magnitude of the IGRF magnitude, but is
+        instead equal to the IGRF magnitude divided by a scaling factor, D.
+        Similarly, Bd3 is the IGRF magnitude multiplied by D.
+
+        See Richmond, A. D. (1995) [4]_ equations 3.13 and 3.14 
+
+        References
+        ==========
+
+        .. [4] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
+               Magnetic Apex Coordinates, Journal of geomagnetism and
+               geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
+
+        .. [5] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
+               A computationally compact representation of Magnetic-Apex
+               and Quasi-Dipole coordinates with smooth base vectors,
+               J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
+
+        """
+
+
+        glat, glon = self.convert(lat, lon, coords, 'geo', height=height,
+                                  precision=precision)
+
+        babs = self.get_babs(glat, glon, height)
+
+        _, _, _, _, _, _, d1, d2, d3, _, _, e3 = self.basevectors_apex(glat, \
+                                                glon, height, coords='geo')
+        d1_cross_d2 = np.cross(d1.T,d2.T).T
+        D = np.sqrt(np.sum(d1_cross_d2**2,axis=0))
+
+        Be3 = babs / D
+        Bd3 = babs * D
+
+        return Be3, e3, Bd3, d3
