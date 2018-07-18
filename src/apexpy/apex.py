@@ -72,8 +72,7 @@ class Apex(object):
             datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
 
         if fortranlib is None:
-            temp = os.path.dirname(__file__)
-            fortranlib = os.path.join(temp,'fortranapex.so')
+            fortranlib = fa.__file__
 
         self.RE = 6371.009  # mean Earth radius
         self.set_refh(refh) # reference height
