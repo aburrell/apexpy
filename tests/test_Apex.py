@@ -1301,11 +1301,11 @@ def test_get_babs():
 
 
 ###============================================================================
-### Test the apex_bvectors() method
+### Test the bvectors_apex() method
 ###============================================================================
 
 
-def test_apex_bvectors():
+def test_bvectors_apex():
     inputs = [[80,81],[100,120],[100,200]]
 
     expected = (np.array([5.94623305e-05,  5.95450722e-05]),
@@ -1320,7 +1320,7 @@ def test_apex_bvectors():
 
     A = Apex(date=2018.1, refh=0)
 
-    outputs = A.apex_bvectors(*inputs,coords='geo', precision=1e-10)
+    outputs = A.bvectors_apex(*inputs,coords='geo', precision=1e-10)
     for i,output in enumerate(outputs):
         for j in range(output.size):
             assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,

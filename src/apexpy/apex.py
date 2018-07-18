@@ -1003,7 +1003,7 @@ class Apex(object):
         # if array is returned, the dtype is object, so convert to float
         return np.float64(babs)
 
-    def apex_bvectors(self, lat, lon, height, coords='geo', precision=1e-10):
+    def bvectors_apex(self, lat, lon, height, coords='geo', precision=1e-10):
         """Returns the magnetic field vectors in apex coordinates.
 
         The apex magnetic field vectors described by Richmond [1995] [4]_ and
