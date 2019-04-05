@@ -554,7 +554,7 @@ def test_apex2qd_apexheight_close():
 
 def test_apex2qd_apexheight_over():
     apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(apex_outpexHeightError):
+    with pytest.raises(ApexHeightError):
         apex_out.apex2qd(0, 15, 301)
 
 
