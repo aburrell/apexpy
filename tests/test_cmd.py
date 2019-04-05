@@ -8,10 +8,10 @@ import os
 import subprocess
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+outfile = 'tests/output.txt'
 
 def setup_function(function):
     try:
-        outfile = 'tests/output.txt'
         os.remove(outfile)
     except:
         pass
