@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.0.4 (2019-04-05)
+----------------------------------------
+* Updated installation instructions
+* Simplified warning tests
+* Made some PEP8 changes
+
 1.0.3 (2018-04-05)
 -----------------------------------------
 * Updated badges and added DOI
