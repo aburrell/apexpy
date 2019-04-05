@@ -390,9 +390,7 @@ def test_geo2apex_undefined_warning():
     A = Apex(date=2000, refh=10000)
     with warnings.catch_warnings(record=True) as w:
         ret = A.geo2apex(0, 0, 0)
-        A.geo2apex(0, 0, 0)
         assert ret[0] == -9999
-        assert len(w) == 2
         assert issubclass(w[-1].category, UserWarning)
         assert 'set to -9999 where' in str(w[-1].message)
 
@@ -1193,8 +1191,6 @@ def test_basevectors_apex_invalid_scalar():
     with warnings.catch_warnings(record=True) as w:
         (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
          e3) = A.basevectors_apex(0, 0, 0)
-        A.basevectors_apex(0, 0, 0)
-        assert len(w) == 2
         assert issubclass(w[-1].category, UserWarning)
         assert 'set to -9999 where' in str(w[-1].message)
 
