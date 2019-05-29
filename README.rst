@@ -13,17 +13,23 @@ included. The package is free software (MIT license).
 Quick start
 ===========
 
-Install (requires NumPy before installation)::
+Install::
 
     pip install apexpy
 
-This assumes that the same version of libgfortran is installed in the same location as when the pip wheel was built. If not, you may have trouble importing apexpy and you will have to build apexpy yourself using::
+To install development version, clone this repo and install::
 
-    pip install --global-option='build_ext' apexpy
-    
-which requires both libgfortran and gfortran to be installed on your system.
+    git clone https://github.com/aburrell/apexpy
 
-Conversion is done by creating an ``Apex`` object and using its methods to
+    cd apexpy
+
+    pip install -e .
+
+
+Usage
+-----
+
+Geomagnetic coordinate conversion is done by creating an ``Apex`` object and using its methods to
 perform the desired calculations. Some simple examples::
 
     >>> from apexpy import Apex
@@ -53,6 +59,23 @@ Documentation
 =============
 
 https://apexpy.readthedocs.org/
+
+
+Troubleshooting
+===============
+
+The install procedure assumes that the same version of libgfortran is installed in the same location as when the pip wheel was built.
+If not, you may have trouble importing apexpy and you will have to build apexpy yourself using::
+
+    pip install --global-option='build_ext' apexpy
+
+which requires a Fortran compiler such as Gfortran to be installed on your system.
+Gfortran can be obtained by:
+
+* Linux: ``apt install gfortran``
+* MacOS: ``brew install gfortran``
+* Windows: use `MinGW <https://sourceforge.net/projects/mingw-w64/>`_ to get Gfortran.
+
 
 References
 ==========

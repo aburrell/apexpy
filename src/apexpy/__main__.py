@@ -67,5 +67,6 @@ def main():
                            args.height, datetime=datetime)
     np.savetxt(args.file_out, np.column_stack((lats, lons)), fmt='%.8f')
 
+
 if __name__ == '__main__':
     sys.exit(main())

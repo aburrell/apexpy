@@ -16,7 +16,7 @@ except ImportError:
 
 BASE_URL = "https://www.python.org/ftp/python/"
 GET_PIP_URL = "https://bootstrap.pypa.io/get-pip.py"
-GET_PIP_PATH = "C:\get-pip.py"
+GET_PIP_PATH = "C:/get-pip.py"
 URLS = {
     ("2.6", "64"): BASE_URL + "2.6.6/python-2.6.6.amd64.msi",
     ("2.6", "32"): BASE_URL + "2.6.6/python-2.6.6.msi",

@@ -96,6 +96,7 @@ def unpack_zipfile(filename):
             ensure_dirs(name)
             z.extract(name)
 
+
 parser = argparse.ArgumentParser(description='Download artifacts from AppVeyor.')
 parser.add_argument('name',
                     metavar='ID',

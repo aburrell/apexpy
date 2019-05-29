@@ -8,6 +8,7 @@ import time
 import datetime as dt
 import numpy as np
 
+
 def checklat(lat, name='lat'):
     """Makes sure the latitude is inside [-90, 90], clipping close values
     (tolerance 1e-4).
@@ -219,7 +220,7 @@ def subsol(datetime):
     etdeg = etdeg - 360.0 * nrot
 
     # Subsolar longitude:
-    sslon = 180.0 - (ut / 240.0 + etdeg) # Earth rotates one degree every 240 s.
+    sslon = 180.0 - (ut / 240.0 + etdeg)  # Earth rotates one degree every 240 s.
     nrot = round(sslon / 360.0)
     sslon = sslon - 360.0 * nrot
 

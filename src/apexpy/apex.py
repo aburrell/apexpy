@@ -13,7 +13,7 @@ from . import helpers
 # below try..catch required for autodoc to work on readthedocs
 try:
     from . import fortranapex as fa
-except:
+except ImportError:
     print("ERROR: fortranapex module could not be imported. apexpy probably"
           " won't work")
 
@@ -70,7 +70,7 @@ class Apex(object):
             datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
 
         self.RE = 6371.009  # mean Earth radius
-        self.set_refh(refh) # reference height
+        self.set_refh(refh)  # reference height
 
         if date is None:
             self.year = helpers.toYearFraction(dt.datetime.now())
@@ -78,7 +78,7 @@ class Apex(object):
             try:
                 # convert date/datetime object to decimal year
                 self.year = helpers.toYearFraction(date)
-            except:
+            except AttributeError:
                 # failed so date is probably int/float, use directly
                 self.year = date
 
@@ -418,7 +418,7 @@ class Apex(object):
         qlat = helpers.checklat(qlat, name='qlat')
 
         alon = qlon
-        hA = self.get_apex(qlat, height) # apex height
+        hA = self.get_apex(qlat, height)  # apex height
 
         if hA < self.refh:
             if np.isclose(hA, self.refh, rtol=0, atol=1e-5):
@@ -473,7 +473,7 @@ class Apex(object):
         Parameters
         ==========
         mlon : array_like
-            Magnetic longitude (apex and quasi-dipole longitude are always 
+            Magnetic longitude (apex and quasi-dipole longitude are always
             equal)
         datetime : :class:`datetime.datetime`
             Date and time
@@ -604,8 +604,8 @@ class Apex(object):
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
         X = np.reshape(X, (3, np.size(X)//3))
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, \
-                                                alon, height, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat,
+                                                                       alon, height, coords='apex')
 
         if EV == 'E':
             v1 = e1
@@ -621,8 +621,8 @@ class Apex(object):
         X1 = np.sum(X*v1, axis=0)  # E dot e1 or V dot d1
         X2 = np.sum(X*v2, axis=0)  # E dot e2 or V dot d2
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, \
-                                                alon, newheight, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat,
+                                                                       alon, newheight, coords='apex')
 
         if EV == 'E':
             v1 = d1
@@ -860,10 +860,10 @@ class Apex(object):
         cosI = helpers.getcosIm(alat)
         k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
         g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh))**(3/2) \
-             * d1 / F
+            * d1 / F
         g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * \
-             (k + ((self.RE + np.float64(height)) / (self.RE + self.refh))
-              * d2 / cosI)
+            (k + ((self.RE + np.float64(height)) / (self.RE + self.refh))
+             * d2 / cosI)
         g3 = k*F
         f3 = np.cross(g1.T, g2.T).T
 
