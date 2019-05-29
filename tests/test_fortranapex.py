@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
+from pytest import approx
 import pytest
 from numpy.testing import assert_allclose
 
@@ -18,8 +18,8 @@ from apexpy import fortranapex as fa
 def test_apxg2q():
     fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
     qlat, qlon, f1, f2, f = fa.apxg2q(60, 15, 100, 1)
-    assert_allclose(qlat, 56.531288146972656)
-    assert_allclose(qlon, 94.1068344116211)
+    assert qlat == approx(56.531288146972656)
+    assert qlon == approx(94.1068344116211)
     assert_allclose(f1, [1.07978308, 0.10027108], rtol=1e-6)
     assert_allclose(f2, [-0.24546318, 0.90718889], rtol=1e-6)
     assert_allclose(f, 1.0041800737380981)
@@ -71,4 +71,4 @@ def test_apxq2g_lowprecision():
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main([__file__])
