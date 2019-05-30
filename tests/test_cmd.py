@@ -28,6 +28,7 @@ def test_module_invocation(tmp_path):
                                   [59.571465, 94.477257]]), rel=1e-4)
 
 
+@pytest.mark.skipif(OLDPY, reason='Python >= 3.5 for this test')
 @pytest.mark.parametrize('dt', ['2015', '201501', '20150101', '20150101000000'])
 def test_convert_dates(dt, tmp_path):
     outfile = str(tmp_path / TESTFN)

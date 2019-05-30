@@ -1,17 +1,19 @@
 language: python
+group: travis_latest
+dist: xenial
 
 python:
-  - '2.7'
-  - '3.4'
-  - '3.5'
-  - '3.6'
+- 2.7
+- 3.4
+- 3.5
+- 3.6
+- 3.7
 
 sudo: false
 
 addons:
   apt:
     packages:
-    - python-numpy
     - gfortran
 
 env:
@@ -22,7 +24,6 @@ before_install:
   - python --version
   - uname -a
   - lsb_release -a
-  - pip install numpy
 
 install:
   - pip install coveralls pytest-cov coverage codecov
