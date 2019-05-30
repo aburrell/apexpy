@@ -4,6 +4,7 @@ from __future__ import division, absolute_import, unicode_literals
 
 import datetime as dt
 import warnings
+import math
 
 import numpy as np
 import pytest
@@ -230,8 +231,7 @@ def test__basevec_longitude():
 
 def test_convert_geo2apex():
     A = Apex(date=2000, refh=300)
-    assert_allclose(A.convert(60, 15, 'geo', 'apex', height=100),
-                    A.geo2apex(60, 15, 100))
+    assert A.convert(60, 15, 'geo', 'apex', height=100) == approx(A.geo2apex(60, 15, 100))
 
 
 def test_convert_geo2qd():
@@ -363,17 +363,20 @@ def test_geo2apex_vectorization():
     assert A.geo2apex(60, 15, [100, 100])[0].shape == (2,)
 
 
-def test_geo2apex_invalid_lat():
+@pytest.mark.parametrize('lat', [91, -91])
+def test_geo2apex_invalid_lat(lat):
     A = Apex(date=2000, refh=300)
     with pytest.raises(ValueError):
-        A.geo2apex(91, 0, 0)
-    with pytest.raises(ValueError):
-        A.geo2apex(-91, 0, 0)
-    A.geo2apex(90, 0, 0)
-    A.geo2apex(-90, 0, 0)
+        A.geo2apex(lat, 0, 0)
 
-    assert_allclose(A.geo2apex(90+1e-5, 0, 0), A.geo2apex(90, 0, 0), rtol=0,
-                    atol=1e-8)
+
+@pytest.mark.parametrize('lat', [90, -90])
+def test_geo2apex_lat_bounds(lat):
+    A = Apex(date=2000, refh=300)
+    A.geo2apex(lat, 0, 0)
+
+    assert A.geo2apex(lat+math.copysign(1e-5, lat), 0, 0) == approx(A.geo2apex(lat, 0, 0),
+                      rel=0, abs=1e-8)
 
 
 def test_geo2apex_undefined_warning():
@@ -382,7 +385,7 @@ def test_geo2apex_undefined_warning():
         ret = A.geo2apex(0, 0, 0)
         A.geo2apex(0, 0, 0)
         assert ret[0] == -9999
-        assert len(w) == 2
+        assert len(w) == 1
         assert issubclass(w[-1].category, UserWarning)
         assert 'set to -9999 where' in str(w[-1].message)
 
@@ -1185,15 +1188,15 @@ def test_basevectors_apex_invalid_scalar():
         (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
          e3) = A.basevectors_apex(0, 0, 0)
         A.basevectors_apex(0, 0, 0)
-        assert len(w) == 2
+        assert len(w) == 1
         assert issubclass(w[-1].category, UserWarning)
         assert 'set to -9999 where' in str(w[-1].message)
 
     invalid = [-9999, -9999, -9999]
     assert not np.allclose(f1, invalid[:2])
     assert not np.allclose(f2, invalid[:2])
-    assert_allclose(f3, invalid)
-    assert_allclose(g1, invalid)
+    assert f3 == approx(invalid)
+    assert g1 == approx(invalid)
     assert_allclose(g2, invalid)
     assert_allclose(g3, invalid)
     assert_allclose(d1, invalid)
