@@ -16,7 +16,10 @@ from apexpy import fortranapex as fa
 
 
 def test_apxg2q():
-    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
+    """Test fortran apex geographic to quasi-dipole
+    """
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'),
+                 2000)
     qlat, qlon, f1, f2, f = fa.apxg2q(60, 15, 100, 1)
     assert_allclose(qlat, 56.531288146972656)
     assert_allclose(qlon, 94.1068344116211)
@@ -45,15 +48,19 @@ def test_apxg2all():
 
 
 def test_apxq2g():
-    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
+    """ Test fortran quasi-dipole to geographic
+    """
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'),
+                 2000)
     glat, glon, error = fa.apxq2g(60, 15, 100, 1e-2)
-    assert_allclose(glat, 50.97946548461914)
-    assert_allclose(glon, -66.16902923583984)
-    assert_allclose(error, 0.00010020843910751864)
+    assert_allclose([glat, glon, error],
+                    [50.97946548461914, -66.16902923583984,
+                     0.00010020843910751864], atol=1e-6)
 
 
 def test_g2q2d():
-    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'),
+                 2000)
     for lat in [0, 30, 60, 89]:
         for lon in [-179, -90, 0, 90, 179]:
             qlat, qlon, _, _, _ = fa.apxg2q(lat, lon, 100, 0)
