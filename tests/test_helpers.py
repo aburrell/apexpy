@@ -157,7 +157,7 @@ def test_subsol():
 
 
 def datetime64_to_datetime(dt64):
-    """Convert a numpy.datetime64 to datetime.datetime, works outside 32 bit int seconds range of 1970
+    """np.datetime64 to dt.datetime, works outside 32 bit int sec range of 1970
     """
     year_floor = dt64.astype('datetime64[Y]')
     month_floor = dt64.astype('datetime64[M]')
@@ -169,8 +169,13 @@ def datetime64_to_datetime(dt64):
 
 
 def test_subsol_array():
-    """Verify that getting the subsolar point at an array of numpy.datetime64 is the same as converting individual
-    datetime.datetime
+    """Verify subsolar point calculation using an array of np.datetime64
+
+    Notes
+    -----
+    Tested by ensurnig the array of np.datetime64 is equivalent to converting
+    using single dt.datetime values
+
     """
     dates = np.arange(np.datetime64("1601"), np.datetime64("2100"), np.timedelta64(100, 'D')).astype('datetime64[s]')
     sslat, sslon = helpers.subsol(dates)
