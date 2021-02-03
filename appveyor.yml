@@ -73,7 +73,7 @@ install:
   - where python
   - where pip
   - '%INSTALL_EXTRA_DEPS%'
-  - python setup.py clean --all build_ext --inplace 
+  - python setup.py clean --all build_ext --inplace --force --compiler=msvc
   - python setup.py develop
 test_script:
   - '%TESTSCRIPT%'
