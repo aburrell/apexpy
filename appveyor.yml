@@ -1,21 +1,23 @@
+image:
+- Visual Studio 2017
 version: '{branch}-{build}'
 build: off
 configuration: Release
 environment:
-  global:
-    WITH_COMPILER: 'cmd /E:ON /V:ON /C .\ci\appveyor-with-compiler.cmd'
   matrix:
     - TESTENV: '2.7-nocover-64'
       INSTALL_LIBPYTHON: libpython
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
       TESTSCRIPT: 'py.test'
+      MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
 
     - TESTENV: '2.7-nocover-32'
       INSTALL_LIBPYTHON: libpython
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'py.test'
+      MINGW_DIR: C:\MinGW\bin
 
     - TESTENV: '3.5-nocover-64'
       PYTHON_VERSION: '3.5'
@@ -61,7 +63,7 @@ environment:
 init:
   - ps: echo $env:TESTENV
 install:
-  - set PATH=%PATH%
+  - set PATH=%MINGW_DIR%;%PATH%
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% %INSTALL_LIBPYTHON% pytest numpy'
