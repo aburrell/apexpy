@@ -96,7 +96,6 @@ class Apex(object):
 
         self.datafile = datafile
         self.fortranlib = fortranlib
-        self._cfa = ctypes.CDLL(fortranlib)
 
         self.set_epoch(self.year)
 
@@ -938,7 +937,7 @@ class Apex(object):
         fa.loadapxsh(self.datafile, np.float(year))
         # ctypes
         date = ctypes.c_float(year)
-        self._cfa.cofrm_(ctypes.byref(date))
+        fa.cofrm(year)
 
         self.year = year
 
@@ -960,25 +959,9 @@ class Apex(object):
         self.refh = refh
 
     def _get_babs_nonvectorized(self, glat, glon, height):
-
-        # setup input args for feldg
-        IENTY = ctypes.c_int(1)
-        GLAT  = ctypes.c_float(glat)
-        GLON  = ctypes.c_float(glon)
-        ALT   = ctypes.c_float(height)
-        # setup output args for feldg
-        BNRTH = ctypes.c_float(0)
-        BEAST = ctypes.c_float(0)
-        BDOWN = ctypes.c_float(0)
-        BABS  = ctypes.c_float(0)
-
-        self._cfa.feldg_(ctypes.byref(IENTY),ctypes.byref(GLAT),
-                         ctypes.byref(GLON),ctypes.byref(ALT),
-                         ctypes.byref(BNRTH),ctypes.byref(BEAST),
-                         ctypes.byref(BDOWN),ctypes.byref(BABS)
-                        )
+        bnorth, beast, bdown, babs = fa.feldg(1, glat, glon, height)
         # BABS is in guass, so convert to tesla
-        return BABS.value / 10000.0
+        return babs / 10000.0
 
     def get_babs(self, glat, glon, height):
         """Returns the magnitude of the IGRF magnetic field in tesla.
