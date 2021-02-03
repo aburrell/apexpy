@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.2.0 (2021-03-XX)
+------------------
+* Improved the subsol routine to allow array input
+* Improved PEP8 compliance
+* Added some missing docstrings to unit tests
+
+
 1.0.3 (2018-04-05)
 -----------------------------------------
 * Updated badges and added DOI

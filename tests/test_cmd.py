@@ -2,10 +2,9 @@
 
 from __future__ import division, print_function, absolute_import, unicode_literals
 
+import numpy as np
 import os
 import subprocess
-
-import numpy as np
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
@@ -92,10 +91,12 @@ def test_convert_single_line():
 
 
 def test_convert_stdin_stdout():
-    p = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 300',
-                         shell=True, stdout=subprocess.PIPE)
-    stdout, _ = p.communicate()
-    p.wait()
+    """ Test use of pipe input to command-line call
+    """
+    pipe = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 300',
+                            shell=True, stdout=subprocess.PIPE)
+    stdout, _ = pipe.communicate()
+    pipe.wait()
     np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float),
                                [57.469547, 93.639816], rtol=1e-4)
 
