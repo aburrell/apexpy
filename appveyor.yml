@@ -31,8 +31,8 @@ install:
   - conda install -q -c msys2 m2w64-toolchain
   - python.exe setup.py config_fc
   - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - python.exe setup.py build
   - python.exe setup.py develop
+
 test_script:
   - py.test
 
