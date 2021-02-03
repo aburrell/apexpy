@@ -29,6 +29,7 @@ install:
   - conda create -q -p C:\pythontest python=%PYTHON_VERSION% pytest numpy
   - activate C:\pythontest
   - conda install -q -c msys2 m2w64-toolchain
+  - python.exe setup.py config_fc
   - python setup.py clean --all build_ext --force --inplace --compiler=mingw32 --fcompiler=gfortran
   - python setup.py develop
 
