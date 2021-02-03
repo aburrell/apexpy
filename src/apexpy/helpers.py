@@ -146,7 +146,7 @@ def subsol(datetime):
 
     Parameters
     ==========
-    datetime : :class:`datetime.datetime`
+    datetime : :class:`datetime.datetime` or :class:`numpy.ndarray[datetime64]`
 
     Returns
     =======
