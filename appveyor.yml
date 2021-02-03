@@ -1,5 +1,5 @@
 image:
-- Visual Studio 2019
+- Visual Studio 2015
 version: '{branch}-{build}'
 build: off
 configuration: Release
