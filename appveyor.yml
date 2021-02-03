@@ -17,7 +17,7 @@ environment:
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'py.test'
-      MINGW_DIR: C:\MinGW\bin
+      MINGW_DIR: C:\cygwin
 
     - TESTENV: '3.5-nocover-64'
       PYTHON_VERSION: '3.5'
