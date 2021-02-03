@@ -61,7 +61,7 @@ environment:
 init:
   - ps: echo $env:TESTENV
 install:
-  - set PATH=%PATH%;C:\msys64\mingw64\bin
+  - set PATH=%PATH%;C:\msys64\mingw64\bin;C:\MinGW\bin
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% %INSTALL_LIBPYTHON% pytest numpy'
