@@ -13,10 +13,11 @@ from . import helpers
 # below try..catch required for autodoc to work on readthedocs
 try:
     from . import fortranapex as fa
-except:
+except ImportError as e:
     print("ERROR: fortranapex module could not be imported, so apexpy probably"
           " won't work.  Make sure you have a gfortran compiler. Wheels "
           "installation assumes your compiler lives in /opt/local/bin")
+    raise e
 
 import ctypes
 
@@ -76,7 +77,7 @@ class Apex(object):
             fortranlib = fa.__file__
 
         self.RE = 6371.009  # mean Earth radius
-        self.set_refh(refh) # reference height
+        self.set_refh(refh)  # reference height
 
         if date is None:
             self.year = helpers.toYearFraction(dt.datetime.now())
@@ -84,7 +85,7 @@ class Apex(object):
             try:
                 # convert date/datetime object to decimal year
                 self.year = helpers.toYearFraction(date)
-            except:
+            except AttributeError:
                 # failed so date is probably int/float, use directly
                 self.year = date
 
@@ -123,7 +124,6 @@ class Apex(object):
         self._apex2qd = np.frompyfunc(self._apex2qd_nonvectorized, 3, 2)
         self._qd2apex = np.frompyfunc(self._qd2apex_nonvectorized, 3, 2)
         self._get_babs = np.frompyfunc(self._get_babs_nonvectorized, 3, 1)
-
 
     def convert(self, lat, lon, source, dest, height=0, datetime=None,
                 precision=1e-10, ssheight=50*6371):
@@ -431,7 +431,7 @@ class Apex(object):
         qlat = helpers.checklat(qlat, name='qlat')
 
         alon = qlon
-        hA = self.get_apex(qlat, height) # apex height
+        hA = self.get_apex(qlat, height)  # apex height
 
         if hA < self.refh:
             if np.isclose(hA, self.refh, rtol=0, atol=1e-5):
@@ -617,8 +617,8 @@ class Apex(object):
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
         X = np.reshape(X, (3, np.size(X)//3))
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, \
-                                                alon, height, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat,
+                                                   alon, height, coords='apex')
 
         if EV == 'E':
             v1 = e1
@@ -634,8 +634,8 @@ class Apex(object):
         X1 = np.sum(X*v1, axis=0)  # E dot e1 or V dot d1
         X2 = np.sum(X*v2, axis=0)  # E dot e2 or V dot d2
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, \
-                                                alon, newheight, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat,
+                                                   alon, newheight, coords='apex')
 
         if EV == 'E':
             v1 = d1
@@ -678,7 +678,6 @@ class Apex(object):
             components)
 
         """
-
         return self._map_EV_to_height(alat, alon, height, newheight, E, 'E')
 
     def map_V_to_height(self, alat, alon, height, newheight, V):
@@ -787,11 +786,6 @@ class Apex(object):
             Altitude in km
         coords : {'geo', 'apex', 'qd'}, optional
             Input coordinate system
-        return_all : bool, optional
-            Will also return f3, g1, g2, and g3, and f1 and f2 have 3 components
-            (the last component is zero). Requires `lat`, `lon`, and `height`
-            to be broadcast to 1D (at least one of the parameters must be 1D
-            and the other two parameters must be 1D or 0D).
         precision : float, optional
             Precision of output (degrees) when converting to geo. A negative
             value of this argument produces a low-precision calculation of
@@ -872,11 +866,9 @@ class Apex(object):
         F = np.cross(F1.T, F2.T).T[-1]
         cosI = helpers.getcosIm(alat)
         k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
-        g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh))**(3/2) \
-             * d1 / F
-        g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * \
-             (k + ((self.RE + np.float64(height)) / (self.RE + self.refh))
-              * d2 / cosI)
+        g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh))**(3/2) * d1 / F
+        g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * (k + ((self.RE + np.float64(height)) /
+                                                                 (self.RE + self.refh)) * d2 / cosI)
         g3 = k*F
         f3 = np.cross(g1.T, g2.T).T
 
@@ -932,13 +924,9 @@ class Apex(object):
             Decimal year
 
         """
-
         # f2py
         fa.loadapxsh(self.datafile, np.float(year))
-        # ctypes
-        date = ctypes.c_float(year)
         fa.cofrm(year)
-
         self.year = year
 
     def set_refh(self, refh):
@@ -955,7 +943,6 @@ class Apex(object):
         and is only relevant for conversions involving apex (not quasi-dipole).
 
         """
-
         self.refh = refh
 
     def _get_babs_nonvectorized(self, glat, glon, height):
@@ -1043,17 +1030,14 @@ class Apex(object):
                J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
 
         """
-
-
         glat, glon = self.convert(lat, lon, coords, 'geo', height=height,
                                   precision=precision)
 
         babs = self.get_babs(glat, glon, height)
 
-        _, _, _, _, _, _, d1, d2, d3, _, _, e3 = self.basevectors_apex(glat, \
-                                                glon, height, coords='geo')
-        d1_cross_d2 = np.cross(d1.T,d2.T).T
-        D = np.sqrt(np.sum(d1_cross_d2**2,axis=0))
+        _, _, _, _, _, _, d1, d2, d3, _, _, e3 = self.basevectors_apex(glat, glon, height, coords='geo')
+        d1_cross_d2 = np.cross(d1.T, d2.T).T
+        D = np.sqrt(np.sum(d1_cross_d2**2, axis=0))
 
         Be3 = babs / D
         Bd3 = babs * D
