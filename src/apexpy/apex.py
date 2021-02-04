@@ -17,7 +17,7 @@ except ImportError as err:
     print("ERROR: fortranapex module could not be imported, so apexpy probably"
           " won't work.  Make sure you have a gfortran compiler. Wheels "
           "installation assumes your compiler lives in /opt/local/bin")
-    raise e
+    raise err
 
 # make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to -9999 where*',
