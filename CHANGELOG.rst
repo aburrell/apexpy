@@ -7,6 +7,8 @@ Changelog
 * Improved the subsol routine to allow array input
 * Improved PEP8 compliance
 * Added some missing docstrings to unit tests
+* Fixed AppVeyor test environment
+* Updated python test versions
 
 
 1.0.3 (2018-04-05)
