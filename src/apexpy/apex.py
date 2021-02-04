@@ -921,9 +921,10 @@ class Apex(object):
 
         """
         # f2py
-        fa.loadapxsh(self.datafile, np.float(year))
-        fa.cofrm(year)
-        self.year = year
+        self.year = np.float64(year)
+        fa.loadapxsh(self.datafile, self.year)
+        fa.cofrm(self.year)
+        
 
     def set_refh(self, refh):
         """Updates the apex reference height for all subsequent conversions.
