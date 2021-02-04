@@ -65,6 +65,7 @@ install:
   - del C:\pythontest\Lib\site-packages\README 
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - '%MINICONDA_HOME%\Scripts\conda install -q -c msys2 m2w64-toolchain'
+  - python -m pip install --upgrade pip
   - '%INSTALL_EXTRA_DEPS%'
   - python.exe setup.py config_fc
   - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
