@@ -19,9 +19,6 @@ except ImportError as e:
           "installation assumes your compiler lives in /opt/local/bin")
     raise e
 
-import ctypes
-
-
 # make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to -9999 where*',
                         module='apexpy.apex')
@@ -126,7 +123,7 @@ class Apex(object):
         self._get_babs = np.frompyfunc(self._get_babs_nonvectorized, 3, 1)
 
     def convert(self, lat, lon, source, dest, height=0, datetime=None,
-                precision=1e-10, ssheight=50*6371):
+                precision=1e-10, ssheight=50 * 6371):
         """Converts between geodetic, modified apex, quasi-dipole and MLT.
 
         Parameters
@@ -479,14 +476,14 @@ class Apex(object):
         # if array is returned, the dtype is object, so convert to float
         return np.float64(alat), np.float64(alon)
 
-    def mlon2mlt(self, mlon, datetime, ssheight=50*6371):
+    def mlon2mlt(self, mlon, datetime, ssheight=50 * 6371):
         """Computes the magnetic local time at the specified magnetic longitude
         and UT.
 
         Parameters
         ==========
         mlon : array_like
-            Magnetic longitude (apex and quasi-dipole longitude are always 
+            Magnetic longitude (apex and quasi-dipole longitude are always
             equal)
         datetime : :class:`datetime.datetime`
             Date and time
@@ -513,9 +510,9 @@ class Apex(object):
         ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # np.float64 will ensure lists are converted to arrays
-        return (180 + np.float64(mlon) - ssalon)/15 % 24
+        return (180 + np.float64(mlon) - ssalon) / 15 % 24
 
-    def mlt2mlon(self, mlt, datetime, ssheight=50*6371):
+    def mlt2mlon(self, mlt, datetime, ssheight=50 * 6371):
         """Computes the magnetic longitude at the specified magnetic local time
         and UT.
 
@@ -549,7 +546,7 @@ class Apex(object):
         ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # np.float64 will ensure lists are converted to arrays
-        return (15*np.float64(mlt) - 180 + ssalon + 360) % 360
+        return (15 * np.float64(mlt) - 180 + ssalon + 360) % 360
 
     def map_to_height(self, glat, glon, height, newheight, conjugate=False,
                       precision=1e-10):
@@ -610,15 +607,14 @@ class Apex(object):
     def _map_EV_to_height(self, alat, alon, height, newheight, X, EV):
 
         # make sure X is array of correct shape
-        if(not (np.ndim(X) == 1 and np.size(X) == 3) and
-           not (np.ndim(X) == 2 and np.shape(X)[0] == 3)):
+        if (not (np.ndim(X) == 1 and np.size(X) == 3) and
+                not (np.ndim(X) == 2 and np.shape(X)[0] == 3)):
             # raise ValueError because if passing e.g. a (6,) ndarray the
             # reshape below will work even though the input is invalid
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
-        X = np.reshape(X, (3, np.size(X)//3))
+        X = np.reshape(X, (3, np.size(X) // 3))
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat,
-                                                   alon, height, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
 
         if EV == 'E':
             v1 = e1
@@ -628,14 +624,13 @@ class Apex(object):
             v2 = d2
 
         # make sure v1 and v2 have shape (3, N)
-        v1 = np.reshape(v1, (3, v1.size//3))
-        v2 = np.reshape(v2, (3, v2.size//3))
+        v1 = np.reshape(v1, (3, v1.size // 3))
+        v2 = np.reshape(v2, (3, v2.size // 3))
 
-        X1 = np.sum(X*v1, axis=0)  # E dot e1 or V dot d1
-        X2 = np.sum(X*v2, axis=0)  # E dot e2 or V dot d2
+        X1 = np.sum(X * v1, axis=0)  # E dot e1 or V dot d1
+        X2 = np.sum(X * v2, axis=0)  # E dot e2 or V dot d2
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat,
-                                                   alon, newheight, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, newheight, coords='apex')
 
         if EV == 'E':
             v1 = d1
@@ -645,10 +640,10 @@ class Apex(object):
             v2 = e2
 
         # make sure v1 and v2 have shape (3, N)
-        v1 = np.reshape(v1, (3, v1.size//3))
-        v2 = np.reshape(v2, (3, v2.size//3))
+        v1 = np.reshape(v1, (3, v1.size // 3))
+        v2 = np.reshape(v2, (3, v2.size // 3))
 
-        X_mapped = X1[np.newaxis, :]*v1 + X2[np.newaxis, :]*v2
+        X_mapped = X1[np.newaxis, :] * v1 + X2[np.newaxis, :] * v2
 
         return np.squeeze(X_mapped)
 
@@ -851,14 +846,14 @@ class Apex(object):
             e3 = np.vstack(e3).T
 
         # make sure arrays are 2D
-        f1 = f1.reshape((2, f1.size//2))
-        f2 = f2.reshape((2, f2.size//2))
-        d1 = d1.reshape((3, d1.size//3))
-        d2 = d2.reshape((3, d2.size//3))
-        d3 = d3.reshape((3, d3.size//3))
-        e1 = e1.reshape((3, e1.size//3))
-        e2 = e2.reshape((3, e2.size//3))
-        e3 = e3.reshape((3, e3.size//3))
+        f1 = f1.reshape((2, f1.size // 2))
+        f2 = f2.reshape((2, f2.size // 2))
+        d1 = d1.reshape((3, d1.size // 3))
+        d2 = d2.reshape((3, d2.size // 3))
+        d3 = d3.reshape((3, d3.size // 3))
+        e1 = e1.reshape((3, e1.size // 3))
+        e2 = e2.reshape((3, e2.size // 3))
+        e3 = e3.reshape((3, e3.size // 3))
 
         # compute f3, g1, g2, g3
         F1 = np.vstack((f1, np.zeros_like(f1[0])))
@@ -866,10 +861,10 @@ class Apex(object):
         F = np.cross(F1.T, F2.T).T[-1]
         cosI = helpers.getcosIm(alat)
         k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
-        g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh))**(3/2) * d1 / F
+        g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh)) ** (3 / 2) * d1 / F
         g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * (k + ((self.RE + np.float64(height)) /
                                                                  (self.RE + self.refh)) * d2 / cosI)
-        g3 = k*F
+        g3 = k * F
         f3 = np.cross(g1.T, g2.T).T
 
         if np.any(alat == -9999):
@@ -910,7 +905,7 @@ class Apex(object):
         if height is None:
             height = self.refh
 
-        cos_lat_squared = np.cos(np.radians(lat))**2
+        cos_lat_squared = np.cos(np.radians(lat)) ** 2
         apex_height = (self.RE + height) / cos_lat_squared - self.RE
 
         return apex_height
@@ -1015,7 +1010,7 @@ class Apex(object):
         instead equal to the IGRF magnitude divided by a scaling factor, D.
         Similarly, Bd3 is the IGRF magnitude multiplied by D.
 
-        See Richmond, A. D. (1995) [4]_ equations 3.13 and 3.14 
+        See Richmond, A. D. (1995) [4]_ equations 3.13 and 3.14
 
         References
         ==========
@@ -1037,7 +1032,7 @@ class Apex(object):
 
         _, _, _, _, _, _, d1, d2, d3, _, _, e3 = self.basevectors_apex(glat, glon, height, coords='geo')
         d1_cross_d2 = np.cross(d1.T, d2.T).T
-        D = np.sqrt(np.sum(d1_cross_d2**2, axis=0))
+        D = np.sqrt(np.sum(d1_cross_d2 ** 2, axis=0))
 
         Be3 = babs / D
         Bd3 = babs * D
