@@ -83,7 +83,8 @@ class Apex(object):
                 # convert date/datetime object to decimal year
                 self.year = helpers.toYearFraction(date)
             except AttributeError:
-                # failed so date is probably int/float, use directly
+                # Failed while finding datetime attribute, so
+                # date is probably an int or float; use directly
                 self.year = date
 
         if not os.path.isfile(datafile):
