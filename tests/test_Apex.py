@@ -394,6 +394,7 @@ def test_geo2apex_undefined_warning():
         ret = apex2000.geo2apex(0, 0, 0)
 
     print(wmsg)
+    print([w.message for w in wmsg])
     assert ret[0] == -9999
     assert len(wmsg) == 1
     assert issubclass(wmsg[-1].category, UserWarning)
