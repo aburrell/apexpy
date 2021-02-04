@@ -13,7 +13,7 @@ from . import helpers
 # below try..catch required for autodoc to work on readthedocs
 try:
     from . import fortranapex as fa
-except ImportError as e:
+except ImportError as err:
     print("ERROR: fortranapex module could not be imported, so apexpy probably"
           " won't work.  Make sure you have a gfortran compiler. Wheels "
           "installation assumes your compiler lives in /opt/local/bin")
