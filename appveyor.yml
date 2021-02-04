@@ -68,7 +68,7 @@ install:
   - '%INSTALL_EXTRA_DEPS%'
   - python.exe setup.py config_fc
   - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - python setup.py develop
+  - python setup.py install
 
 test_script:
   - '%TESTSCRIPT%'
