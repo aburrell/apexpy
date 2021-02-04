@@ -60,14 +60,11 @@ install:
             throw "There are newer queued builds for this pull request, failing early." }
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
-  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% %INSTALL_LIBPYTHON% pytest numpy'
+  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% pytest numpy libpython'
   # remove file which conflicts with installation of package 'readme' on case-insensitive file systems
-  - del C:\pythontest\Lib\site-packages\README
-  - conda config --set always_yes yes
-  - conda update -q conda
-  - conda create -q -p C:\pythontest python=%PYTHON_VERSION% pytest numpy libpython
-  - activate C:\pythontest
-  - conda install -q -c msys2 m2w64-toolchain
+  - del C:\pythontest\Lib\site-packages\README 
+  - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
+  - '%MINICONDA_HOME%\Scripts\conda install -q -c msys2 m2w64-toolchain'
   - '%INSTALL_EXTRA_DEPS%'
   - python.exe setup.py config_fc
   - python.exe setup.py config --compiler=mingw32 --fcompiler=gfortran
