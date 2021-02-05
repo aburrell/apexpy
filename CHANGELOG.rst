@@ -2,6 +2,15 @@
 Changelog
 =========
 
+1.1.0 (2021-03-XX)
+------------------
+* Improved the subsol routine to allow array input
+* Improved PEP8 compliance
+* Added some missing docstrings to unit tests
+* Fixed AppVeyor test environment
+* Updated python test versions
+* Adapted Fortran to read IRGF coefficients from a text file (currently IGRF-13)
+
 1.0.4 (2019-04-05)
 ----------------------------------------
 * Updated installation instructions
