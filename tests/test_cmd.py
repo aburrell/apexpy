@@ -97,6 +97,8 @@ def test_convert_single_line():
 
 
 def test_convert_stdin_stdout():
+    """ Test use of pipe input to command-line call
+    """
     pipe = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 300',
                             shell=True, stdout=subprocess.PIPE)
     stdout, _ = pipe.communicate()
