@@ -314,7 +314,7 @@ def test_convert_qd2mlt():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.convert(60, 15, 'qd', 'mlt', height=100,
-                              datetime=datetime, ssheight=2e5)[1],
+                                     datetime=datetime, ssheight=2e5)[1],
                     apex_out.mlon2mlt(15, datetime, ssheight=2e5))
 
 
@@ -333,7 +333,7 @@ def test_convert_mlt2apex():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.convert(60, 15, 'mlt', 'apex', height=100,
-                              datetime=datetime, ssheight=2e5),
+                                     datetime=datetime, ssheight=2e5),
                     (60, apex_out.mlt2mlon(15, datetime, ssheight=2e5)))
 
 
@@ -402,12 +402,16 @@ def test_geo2apex_invalid_lat():
 
 
 def test_geo2apex_undefined_warning():
-    apex_out = Apex(date=2000, refh=10000)
-    with warnings.catch_warnings(record=True) as w:
+    """Test warning and fill values for an undefined location
+    """
+    with warnings.catch_warnings(record=True) as wmsg:
+        apex_out = Apex(date=2000, refh=10000)
         ret = apex_out.geo2apex(0, 0, 0)
-        assert ret[0] == -9999
-        assert issubclass(w[-1].category, UserWarning)
-        assert 'set to -9999 where' in str(w[-1].message)
+
+    assert ret[0] == -9999
+    assert len(wmsg) == 1
+    assert issubclass(wmsg[-1].category, UserWarning)
+    assert 'set to -9999 where' in str(wmsg[-1].message)
 
 
 ###============================================================================
@@ -420,7 +424,7 @@ def test_apex2geo():
     lat, lon, error = apex_out.apex2geo(60, 15, 100, precision=1e-2)
     assert_allclose((lat, lon, error),
                     apex_out.qd2geo(*apex_out.apex2qd(60, 15, 100), height=100,
-                             precision=1e-2))
+                                    precision=1e-2))
     assert type(lat) != np.ndarray
     assert type(lon) != np.ndarray
     assert type(error) != np.ndarray
@@ -543,8 +547,8 @@ def test_apex2qd_invalid_lat():
     apex_out.apex2qd(90, 0, 0)
     apex_out.apex2qd(-90, 0, 0)
 
-    assert_allclose(apex_out.apex2qd(90+1e-5, 0, 0), apex_out.apex2qd(90, 0, 0),
-                    rtol=0, atol=1e-8)
+    assert_allclose(apex_out.apex2qd(90+1e-5, 0, 0),
+                    apex_out.apex2qd(90, 0, 0), rtol=0, atol=1e-8)
 
 
 def test_apex2qd_apexheight_close():
@@ -588,8 +592,8 @@ def test_qd2apex_invalid_lat():
     apex_out.qd2apex(90, 0, 0)
     apex_out.qd2apex(-90, 0, 0)
 
-    assert_allclose(apex_out.qd2apex(90+1e-5, 0, 0), apex_out.qd2apex(90, 0, 0),
-                    rtol=0, atol=1e-8)
+    assert_allclose(apex_out.qd2apex(90+1e-5, 0, 0),
+                    apex_out.qd2apex(90, 0, 0), rtol=0, atol=1e-8)
 
 
 def test_qd2apex_apexheight_close():
@@ -633,7 +637,7 @@ def test_mlon2mlt_1Darray():
 def test_mlon2mlt_2Darray():
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.mlon2mlt([[0, 180], [0, 180]],
-                               dt.datetime(2000, 2, 3, 4, 5, 6)),
+                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
                     [[23.019261, 11.019261], [23.019261, 11.019261]], rtol=1e-4)
 
 
@@ -755,30 +759,32 @@ def test_mlt2mlon2mlt():
 def test_map_to_height():
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=False,
-                                    precision=1e-10),
+                                           precision=1e-10),
                     (31.841459274291992, 17.916629791259766, 0))
     assert_allclose(apex_out.map_to_height(30, 170, 100, 500, conjugate=False,
-                                    precision=1e-2),
+                                           precision=1e-2),
                     (25.727252960205078, 169.60546875, 0.00017655163537710905))
 
 
 def test_map_to_height_same_height():
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
-                                    precision=1e-10),
+                                           precision=1e-10),
                     (60, 15, 3.4150946248701075e-6), rtol=1e-5)
 
 
 def test_map_to_height_conjugate():
+    """Test results of map_to_height using conjugacy
+    """
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
-                                    precision=1e-10),
+                                           precision=1e-10),
                     (-25.424892425537109, 27.310417175292969,
-                     1.2074182222931995e-6))
+                     1.2074182222931995e-6), atol=1e-6)
     assert_allclose(apex_out.map_to_height(30, 170, 100, 500, conjugate=True,
-                                    precision=1e-2),
+                                           precision=1e-2),
                     (-13.76642894744873, 164.24259948730469,
-                     0.00056820799363777041))
+                     0.00056820799363777041), atol=1e-6)
 
 
 def test_map_to_height_vectorization():
@@ -829,31 +835,32 @@ def test_map_E_to_height():
 
     # vectorize lat
     assert_allclose(apex_out.map_E_to_height([60, 70], 15, 100, 500,
-                                      np.array([[1, 2, 3]]*2).T),
+                                             np.array([[1, 2, 3]]*2).T),
                     np.array([out_60_15_100_500, out_70_15_100_500]).T,
                     rtol=1e-5)
 
     # vectorize lon
     assert_allclose(apex_out.map_E_to_height(60, [15, 30], 100, 500,
-                                      np.array([[1, 2, 3]]*2).T),
+                                             np.array([[1, 2, 3]]*2).T),
                     np.array([out_60_15_100_500, out_60_30_100_500]).T,
                     rtol=1e-5)
 
     # vectorize height
     assert_allclose(apex_out.map_E_to_height(60, 15, [100, 200], 500,
-                                      np.array([[1, 2, 3]]*2).T),
+                                             np.array([[1, 2, 3]]*2).T),
                     np.array([out_60_15_100_500, out_60_15_200_500]).T,
                     rtol=1e-5)
 
     # vectorize newheight
     assert_allclose(apex_out.map_E_to_height(60, 15, 100, [500, 1000],
-                                      np.array([[1, 2, 3]]*2).T),
+                                             np.array([[1, 2, 3]]*2).T),
                     np.array([out_60_15_100_500, out_60_15_100_1000]).T,
                     rtol=1e-5)
 
     # vectorize E
     assert_allclose(apex_out.map_E_to_height(60, 15, 100, 500,
-                                      np.array([[1, 2, 3], [2, 3, 4]]).T),
+                                             np.array([[1, 2, 3],
+                                                       [2, 3, 4]]).T),
                     np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
                     rtol=1e-5)
 
@@ -1212,26 +1219,21 @@ def test_basevectors_apex_delta():
 
 
 def test_basevectors_apex_invalid_scalar():
+    """ Test warning and fill values for calculating base vectors with bad value
+    """
     apex_out = Apex(date=2000, refh=10000)
-    with warnings.catch_warnings(record=True) as w:
-        (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-         e3) = apex_out.basevectors_apex(0, 0, 0)
-        assert issubclass(w[-1].category, UserWarning)
-        assert 'set to -9999 where' in str(w[-1].message)
+    with warnings.catch_warnings(record=True) as wmsg:
+        base_vecs = apex_out.basevectors_apex(0, 0, 0)
+
+    assert issubclass(wmsg[-1].category, UserWarning)
+    assert 'set to -9999 where' in str(wmsg[-1].message)
 
     invalid = [-9999, -9999, -9999]
-    assert not np.allclose(f1, invalid[:2])
-    assert not np.allclose(f2, invalid[:2])
-    assert_allclose(f3, invalid)
-    assert_allclose(g1, invalid)
-    assert_allclose(g2, invalid)
-    assert_allclose(g3, invalid)
-    assert_allclose(d1, invalid)
-    assert_allclose(d2, invalid)
-    assert_allclose(d3, invalid)
-    assert_allclose(e1, invalid)
-    assert_allclose(e2, invalid)
-    assert_allclose(e3, invalid)
+    for i, bvec in enumerate(base_vecs):
+        if i < 2:
+            assert not np.allclose(bvec, invalid[:2])
+        else:
+            assert_allclose(bvec, invalid)
 
 
 ###============================================================================
@@ -1299,6 +1301,54 @@ def test_set_refh():
 
     assert_allclose(ret_300, fa.apxg2all(60, 15, 100, 300, 0)[2:4])
     assert_allclose(ret_500, fa.apxg2all(60, 15, 100, 500, 0)[2:4])
+
+
+###============================================================================
+### Test the get_babs() method
+###============================================================================
+
+
+def test_get_babs():
+    inputs = [[[80],[100],[300]],[range(50,90,8),range(0,360,80),[300]*5],
+              [90.0,0,1000]]
+    temp1 = np.array([4.22045410e-05, 5.15672743e-05, 4.98150200e-05,
+                     5.06769359e-05, 4.91028428e-05])
+    expected = [[5.1303124427795412e-05], temp1, [3.793962299823761e-05]]
+
+    apex_out = Apex(date=2018.1, refh=0)
+    for i in range(len(inputs)):
+        outputs = apex_out.get_babs(*inputs[i])
+        if isinstance(outputs,np.float64):
+            outputs = [outputs]
+        for j,output in enumerate(outputs):
+            assert_allclose(output, expected[i][j], rtol=0, atol=1e-5)
+
+
+###============================================================================
+### Test the bvectors_apex() method
+###============================================================================
+
+
+def test_bvectors_apex():
+    inputs = [[80,81],[100,120],[100,200]]
+
+    expected = (np.array([5.94623305e-05,  5.95450722e-05]),
+                np.array([[ 0.02008877,  0.00303204],
+                          [ 0.03571109,  0.03377986],
+                          [-0.94045794, -0.89848483]]),
+                np.array([  5.26919505e-05,   4.81377429e-05]),
+                np.array([[ 0.02266997,  0.00375055],
+                          [ 0.04029961,  0.04178477],
+                          [-1.0612973 , -1.1114012 ]])
+               )
+
+    apex_out = Apex(date=2018.1, refh=0)
+
+    outputs = apex_out.bvectors_apex(*inputs,coords='geo', precision=1e-10)
+    for i,output in enumerate(outputs):
+        for j in range(output.size):
+            assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,
+                            atol=1e-5)
 
 
 if __name__ == '__main__':
