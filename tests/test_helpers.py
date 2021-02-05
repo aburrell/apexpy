@@ -157,7 +157,7 @@ def test_subsol():
 
 
 def datetime64_to_datetime(dt64):
-    """np.datetime64 to dt.datetime, works outside 32 bit int sec range of 1970
+    """Convert a numpy.datetime64 to datetime.datetime, works outside 32 bit int seconds range of 1970
     """
     year_floor = dt64.astype('datetime64[Y]')
     month_floor = dt64.astype('datetime64[M]')

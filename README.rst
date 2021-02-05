@@ -17,6 +17,12 @@ Install (requires NumPy before installation)::
 
     pip install apexpy
 
+This assumes that the same version of libgfortran is installed in the same location as when the pip wheel was built. If not, you may have trouble importing apexpy and you will have to build apexpy yourself using::
+
+    pip install --global-option='build_ext' apexpy
+    
+which requires both libgfortran and gfortran to be installed on your system.
+
 Conversion is done by creating an ``Apex`` object and using its methods to
 perform the desired calculations. Some simple examples::
 
