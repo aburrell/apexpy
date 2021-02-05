@@ -8,6 +8,7 @@ import time
 import datetime as dt
 import numpy as np
 
+
 def checklat(lat, name='lat'):
     """Makes sure the latitude is inside [-90, 90], clipping close values
     (tolerance 1e-4).

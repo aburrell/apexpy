@@ -18,12 +18,9 @@ such as gfortran.
 
 The package has been tested with the following setups (others might work, too):
 
-* Windows (64 bit Python), Linux (64 bit), and Mac (64 bit)
-* Python 2.7, 3.5, 3.6, (and 3.4 on Linux/Mac [2]_)
+* Windows (32/64 bit Python), Linux (64 bit), and Mac (64 bit)
+* Python 2.7, 3.6, 3.7, 3.8, 3.9
 
 .. [1] pip is included with Python 2 from v2.7.9 and Python 3 from v3.4.
        If you don't have pip,
        `get it here <http://pip.readthedocs.org/en/stable/installing/>`_.
-.. [2] I do not know how to compile the Fortran extension on Windows in a
-       manner that is compatible with the omitted python versions. If you get
-       it working, let me know!

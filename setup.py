@@ -22,7 +22,7 @@ else:
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
                            'src/fortranapex/makeapexsh.f90',
                            'src/fortranapex/apexsh.f90',
-                           'src/fortranapex/checkapexsh.f90'])]
+                           'src/fortranapex/checkapexsh.f90', 'src/fortranapex/fortranapex.pyf'])]
 
 def read(*names, **kwargs):
     return io.open(
@@ -62,9 +62,10 @@ if __name__ == "__main__":
             'Programming Language :: Python',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.4',
-            'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
             'Programming Language :: Python :: Implementation :: CPython',
             'Topic :: Scientific/Engineering :: Physics',
             'Topic :: Utilities',
