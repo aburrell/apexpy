@@ -14,20 +14,20 @@ def checklat(lat, name='lat'):
     (tolerance 1e-4).
 
     Parameters
-    ==========
-    lat : array_like
+    ----------
+    lat : array-like
         latitude
     name : str, optional
         parameter name to use in the exception message
 
     Returns
-    =======
+    -------
     lat : ndarray or float
         Same as input where values just outside the range have been
         clipped to [-90, 90]
 
     Raises
-    ======
+    ------
     ValueError
         if any values are too far outside the range [-90, 90]
     """
@@ -57,12 +57,12 @@ def getsinIm(alat):
     """Computes sinIm from modified apex latitude.
 
     Parameters
-    ==========
-    alat : array_like
+    ----------
+    alat : array-like
         Modified apex latitude
 
     Returns
-    =======
+    -------
     sinIm : ndarray or float
 
     """
@@ -76,12 +76,12 @@ def getcosIm(alat):
     """Computes cosIm from modified apex latitude.
 
     Parameters
-    ==========
-    alat : array_like
+    ----------
+    alat : array-like
         Modified apex latitude
 
     Returns
-    =======
+    -------
     cosIm : ndarray or float
 
     """
@@ -96,16 +96,16 @@ def toYearFraction(date):
     year.
 
     Parameters
-    ==========
+    ----------
     date : :class:`datetime.date` or :class:`datetime.datetime`
 
     Returns
-    =======
+    -------
     year : float
         Decimal year
 
     Notes
-    =====
+    -----
     The algorithm is taken from http://stackoverflow.com/a/6451892/2978652
 
     """
@@ -128,12 +128,12 @@ def gc2gdlat(gclat):
     """Converts geocentric latitude to geodetic latitude using WGS84.
 
     Parameters
-    ==========
-    gclat : array_like
+    ---------
+    gclat : array-like
         Geocentric latitude
 
     Returns
-    =======
+    -------
     gdlat : ndarray or float
         Geodetic latitude
 
@@ -146,18 +146,18 @@ def subsol(datetime):
     """Finds subsolar geocentric latitude and longitude.
 
     Parameters
-    ==========
+    ----------
     datetime : :class:`datetime.datetime` or :class:`numpy.ndarray[datetime64]`
 
     Returns
-    =======
+    -------
     sbsllat : float
         Latitude of subsolar point
     sbsllon : float
         Longitude of subsolar point
 
     Notes
-    =====
+    -----
     Based on formulas in Astronomical Almanac for the year 1996, p. C24.
     (U.S. Government Printing Office, 1994). Usable for years 1601-2100,
     inclusive. According to the Almanac, results are good to at least 0.01
