@@ -13,20 +13,24 @@ When you have NumPy, install this package at the command line using
 
     pip install apexpy
 
-This assumes that the same version of libgfortran is installed in the same location as when the pip wheel was built. If not, you may have trouble importing apexpy and you will have to build apexpy yourself using:
+This assumes that the same version of libgfortran is installed in the same
+location as when the pip wheel was built (in the event that a wheel is
+available). If not, you may have trouble importing apexpy.  In the event that
+you run into issues, you can get around this problem by using
+``pip`` [1]_::
 
-pip install --global-option='build_ext' apexpy
+    pip install --global-option='build_ext' apexpy
 
 which requires both libgfortran and gfortran to be installed on your system.
+This is the default option for Linux, and so should not be an issue there.
 
 The package has been tested with the following setups (others might work, too):
 
-* Windows (64 bit Python), Linux (64 bit), and Mac (64 bit)
-* Python 2.7, 3.5, 3.6, (and 3.4 on Linux/Mac [2]_)
+The package has been tested with the following setups (others might work, too):
+
+* Windows (32/64 bit Python), Linux (64 bit), and Mac (64 bit)
+* Python 2.7, 3.6, 3.7, 3.8, 3.9
 
 .. [1] pip is included with Python 2 from v2.7.9 and Python 3 from v3.4.
        If you don't have pip,
        `get it here <http://pip.readthedocs.org/en/stable/installing/>`_.
-.. [2] I do not know how to compile the Fortran extension on Windows in a
-       manner that is compatible with the omitted python versions. If you get
-       it working, let me know!
