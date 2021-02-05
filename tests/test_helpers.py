@@ -155,5 +155,36 @@ def test_subsol():
     assert_allclose(helpers.subsol(dt.datetime(2100, 12, 31, 23, 59, 59)),
                     (-23.021061422069053, -179.23129780639425))
 
+
+def datetime64_to_datetime(dt64):
+    """np.datetime64 to dt.datetime, works outside 32 bit int sec range of 1970
+    """
+    year_floor = dt64.astype('datetime64[Y]')
+    month_floor = dt64.astype('datetime64[M]')
+    day_floor = dt64.astype('datetime64[D]')
+    year = year_floor.astype(int) + 1970
+    month = (month_floor - year_floor).astype('timedelta64[M]').astype(int) + 1
+    day = (day_floor - month_floor).astype('timedelta64[D]').astype(int) + 1
+    return dt.datetime(year, month, day)
+
+
+def test_subsol_array():
+    """Verify subsolar point calculation using an array of np.datetime64
+
+    Notes
+    -----
+    Tested by ensurnig the array of np.datetime64 is equivalent to converting
+    using single dt.datetime values
+
+    """
+    dates = np.arange(np.datetime64("1601"), np.datetime64("2100"), np.timedelta64(100, 'D')).astype('datetime64[s]')
+    sslat, sslon = helpers.subsol(dates)
+    for i, date in enumerate(dates):
+        datetime = datetime64_to_datetime(date)
+        true_sslat, true_sslon = helpers.subsol(datetime)
+        assert sslat[i] == true_sslat
+        assert sslon[i] == true_sslon
+
+
 if __name__ == '__main__':
     pytest.main()

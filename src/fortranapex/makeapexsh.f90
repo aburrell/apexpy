@@ -1,18 +1,19 @@
-!***************************************************************************************************
+!*******************************************************************************
 !
 !  File Name: makeapexsh.f90
 !  Authors: John Emmert, Art Richmond
 !  Date: 11/13/2009
 !  Version: 1.0
-!  Description: Creates and saves spherical harmonic expansion coefficients for QD coordinate
-!               conversion.
-!  References: Richmond, A. D., Ionospheric Electrodynamics Using Magnetic Apex Coordinates,
-!                J. Geomag. Geoelectr., 47, 191-212, 1995.
-!              Emmert, J. T., A. D. Richmond, and D. P. Drob, A computationally compact 
-!                representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base
-!                vectors, J. Geophys. Res., 115, Axxxxx, doi:10.1029/2010JA015326, 2010.
+!  Description: Creates and saves spherical harmonic expansion coefficients for
+!               QD coordinate conversion.
+!  References: Richmond, A. D., Ionospheric Electrodynamics Using Magnetic Apex
+!               Coordinates, J. Geomag. Geoelectr., 47, 191-212, 1995.
+!              Emmert, J. T., A. D. Richmond, and D. P. Drob, A computationally
+!               compact representation of Magnetic-Apex and Quasi-Dipole
+!               coordinates with smooth base vectors, J. Geophys. Res., 115,
+!               Axxxxx, doi:10.1029/2010JA015326, 2010.
 !
-!***************************************************************************************************
+!*******************************************************************************
 !
 !  MAKEAPXSH
 !  Computes and saves harmonic coefficients for coordinate conversions.
@@ -20,20 +21,22 @@
 !  CALL MAKEAPXSH (DATAFILE, EPOCHS, NEPOCHS, L, M, N)
 !
 !  INPUT ARGUMENTS
-!    DATAFILE  Name of output data file that will contain the conversion coefficients
-!    EPOCHS    Array of ordered epochs (decimal years, yyyy.y) for which coefficients are to be 
-!              computed.
+!    DATAFILE  Name of output data file that will contain the conversion
+!              coefficients
+!    EPOCHS    Array of ordered epochs (decimal years, yyyy.y) for which 
+!              coefficients are to be computed.
 !    NEPOCHS   Number of elements in EPOCHS.
 !    L         Maximum order of vertical polynomial expansion.
 !    M         Maximum order of spherical harmonic expansion.
-!    N         Maximum degree of spherical harmonic expansion. N must be equal or greater than M.
+!    N         Maximum degree of spherical harmonic expansion. N must be equal
+!              or greater than M.
 !
 !  DEPENDENCIES
 !    apex.f, magfld.f, apexsh.f90
 !
-!***************************************************************************************************
+!*******************************************************************************
 
-subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin)
+subroutine makeapxsh(datafilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 
     use apxshmodule
 
@@ -51,16 +54,19 @@ subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin)
     integer(4)                  :: l, ish, i, j, Rpt(0:2)
     real(4)                     :: glon, glat, alt, lonspace, latspace, lat0
     real(8)                     :: rhospace
-    real(8)                     :: norm1, norm2, cosmplat, sinmplat, cosmplon, sinmplon
+    real(8)                     :: norm1, norm2, cosmplat, sinmplat, cosmplon
+    real(8)                     :: sinmplon
     real(8)                     :: thetag, phig, thetaq, phiq, latwgt
     real(8)                     :: xq0, yq0, zq0, xg, yg, zg
     real(8), allocatable        :: altgrid(:), altfn(:,:), shg(:)
-    real(8), allocatable        :: Gg(:,:), Gq(:,:), Fg(:), Fq(:), cfdiag(:), coefftemp(:)
-    real(8), allocatable        :: Dxq(:), Dyq(:), Dzq(:), Dxg(:), Dyg(:), Dzg(:)
+    real(8), allocatable        :: Gg(:,:), Gq(:,:), Fg(:), Fq(:), cfdiag(:)
+    real(8), allocatable        :: coefftemp(:)
+    real(8), allocatable        :: Dxq(:), Dyq(:), Dzq(:), Dxg(:), Dyg(:)
+    real(8), allocatable        :: Dzg(:)
     
     integer(4)                  :: NMAXIGRF
     real(4)                     :: GB(1:255)
-    real(4)                     :: A,ALAT,ALON,dum1,dum2,dum3,dum4,dum5
+    real(4)                     :: A, ALAT, ALON, dum1, dum2, dum3, dum4, dum5
 
     external COFRM, APEX
 
@@ -135,13 +141,15 @@ subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin)
         latwgt = dsin(thetag)
         do ilon = 0, nlon-1
 
-          !COMPUTE SPHERICAL HARMONICS OF CURRENT GEODETIC LONGITUDE AND LATITUDE
+          !COMPUTE SPHERICAL HARMONICS OF CURRENT GEODETIC LONGITUDE AND
+          !LATITUDE
           glon = lonspace*real(ilon) - 180E0
           phig = dble(glon) * dtor
           call shcalc(thetag,phig)
           shg = sh
 
-          !COMPUTE REFERENCE (DIPOLE) MAGNETIC LATITUDE AND LONGITUDE OF CURRENT LOCATION
+          !COMPUTE REFERENCE (DIPOLE) MAGNETIC LATITUDE AND LONGITUDE OF
+          !CURRENT LOCATION
           xq0 = dot_product(coeff0(Rpt,iepoch,0),shg(Rpt))
           yq0 = dot_product(coeff0(Rpt,iepoch,1),shg(Rpt))
           zq0 = dot_product(coeff0(Rpt,iepoch,2),shg(Rpt))
@@ -158,7 +166,8 @@ subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin)
             thetaq = dasin(cosqlat)
             if (ALAT .lt. 0) thetaq = pi - thetaq
 
-            !COMPUTE RESIDUAL QD COORDINATES (FITTING DATA FOR GEODETIC TO QD TRANSFORMATION)
+            !COMPUTE RESIDUAL QD COORDINATES (FITTING DATA FOR GEODETIC TO QD
+            !TRANSFORMATION)
             xq = cosqlat*dcos(phiq) - xq0
             yq = cosqlat*dsin(phiq) - yq0
             zq = dcos(thetaq)       - zq0
@@ -166,7 +175,8 @@ subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin)
             !COMPUTE SPHERICAL HARMONICS OF CURRENT QD LATITUDE AND LONGITUDE
             call shcalc(thetaq,phiq)
 
-            !COMPUTE RESIDUAL GD COORDINATES (FITTING DATA FOR QD TO GEODETIC TRANSFORMATION)
+            !COMPUTE RESIDUAL GD COORDINATES (FITTING DATA FOR QD TO GEODETIC
+            !TRANSFORMATION)
             xg = latwgt*dcos(phig) - dot_product(coeff0(Rpt,iepoch,3),sh(Rpt))
             yg = latwgt*dsin(phig) - dot_product(coeff0(Rpt,iepoch,4),sh(Rpt))
             zg = dcos(thetag)      - dot_product(coeff0(Rpt,iepoch,5),sh(Rpt))
@@ -217,15 +227,15 @@ subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin)
     
     !WRITE COEFFICIENTS TO OUTPUT FILE
     open(unit=iun, file=trim(datafilein), form='unformatted')
-    write(iun), nepoch, nmax, mmax, lmax, nterm
-    write(iun), epochgrid, coeff0
+    write(iun) nepoch, nmax, mmax, lmax, nterm
+    write(iun) epochgrid, coeff0
     close(iun)
     
     return
 
 end subroutine makeapxsh
 
-!***************************************************************************************************
+!*******************************************************************************
 
 subroutine choldc(a,n,np,p)
   
@@ -252,7 +262,7 @@ subroutine choldc(a,n,np,p)
 
 end subroutine choldc
 
-!***************************************************************************************************
+!*******************************************************************************
 
 subroutine cholsl(a,n,np,p,b,x)
   
@@ -280,4 +290,4 @@ subroutine cholsl(a,n,np,p,b,x)
 
 end subroutine cholsl
 
-!***************************************************************************************************
+!*******************************************************************************

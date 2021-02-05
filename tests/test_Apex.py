@@ -1318,6 +1318,7 @@ def test_get_babs():
     apex_out = Apex(date=2018.1, refh=0)
     for i in range(len(inputs)):
         outputs = apex_out.get_babs(*inputs[i])
+
         if isinstance(outputs,np.float64):
             outputs = [outputs]
         for j,output in enumerate(outputs):
@@ -1343,8 +1344,8 @@ def test_bvectors_apex():
                )
 
     apex_out = Apex(date=2018.1, refh=0)
-
     outputs = apex_out.bvectors_apex(*inputs,coords='geo', precision=1e-10)
+
     for i,output in enumerate(outputs):
         for j in range(output.size):
             assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,
