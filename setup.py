@@ -34,14 +34,14 @@ def read(*names, **kwargs):
 if __name__ == "__main__":
     setup(
         name='apexpy',
-        version='1.0.3',
+        version='1.0.4',
         license='MIT',
         description='A Python wrapper for Apex coordinates',
         long_description='%s\n%s' % (read('README.rst'),
                                      re.sub(':[a-z]+:`~?(.*?)`', r'``\1``',
                                             read('CHANGELOG.rst'))),
         author='Christer van der Meeren; Angeline G. Burrell',
-        author_email='agb073000@utdallas.edu',
+        author_email='angeline.burrell@nrl.navy.mil',
         url='https://github.com/aburrell/apexpy',
         packages=find_packages('src'),
         package_dir={'': 'src'},
