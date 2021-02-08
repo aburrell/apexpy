@@ -1315,9 +1315,9 @@ def test_bvectors_apex():
                           [-1.0612973 , -1.1114012 ]])
                )
 
-    A = Apex(date=2018.1, refh=0)
+    apex_out = Apex(date=2018.1, refh=0)
 
-    outputs = A.bvectors_apex(*inputs,coords='geo', precision=1e-10)
+    outputs = apex_out.bvectors_apex(*inputs, coords='geo', precision=1e-10)
     for i,output in enumerate(outputs):
         for j in range(output.size):
             assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,

@@ -618,7 +618,8 @@ class Apex(object):
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
         X = np.reshape(X, (3, np.size(X) // 3))
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(
+            alat, alon, height, coords='apex')
 
         if EV == 'E':
             v1 = e1
