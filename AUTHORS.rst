@@ -7,6 +7,7 @@ This python wrapper is made by:
 * Karl M. Laundal
 * Christer van der Meeren
 * Angeline G. Burrell (maintainer)
+* Ashton Reimer
 * Gregory Starr
 
 Fortran code by Emmert et al. [2010] [1]_. Quasi-dipole and modified
