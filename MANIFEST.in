@@ -3,11 +3,6 @@ graft src
 graft ci
 graft tests
 
-include .bumpversion.cfg
-include .coveragerc
-include .cookiecutterrc
-include pytest.ini
-
 include AUTHORS.rst
 include CHANGELOG.rst
 include CONTRIBUTING.rst
@@ -15,6 +10,6 @@ include LICENSE
 include README.rst
 include CODE_OF_CONDUCT.md
 
-include tox.ini .travis.yml appveyor.yml .codeclimate.yml .landscape.yaml
+include tox.ini .travis.yml appveyor.yml .codeclimate.yml
 
 global-exclude *.py[cod~] __pycache__ *.so *.dylib
