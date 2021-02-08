@@ -425,6 +425,7 @@ def test_apex2geo():
     assert_allclose((lat, lon, error),
                     apex_out.qd2geo(*apex_out.apex2qd(60, 15, 100), height=100,
                                     precision=1e-2))
+
     assert type(lat) != np.ndarray
     assert type(lon) != np.ndarray
     assert type(error) != np.ndarray
