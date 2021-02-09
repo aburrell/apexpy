@@ -1022,7 +1022,7 @@ class Apex(object):
 
         References
         ----------
-        Richmond, A. D. (1995) [4]_ 
+        Richmond, A. D. (1995) [4]_
         Emmert, J. T. et al. (2010) [5]_
 
         """
