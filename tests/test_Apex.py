@@ -157,7 +157,7 @@ def test__geo2apexall_array():
             assert_allclose(ret[i].astype(float),
                             np.array([[ret1[i], ret2[i]], [ret3[i], ret4[i]]],
                                      dtype=float))
-        except TypeError:
+        except ValueError:
             # ret[i] is array of arrays
             assert_allclose(ret[i][0, 0], ret1[i])
             assert_allclose(ret[i][0, 1], ret2[i])
