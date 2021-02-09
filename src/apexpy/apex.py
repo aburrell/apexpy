@@ -986,9 +986,9 @@ class Apex(object):
 
         Parameters
         ----------
-        lat, lon : (N,) array_like or float
-            Latitude
         lat : (N,) array_like or float
+            Latitude
+        lon : (N,) array_like or float
             Longitude
         height : (N,) array_like or float
             Altitude in km
@@ -1012,8 +1012,8 @@ class Apex(object):
         Bd3: (1, N) or (1,) ndarray
         d3 : (3, N) or (3,) ndarray
 
-        Note
-        ----
+        Notes
+        -----
         Be3 is not equivalent to the magnitude of the IGRF magnitude, but is
         instead equal to the IGRF magnitude divided by a scaling factor, D.
         Similarly, Bd3 is the IGRF magnitude multiplied by D.
@@ -1022,15 +1022,8 @@ class Apex(object):
 
         References
         ----------
-
-        .. [4] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
-               Magnetic Apex Coordinates, Journal of geomagnetism and
-               geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
-
-        .. [5] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
-               A computationally compact representation of Magnetic-Apex
-               and Quasi-Dipole coordinates with smooth base vectors,
-               J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
+        Richmond, A. D. (1995) [4]_ 
+        Emmert, J. T. et al. (2010) [5]_
 
         """
         glat, glon = self.convert(lat, lon, coords, 'geo', height=height,
