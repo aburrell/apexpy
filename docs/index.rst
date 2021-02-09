@@ -10,6 +10,7 @@ Contents
    usage
    reference/index
    contributing
+   maintenance
    authors
    changelog
 
