@@ -19,12 +19,15 @@ LIBS 	= #-L/global/apps/intel/mkl/10.1.0.015/ -shared-intel -Wl,--start-group /g
 
 PROG	   = apextest
 
-OBJS	   = checkapexsh.o apexsh.o makeapexsh.o apex.o magfld.o
+OBJS	   = igrf.o checkapexsh.o apexsh.o makeapexsh.o apex.o magfld.o
 
 $(PROG)	    : $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(PROG) $(LIBS)
 
 apexsh.o      : apexsh.f90  
+	$(FC) -c $(FFLAGS) $<
+
+igrf.o      : igrf.f90  
 	$(FC) -c $(FFLAGS) $<
 
 checkapexsh.o        : checkapexsh.f90 

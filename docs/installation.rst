@@ -13,11 +13,16 @@ When you have NumPy, install this package at the command line using
 
     pip install apexpy
 
-This assumes that the same version of libgfortran is installed in the same location as when the pip wheel was built. If not, you may have trouble importing apexpy and you will have to build apexpy yourself using:
+This assumes that the same version of libgfortran is installed in the same
+location as when the pip wheel was built (in the event that a wheel is
+available). If not, you may have trouble importing apexpy.  In the event that
+you run into issues, you can get around this problem by using
+``pip`` [1]_::
 
-pip install --global-option='build_ext' apexpy
+    pip install --global-option='build_ext' apexpy
 
 which requires both libgfortran and gfortran to be installed on your system.
+This is the default option for Linux, and so should not be an issue there.
 
 The package has been tested with the following setups (others might work, too):
 

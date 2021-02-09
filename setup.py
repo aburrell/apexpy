@@ -21,8 +21,10 @@ else:
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
                            'src/fortranapex/makeapexsh.f90',
+                           'src/fortranapex/igrf.f90',
                            'src/fortranapex/apexsh.f90',
-                           'src/fortranapex/checkapexsh.f90', 'src/fortranapex/fortranapex.pyf'])]
+                           'src/fortranapex/checkapexsh.f90',
+                           'src/fortranapex/fortranapex.pyf'])]
 
 def read(*names, **kwargs):
     return io.open(

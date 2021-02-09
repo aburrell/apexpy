@@ -19,7 +19,7 @@ program checkapexsh
 
   integer(4), parameter :: nepochgrid=25
   integer(4)            :: lmax=3, nmmax=6
-  character(128)        :: apexshfile='apexsh.dat'
+  character(1000)       :: apexshfile='apexsh.dat'
   real(4)               :: epochgrid(0:nepochgrid-1)
   real(4)               :: epoch
   real(4)               :: glat, glon, alt, hr, prec, error
