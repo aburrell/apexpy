@@ -4,6 +4,7 @@ Changelog
 
 1.1.0 (2021-03-XX)
 ------------------
+* Adapted Fortran to read IRGF coefficients from a text file (currently IGRF-13)
 * Improved the subsol routine to allow array input
 * Improved PEP8 compliance
 * Added some missing docstrings to unit tests

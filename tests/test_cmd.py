@@ -36,8 +36,8 @@ def test_module_invocation():
 
 def test_convert_YYYY():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
-                             '--height', '300',
-                             '-i', 'tests/test_convert.txt', '-o', outfile])
+                             '--height', '300', '-i', 'tests/test_convert.txt',
+                             '-o', outfile])
     pipe.communicate()
     pipe.wait()
     assert os.path.isfile(outfile)

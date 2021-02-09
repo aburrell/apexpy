@@ -374,9 +374,9 @@ def test_convert_invalid_transformation():
 
 
 def test_geo2apex():
-    apex2000 = Apex(date=2000, refh=300)
-    lat, lon = apex2000.geo2apex(60, 15, 100)
-    assert_allclose((lat, lon), apex2000._geo2apex(60, 15, 100))
+    apex_out = Apex(date=2000, refh=300)
+    lat, lon = apex_out.geo2apex(60, 15, 100)
+    assert_allclose((lat, lon), apex_out._geo2apex(60, 15, 100))
     assert type(lat) != np.ndarray
     assert type(lon) != np.ndarray
 
@@ -405,8 +405,8 @@ def test_geo2apex_undefined_warning():
     """Test warning and fill values for an undefined location
     """
     with warnings.catch_warnings(record=True) as wmsg:
-        apex2000 = Apex(date=2000, refh=10000)
-        ret = apex2000.geo2apex(0, 0, 0)
+        apex_out = Apex(date=2000, refh=10000)
+        ret = apex_out.geo2apex(0, 0, 0)
 
     assert ret[0] == -9999
     assert len(wmsg) == 1
@@ -425,6 +425,7 @@ def test_apex2geo():
     assert_allclose((lat, lon, error),
                     apex_out.qd2geo(*apex_out.apex2qd(60, 15, 100), height=100,
                                     precision=1e-2))
+
     assert type(lat) != np.ndarray
     assert type(lon) != np.ndarray
     assert type(error) != np.ndarray
@@ -547,8 +548,8 @@ def test_apex2qd_invalid_lat():
     apex_out.apex2qd(90, 0, 0)
     apex_out.apex2qd(-90, 0, 0)
 
-    assert_allclose(apex_out.apex2qd(90+1e-5, 0, 0), apex_out.apex2qd(90, 0, 0),
-                    rtol=0, atol=1e-8)
+    assert_allclose(apex_out.apex2qd(90+1e-5, 0, 0),
+                    apex_out.apex2qd(90, 0, 0), rtol=0, atol=1e-8)
 
 
 def test_apex2qd_apexheight_close():
@@ -592,8 +593,8 @@ def test_qd2apex_invalid_lat():
     apex_out.qd2apex(90, 0, 0)
     apex_out.qd2apex(-90, 0, 0)
 
-    assert_allclose(apex_out.qd2apex(90+1e-5, 0, 0), apex_out.qd2apex(90, 0, 0),
-                    rtol=0, atol=1e-8)
+    assert_allclose(apex_out.qd2apex(90+1e-5, 0, 0),
+                    apex_out.qd2apex(90, 0, 0), rtol=0, atol=1e-8)
 
 
 def test_qd2apex_apexheight_close():
@@ -776,12 +777,12 @@ def test_map_to_height_same_height():
 def test_map_to_height_conjugate():
     """Test results of map_to_height using conjugacy
     """
-    apex2000 = Apex(date=2000, refh=300)
-    assert_allclose(apex2000.map_to_height(60, 15, 100, 10000, conjugate=True,
+    apex_out = Apex(date=2000, refh=300)
+    assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
                                            precision=1e-10),
                     (-25.424892425537109, 27.310417175292969,
                      1.2074182222931995e-6), atol=1e-6)
-    assert_allclose(apex2000.map_to_height(30, 170, 100, 500, conjugate=True,
+    assert_allclose(apex_out.map_to_height(30, 170, 100, 500, conjugate=True,
                                            precision=1e-2),
                     (-13.76642894744873, 164.24259948730469,
                      0.00056820799363777041), atol=1e-6)
@@ -1225,9 +1226,9 @@ def test_basevectors_apex_delta():
 def test_basevectors_apex_invalid_scalar():
     """ Test warning and fill values for calculating base vectors with bad value
     """
-    apex2000 = Apex(date=2000, refh=10000)
+    apex_out = Apex(date=2000, refh=10000)
     with warnings.catch_warnings(record=True) as wmsg:
-        base_vecs = apex2000.basevectors_apex(0, 0, 0)
+        base_vecs = apex_out.basevectors_apex(0, 0, 0)
 
     assert issubclass(wmsg[-1].category, UserWarning)
     assert 'set to -9999 where' in str(wmsg[-1].message)
