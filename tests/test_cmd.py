@@ -14,8 +14,9 @@ outfile = 'tests/output.txt'
 def setup_function(function):
     try:
         os.remove(outfile)
-    except:
+    except OSError:
         pass
+
 
 teardown_function = setup_function
 

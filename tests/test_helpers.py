@@ -11,17 +11,17 @@ from numpy.testing import assert_allclose
 from apexpy import helpers
 
 
-##############################################################################
-# NOTE: whenever function outputs are tested against hard-coded numbers,     #
-# the test results (numbers) were obtained by running the code that is       #
-# tested. Therefore these tests below only check that nothing changes when   #
-# refactoring etc., and not if the results are actually correct              #
-##############################################################################
+# ----------------------------------------------------------------------------
+# NOTE: whenever function outputs are tested against hard-coded numbers, the
+# test results (numbers) were obtained by running the code that is tested.
+# Therefore these tests below only check that nothing changes when refactoring,
+# etc., and not if the results are actually correct
+# ----------------------------------------------------------------------------
 
 
-###============================================================================
-### Test checklat
-###============================================================================
+# ============================================================================
+#  Test checklat
+# ============================================================================
 
 def test_checklat_scalar():
     assert helpers.checklat(90) == 90
@@ -64,9 +64,9 @@ def test_checklat_array():
         helpers.checklat([-90-1e-5, -90, 0, 90, 90+1e-4])
 
 
-###============================================================================
-### Test getsinIm
-###============================================================================
+# ============================================================================
+#  Test getsinIm
+# ============================================================================
 
 def test_getsinIm_scalar():
     assert_allclose(helpers.getsinIm(60), 0.96076892283052284)
@@ -85,9 +85,9 @@ def test_getsinIm_2Darray():
                      [0.96076892283052284, 0.33257924500670238]])
 
 
-###============================================================================
-### Test getcosIm
-###============================================================================
+# ============================================================================
+#  Test getcosIm
+# ============================================================================
 
 
 def test_getcosIm_scalar():
@@ -107,9 +107,9 @@ def test_getcosIm_2Darray():
                      [0.27735009811261463, 0.94307531289434765]])
 
 
-###============================================================================
-### Test toYearFraction
-###============================================================================
+# ============================================================================
+#  Test toYearFraction
+# ============================================================================
 
 
 def test_toYearFraction():
@@ -124,9 +124,9 @@ def test_toYearFraction():
                     2005.943624682902)
 
 
-###============================================================================
-### Test gc2gdlat
-###============================================================================
+# ============================================================================
+#  Test gc2gdlat
+# ============================================================================
 
 
 def test_gc2gdlat():
@@ -136,9 +136,9 @@ def test_gc2gdlat():
     assert_allclose(helpers.gc2gdlat(60), 60.166364190170931)
 
 
-###============================================================================
-### Test subsol
-###============================================================================
+# ============================================================================
+#  Test subsol
+# ============================================================================
 
 def test_subsol():
     assert_allclose(helpers.subsol(dt.datetime(2005, 2, 3, 4, 5, 6)),
@@ -157,7 +157,12 @@ def test_subsol():
 
 
 def datetime64_to_datetime(dt64):
-    """Convert a numpy.datetime64 to datetime.datetime, works outside 32 bit int seconds range of 1970
+    """Convert numpy datetime64 object to a datetime datetime object
+
+    Notes
+    -----
+    Works outside 32 bit int second range of 1970
+
     """
     year_floor = dt64.astype('datetime64[Y]')
     month_floor = dt64.astype('datetime64[M]')
@@ -177,7 +182,8 @@ def test_subsol_array():
     using single dt.datetime values
 
     """
-    dates = np.arange(np.datetime64("1601"), np.datetime64("2100"), np.timedelta64(100, 'D')).astype('datetime64[s]')
+    dates = np.arange(np.datetime64("1601"), np.datetime64("2100"),
+                      np.timedelta64(100, 'D')).astype('datetime64[s]')
     sslat, sslon = helpers.subsol(dates)
     for i, date in enumerate(dates):
         datetime = datetime64_to_datetime(date)

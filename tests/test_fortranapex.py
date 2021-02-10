@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-import pytest
 from numpy.testing import assert_allclose
+import os
+import pytest
 
 import apexpy
 from apexpy import fortranapex as fa
 
-##############################################################################
-# NOTE: the test results (numbers) were obtained by running the code that is #
-# tested, therefore the tests below only check that nothing changes when     #
-# refactoring etc., and not if the results are actually correct              #
-##############################################################################
+# ----------------------------------------------------------------------------
+# NOTE: the test results (numbers) were obtained by running the code that is
+# tested, therefore the tests below only check that nothing changes when
+# refactoring etc., and not if the results are actually correct
+# ----------------------------------------------------------------------------
 
 
 def test_apxg2q():
@@ -29,8 +28,10 @@ def test_apxg2q():
 
 
 def test_apxg2all():
-    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
-    qlat, qlon, mlat, mlon, f1, f2, f, d1, d2, d3, d, e1, e2, e3 = fa.apxg2all(60, 15, 100, 300, 1)
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'),
+                 2000)
+    qlat, qlon, mlat, mlon, f1, f2, f, d1, d2, d3, d, e1, e2, e3 = fa.apxg2all(
+        60, 15, 100, 300, 1)
     assert_allclose(qlat, 56.531288146972656)
     assert_allclose(qlon, 94.1068344116211)
     assert_allclose(mlat, 55.94841766357422)
@@ -70,7 +71,8 @@ def test_g2q2d():
 
 
 def test_apxq2g_lowprecision():
-    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'), 2000)
+    fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__), 'apexsh.dat'),
+                 2000)
     glat, glon, error = fa.apxq2g(60, 15, 100, -1)
     assert_allclose(glat, 51.00891876220703)
     assert_allclose(glon, -66.11973571777344)
