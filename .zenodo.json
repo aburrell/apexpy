@@ -22,13 +22,29 @@
   ], 
   "creators": [
     {
+      "orcid": "0000-0002-8043-0953", 
+      "name": "Christer van der Meeren"
+    },
+    {
+      "orcid": "0000-0001-5028-4943",
+      "name": "Karl M. Laundal"
+    },
+    {
       "orcid": "0000-0001-8875-9326", 
       "affiliation": "Naval Research Laboratory", 
       "name": "Angeline G. Burrell"
-    }, 
+    },
     {
-      "orcid": "0000-0002-8043-0953", 
-      "name": "Christer van der Meeren"
+      "orcid": "0000-0002-3487-3630",
+      "name": "Gregory Starr"
+    },
+    {
+      "orcid": "0000-0002-4621-3453",
+      "name": "Ashton S. Reimer"
+    },
+    {
+      "orcid": "0000-0003-4227-8687",
+      "name": "Joachim Morschhäuser"
     }
   ]
 }
