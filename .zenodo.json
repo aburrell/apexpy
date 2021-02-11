@@ -2,7 +2,7 @@
   "license": {
   "id": "MIT"
   }, 
-  "notes": "When referencing this package, please cite both the package DOI and the AACGM-v2 journal article: Shepherd, S. G. (2014), Altitude\u2010adjusted corrected geomagnetic coordinates: Definition and functional approximations, Journal of Geophysical Research: Space Physics, 119, 7501\u20137521, doi:10.1002/2014JA020264.",
+  "notes": "When referencing this package, please cite both the package DOI and the Apex Coordinates journal article: Emmert, J. T., A. D. Richmond, and D. P. Drob (2010), A computationally compact representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base vectors, J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.",
   "references": [
     "Emmert, J. T., A. D. Richmond, and D. P. Drob (2010), A computationally compact representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base vectors, J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.",
     "Richmond, A. D. (1995), Ionospheric Electrodynamics Using Magnetic Apex Coordinates, Journal of geomagnetism and geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191."
