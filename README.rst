@@ -17,7 +17,9 @@ Install (requires NumPy before installation)::
 
     pip install apexpy
 
-This assumes that the same version of libgfortran is installed in the same location as when the pip wheel was built. If not, you may have trouble importing apexpy and you will have to build apexpy yourself using::
+This assumes that the same version of libgfortran is installed in the same
+location as when the pip wheel was built (if a wheel was used). If not, you may
+have trouble importing apexpy.  If you run into trouble, try the command::
 
     pip install --global-option='build_ext' apexpy
     

@@ -2,21 +2,21 @@
 
 from __future__ import division, print_function, absolute_import
 
+import datetime as dt
+import numpy as np
 import os
 import warnings
-import datetime as dt
-
-import numpy as np
 
 from . import helpers
 
-# below try..catch required for autodoc to work on readthedocs
+# Below try..catch required for autodoc to work on readthedocs
 try:
     from . import fortranapex as fa
 except ImportError as err:
-    print("ERROR: fortranapex module could not be imported, so apexpy probably"
-          " won't work.  Make sure you have a gfortran compiler. Wheels "
-          "installation assumes your compiler lives in /opt/local/bin")
+    warnings.warn("".join(["fortranapex module could not be imported, so ",
+                           "apexpy probably won't work.  Make sure you have ",
+                           "a gfortran compiler. Wheels installation ",
+                           "assumes your compiler lives in /opt/local/bin"]))
     raise err
 
 # make sure invalid warnings are always shown
@@ -25,6 +25,8 @@ warnings.filterwarnings('always', message='.*set to -9999 where*',
 
 
 class ApexHeightError(ValueError):
+    """Specialized error type definition
+    """
     pass
 
 
@@ -33,7 +35,7 @@ class Apex(object):
     calculations.
 
     Parameters
-    ==========
+    ----------
     date : float, :class:`dt.date`, or :class:`dt.datetime`, optional
         Determines which IGRF coefficients are used in conversions. Uses
         current date as default.  If float, use decimal year.
@@ -44,7 +46,7 @@ class Apex(object):
         Path to custom coefficient file
 
     Attributes
-    ==========
+    ----------
     year : float
         Decimal year used for the IGRF model
     refh : float
@@ -53,11 +55,11 @@ class Apex(object):
         Path to coefficient file
 
     Notes
-    =====
+    -----
     The calculations use IGRF-12 with coefficients from 1900 to 2020 [1]_.
 
     References
-    ==========
+    ----------
 
     .. [1] Thébault, E. et al. (2015), International Geomagnetic Reference
            Field: the 12th generation, Earth, Planets and Space, 67(1), 79,
@@ -77,10 +79,10 @@ class Apex(object):
         self.set_refh(refh)  # reference height
 
         if date is None:
-            self.year = helpers.toYearFraction(dt.datetime.now())
+            self.year = helpers.toYearFraction(dt.datetime.utcnow())
         else:
             try:
-                # convert date/datetime object to decimal year
+                # Convert date/datetime object to decimal year
                 self.year = helpers.toYearFraction(date)
             except AttributeError:
                 # Failed while finding datetime attribute, so
@@ -88,10 +90,11 @@ class Apex(object):
                 self.year = date
 
         if not os.path.isfile(datafile):
-            raise IOError('Datafile does not exist: {}'.format(datafile))
+            raise IOError('Data file does not exist: {}'.format(datafile))
 
         if not os.path.isfile(fortranlib):
-            raise IOError('Datafile does not exist: {}'.format(fortranlib))
+            raise IOError('Fortran library does not exist: {}'.format(
+                fortranlib))
 
         self.datafile = datafile
         self.fortranlib = fortranlib
@@ -128,7 +131,7 @@ class Apex(object):
         """Converts between geodetic, modified apex, quasi-dipole and MLT.
 
         Parameters
-        ==========
+        ----------
         lat : array_like
             Latitude
         lon : array_like
@@ -158,7 +161,7 @@ class Apex(object):
             prevents the South-Atlantic Anomaly (SAA) from influencing the MLT.
 
         Returns
-        =======
+        -------
         lat : ndarray or float
             Converted latitude (if converting to MLT, output latitude is apex)
         lat : ndarray or float
@@ -217,7 +220,7 @@ class Apex(object):
         """Converts geodetic to modified apex coordinates.
 
         Parameters
-        ==========
+        ----------
         glat : array_like
             Geodetic latitude
         glon : array_like
@@ -226,7 +229,7 @@ class Apex(object):
             Altitude in km
 
         Returns
-        =======
+        -------
         alat : ndarray or float
             Modified apex latitude
         alon : ndarray or float
@@ -249,7 +252,7 @@ class Apex(object):
         """Converts modified apex to geodetic coordinates.
 
         Parameters
-        ==========
+        ----------
         alat : array_like
             Modified apex latitude
         alon : array_like
@@ -265,7 +268,7 @@ class Apex(object):
             within the specified precision.
 
         Returns
-        =======
+        -------
         glat : ndarray or float
             Geodetic latitude
         glon : ndarray or float
@@ -288,7 +291,7 @@ class Apex(object):
         """Converts geodetic to quasi-dipole coordinates.
 
         Parameters
-        ==========
+        ----------
         glat : array_like
             Geodetic latitude
         glon : array_like
@@ -297,7 +300,7 @@ class Apex(object):
             Altitude in km
 
         Returns
-        =======
+        -------
         qlat : ndarray or float
             Quasi-dipole latitude
         qlon : ndarray or float
@@ -316,7 +319,7 @@ class Apex(object):
         """Converts quasi-dipole to geodetic coordinates.
 
         Parameters
-        ==========
+        ----------
         qlat : array_like
             Quasi-dipole latitude
         qlon : array_like
@@ -332,7 +335,7 @@ class Apex(object):
             within the specified precision.
 
         Returns
-        =======
+        -------
         glat : ndarray or float
             Geodetic latitude
         glon : ndarray or float
@@ -397,7 +400,7 @@ class Apex(object):
         """Converts modified apex to quasi-dipole coordinates.
 
         Parameters
-        ==========
+        ----------
         alat : array_like
             Modified apex latitude
         alon : array_like
@@ -406,14 +409,14 @@ class Apex(object):
             Altitude in km
 
         Returns
-        =======
+        -------
         qlat : ndarray or float
             Quasi-dipole latitude
         qlon : ndarray or float
             Quasi-dipole longitude
 
         Raises
-        ======
+        ------
         ApexHeightError
             if `height` > apex height
 
@@ -450,7 +453,7 @@ class Apex(object):
         """Converts quasi-dipole to modified apex coordinates.
 
         Parameters
-        ==========
+        ----------
         qlat : array_like
             Quasi-dipole latitude
         qlon : array_like
@@ -459,14 +462,14 @@ class Apex(object):
             Altitude in km
 
         Returns
-        =======
+        -------
         alat : ndarray or float
             Modified apex latitude
         alon : ndarray or float
             Modified apex longitude
 
         Raises
-        ======
+        ------
         ApexHeightError
             if apex height < reference height
 
@@ -482,7 +485,7 @@ class Apex(object):
         and UT.
 
         Parameters
-        ==========
+        ----------
         mlon : array_like
             Magnetic longitude (apex and quasi-dipole longitude are always
             equal)
@@ -495,12 +498,12 @@ class Apex(object):
             prevents the South-Atlantic Anomaly (SAA) from influencing the MLT.
 
         Returns
-        =======
+        -------
         mlt : ndarray or float
             Magnetic local time [0, 24)
 
         Notes
-        =====
+        -----
         To compute the MLT, we find the apex longitude of the subsolar point at
         the given time. Then the MLT of the given point will be computed from
         the separation in magnetic longitude from this point (1 hour = 15
@@ -518,7 +521,7 @@ class Apex(object):
         and UT.
 
         Parameters
-        ==========
+        ----------
         mlt : array_like
             Magnetic local time
         datetime : :class:`datetime.datetime`
@@ -530,13 +533,13 @@ class Apex(object):
             prevents the South-Atlantic Anomaly (SAA) from influencing the MLT.
 
         Returns
-        =======
+        -------
         mlon : ndarray or float
             Magnetic longitude [0, 360) (apex and quasi-dipole longitude are
             always equal)
 
         Notes
-        =====
+        -----
         To compute the magnetic longitude, we find the apex longitude of the
         subsolar point at the given time. Then the magnetic longitude of the
         given point will be computed from the separation in magnetic local time
@@ -555,7 +558,7 @@ class Apex(object):
         or conjugate hemisphere.
 
         Parameters
-        ==========
+        ----------
         glat : array_like
             Geodetic latitude
         glon : array_like
@@ -576,7 +579,7 @@ class Apex(object):
             within the specified precision.
 
         Returns
-        =======
+        -------
         newglat : ndarray or float
             Geodetic latitude of mapped point
         newglon : ndarray or float
@@ -587,7 +590,7 @@ class Apex(object):
             into geo2qd (APXG2Q)
 
         Notes
-        =====
+        -----
         The mapping is done by converting glat/glon/height to modified apex
         lat/lon, and converting back to geographic using newheight (if
         conjugate, use negative apex latitude when converting back)
@@ -615,7 +618,8 @@ class Apex(object):
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
         X = np.reshape(X, (3, np.size(X) // 3))
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, height, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(
+            alat, alon, height, coords='apex')
 
         if EV == 'E':
             v1 = e1
@@ -631,7 +635,8 @@ class Apex(object):
         X1 = np.sum(X * v1, axis=0)  # E dot e1 or V dot d1
         X2 = np.sum(X * v2, axis=0)  # E dot e2 or V dot d2
 
-        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(alat, alon, newheight, coords='apex')
+        _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(
+            alat, alon, newheight, coords='apex')
 
         if EV == 'E':
             v1 = d1
@@ -654,7 +659,7 @@ class Apex(object):
         It is assumed that the electric field is perpendicular to B.
 
         Parameters
-        ==========
+        ----------
         alat : (N,) array_like or float
             Modified apex latitude
         alon : (N,) array_like or float
@@ -668,7 +673,7 @@ class Apex(object):
             north, and up components
 
         Returns
-        =======
+        -------
         E : (3, N) or (3,) ndarray
             The electric field at `newheight` (geodetic east, north, and up
             components)
@@ -682,7 +687,7 @@ class Apex(object):
         It is assumed that the electric field is perpendicular to B.
 
         Parameters
-        ==========
+        ----------
         alat : (N,) array_like or float
             Modified apex latitude
         alon : (N,) array_like or float
@@ -696,7 +701,7 @@ class Apex(object):
             east, north, and up components
 
         Returns
-        =======
+        -------
         V : (3, N) or (3,) ndarray
             The electric drift velocity at `newheight` (geodetic east, north,
             and up components)
@@ -714,7 +719,7 @@ class Apex(object):
         north.
 
         Parameters
-        ==========
+        ----------
         lat : (N,) array_like or float
             Latitude
         lon : (N,) array_like or float
@@ -735,12 +740,12 @@ class Apex(object):
             passed through APXG2Q).
 
         Returns
-        =======
+        -------
         f1 : (2, N) or (2,) ndarray
         f2 : (2, N) or (2,) ndarray
 
         References
-        ==========
+        ----------
         .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
                geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
@@ -773,7 +778,7 @@ class Apex(object):
         north, and up (only east and north for `f1` and `f2`).
 
         Parameters
-        ==========
+        ----------
         lat, lon : (N,) array_like or float
             Latitude
         lat : (N,) array_like or float
@@ -794,12 +799,12 @@ class Apex(object):
             passed through APXG2Q).
 
         Returns
-        =======
+        -------
         f1, f2 : (2, N) or (2,) ndarray
         f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : (3, N) or (3,) ndarray
 
         Note
-        ====
+        ----
         `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
         by Emmert et al. [2010] [5]_. They are calculated by this
         Python library according to the following equations in
@@ -811,7 +816,7 @@ class Apex(object):
         * `f3`: Eqn. 6.8
 
         References
-        ==========
+        ----------
 
         .. [4] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
@@ -862,16 +867,18 @@ class Apex(object):
         F = np.cross(F1.T, F2.T).T[-1]
         cosI = helpers.getcosIm(alat)
         k = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
-        g1 = ((self.RE + np.float64(height)) / (self.RE + self.refh)) ** (3 / 2) * d1 / F
-        g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * (k + ((self.RE + np.float64(height)) /
-                                                                 (self.RE + self.refh)) * d2 / cosI)
+        g1 = ((self.RE + np.float64(height))
+              / (self.RE + self.refh)) ** (3 / 2) * d1 / F
+        g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * (
+            k + ((self.RE + np.float64(height)) /
+                 (self.RE + self.refh)) * d2 / cosI)
         g3 = k * F
         f3 = np.cross(g1.T, g2.T).T
 
         if np.any(alat == -9999):
-            warnings.warn(('Base vectors g, d, e, and f3 set to -9999 where '
-                           'apex latitude is undefined (apex height may be < '
-                           'reference height)'))
+            warnings.warn(''.join(['Base vectors g, d, e, and f3 set to -9999 ',
+                                   'where apex latitude is undefined (apex ',
+                                   'height may be < reference height)']))
             f3 = np.where(alat == -9999, -9999, f3)
             g1 = np.where(alat == -9999, -9999, g1)
             g2 = np.where(alat == -9999, -9999, g2)
@@ -915,7 +922,7 @@ class Apex(object):
         """Updates the epoch for all subsequent conversions.
 
         Parameters
-        ==========
+        ----------
         year : float
             Decimal year
 
@@ -929,12 +936,12 @@ class Apex(object):
         """Updates the apex reference height for all subsequent conversions.
 
         Parameters
-        ==========
+        ----------
         refh : float
             Apex reference height in km
 
         Notes
-        =====
+        -----
         The reference height is the height to which field lines will be mapped,
         and is only relevant for conversions involving apex (not quasi-dipole).
 
@@ -950,7 +957,7 @@ class Apex(object):
         """Returns the magnitude of the IGRF magnetic field in tesla.
 
         Parameters
-        ==========
+        ----------
         glat : array_like
             Geodetic latitude
         glon : array_like
@@ -959,7 +966,7 @@ class Apex(object):
             Altitude in km
 
         Returns
-        =======
+        -------
         babs : ndarray or float
             Magnitude of the IGRF magnetic field
 
@@ -978,10 +985,10 @@ class Apex(object):
         vector components are geodetic east, north, and up.
 
         Parameters
-        ==========
-        lat, lon : (N,) array_like or float
-            Latitude
+        ----------
         lat : (N,) array_like or float
+            Latitude
+        lon : (N,) array_like or float
             Longitude
         height : (N,) array_like or float
             Altitude in km
@@ -999,14 +1006,14 @@ class Apex(object):
             passed through APXG2Q).
 
         Returns
-        =======
+        -------
         Be3: (1, N) or (1,) ndarray
         e3 : (3, N) or (3,) ndarray
         Bd3: (1, N) or (1,) ndarray
         d3 : (3, N) or (3,) ndarray
 
-        Note
-        ====
+        Notes
+        -----
         Be3 is not equivalent to the magnitude of the IGRF magnitude, but is
         instead equal to the IGRF magnitude divided by a scaling factor, D.
         Similarly, Bd3 is the IGRF magnitude multiplied by D.
@@ -1014,16 +1021,9 @@ class Apex(object):
         See Richmond, A. D. (1995) [4]_ equations 3.13 and 3.14
 
         References
-        ==========
-
-        .. [4] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
-               Magnetic Apex Coordinates, Journal of geomagnetism and
-               geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
-
-        .. [5] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
-               A computationally compact representation of Magnetic-Apex
-               and Quasi-Dipole coordinates with smooth base vectors,
-               J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
+        ----------
+        Richmond, A. D. (1995) [4]_
+        Emmert, J. T. et al. (2010) [5]_
 
         """
         glat, glon = self.convert(lat, lon, coords, 'geo', height=height,
@@ -1031,7 +1031,8 @@ class Apex(object):
 
         babs = self.get_babs(glat, glon, height)
 
-        _, _, _, _, _, _, d1, d2, d3, _, _, e3 = self.basevectors_apex(glat, glon, height, coords='geo')
+        _, _, _, _, _, _, d1, d2, d3, _, _, e3 = self.basevectors_apex(
+            glat, glon, height, coords='geo')
         d1_cross_d2 = np.cross(d1.T, d2.T).T
         D = np.sqrt(np.sum(d1_cross_d2 ** 2, axis=0))
 

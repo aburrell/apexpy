@@ -1,8 +1,8 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
+title: 'BUG: '
+labels: 'bug'
 assignees: ''
 
 ---
@@ -25,8 +25,8 @@ If applicable, add screenshots to help explain your problem.
 
 **Computer (please complete the following information):**
  - OS: [e.g. iOS]
- - Version [e.g. 22]
-- Python version [e.g. 3.6]
+ - Python version [e.g. 3.6]
+ - Compiler and version [e.g. ifort 22]
 
 **Additional context**
 Add any other context about the problem here.

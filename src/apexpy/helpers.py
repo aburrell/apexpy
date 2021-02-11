@@ -14,20 +14,20 @@ def checklat(lat, name='lat'):
     (tolerance 1e-4).
 
     Parameters
-    ==========
-    lat : array_like
+    ----------
+    lat : array-like
         latitude
     name : str, optional
         parameter name to use in the exception message
 
     Returns
-    =======
+    -------
     lat : ndarray or float
         Same as input where values just outside the range have been
         clipped to [-90, 90]
 
     Raises
-    ======
+    ------
     ValueError
         if any values are too far outside the range [-90, 90]
     """
@@ -57,12 +57,12 @@ def getsinIm(alat):
     """Computes sinIm from modified apex latitude.
 
     Parameters
-    ==========
-    alat : array_like
+    ----------
+    alat : array-like
         Modified apex latitude
 
     Returns
-    =======
+    -------
     sinIm : ndarray or float
 
     """
@@ -76,12 +76,12 @@ def getcosIm(alat):
     """Computes cosIm from modified apex latitude.
 
     Parameters
-    ==========
-    alat : array_like
+    ----------
+    alat : array-like
         Modified apex latitude
 
     Returns
-    =======
+    -------
     cosIm : ndarray or float
 
     """
@@ -96,16 +96,16 @@ def toYearFraction(date):
     year.
 
     Parameters
-    ==========
+    ----------
     date : :class:`datetime.date` or :class:`datetime.datetime`
 
     Returns
-    =======
+    -------
     year : float
         Decimal year
 
     Notes
-    =====
+    -----
     The algorithm is taken from http://stackoverflow.com/a/6451892/2978652
 
     """
@@ -128,12 +128,12 @@ def gc2gdlat(gclat):
     """Converts geocentric latitude to geodetic latitude using WGS84.
 
     Parameters
-    ==========
-    gclat : array_like
+    ---------
+    gclat : array-like
         Geocentric latitude
 
     Returns
-    =======
+    -------
     gdlat : ndarray or float
         Geodetic latitude
 
@@ -146,18 +146,19 @@ def subsol(datetime):
     """Finds subsolar geocentric latitude and longitude.
 
     Parameters
-    ==========
+    ----------
     datetime : :class:`datetime.datetime` or :class:`numpy.ndarray[datetime64]`
+        Date and time in UTC (naive objects are treated as UTC)
 
     Returns
-    =======
+    -------
     sbsllat : float
         Latitude of subsolar point
     sbsllon : float
         Longitude of subsolar point
 
     Notes
-    =====
+    -----
     Based on formulas in Astronomical Almanac for the year 1996, p. C24.
     (U.S. Government Printing Office, 1994). Usable for years 1601-2100,
     inclusive. According to the Almanac, results are good to at least 0.01
@@ -171,13 +172,15 @@ def subsol(datetime):
     by K. Laundal.
 
     """
-    # convert to year, day of year and seconds since midnight
+    # Convert to year, day of year and seconds since midnight
     if isinstance(datetime, dt.datetime):
         year = np.asanyarray([datetime.year])
         doy = np.asanyarray([datetime.timetuple().tm_yday])
-        ut = np.asanyarray([datetime.hour * 3600 + datetime.minute * 60 + datetime.second])
+        ut = np.asanyarray([datetime.hour * 3600 + datetime.minute * 60
+                            + datetime.second])
     elif isinstance(datetime, np.ndarray):
-        times = datetime.astype('datetime64[s]')  # works for datetime of wrong precision or unix epoch
+        # This conversion works for datetime of wrong precision or unit epoch
+        times = datetime.astype('datetime64[s]')
         year_floor = times.astype('datetime64[Y]')
         day_floor = times.astype('datetime64[D]')
         year = year_floor.astype(int) + 1970
@@ -201,21 +204,30 @@ def subsol(datetime):
 
     l0 = -79.549 + (-0.238699 * (yr - 4.0 * nleap) + 3.08514e-2 * nleap)
     g0 = -2.472 + (-0.2558905 * (yr - 4.0 * nleap) - 3.79617e-2 * nleap)
+
     # Days (including fraction) since 12 UT on January 1 of IYR:
     df = (ut / 86400.0 - 1.5) + doy
+
     # Mean longitude of Sun:
     lmean = l0 + 0.9856474 * df
+
     # Mean anomaly in radians:
     grad = np.radians(g0 + 0.9856003 * df)
+
     # Ecliptic longitude:
-    lmrad = np.radians(lmean + 1.915 * np.sin(grad) + 0.020 * np.sin(2.0 * grad))
+    lmrad = np.radians(lmean + 1.915 * np.sin(grad)
+                       + 0.020 * np.sin(2.0 * grad))
     sinlm = np.sin(lmrad)
+
     # Obliquity of ecliptic in radians:
     epsrad = np.radians(23.439 - 4e-7 * (df + 365 * yr + nleap))
+
     # Right ascension:
     alpha = np.degrees(np.arctan2(np.cos(epsrad) * sinlm, np.cos(lmrad)))
+
     # Declination, which is also the subsolar latitude:
     sslat = np.degrees(np.arcsin(np.sin(epsrad) * sinlm))
+
     # Equation of time (degrees):
     etdeg = lmean - alpha
     nrot = np.round(etdeg / 360.0)

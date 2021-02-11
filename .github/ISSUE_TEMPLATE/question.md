@@ -1,8 +1,8 @@
 ---
 name: Question
 about: Ask a question (and help us improve our documentation)
-title: ''
-labels: ''
+title: 'Question: '
+labels: 'question'
 assignees: ''
 
 ---
@@ -25,8 +25,8 @@ If applicable, add screenshots to help explain your question.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
- - Version [e.g. 22]
  - Python version [e.g. 3.6]
+ - Compiler and version [e.g. gfortran 22]
 
 **Additional context**
 Add any other context about the problem here.
