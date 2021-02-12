@@ -800,7 +800,6 @@ class Apex(object):
 
         Returns
         -------
-        f1, f2 : (2, N) or (2,) ndarray
         f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : (3, N) or (3,) ndarray
 
         Note
