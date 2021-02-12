@@ -57,7 +57,7 @@ class Apex(object):
     Notes
     -----
     The calculations use IGRF-12 with coefficients from 1900 to 2020 [1]_.
-    
+
     The geodetic reference ellipsoid is WGS84.
 
     References
