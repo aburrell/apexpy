@@ -49,7 +49,7 @@ if __name__ == "__main__":
         package_dir={'': 'src'},
         py_modules=[path.splitext(path.basename(pp))[0]
                     for pp in glob('src/*.py')],
-        package_data={'apexpy': ['apexsh.dat', 'igrfcoeffs.txt']},
+        package_data={'apexpy': ['apexsh.dat', 'igrf13coeffs.txt']},
         zip_safe=False,
         classifiers=[
             # complete classifier list:
