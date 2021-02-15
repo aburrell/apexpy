@@ -931,7 +931,7 @@ class Apex(object):
         # f2py
         self.year = np.float64(year)
         fa.loadapxsh(self.datafile, self.year)
-        igrf_fn = os.path.join(os.path.dirname(__file__), '..', 'fortranapex', 'igrf13coeffs.txt')
+        igrf_fn = os.path.join(os.path.dirname(__file__), 'igrf13coeffs.txt')
         fa.cofrm(self.year, igrf_fn)
 
     def set_refh(self, refh):
