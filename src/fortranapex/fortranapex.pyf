@@ -3,7 +3,7 @@
 
 python module fortranapex ! in 
     interface  ! in :fortranapex
-        subroutine apex(date,dlat,dlon,alt,a,alat,alon,bmag,xmag,ymag,zmag,v) ! in :fortranapex:.\apex.f
+        subroutine apex(date,dlat,dlon,alt,a,alat,alon,bmag,xmag,ymag,zmag,v) ! in :fortranapex:apex.f
             real :: date
             real :: dlat
             real :: dlon
@@ -23,7 +23,7 @@ python module fortranapex ! in
             real :: stp
             common /dipole/ colat,elon,vp,ctp,stp
         end subroutine apex
-        subroutine linapx(gdlat,glon,alt,a,alat,alon,xmag,ymag,zmag,f) ! in :fortranapex:.\apex.f
+        subroutine linapx(gdlat,glon,alt,a,alat,alon,xmag,ymag,zmag,f) ! in :fortranapex:apex.f
             real :: gdlat
             real :: glon
             real :: alt
@@ -54,7 +54,7 @@ python module fortranapex ! in
             common /dipole/ colat,elon,vp,ctp,stp
             common /itra/ nstp,y,yp,sgn,ds
         end subroutine linapx
-        subroutine itrace(iapx) ! in :fortranapex:.\apex.f
+        subroutine itrace(iapx) ! in :fortranapex:apex.f
             integer :: iapx
             real dimension(3,3) :: yapx
             real :: bx
@@ -70,7 +70,7 @@ python module fortranapex ! in
             common /fldcomd/ bx,by,bz,bb
             common /itra/ nstp,y,yold,sgn,ds
         end subroutine itrace
-        subroutine fndapx(alt,zmag,a,alat,alon) ! in :fortranapex:.\apex.f
+        subroutine fndapx(alt,zmag,a,alat,alon) ! in :fortranapex:apex.f
             real :: alt
             real :: zmag
             real :: a
@@ -85,7 +85,7 @@ python module fortranapex ! in
             common /apxin/ yapx
             common /dipole/ colat,elon,vp,ctp,stp
         end subroutine fndapx
-        subroutine dipapx(gdlat,gdlon,alt,bnorth,beast,bdown,a,alon) ! in :fortranapex:.\apex.f
+        subroutine dipapx(gdlat,gdlon,alt,bnorth,beast,bdown,a,alon) ! in :fortranapex:apex.f
             real :: gdlat
             real :: gdlon
             real :: alt
@@ -101,7 +101,7 @@ python module fortranapex ! in
             real :: stp
             common /dipole/ colat,elon,vp,ctp,stp
         end subroutine dipapx
-        function fint(x1,x2,x3,y1,y2,y3,xfit) ! in :fortranapex:.\apex.f
+        function fint(x1,x2,x3,y1,y2,y3,xfit) ! in :fortranapex:apex.f
             real :: x1
             real :: x2
             real :: x3
@@ -111,7 +111,7 @@ python module fortranapex ! in
             real :: xfit
             real :: fint
         end function fint
-        module apxshmodule ! in :fortranapex:.\apexsh.f90
+        module apxshmodule ! in :fortranapex:apexsh.f90
             integer(kind=4) :: nterm
             integer(kind=4) :: nmax
             integer(kind=4) :: mmax
@@ -173,15 +173,15 @@ python module fortranapex ! in
             real(kind=4) :: altlastg
             logical, optional :: loadflag=.true.
         end module apxshmodule
-        subroutine loadapxsh(datafilenew,epochnew) ! in :fortranapex:.\apexsh.f90
+        subroutine loadapxsh(datafilenew,epochnew) ! in :fortranapex:apexsh.f90
             use apxshmodule
             character*1000 intent(in) :: datafilenew
             real(kind=4) intent(in) :: epochnew
         end subroutine loadapxsh
-        subroutine allocatearrays ! in :fortranapex:.\apexsh.f90
+        subroutine allocatearrays ! in :fortranapex:apexsh.f90
             use apxshmodule
         end subroutine allocatearrays
-        subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f) ! in :fortranapex:.\apexsh.f90
+        subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f) ! in :fortranapex:apexsh.f90
             use apxshmodule
             real(kind=4) intent(in) :: glat
             real(kind=4) intent(in) :: glon
@@ -193,7 +193,7 @@ python module fortranapex ! in
             real(kind=4) dimension(2),intent(out) :: f2
             real(kind=4) intent(out) :: f
         end subroutine apxg2q
-        subroutine apxg2all(glat,glon,alt,hr,vecflagin,qlatout,qlonout,mlat,mlon,f1,f2,f,d1,d2,d3,d,e1,e2,e3) ! in :fortranapex:.\apexsh.f90
+        subroutine apxg2all(glat,glon,alt,hr,vecflagin,qlatout,qlonout,mlat,mlon,f1,f2,f,d1,d2,d3,d,e1,e2,e3) ! in :fortranapex:apexsh.f90
             use apxshmodule
             real(kind=4) intent(in) :: glat
             real(kind=4) intent(in) :: glon
@@ -215,7 +215,7 @@ python module fortranapex ! in
             real(kind=4) dimension(3),intent(out) :: e2
             real(kind=4) dimension(3),intent(out) :: e3
         end subroutine apxg2all
-        subroutine apxq2g(qlat0,qlon0,alt,prec,glatout,glonout,error) ! in :fortranapex:.\apexsh.f90
+        subroutine apxq2g(qlat0,qlon0,alt,prec,glatout,glonout,error) ! in :fortranapex:apexsh.f90
             use apxshmodule
             real(kind=4) intent(in) :: qlat0
             real(kind=4) intent(in) :: qlon0
@@ -225,12 +225,12 @@ python module fortranapex ! in
             real(kind=4) intent(out) :: glonout
             real(kind=4) intent(out) :: error
         end subroutine apxq2g
-        subroutine shcalc(theta,phi) ! in :fortranapex:.\apexsh.f90
+        subroutine shcalc(theta,phi) ! in :fortranapex:apexsh.f90
             use apxshmodule
             real(kind=8) intent(in) :: theta
             real(kind=8) intent(in) :: phi
         end subroutine shcalc
-        module alfbasismodule ! in :fortranapex:.\apexsh.f90
+        module alfbasismodule ! in :fortranapex:apexsh.f90
             integer(kind=4) :: nmax0
             integer(kind=4) :: mmax0
             real(kind=8), allocatable,dimension(:,:) :: anm
@@ -241,12 +241,12 @@ python module fortranapex ! in
             real(kind=8), allocatable,dimension(:) :: marr
             real(kind=8), allocatable,dimension(:) :: narr
         end module alfbasismodule
-        subroutine alfbasisinit(nmax0in,mmax0in) ! in :fortranapex:.\apexsh.f90
+        subroutine alfbasisinit(nmax0in,mmax0in) ! in :fortranapex:apexsh.f90
             use alfbasismodule
             integer(kind=4) intent(in) :: nmax0in
             integer(kind=4) intent(in) :: mmax0in
         end subroutine alfbasisinit
-        subroutine alfbasis(nmax,mmax,theta,p,v,w) ! in :fortranapex:.\apexsh.f90
+        subroutine alfbasis(nmax,mmax,theta,p,v,w) ! in :fortranapex:apexsh.f90
             use alfbasismodule
             integer(kind=4) intent(in) :: nmax
             integer(kind=4) intent(in) :: mmax
@@ -255,7 +255,7 @@ python module fortranapex ! in
             real(kind=8) dimension(nmax + 1,mmax + 1),intent(out),depend(nmax,mmax) :: v
             real(kind=8) dimension(nmax + 1,mmax + 1),intent(out),depend(nmax,mmax) :: w
         end subroutine alfbasis
-        subroutine cofrm(date,filename) ! in :fortranapex:.\magfld.f
+        subroutine cofrm(date,filename) ! in :fortranapex:magfld.f
             use igrf
             real(kind=4) intent(in) :: date
             character*1000 intent(in) :: filename
@@ -265,7 +265,7 @@ python module fortranapex ! in
             integer, optional :: ichg=-99999
             common /magcof/ nmax,gb,gv,ichg
         end subroutine cofrm
-        subroutine dypol(colat,elon,vp) ! in :fortranapex:.\magfld.f
+        subroutine dypol(colat,elon,vp) ! in :fortranapex:magfld.f
             real :: colat
             real :: elon
             real :: vp
@@ -275,7 +275,7 @@ python module fortranapex ! in
             integer :: ichg
             common /magcof/ nmax,gb,gv,ichg
         end subroutine dypol
-        subroutine feldg(ienty,glat,glon,alt,bnrth,beast,bdown,babs) ! in :fortranapex:.\magfld.f
+        subroutine feldg(ienty,glat,glon,alt,bnrth,beast,bdown,babs) ! in :fortranapex:magfld.f
             integer intent(in) :: ienty
             real intent(in) :: glat
             real intent(in) :: glon
@@ -290,7 +290,7 @@ python module fortranapex ! in
             integer :: ichg
             common /magcof/ nmax,gb,gv,ichg
         end subroutine feldg
-        subroutine gd2cart(gdlat,glon,alt,x,y,z) ! in :fortranapex:.\magfld.f
+        subroutine gd2cart(gdlat,glon,alt,x,y,z) ! in :fortranapex:magfld.f
             real :: gdlat
             real :: glon
             real :: alt
@@ -298,14 +298,14 @@ python module fortranapex ! in
             real :: y
             real :: z
         end subroutine gd2cart
-        subroutine convrt(i,gdlat,alt,x1,x2) ! in :fortranapex:.\magfld.f
+        subroutine convrt(i,gdlat,alt,x1,x2) ! in :fortranapex:magfld.f
             integer :: i
             real :: gdlat
             real :: alt
             real :: x1
             real :: x2
         end subroutine convrt
-        subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin) ! in :fortranapex:.\makeapexsh.f90
+        subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin) ! in :fortranapex:makeapexsh.f90
             use apxshmodule
             character*128 intent(in) :: datafilein
             real(kind=4) dimension(31),intent(in) :: epochgridin
@@ -317,13 +317,13 @@ python module fortranapex ! in
             real(kind=4) dimension(255) :: gb
             common /magcof/ nmaxigrf,gb
         end subroutine makeapxsh
-        subroutine choldc(a,n,np,p) ! in :fortranapex:.\makeapexsh.f90
+        subroutine choldc(a,n,np,p) ! in :fortranapex:makeapexsh.f90
             real(kind=8) dimension(np,np),intent(inout) :: a
             integer(kind=4) intent(in) :: n
             integer(kind=4), optional,intent(in),check(shape(a,0)==np),depend(a) :: np=shape(a,0)
             real(kind=8) dimension(n),intent(out),depend(n) :: p
         end subroutine choldc
-        subroutine cholsl(a,n,np,p,b,x) ! in :fortranapex:.\makeapexsh.f90
+        subroutine cholsl(a,n,np,p,b,x) ! in :fortranapex:makeapexsh.f90
             real(kind=8) dimension(np,np),intent(in) :: a
             integer(kind=4), optional,intent(in),check(len(p)>=n),depend(p) :: n=len(p)
             integer(kind=4), optional,intent(in),check(shape(a,0)==np),depend(a) :: np=shape(a,0)
