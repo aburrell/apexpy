@@ -445,9 +445,8 @@ class Apex(object):
                 estr += '({:.3g}) for qlat {:.3g}'.format(self.refh, qlat)
                 raise ApexHeightError(estr)
 
-        alat = np.sign(qlat) * np.degrees(np.arccos(np.sqrt((self.RE +
-                                                             self.refh) /
-                                                            (self.RE + hA))))
+        sqlat = np.sign(qlat) if qlat != 0 else 1
+        alat = sqlat * np.degrees(np.arccos(np.sqrt((self.RE + self.refh) / (self.RE + hA))))
 
         return alat, alon
 
