@@ -146,3 +146,8 @@ Badges
 
 .. |doi| image:: https://www.zenodo.org/badge/46420037.svg
    :target: https://www.zenodo.org/badge/latestdoi/46420037
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/7d4c1a6c60e747ca95cdf97746c39cda
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/aburrell/apexpy?utm_source=github.com&utm_medium=referral&utm_content=aburrell/apexpy&utm_campaign=Badge_Grade
