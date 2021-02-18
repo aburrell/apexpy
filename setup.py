@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 from glob import glob
 from os import path, environ
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # Include extensions only when not on readthedocs.org
 if environ.get('READTHEDOCS', None) == 'True':
