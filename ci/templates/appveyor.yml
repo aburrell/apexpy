@@ -7,19 +7,19 @@ environment:
     - TESTENV: '{{ env }}-64'
       PYTHON_VERSION: '{{ config.python[-3:] }}'
       MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'py.test'
+      TESTSCRIPT: 'python -m pytest'
 
     - TESTENV: '{{ env }}-32'
       PYTHON_VERSION: '{{ config.python[-3:] }}'
       MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'py.test'
+      TESTSCRIPT: 'python -m pytest'
 
 {% endif %}{% endfor %}
     - TESTENV: 'check'
-      PYTHON_VERSION: '2.7'
+      PYTHON_VERSION: '3.7'
       MINICONDA_HOME: 'C:\Miniconda'
       TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
-      INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments'
+      INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments sphinx_rtd_theme'
 
 init:
   - ps: echo $env:TESTENV
