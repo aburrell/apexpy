@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from glob import glob
 from os import path, environ
 from setuptools import setup, find_packages
+import sys
 
 # Include extensions only when not on readthedocs.org
 if environ.get('READTHEDOCS', None) == 'True':
@@ -20,5 +21,9 @@ else:
                            'src/fortranapex/checkapexsh.f90',
                            'src/fortranapex/fortranapex.pyf'])]
 
-setup(py_modules=[path.splitext(path.basename(pp))[0]
-                  for pp in glob('src/*.py')], ext_modules=extensions)
+setup_kwargs = {'py_modules': [path.splitext(path.basename(pp))[0]
+                               for pp in glob('src/*.py')],
+                'ext_modules': extensions,
+                'packages': find_packages(where='src')}
+
+setup(**setup_kwargs)
