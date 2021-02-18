@@ -21,9 +21,9 @@ before_install:
   - python --version
   - uname -a
   - lsb_release -a
+  - pip install numpy coveralls pytest-cov tox-travis sphinx_rtd_theme
 
 install:
-  - pip install numpy coveralls pytest-cov tox-travis sphinx_rtd_theme
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py install
 
