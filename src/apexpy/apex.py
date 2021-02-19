@@ -781,9 +781,9 @@ class Apex(object):
 
         Parameters
         ----------
-        lat, lon : (N,) array_like or float
-            Latitude
         lat : (N,) array_like or float
+            Latitude
+        lon : (N,) array_like or float
             Longitude
         height : (N,) array_like or float
             Altitude in km
