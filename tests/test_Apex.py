@@ -318,7 +318,7 @@ def test_convert_qd2apex_at_equator():
     clat, clon = apex_out.convert(lat=0.001, lon=0, source='qd', dest='apex',
                                   height=120.0)
     assert_allclose([elat, elon], [clat, clon], atol=1e-4)
-    
+
 
 def test_convert_qd2mlt():
     datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
