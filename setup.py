@@ -12,6 +12,7 @@ if environ.get('READTHEDOCS', None) == 'True':
     extensions = []
 else:
     from numpy.distutils.core import setup, Extension
+    from numpy.distutils.command import sdist
     extensions = [
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
