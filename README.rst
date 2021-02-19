@@ -7,8 +7,9 @@ Overview
 This is a Python wrapper for the Apex fortran library by
 Emmert et al. [2010] [1]_, which allows converting between geodetic, modified
 apex, and quasi-dipole coordinates as well as getting modified apex and
-quasi-dipole base vectors (Richmond [1995] [2]_). MLT calculations are also
-included. The package is free software (MIT license).
+quasi-dipole base vectors (Richmond [1995] [2]_). The geodetic system used here
+is WGS84. MLT calculations are also included. The package is free software
+(MIT license).
 
 Quick start
 ===========
