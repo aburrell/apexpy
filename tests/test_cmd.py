@@ -12,6 +12,7 @@ outfile = os.path.join('tests', 'output.txt')
 infile = os.path.join('tests', 'test_convert.txt')
 singlefile = os.path.join('tests', 'test_convert_single_line.txt')
 
+
 def setup_function(function):
     try:
         os.remove(outfile)
