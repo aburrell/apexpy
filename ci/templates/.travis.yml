@@ -30,7 +30,7 @@ install:
 script:
   - |
     if [ $TRAVIS_PYTHON_VERSION == "3.7" ]; then
-        tox -e check,docs
+        tox -e docs
     fi
   - tox -e $TRAVIS_PYTHON_VERSION
 
