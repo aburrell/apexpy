@@ -5,14 +5,12 @@ from __future__ import absolute_import
 from glob import glob
 from os import path, environ
 from setuptools import setup, find_packages
-import sys
 
 # Include extensions only when not on readthedocs.org
 if environ.get('READTHEDOCS', None) == 'True':
     extensions = []
 else:
     from numpy.distutils.core import setup, Extension
-    from numpy.distutils.command import sdist
     extensions = [
         Extension(name='apexpy.fortranapex',
                   sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
