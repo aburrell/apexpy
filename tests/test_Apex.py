@@ -311,7 +311,7 @@ def test_convert_qd2apex():
 
 
 def test_convert_qd2apex_at_equator():
-    """Test the quasi-dipole to apex conversion at the magnetic equator """
+    """Test the quasi-dipole to apex conversion at the magnetic equator"""
     apex_out = Apex(date=2000, refh=80)
     elat, elon = apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
                                   height=120.0)
