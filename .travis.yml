@@ -12,21 +12,15 @@ sudo: false
 addons:
   apt:
     packages:
-    - python-numpy
     - gfortran
-
-env:
-  global:
-    LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
 
 before_install:
   - python --version
   - uname -a
   - lsb_release -a
-  - pip install numpy
 
 install:
-  - pip install coveralls coverage codecov
+  - pip install numpy pytest coveralls coverage codecov
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
 
@@ -35,7 +29,6 @@ script:
 after_success:
   - coverage combine
   - coverage report
-  - coveralls --merge=extension-coveralls.json []
   - coveralls
   - codecov
 
