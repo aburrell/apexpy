@@ -26,13 +26,12 @@ before_install:
   - pip install numpy
 
 install:
-  - pip install coveralls pytest-cov coverage codecov
+  - pip install coveralls coverage codecov
   - python setup.py clean --all build_ext --force --inplace
   - python setup.py develop
-  - pip install tox-travis
 
 script:
-  - tox
+  - coverage run --source=src/apexpy -m pytest -v tests/
 after_success:
   - coverage combine
   - coverage report
