@@ -25,7 +25,7 @@ install:
   - python setup.py develop
 
 script:
-  - coverage run --source=src/apexpy -m pytest -v tests/
+  - coverage run --source=src/apexpy -m pytest -v --cov=src/apexpy tests/
 after_success:
   - coverage combine
   - coverage report

@@ -7,10 +7,9 @@ import numpy as np
 import os
 import subprocess
 
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-outfile = os.path.join('tests', 'output.txt')
-infile = os.path.join('tests', 'test_convert.txt')
-singlefile = os.path.join('tests', 'test_convert_single_line.txt')
+outfile = os.path.abspath(os.path.join(os.path.dirname(__file__), 'output.txt'))
+infile = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_convert.txt'))
+singlefile = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_convert_single_line.txt'))
 
 
 def setup_function(function):
@@ -23,24 +22,12 @@ def setup_function(function):
 teardown_function = setup_function
 
 
-def test_module_invocation():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
-                             '--height', '300', '-i', infile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
-
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.469547, 93.639816],
-                                      [58.522701, 94.044762],
-                                      [59.571465, 94.477257]], rtol=1e-4)
-
-
 def test_convert_YYYY():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
                              '--height', '300', '-i', infile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
+
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
     np.testing.assert_allclose(data, [[57.469547, 93.639816],
