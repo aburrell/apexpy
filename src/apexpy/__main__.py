@@ -56,12 +56,12 @@ def main():
     if 'mlt' in [args.source, args.dest] and len(args.date) < 14:
         desc = 'full date/time YYYYMMDDHHMMSS required for MLT calculations'
         raise ValueError(desc)
-    if 9 <= len(args.date) <= 13:
-        desc = 'full date/time must be given as YYYYMMDDHHMMSS, not ' + \
-               'YYYYMMDDHHMMSS'[:len(args.date)]
+    if 9 <= len(args.date) and len(args.date) <= 13:
+        desc = 'full date/time must be given as YYYYMMDDHHMMSS, not ' \
+               + 'YYYYMMDDHHMMSS'[:len(args.date)]
         raise ValueError(desc)
     datetime = dt.datetime.strptime(args.date,
-                                    '%Y%m%d%H%M%S'[:len(args.date)-2])
+                                    '%Y%m%d%H%M%S'[:len(args.date) - 2])
     A = apexpy.Apex(date=datetime, refh=args.refh)
     lats, lons = A.convert(array[:, 0], array[:, 1], args.source, args.dest,
                            args.height, datetime=datetime)

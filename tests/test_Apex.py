@@ -93,7 +93,7 @@ def test__geo2qd_longitude():
                     apex_out._geo2qd(60, 180, 100))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._geo2qd(lat, 15+i*360, 100),
+            assert_allclose(apex_out._geo2qd(lat, 15 + i * 360, 100),
                             fa.apxg2q(lat, 15, 100, 0)[:2])
 
 
@@ -129,7 +129,7 @@ def test__geo2apex_longitude():
                     apex_out._geo2apex(60, 180, 100))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._geo2apex(lat, 15+i*360, 100),
+            assert_allclose(apex_out._geo2apex(lat, 15 + i * 360, 100),
                             fa.apxg2all(lat, 15, 100, 300, 0)[2:4])
 
 
@@ -200,7 +200,7 @@ def test__qd2geo_longitude():
                     apex_out._qd2geo(60, 180, 100, 1e-2))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._qd2geo(lat, 15+i*360, 100, 1e-2),
+            assert_allclose(apex_out._qd2geo(lat, 15 + i * 360, 100, 1e-2),
                             fa.apxq2g(lat, 15, 100, 1e-2))
 
 
@@ -240,7 +240,7 @@ def test__basevec_longitude():
                     apex_out._basevec(60, 180, 100))
     for i in range(-5, 5):
         for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._basevec(lat, 15+i*360, 100),
+            assert_allclose(apex_out._basevec(lat, 15 + i * 360, 100),
                             fa.apxg2q(lat, 15, 100, 1)[2:4])
 
 
@@ -366,7 +366,7 @@ def test_convert_invalid_lat():
     apex_out.convert(90, 0, 'geo', 'geo')
     apex_out.convert(-90, 0, 'geo', 'geo')
 
-    assert_allclose(apex_out.convert(90+1e-5, 0, 'geo', 'apex'),
+    assert_allclose(apex_out.convert(90 + 1e-5, 0, 'geo', 'apex'),
                     apex_out.convert(90, 0, 'geo', 'apex'), rtol=0, atol=1e-8)
 
 
@@ -407,7 +407,7 @@ def test_geo2apex_invalid_lat():
     apex_out.geo2apex(90, 0, 0)
     apex_out.geo2apex(-90, 0, 0)
 
-    assert_allclose(apex_out.geo2apex(90+1e-5, 0, 0),
+    assert_allclose(apex_out.geo2apex(90 + 1e-5, 0, 0),
                     apex_out.geo2apex(90, 0, 0), rtol=0, atol=1e-8)
 
 
@@ -457,7 +457,7 @@ def test_apex2geo_invalid_lat():
     apex_out.apex2geo(90, 0, 0, 1e-2)
     apex_out.apex2geo(-90, 0, 0, 1e-2)
 
-    assert_allclose(apex_out.apex2geo(90+1e-5, 0, 0, 1e-2),
+    assert_allclose(apex_out.apex2geo(90 + 1e-5, 0, 0, 1e-2),
                     apex_out.apex2geo(90, 0, 0, 1e-2), rtol=0, atol=1e-8)
 
 
@@ -490,7 +490,7 @@ def test_geo2qd_invalid_lat():
     apex_out.geo2qd(90, 0, 0)
     apex_out.geo2qd(-90, 0, 0)
 
-    assert_allclose(apex_out.geo2qd(90+1e-5, 0, 0), apex_out.geo2qd(90, 0, 0),
+    assert_allclose(apex_out.geo2qd(90 + 1e-5, 0, 0), apex_out.geo2qd(90, 0, 0),
                     rtol=0, atol=1e-8)
 
 
@@ -524,7 +524,7 @@ def test_qd2geo_invalid_lat():
     apex_out.qd2geo(90, 0, 0, precision=1e-2)
     apex_out.qd2geo(-90, 0, 0, precision=1e-2)
 
-    assert_allclose(apex_out.qd2geo(90+1e-5, 0, 0, 1e-2),
+    assert_allclose(apex_out.qd2geo(90 + 1e-5, 0, 0, 1e-2),
                     apex_out.qd2geo(90, 0, 0, 1e-2), rtol=0, atol=1e-8)
 
 
@@ -558,13 +558,13 @@ def test_apex2qd_invalid_lat():
     apex_out.apex2qd(90, 0, 0)
     apex_out.apex2qd(-90, 0, 0)
 
-    assert_allclose(apex_out.apex2qd(90+1e-5, 0, 0),
+    assert_allclose(apex_out.apex2qd(90 + 1e-5, 0, 0),
                     apex_out.apex2qd(90, 0, 0), rtol=0, atol=1e-8)
 
 
 def test_apex2qd_apexheight_close():
     apex_out = Apex(date=2000, refh=300)
-    apex_out.apex2qd(0, 15, 300+1e-6)
+    apex_out.apex2qd(0, 15, 300 + 1e-6)
 
 
 def test_apex2qd_apexheight_over():
@@ -603,13 +603,13 @@ def test_qd2apex_invalid_lat():
     apex_out.qd2apex(90, 0, 0)
     apex_out.qd2apex(-90, 0, 0)
 
-    assert_allclose(apex_out.qd2apex(90+1e-5, 0, 0),
+    assert_allclose(apex_out.qd2apex(90 + 1e-5, 0, 0),
                     apex_out.qd2apex(90, 0, 0), rtol=0, atol=1e-8)
 
 
 def test_qd2apex_apexheight_close():
     apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.qd2apex(0, 15, 300-1e-5),
+    assert_allclose(apex_out.qd2apex(0, 15, 300 - 1e-5),
                     apex_out.qd2apex(0, 15, 300))
 
 
@@ -634,7 +634,7 @@ def test_mlon2mlt_scalar():
 def test_mlon2mlt_ssheight():
     apex_out = Apex(date=2000, refh=300)
     mlt = apex_out.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6),
-                            ssheight=50*2000)
+                            ssheight=50 * 2000)
     assert_allclose(mlt, 23.026712036132814)
 
 
@@ -665,7 +665,7 @@ def test_mlon2mlt_offset():
     assert_allclose(apex_out.mlon2mlt(0, date),
                     apex_out.mlon2mlt(-15, date) + 1)
     assert_allclose(apex_out.mlon2mlt(0, date),
-                    apex_out.mlon2mlt(-10*15, date) + 10)
+                    apex_out.mlon2mlt(-10 * 15, date) + 10)
 
 
 def test_mlon2mlt_range():
@@ -693,7 +693,7 @@ def test_mlt2mlon_scalar():
 def test_mlt2mlon_ssheight():
     apex_out = Apex(date=2000, refh=300)
     mlt = apex_out.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6),
-                            ssheight=50*2000)
+                            ssheight=50 * 2000)
     assert_allclose(mlt, 14.599319458007812)
 
 
@@ -1229,8 +1229,8 @@ def test_basevectors_apex_delta():
             e = [e1, e2, e3]
             for i, j in [(i, j) for i in range(3) for j in range(3)]:
                 delta = 1 if i == j else 0
-                assert_allclose(np.sum(f[i]*g[j]), delta, rtol=0, atol=1e-5)
-                assert_allclose(np.sum(d[i]*e[j]), delta, rtol=0, atol=1e-5)
+                assert_allclose(np.sum(f[i] * g[j]), delta, rtol=0, atol=1e-5)
+                assert_allclose(np.sum(d[i] * e[j]), delta, rtol=0, atol=1e-5)
 
 
 def test_basevectors_apex_invalid_scalar():
@@ -1271,7 +1271,7 @@ def test_get_apex_invalid_lat():
     apex_out.get_apex(90)
     apex_out.get_apex(-90)
 
-    assert_allclose(apex_out.get_apex(90+1e-5), apex_out.get_apex(90),
+    assert_allclose(apex_out.get_apex(90 + 1e-5), apex_out.get_apex(90),
                     rtol=0, atol=1e-8)
 
 
@@ -1347,7 +1347,7 @@ def test_get_babs():
 def test_bvectors_apex():
     inputs = [[80, 81], [100, 120], [100, 200]]
 
-    expected = (np.array([5.94623305e-05,  5.95450722e-05]),
+    expected = (np.array([5.94623305e-05, 5.95450722e-05]),
                 np.array([[0.02008877, 0.00303204],
                           [0.03571109, 0.03377986],
                           [-0.94045794, -0.89848483]]),

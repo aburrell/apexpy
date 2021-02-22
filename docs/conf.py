@@ -11,10 +11,6 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.extlinks'
 ]
-if os.getenv('SPELLCHECK'):
-    extensions += 'sphinxcontrib.spelling',
-    spelling_show_suggestions = True
-    spelling_lang = 'en_US'
 
 source_suffix = '.rst'
 master_doc = 'index'
