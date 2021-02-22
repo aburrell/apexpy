@@ -1,3 +1,6 @@
+! Uncomment below if using an Intel compiler
+! use ifport
+
 module igrf
       
   implicit none

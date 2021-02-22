@@ -2,8 +2,8 @@
 
 # Ver. 1.0. 27/8-10 - Based on Makefile for Einar Stiansen.
 
-FC 	= gfortran
-#FC 	= mpif90
+# If using Intel compilers, uncomment a line at the top of the igrf.f90 file
+FC 	= gfortran  # mpif90, ifort 
 LD      = $(FC)
 LDFLAGS = #-ipo
 FFLAGS 	= -O3 -fPIC #-ipo -check bounds -check pointer -check uninit
