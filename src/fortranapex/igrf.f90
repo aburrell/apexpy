@@ -27,10 +27,6 @@ contains
     !num_sh = NGHT-2*sqrt(real(NGHT))
     !write(*,*) num_sh
 
-    write(*,*) '----------------------------'
-    write(*,*) '    Read IGRF coefficeints  '
-    write(*,*) '----------------------------'
-
     ! Open IGRF file
     open(unit=100, file=filename_in,status='old',iostat=state)
     if (state /= 0) then
@@ -47,7 +43,6 @@ contains
     num_epochs=count([(s(i:i+3),i=1,len_trim(s))].eq.'IGRF')
     num_epochs=count([(s(i:i+3),i=1,len_trim(s))].eq.'DGRF')+num_epochs
     allocate(EPOCH(1:num_epochs))
-    write(*,*) 'Number of epochs read: ',num_epochs
     allocate(NMXE(1:num_epochs))
 
     ! Read epochs
@@ -107,7 +102,6 @@ contains
     GT =0.0d0
     HYR=0.0d0
     HT =0.0d0
-    write(*,*) 'ASSIGN COEFFICIENTS: ',NEPO,NGHT
     do e=1,NEPO+1
        do l=1,L_max
           if (e .le. NEPO) then

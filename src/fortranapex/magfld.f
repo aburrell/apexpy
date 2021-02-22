@@ -1,6 +1,6 @@
 C  FILE NAME: magfld.f
 
-      SUBROUTINE COFRM (DATE)
+      SUBROUTINE COFRM (DATE, FILENAME)
 C          Define the International Geomagnetic Reference Field (IGRF) as a
 C          scalar potential field using a truncated series expansion with
 C          Schmidt semi-normalized associated Legendre functions of degree n and
@@ -9,7 +9,8 @@ C          interpolated between five year epochs or extrapolated at a constant
 C          rate after the last epoch.
 C
 C          INPUTS:
-C            DATE = yyyy.fraction (UT)
+C            DATE = yyyy.fraction (UT)\
+C            FILENAME = filename
 C          OUTPUTS (in comnon block MAGCOF):
 C            NMAX = Maximum order of spherical harmonic coefficients used
 C            GB   = Coefficients for magnetic field calculation
@@ -129,9 +130,8 @@ C          Do not need to load new coefficients if date has not changed
       ICHG = 1
 
 c          Load coefficients
-      FILENAME='igrf13coeffs.txt'
       if (.not. allocated(GYR)) then
-        call read_igrf(filename,GYR,HYR,GT,HT,NEPO,NGHT,EPOCH,NMXE)
+        call read_igrf(FILENAME,GYR,HYR,GT,HT,NEPO,NGHT,EPOCH,NMXE)
       endif
       NGH=NGHT*NEPO
  

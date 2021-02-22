@@ -56,7 +56,9 @@ class Apex(object):
 
     Notes
     -----
-    The calculations use IGRF-12 with coefficients from 1900 to 2020 [1]_.
+    The calculations use IGRF-13 with coefficients from 1900 to 2025 [1]_.
+
+    The geodetic reference ellipsoid is WGS84.
 
     References
     ----------
@@ -443,9 +445,9 @@ class Apex(object):
                 estr += '({:.3g}) for qlat {:.3g}'.format(self.refh, qlat)
                 raise ApexHeightError(estr)
 
-        alat = np.sign(qlat) * np.degrees(np.arccos(np.sqrt((self.RE +
-                                                             self.refh) /
-                                                            (self.RE + hA))))
+        sqlat = np.sign(qlat) if qlat != 0 else 1
+        alat = sqlat * np.degrees(np.arccos(np.sqrt((self.RE + self.refh) /
+                                                    (self.RE + hA))))
 
         return alat, alon
 
@@ -779,9 +781,9 @@ class Apex(object):
 
         Parameters
         ----------
-        lat, lon : (N,) array_like or float
-            Latitude
         lat : (N,) array_like or float
+            Latitude
+        lon : (N,) array_like or float
             Longitude
         height : (N,) array_like or float
             Altitude in km
@@ -800,11 +802,10 @@ class Apex(object):
 
         Returns
         -------
-        f1, f2 : (2, N) or (2,) ndarray
         f3, g1, g2, g3, d1, d2, d3, e1, e2, e3 : (3, N) or (3,) ndarray
 
-        Note
-        ----
+        Notes
+        -----
         `f3`, `g1`, `g2`, and `g3` are not part of the Fortran code
         by Emmert et al. [2010] [5]_. They are calculated by this
         Python library according to the following equations in
@@ -930,7 +931,8 @@ class Apex(object):
         # f2py
         self.year = np.float64(year)
         fa.loadapxsh(self.datafile, self.year)
-        fa.cofrm(self.year)
+        igrf_fn = os.path.join(os.path.dirname(__file__), 'igrf13coeffs.txt')
+        fa.cofrm(self.year, igrf_fn)
 
     def set_refh(self, refh):
         """Updates the apex reference height for all subsequent conversions.
