@@ -4,11 +4,12 @@ Installation
 ============
 
 This package requires NumPy, which you can install alone or as a part of SciPy.
-`Some Python distributions <http://www.scipy.org/install.html#scientific-python-distributions>`_
+`Some Python distributions <https://www.scipy.org/install.html>`_
 come with NumPy/SciPy pre-installed. For Python distributions without
 NumPy/SciPy, Windows/Mac users should install
-`pre-compiled binaries of NumPy/SciPy <http://www.scipy.org/scipylib/download.html#official-source-and-binary-releases>`_, and Linux users may have NumPy/SciPy
-available in `their repositories <http://www.scipy.org/scipylib/download.html#third-party-vendor-package-managers>`_.
+`pre-compiled binaries of NumPy/SciPy <https://www.scipy.org/scipylib/download.html#official-source-and-binary-releases>`_, and Linux users may have
+NumPy/SciPy available in
+`their repositories <https://www.scipy.org/scipylib/download.html#third-party-vendor-package-managers>`_.
 
 When you have NumPy, you may use either PyPi or GitHub to install this package.
 
@@ -54,4 +55,4 @@ you may install by::
 
 .. [1] pip is included with Python 2 from v2.7.9 and Python 3 from v3.4.
        If you don't have pip,
-       `get it here <http://pip.readthedocs.org/en/stable/installing/>`_.
+       `get it here <https://pip.pypa.io/en/stable/installing/>`_.

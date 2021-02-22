@@ -108,12 +108,12 @@ class Apex(object):
             lambda glat, glon, height: fa.apxg2q(glat, (glon + 180) % 360 - 180,
                                                  height, 0)[:2], 3, 2)
         self._geo2apex = np.frompyfunc(
-            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 -
-                                                   180, height, self.refh,
+            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360
+                                                   - 180, height, self.refh,
                                                    0)[2:4], 3, 2)
         self._geo2apexall = np.frompyfunc(
-            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360 -
-                                                   180, height, self.refh,
+            lambda glat, glon, height: fa.apxg2all(glat, (glon + 180) % 360
+                                                   - 180, height, self.refh,
                                                    1), 3, 14)
         self._qd2geo = np.frompyfunc(
             lambda qlat, qlon, height, precision: fa.apxq2g(qlat, (qlon + 180)
@@ -393,8 +393,8 @@ class Apex(object):
                 estr += '{:.3g} for alat {:.3g}'.format(hA, alat)
                 raise ApexHeightError(estr)
 
-        qlat = np.sign(alat) * np.degrees(np.arccos(np.sqrt((self.RE + height) /
-                                                            (self.RE + hA))))
+        qlat = np.sign(alat) * np.degrees(np.arccos(np.sqrt((self.RE + height)
+                                                            / (self.RE + hA))))
 
         return qlat, qlon
 
@@ -613,8 +613,8 @@ class Apex(object):
     def _map_EV_to_height(self, alat, alon, height, newheight, X, EV):
 
         # make sure X is array of correct shape
-        if (not (np.ndim(X) == 1 and np.size(X) == 3) and
-                not (np.ndim(X) == 2 and np.shape(X)[0] == 3)):
+        if (not (np.ndim(X) == 1 and np.size(X) == 3) and not (
+                np.ndim(X) == 2 and np.shape(X)[0] == 3)):
             # raise ValueError because if passing e.g. a (6,) ndarray the
             # reshape below will work even though the input is invalid
             raise ValueError(EV + ' must be (3, N) or (3,) ndarray')
@@ -871,8 +871,8 @@ class Apex(object):
         g1 = ((self.RE + np.float64(height))
               / (self.RE + self.refh)) ** (3 / 2) * d1 / F
         g2 = -1.0 / (2.0 * F * np.tan(np.radians(qlat))) * (
-            k + ((self.RE + np.float64(height)) /
-                 (self.RE + self.refh)) * d2 / cosI)
+            k + ((self.RE + np.float64(height))
+                 / (self.RE + self.refh)) * d2 / cosI)
         g3 = k * F
         f3 = np.cross(g1.T, g2.T).T
 

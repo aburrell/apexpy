@@ -80,10 +80,9 @@ Badges
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor| |requires|
-        | |coveralls| |codecov|
-        | |landscape|  |codeclimate|
-        | |scrutinizer| |codacy|
+      - | |travis| |appveyor|
+        | |coveralls| |requires|
+        | |codeclimate| |scrutinizer| |codacy|
     * - package
       - | |version| |supported-versions|
         | |wheel| |supported-implementations|
@@ -101,28 +100,21 @@ Badges
     :target: https://ci.appveyor.com/project/aburrell/apexpy
 
 .. |requires| image:: https://requires.io/github/aburrell/apexpy/requirements.svg?branch=master
-    :alt: Requirements Status
-    :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=master
+     :alt: Requirements Status
+     :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=master
 
 .. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=master
     :alt: Coverage Status
     :target: https://coveralls.io/github/aburrell/apexpy?branch=master
 
-.. |codecov| image:: https://codecov.io/github/aburrell/apexpy/coverage.svg?branch=master
-    :alt: Coverage Status
-    :target: https://codecov.io/github/aburrell/apexpy
+.. |codacy| image:: https://api.codacy.com/project/badge/Grade/7d4c1a6c60e747ca95cdf97746c39cda
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/aburrell/apexpy?utm_source=github.com&utm_medium=referral&utm_content=aburrell/apexpy&utm_campaign=Badge_Grade
 
-.. |landscape| image:: https://landscape.io/github/aburrell/apexpy/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/aburrell/apexpy/master
-    :alt: Code Quality Status
-
-.. |codacy| image:: https://img.shields.io/codacy/af7fdf6be28841f283dfdbc1c01fa82a.svg?style=flat
-    :target: https://www.codacy.com/app/aburrell/apexpy
-    :alt: Codacy Code Quality Status
-
-.. |codeclimate| image:: https://codeclimate.com/github/cmeeren/apexpy/badges/gpa.svg
+.. |codeclimate| image:: https://api.codeclimate.com/v1/badges/da1d972dee790da595f8/maintainability.svg
    :target: https://codeclimate.com/github/aburrell/apexpy
    :alt: CodeClimate Quality Status
+
 .. |version| image:: https://img.shields.io/pypi/v/apexpy.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/apexpy

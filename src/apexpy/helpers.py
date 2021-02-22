@@ -69,7 +69,8 @@ def getsinIm(alat):
 
     alat = np.float64(alat)
 
-    return 2*np.sin(np.radians(alat))/np.sqrt(4 - 3*np.cos(np.radians(alat))**2)
+    return 2 * np.sin(np.radians(alat)) / np.sqrt(4 - 3
+                                                  * np.cos(np.radians(alat))**2)
 
 
 def getcosIm(alat):
@@ -88,7 +89,8 @@ def getcosIm(alat):
 
     alat = np.float64(alat)
 
-    return np.cos(np.radians(alat))/np.sqrt(4 - 3*np.cos(np.radians(alat))**2)
+    return np.cos(np.radians(alat)) / np.sqrt(4 - 3
+                                              * np.cos(np.radians(alat))**2)
 
 
 def toYearFraction(date):
@@ -115,11 +117,11 @@ def toYearFraction(date):
         return time.mktime(date.timetuple())
     year = date.year
     startOfThisYear = dt.datetime(year=year, month=1, day=1)
-    startOfNextYear = dt.datetime(year=year+1, month=1, day=1)
+    startOfNextYear = dt.datetime(year=year + 1, month=1, day=1)
 
     yearElapsed = sinceEpoch(date) - sinceEpoch(startOfThisYear)
     yearDuration = sinceEpoch(startOfNextYear) - sinceEpoch(startOfThisYear)
-    fraction = yearElapsed/yearDuration
+    fraction = yearElapsed / yearDuration
 
     return date.year + fraction
 
@@ -139,7 +141,7 @@ def gc2gdlat(gclat):
 
     """
     WGS84_e2 = 0.006694379990141317  # WGS84 first eccentricity squared
-    return np.rad2deg(-np.arctan(np.tan(np.deg2rad(gclat))/(WGS84_e2 - 1)))
+    return np.rad2deg(-np.arctan(np.tan(np.deg2rad(gclat)) / (WGS84_e2 - 1)))
 
 
 def subsol(datetime):
