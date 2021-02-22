@@ -9,6 +9,7 @@ include CONTRIBUTING.rst
 include LICENSE
 include README.rst
 include CODE_OF_CONDUCT.md
+include .zenodo.json
 
 include tox.ini .travis.yml appveyor.yml .codeclimate.yml pyproject.toml
 

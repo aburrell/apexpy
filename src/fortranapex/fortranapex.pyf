@@ -3,54 +3,6 @@
 
 python module fortranapex ! in 
     interface  ! in :fortranapex
-        subroutine cofrm(date) ! in :fortranapex:magfld.f
-            real :: date
-            integer :: nmax
-            real dimension(255) :: gb
-            real dimension(225) :: gv
-            integer, optional :: ichg=-99999
-            common /magcof/ nmax,gb,gv,ichg
-        end subroutine cofrm
-        subroutine dypol(colat,elon,vp) ! in :fortranapex:magfld.f
-            real :: colat
-            real :: elon
-            real :: vp
-            integer :: nmax
-            real dimension(255) :: gb
-            real dimension(225) :: gv
-            integer :: ichg
-            common /magcof/ nmax,gb,gv,ichg
-        end subroutine dypol
-        subroutine feldg(ienty,glat,glon,alt,bnrth,beast,bdown,babs) ! in :fortranapex:magfld.f
-            integer intent(in) :: ienty
-            real(4) intent(in) :: glat
-            real(4) intent(in) :: glon
-            real(4) intent(in) :: alt
-            real(4) intent(out) :: bnrth
-            real(4) intent(out) :: beast
-            real(4) intent(out) :: bdown
-            real(4) intent(out) :: babs
-            integer :: nmax
-            real dimension(255) :: gb
-            real dimension(225) :: gv
-            integer :: ichg
-            common /magcof/ nmax,gb,gv,ichg
-        end subroutine feldg
-        subroutine gd2cart(gdlat,glon,alt,x,y,z) ! in :fortranapex:magfld.f
-            real :: gdlat
-            real :: glon
-            real :: alt
-            real :: x
-            real :: y
-            real :: z
-        end subroutine gd2cart
-        subroutine convrt(i,gdlat,alt,x1,x2) ! in :fortranapex:magfld.f
-            integer :: i
-            real :: gdlat
-            real :: alt
-            real :: x1
-            real :: x2
-        end subroutine convrt
         subroutine apex(date,dlat,dlon,alt,a,alat,alon,bmag,xmag,ymag,zmag,v) ! in :fortranapex:apex.f
             real :: date
             real :: dlat
@@ -223,8 +175,8 @@ python module fortranapex ! in
         end module apxshmodule
         subroutine loadapxsh(datafilenew,epochnew) ! in :fortranapex:apexsh.f90
             use apxshmodule
-            character*1000 :: datafilenew
-            real(kind=4) :: epochnew
+            character*1000 intent(in) :: datafilenew
+            real(kind=4) intent(in) :: epochnew
         end subroutine loadapxsh
         subroutine allocatearrays ! in :fortranapex:apexsh.f90
             use apxshmodule
@@ -303,6 +255,56 @@ python module fortranapex ! in
             real(kind=8) dimension(nmax + 1,mmax + 1),intent(out),depend(nmax,mmax) :: v
             real(kind=8) dimension(nmax + 1,mmax + 1),intent(out),depend(nmax,mmax) :: w
         end subroutine alfbasis
+        subroutine cofrm(date,filename) ! in :fortranapex:magfld.f
+            use igrf
+            real(kind=4) intent(in) :: date
+            character*1000 intent(in) :: filename
+            integer :: nmax
+            real dimension(255) :: gb
+            real dimension(225) :: gv
+            integer, optional :: ichg=-99999
+            common /magcof/ nmax,gb,gv,ichg
+        end subroutine cofrm
+        subroutine dypol(colat,elon,vp) ! in :fortranapex:magfld.f
+            real :: colat
+            real :: elon
+            real :: vp
+            integer :: nmax
+            real dimension(255) :: gb
+            real dimension(225) :: gv
+            integer :: ichg
+            common /magcof/ nmax,gb,gv,ichg
+        end subroutine dypol
+        subroutine feldg(ienty,glat,glon,alt,bnrth,beast,bdown,babs) ! in :fortranapex:magfld.f
+            integer intent(in) :: ienty
+            real intent(in) :: glat
+            real intent(in) :: glon
+            real intent(in) :: alt
+            real intent(out) :: bnrth
+            real intent(out) :: beast
+            real intent(out) :: bdown
+            real intent(out) :: babs
+            integer :: nmax
+            real dimension(255) :: gb
+            real dimension(225) :: gv
+            integer :: ichg
+            common /magcof/ nmax,gb,gv,ichg
+        end subroutine feldg
+        subroutine gd2cart(gdlat,glon,alt,x,y,z) ! in :fortranapex:magfld.f
+            real :: gdlat
+            real :: glon
+            real :: alt
+            real :: x
+            real :: y
+            real :: z
+        end subroutine gd2cart
+        subroutine convrt(i,gdlat,alt,x1,x2) ! in :fortranapex:magfld.f
+            integer :: i
+            real :: gdlat
+            real :: alt
+            real :: x1
+            real :: x2
+        end subroutine convrt
         subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin) ! in :fortranapex:makeapexsh.f90
             use apxshmodule
             character*128 intent(in) :: datafilein

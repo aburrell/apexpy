@@ -8,7 +8,9 @@ import os
 import subprocess
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-outfile = 'tests/output.txt'
+outfile = os.path.join('tests', 'output.txt')
+infile = os.path.join('tests', 'test_convert.txt')
+singlefile = os.path.join('tests', 'test_convert_single_line.txt')
 
 
 def setup_function(function):
@@ -23,10 +25,10 @@ teardown_function = setup_function
 
 def test_module_invocation():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
-                             '--height', '300', '-i', 'tests/test_convert.txt',
-                             '-o', outfile])
+                             '--height', '300', '-i', infile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
+
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
     np.testing.assert_allclose(data, [[57.469547, 93.639816],
@@ -36,8 +38,7 @@ def test_module_invocation():
 
 def test_convert_YYYY():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
-                             '--height', '300', '-i', 'tests/test_convert.txt',
-                             '-o', outfile])
+                             '--height', '300', '-i', infile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
     assert os.path.isfile(outfile)
@@ -49,8 +50,7 @@ def test_convert_YYYY():
 
 def test_convert_YYYYMM():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '201501',
-                             '--height', '300', '-i', 'tests/test_convert.txt',
-                             '-o', outfile])
+                             '--height', '300', '-i', infile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
     assert os.path.isfile(outfile)
@@ -63,7 +63,7 @@ def test_convert_YYYYMM():
 def test_convert_YYYYMMDD():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
                              '20150101', '--height', '300', '-i',
-                             'tests/test_convert.txt', '-o', outfile])
+                             infile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
     assert os.path.isfile(outfile)
@@ -76,7 +76,7 @@ def test_convert_YYYYMMDD():
 def test_convert_YYYYMMDDHHMMSS():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
                              '20150101000000', '--height', '300', '-i',
-                             'tests/test_convert.txt', '-o', outfile])
+                             infile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
     assert os.path.isfile(outfile)
@@ -89,8 +89,7 @@ def test_convert_YYYYMMDDHHMMSS():
 def test_convert_single_line():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
                              '20150101000000', '--height', '300', '-i',
-                             'tests/test_convert_single_line.txt', '-o',
-                             outfile])
+                             singlefile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
     assert os.path.isfile(outfile)
@@ -122,8 +121,7 @@ def test_convert_refh():
 def test_convert_mlt():
     pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'mlt',
                              '20150101000000', '--height', '300', '-i',
-                             'tests/test_convert_single_line.txt', '-o',
-                             outfile])
+                             singlefile, '-o', outfile])
     pipe.communicate()
     pipe.wait()
     assert os.path.isfile(outfile)
