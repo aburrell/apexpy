@@ -3,52 +3,52 @@ build: off
 configuration: Release
 environment:
   matrix:
-    - TESTENV: '2.7-nocover-64'
+    - TESTENV: '2.7-64'
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '2.7-nocover-32'
+    - TESTENV: '2.7-32'
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.6-nocover-64'
+    - TESTENV: '3.6-64'
       PYTHON_VERSION: '3.6'
       MINICONDA_HOME: C:\Miniconda-x64
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.6-nocover-32'
+    - TESTENV: '3.6-32'
       PYTHON_VERSION: '3.6'
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.7-nocover-64'
+    - TESTENV: '3.7-64'
       PYTHON_VERSION: '3.7'
       MINICONDA_HOME: C:\Miniconda-x64
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.7-nocover-32'
+    - TESTENV: '3.7-32'
       PYTHON_VERSION: '3.7'
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.8-nocover-64'
+    - TESTENV: '3.8-64'
       PYTHON_VERSION: '3.8'
       MINICONDA_HOME: C:\Miniconda-x64
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.8-nocover-32'
+    - TESTENV: '3.8-32'
       PYTHON_VERSION: '3.8'
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.9-nocover-64'
+    - TESTENV: '3.9-64'
       PYTHON_VERSION: '3.9'
       MINICONDA_HOME: C:\Miniconda-x64
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: '3.9-nocover-32'
+    - TESTENV: '3.9-32'
       PYTHON_VERSION: '3.9'
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'python -m pytest'
