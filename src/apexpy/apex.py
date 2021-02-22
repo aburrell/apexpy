@@ -20,7 +20,7 @@ except ImportError as err:
     raise err
 
 # make sure invalid warnings are always shown
-warnings.filterwarnings('always', message='.*set to -9999 where*',
+warnings.filterwarnings('always', message='.*set to NaN where*',
                         module='apexpy.apex')
 
 
@@ -243,9 +243,13 @@ class Apex(object):
 
         alat, alon = self._geo2apex(glat, glon, height)
 
-        if np.any(np.float64(alat) == -9999):
-            warnings.warn('Apex latitude set to -9999 where undefined '
+        if np.any(alat == -9999):
+            warnings.warn('Apex latitude set to NaN where undefined '
                           '(apex height may be < reference height)')
+            if np.isscalar(alat):
+                alat = np.nan
+            else:
+                alat[alat == -9999] = np.nan
 
         # if array is returned, dtype is object, so convert to float
         return np.float64(alat), np.float64(alon)
@@ -389,12 +393,13 @@ class Apex(object):
                 # allow for values that are close
                 hA = height
             else:
-                estr = 'height {:.3g} is > apex height '.format(np.max(height))
-                estr += '{:.3g} for alat {:.3g}'.format(hA, alat)
+                estr = f'height {np.max(height):.3g} is > apex height ' \
+                       f'{hA:.3g} for alat {alat:.3g}'
                 raise ApexHeightError(estr)
 
-        qlat = np.sign(alat) * np.degrees(np.arccos(np.sqrt((self.RE + height)
-                                                            / (self.RE + hA))))
+        salat = np.sign(alat) if alat != 0 else 1
+        qlat = salat * np.degrees(np.arccos(np.sqrt((self.RE + height) /
+                                                    (self.RE + hA))))
 
         return qlat, qlon
 
@@ -877,19 +882,20 @@ class Apex(object):
         f3 = np.cross(g1.T, g2.T).T
 
         if np.any(alat == -9999):
-            warnings.warn(''.join(['Base vectors g, d, e, and f3 set to -9999 ',
+            warnings.warn(''.join(['Base vectors g, d, e, and f3 set to NaN ',
                                    'where apex latitude is undefined (apex ',
                                    'height may be < reference height)']))
-            f3 = np.where(alat == -9999, -9999, f3)
-            g1 = np.where(alat == -9999, -9999, g1)
-            g2 = np.where(alat == -9999, -9999, g2)
-            g3 = np.where(alat == -9999, -9999, g3)
-            d1 = np.where(alat == -9999, -9999, d1)
-            d2 = np.where(alat == -9999, -9999, d2)
-            d3 = np.where(alat == -9999, -9999, d3)
-            e1 = np.where(alat == -9999, -9999, e1)
-            e2 = np.where(alat == -9999, -9999, e2)
-            e3 = np.where(alat == -9999, -9999, e3)
+            mask = alat == -9999
+            f3 = np.where(mask, np.nan, f3)
+            g1 = np.where(mask, np.nan, g1)
+            g2 = np.where(mask, np.nan, g2)
+            g3 = np.where(mask, np.nan, g3)
+            d1 = np.where(mask, np.nan, d1)
+            d2 = np.where(mask, np.nan, d2)
+            d3 = np.where(mask, np.nan, d3)
+            e1 = np.where(mask, np.nan, e1)
+            e2 = np.where(mask, np.nan, e2)
+            e3 = np.where(mask, np.nan, e3)
 
         return tuple(np.squeeze(x) for x in
                      [f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2, e3])

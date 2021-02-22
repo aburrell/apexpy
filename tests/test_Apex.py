@@ -4,6 +4,7 @@ from __future__ import division, absolute_import, unicode_literals
 
 import datetime as dt
 import warnings
+import itertools
 
 import numpy as np
 import pytest
@@ -378,6 +379,25 @@ def test_convert_invalid_transformation():
         apex_out.convert(0, 0, 'geo', 'foobar')
 
 
+coord_names = ['geo', 'apex', 'qd']
+
+
+@pytest.mark.parametrize('transform', itertools.product(coord_names, coord_names))
+def test_convert_withnan(transform):
+    N_nans = 5
+    in_lat = np.arange(0, 10, dtype=float)
+    in_lat[:N_nans] = np.nan
+    in_lon = np.arange(0, 10, dtype=float)
+    in_lon[:N_nans] = np.nan
+    src, dest = transform
+    apex_out = Apex(date=2000, refh=80)
+    out_lat, out_lon = apex_out.convert(in_lat, in_lon, src, dest, height=120)
+    assert np.all(np.isnan(out_lat[:N_nans]))
+    assert np.all(np.isnan(out_lon[:N_nans]))
+    assert np.all(np.isfinite(out_lat[N_nans:]))
+    assert np.all(np.isfinite(out_lat[N_nans:]))
+
+
 # ============================================================================
 #  Test the geo2apex() method
 # ============================================================================
@@ -418,10 +438,10 @@ def test_geo2apex_undefined_warning():
         apex_out = Apex(date=2000, refh=10000)
         ret = apex_out.geo2apex(0, 0, 0)
 
-    assert ret[0] == -9999
+    assert np.isnan(ret[0])
     assert len(wmsg) == 1
     assert issubclass(wmsg[-1].category, UserWarning)
-    assert 'set to -9999 where' in str(wmsg[-1].message)
+    assert 'set to NaN where' in str(wmsg[-1].message)
 
 
 # ============================================================================
@@ -1241,9 +1261,9 @@ def test_basevectors_apex_invalid_scalar():
         base_vecs = apex_out.basevectors_apex(0, 0, 0)
 
     assert issubclass(wmsg[-1].category, UserWarning)
-    assert 'set to -9999 where' in str(wmsg[-1].message)
+    assert 'set to NaN where' in str(wmsg[-1].message)
 
-    invalid = [-9999, -9999, -9999]
+    invalid = np.ones(3) * np.nan
     for i, bvec in enumerate(base_vecs):
         if i < 2:
             assert not np.allclose(bvec, invalid[:2])

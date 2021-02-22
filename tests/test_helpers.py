@@ -31,10 +31,6 @@ def test_checklat_scalar():
     assert helpers.checklat(90 + 1e-5) == 90
     assert helpers.checklat(-90 - 1e-5) == -90
 
-    assert type(helpers.checklat(0.)) == float
-    assert type(helpers.checklat(0)) == int
-    assert type(helpers.checklat(90 + 1e-5)) == int
-
     with pytest.raises(ValueError):
         helpers.checklat(90 + 1e-4)
     with pytest.raises(ValueError):
@@ -54,14 +50,26 @@ def test_checklat_array():
     assert_allclose(helpers.checklat([-90 - 1e-5, -90, 0, 90, 90 + 1e-5]),
                     np.array([-90, -90, 0, 90, 90]), rtol=0, atol=1e-8)
 
-    assert type(helpers.checklat([0])) == list
-    assert type(helpers.checklat(np.array([0]))) == np.ndarray
-
     with pytest.raises(ValueError):
         helpers.checklat([-90 - 1e-4, -90, 0, 90, 90 + 1e-5])
 
     with pytest.raises(ValueError):
         helpers.checklat([-90 - 1e-5, -90, 0, 90, 90 + 1e-4])
+
+
+def test_checklat_withnan():
+    in_lat = np.array([-90 - 1e-5, -90, 0, 90, 90 + 1e-5, np.nan, np.nan])
+    fin_mask = np.isfinite(in_lat)
+    out_lat = helpers.checklat(in_lat)
+    assert_allclose(np.array([-90, -90, 0, 90, 90]), out_lat[fin_mask], rtol=0, atol=1e-8)
+
+    assert np.all(np.isnan(out_lat[~fin_mask]))
+
+    with pytest.raises(ValueError):
+        helpers.checklat([-90 - 1e-4, np.nan, np.nan, 90 + 1e-5])
+
+    with pytest.raises(ValueError):
+        helpers.checklat([-90 - 1e-5, np.nan, np.nan, 90 + 1e-4])
 
 
 # ============================================================================
