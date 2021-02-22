@@ -243,7 +243,7 @@ class Apex(object):
 
         alat, alon = self._geo2apex(glat, glon, height)
 
-        alat = np.float64(alat)
+        print(alat)
         if np.any(alat == -9999):
             warnings.warn('Apex latitude set to NaN where undefined '
                           '(apex height may be < reference height)')
