@@ -393,8 +393,8 @@ class Apex(object):
                 # allow for values that are close
                 hA = height
             else:
-                estr = f'height {np.max(height):.3g} is > apex height ' \
-                       f'{hA:.3g} for alat {alat:.3g}'
+                estr = 'height {:.3g} is > apex height '.format(np.max(height)) +\
+                       '{:.3g} for alat {alat:.3g}'.format(hA)
                 raise ApexHeightError(estr)
 
         salat = np.sign(alat) if alat != 0 else 1
