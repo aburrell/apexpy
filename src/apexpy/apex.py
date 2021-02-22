@@ -394,7 +394,7 @@ class Apex(object):
                 hA = height
             else:
                 estr = 'height {:.3g} is > apex height '.format(np.max(height)) +\
-                       '{:.3g} for alat {alat:.3g}'.format(hA)
+                       '{:.3g} for alat {:.3g}'.format(hA, alat)
                 raise ApexHeightError(estr)
 
         salat = np.sign(alat) if alat != 0 else 1
