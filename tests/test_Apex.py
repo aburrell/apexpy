@@ -1321,7 +1321,6 @@ def test_set_epoch():
 
 def test_set_epoch_file_error():
     """Test raises OSError when IGRF coefficient file is missing."""
-
     # Ensure the coefficient file exists
     igrf_file = os.path.join(os.path.dirname(helpers.__file__),
                              'igrf13coeffs.txt')
@@ -1332,7 +1331,7 @@ def test_set_epoch_file_error():
     os.rename(igrf_file, tmp_file)
 
     # Test missing coefficient file failure
-    with pytest.Raises(OSError) as oerr:
+    with pytest.raises(OSError) as oerr:
         Apex(date=2000.2, refh=300)
 
     assert str(oerr.value).startswith(
