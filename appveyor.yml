@@ -6,52 +6,52 @@ environment:
     - TESTENV: '2.7-nocover-64'
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '2.7-nocover-32'
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.6-nocover-64'
       PYTHON_VERSION: '3.6'
       MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.6-nocover-32'
       PYTHON_VERSION: '3.6'
       MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.7-nocover-64'
       PYTHON_VERSION: '3.7'
       MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.7-nocover-32'
       PYTHON_VERSION: '3.7'
       MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.8-nocover-64'
       PYTHON_VERSION: '3.8'
       MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.8-nocover-32'
       PYTHON_VERSION: '3.8'
       MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.9-nocover-64'
       PYTHON_VERSION: '3.9'
       MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '3.9-nocover-32'
       PYTHON_VERSION: '3.9'
       MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: 'check'
       PYTHON_VERSION: '3.7'
@@ -99,3 +99,4 @@ artifacts:
 
 ### To enable remote debugging uncomment this:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+

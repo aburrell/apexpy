@@ -7,12 +7,12 @@ environment:
     - TESTENV: '{{ env }}-64'
       PYTHON_VERSION: '{{ config.python[-3:] }}'
       MINICONDA_HOME: C:\Miniconda-x64
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
     - TESTENV: '{{ env }}-32'
       PYTHON_VERSION: '{{ config.python[-3:] }}'
       MINICONDA_HOME: C:\Miniconda
-      TESTSCRIPT: 'python -m pytest tests'
+      TESTSCRIPT: 'py.test'
 
 {% endif %}{% endfor %}
     - TESTENV: 'check'
