@@ -25,7 +25,7 @@ from apexpy import helpers
 
 @pytest.mark.parametrize('lat', [(90), (0), (-90), (np.nan)])
 def test_checklat_scalar(lat):
-    """Test good latitude check with scalars"""
+    """Test good latitude check with scalars."""
     if np.isnan(lat):
         assert np.isnan(helpers.checklat(lat))
     else:
@@ -34,7 +34,7 @@ def test_checklat_scalar(lat):
 
 @pytest.mark.parametrize('lat', [(90 + 1e-5), (-90 - 1e-5)])
 def test_checklat_scalar_clip(lat):
-    """Test good latitude check with scalars just beyond the lat limits"""
+    """Test good latitude check with scalars just beyond the lat limits."""
     assert helpers.checklat(lat) == np.sign(lat) * np.floor(abs(lat))
 
 
@@ -46,7 +46,7 @@ def test_checklat_scalar_clip(lat):
                           ([[-90 - 1e-4, -90, np.nan, np.nan, 90 + 1e-5]],
                            'lat must be in')])
 def test_checklat_error(in_args, msg):
-    """Test bad latitude raises ValueError with appropriate message"""
+    """Test bad latitude raises ValueError with appropriate message."""
     with pytest.raises(ValueError) as verr:
         helpers.checklat(*in_args)
 
@@ -54,7 +54,7 @@ def test_checklat_error(in_args, msg):
 
 
 def test_checklat_array():
-    """Test good latitude with finite values"""
+    """Test good latitude with finite values."""
     assert_allclose(helpers.checklat([-90 - 1e-5, -90, 0, 90, 90 + 1e-5]),
                     np.array([-90, -90, 0, 90, 90]), rtol=0, atol=1e-8)
 
@@ -62,7 +62,7 @@ def test_checklat_array():
 
 
 def test_checklat_array_withnan():
-    """Test good latitude input mixed with NaNs"""
+    """Test good latitude input mixed with NaNs."""
 
     in_lat = np.array([-90 - 1e-5, -90, 0, 90, 90 + 1e-5, np.nan, np.nan])
     fin_mask = np.isfinite(in_lat)
@@ -166,7 +166,7 @@ def test_subsol():
 
 
 def datetime64_to_datetime(dt64):
-    """Convert numpy datetime64 object to a datetime datetime object
+    """Convert numpy datetime64 object to a datetime datetime object.
 
     Notes
     -----
@@ -183,7 +183,7 @@ def datetime64_to_datetime(dt64):
 
 
 def test_subsol_array():
-    """Verify subsolar point calculation using an array of np.datetime64
+    """Verify subsolar point calculation using an array of np.datetime64.
 
     Notes
     -----

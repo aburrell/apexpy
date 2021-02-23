@@ -311,7 +311,7 @@ def test_convert_qd2apex():
 
 
 def test_convert_qd2apex_at_equator():
-    """Test the quasi-dipole to apex conversion at the magnetic equator"""
+    """Test the quasi-dipole to apex conversion at the magnetic equator."""
     apex_out = Apex(date=2000, refh=80)
     elat, elon = apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
                                   height=120.0)
@@ -384,7 +384,7 @@ coord_names = ['geo', 'apex', 'qd']
 @pytest.mark.parametrize('transform', itertools.product(coord_names,
                                                         coord_names))
 def test_convert_withnan(transform):
-    """Test Apex.convert success with NaN input"""
+    """Test Apex.convert success with NaN input."""
     num_nans = 5
     in_lat = np.arange(0, 10, dtype=float)
     in_lat[:num_nans] = np.nan
@@ -433,8 +433,7 @@ def test_geo2apex_invalid_lat():
 
 
 def test_geo2apex_undefined_warning(recwarn):
-    """Test warning and fill values for an undefined location
-    """
+    """Test warning and fill values for an undefined location."""
     apex_out = Apex(date=2000, refh=10000)
     ret = apex_out.geo2apex(0, 0, 0)
 
@@ -805,8 +804,7 @@ def test_map_to_height_same_height():
 
 
 def test_map_to_height_conjugate():
-    """Test results of map_to_height using conjugacy
-    """
+    """Test results of map_to_height using conjugacy."""
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
                                            precision=1e-10),
@@ -1254,7 +1252,7 @@ def test_basevectors_apex_delta():
 
 
 def test_basevectors_apex_invalid_scalar(recwarn):
-    """ Test warning and fill values for calculating base vectors with bad value
+    """Test warning and fill values for calculating base vectors with bad value.
     """
     apex_out = Apex(date=2000, refh=10000)
     base_vecs = apex_out.basevectors_apex(0, 0, 0)
