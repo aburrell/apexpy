@@ -200,9 +200,5 @@ def test_subsol_array():
         assert sslon[i] == true_sslon
 
 
-def test_fail():
-    assert False
-
-
 if __name__ == '__main__':
     pytest.main()
