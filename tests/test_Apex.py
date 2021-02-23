@@ -384,18 +384,19 @@ coord_names = ['geo', 'apex', 'qd']
 @pytest.mark.parametrize('transform', itertools.product(coord_names,
                                                         coord_names))
 def test_convert_withnan(transform):
-    N_nans = 5
+    """Test Apex.convert success with NaN input"""
+    num_nans = 5
     in_lat = np.arange(0, 10, dtype=float)
-    in_lat[:N_nans] = np.nan
+    in_lat[:num_nans] = np.nan
     in_lon = np.arange(0, 10, dtype=float)
-    in_lon[:N_nans] = np.nan
+    in_lon[:num_nans] = np.nan
     src, dest = transform
     apex_out = Apex(date=2000, refh=80)
     out_lat, out_lon = apex_out.convert(in_lat, in_lon, src, dest, height=120)
-    assert np.all(np.isnan(out_lat[:N_nans]))
-    assert np.all(np.isnan(out_lon[:N_nans]))
-    assert np.all(np.isfinite(out_lat[N_nans:]))
-    assert np.all(np.isfinite(out_lat[N_nans:]))
+    assert np.all(np.isnan(out_lat[:num_nans]))
+    assert np.all(np.isnan(out_lon[:num_nans]))
+    assert np.all(np.isfinite(out_lat[num_nans:]))
+    assert np.all(np.isfinite(out_lat[num_nans:]))
 
 
 # ============================================================================

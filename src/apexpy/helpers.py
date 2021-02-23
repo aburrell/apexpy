@@ -33,6 +33,7 @@ def checklat(lat, name='lat'):
     """
     if np.any(np.abs(lat) > 90 + 1e-5):
         raise ValueError(name + ' must be in [-90, 90]')
+
     return np.clip(lat, -90.0, 90.0)
 
 
