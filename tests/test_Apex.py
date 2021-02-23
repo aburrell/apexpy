@@ -3,11 +3,11 @@
 from __future__ import division, absolute_import, unicode_literals
 
 import datetime as dt
-import warnings
-
+import itertools
 import numpy as np
-import pytest
 from numpy.testing import assert_allclose
+import os
+import pytest
 
 from apexpy import fortranapex as fa
 from apexpy import Apex, ApexHeightError, helpers
@@ -311,7 +311,7 @@ def test_convert_qd2apex():
 
 
 def test_convert_qd2apex_at_equator():
-    """Test the quasi-dipole to apex conversion at the magnetic equator"""
+    """Test the quasi-dipole to apex conversion at the magnetic equator."""
     apex_out = Apex(date=2000, refh=80)
     elat, elon = apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
                                   height=120.0)
@@ -378,6 +378,27 @@ def test_convert_invalid_transformation():
         apex_out.convert(0, 0, 'geo', 'foobar')
 
 
+coord_names = ['geo', 'apex', 'qd']
+
+
+@pytest.mark.parametrize('transform', itertools.product(coord_names,
+                                                        coord_names))
+def test_convert_withnan(transform):
+    """Test Apex.convert success with NaN input."""
+    num_nans = 5
+    in_lat = np.arange(0, 10, dtype=float)
+    in_lat[:num_nans] = np.nan
+    in_lon = np.arange(0, 10, dtype=float)
+    in_lon[:num_nans] = np.nan
+    src, dest = transform
+    apex_out = Apex(date=2000, refh=80)
+    out_lat, out_lon = apex_out.convert(in_lat, in_lon, src, dest, height=120)
+    assert np.all(np.isnan(out_lat[:num_nans]))
+    assert np.all(np.isnan(out_lon[:num_nans]))
+    assert np.all(np.isfinite(out_lat[num_nans:]))
+    assert np.all(np.isfinite(out_lat[num_nans:]))
+
+
 # ============================================================================
 #  Test the geo2apex() method
 # ============================================================================
@@ -411,17 +432,15 @@ def test_geo2apex_invalid_lat():
                     apex_out.geo2apex(90, 0, 0), rtol=0, atol=1e-8)
 
 
-def test_geo2apex_undefined_warning():
-    """Test warning and fill values for an undefined location
-    """
-    with warnings.catch_warnings(record=True) as wmsg:
-        apex_out = Apex(date=2000, refh=10000)
-        ret = apex_out.geo2apex(0, 0, 0)
+def test_geo2apex_undefined_warning(recwarn):
+    """Test warning and fill values for an undefined location."""
+    apex_out = Apex(date=2000, refh=10000)
+    ret = apex_out.geo2apex(0, 0, 0)
 
-    assert ret[0] == -9999
-    assert len(wmsg) == 1
-    assert issubclass(wmsg[-1].category, UserWarning)
-    assert 'set to -9999 where' in str(wmsg[-1].message)
+    assert np.isnan(ret[0])
+    assert len(recwarn) == 1
+    assert issubclass(recwarn[-1].category, UserWarning)
+    assert 'set to NaN where' in str(recwarn[-1].message)
 
 
 # ============================================================================
@@ -785,8 +804,7 @@ def test_map_to_height_same_height():
 
 
 def test_map_to_height_conjugate():
-    """Test results of map_to_height using conjugacy
-    """
+    """Test results of map_to_height using conjugacy."""
     apex_out = Apex(date=2000, refh=300)
     assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
                                            precision=1e-10),
@@ -1233,17 +1251,16 @@ def test_basevectors_apex_delta():
                 assert_allclose(np.sum(d[i] * e[j]), delta, rtol=0, atol=1e-5)
 
 
-def test_basevectors_apex_invalid_scalar():
-    """ Test warning and fill values for calculating base vectors with bad value
+def test_basevectors_apex_invalid_scalar(recwarn):
+    """Test warning and fill values for calculating base vectors with bad value.
     """
     apex_out = Apex(date=2000, refh=10000)
-    with warnings.catch_warnings(record=True) as wmsg:
-        base_vecs = apex_out.basevectors_apex(0, 0, 0)
+    base_vecs = apex_out.basevectors_apex(0, 0, 0)
 
-    assert issubclass(wmsg[-1].category, UserWarning)
-    assert 'set to -9999 where' in str(wmsg[-1].message)
+    assert issubclass(recwarn[-1].category, UserWarning)
+    assert 'set to NaN where' in str(recwarn[-1].message)
 
-    invalid = [-9999, -9999, -9999]
+    invalid = np.ones(3) * np.nan
     for i, bvec in enumerate(base_vecs):
         if i < 2:
             assert not np.allclose(bvec, invalid[:2])
@@ -1281,6 +1298,7 @@ def test_get_apex_invalid_lat():
 
 
 def test_set_epoch():
+    """Test successful setting of Apex epoch."""
     apex_out = Apex(date=2000.2, refh=300)
     assert_allclose(apex_out.year, 2000.2)
     ret_2000_2_py = apex_out._geo2apex(60, 15, 100)
@@ -1299,6 +1317,28 @@ def test_set_epoch():
 
     assert_allclose(ret_2000_2_py, ret_2000_2_apex)
     assert_allclose(ret_2000_8_py, ret_2000_8_apex)
+
+
+def test_set_epoch_file_error():
+    """Test raises OSError when IGRF coefficient file is missing."""
+    # Ensure the coefficient file exists
+    igrf_file = os.path.join(os.path.dirname(helpers.__file__),
+                             'igrf13coeffs.txt')
+    tmp_file = "temp_coeff.txt"
+    assert os.path.isfile(igrf_file)
+
+    # Move the coefficient file
+    os.rename(igrf_file, tmp_file)
+
+    # Test missing coefficient file failure
+    with pytest.raises(OSError) as oerr:
+        Apex(date=2000.2, refh=300)
+
+    assert str(oerr.value).startswith(
+        "File {:} does not exist".format(igrf_file))
+
+    # Move the coefficient file back
+    os.rename(tmp_file, igrf_file)
 
 
 # ============================================================================

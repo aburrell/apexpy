@@ -31,26 +31,10 @@ def checklat(lat, name='lat'):
     ValueError
         if any values are too far outside the range [-90, 90]
     """
+    if np.any(np.abs(lat) > 90 + 1e-5):
+        raise ValueError(name + ' must be in [-90, 90]')
 
-    if np.all(np.float64(lat) >= -90) and np.all(np.float64(lat) <= 90):
-        return lat
-
-    if np.isscalar(lat):
-        if lat > 90 and np.isclose(lat, 90, rtol=0, atol=1e-4):
-            lat = 90
-            return lat
-        elif lat < -90 and np.isclose(lat, -90, rtol=0, atol=1e-4):
-            lat = -90
-            return lat
-    else:
-        lat = np.float64(lat)  # make sure we have an array, not list
-        lat[(lat > 90) & (np.isclose(lat, 90, rtol=0, atol=1e-4))] = 90
-        lat[(lat < -90) & (np.isclose(lat, -90, rtol=0, atol=1e-4))] = -90
-        if np.all(lat >= -90) and np.all(lat <= 90):
-            return lat
-
-    # we haven't returned yet, so raise exception
-    raise ValueError(name + ' must be in [-90, 90]')
+    return np.clip(lat, -90.0, 90.0)
 
 
 def getsinIm(alat):

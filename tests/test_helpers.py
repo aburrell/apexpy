@@ -23,45 +23,54 @@ from apexpy import helpers
 #  Test checklat
 # ============================================================================
 
-def test_checklat_scalar():
-    assert helpers.checklat(90) == 90
-    assert helpers.checklat(0) == 0
-    assert helpers.checklat(-90) == -90
-
-    assert helpers.checklat(90 + 1e-5) == 90
-    assert helpers.checklat(-90 - 1e-5) == -90
-
-    assert type(helpers.checklat(0.)) == float
-    assert type(helpers.checklat(0)) == int
-    assert type(helpers.checklat(90 + 1e-5)) == int
-
-    with pytest.raises(ValueError):
-        helpers.checklat(90 + 1e-4)
-    with pytest.raises(ValueError):
-        helpers.checklat(-90 - 1e-4)
+@pytest.mark.parametrize('lat', [(90), (0), (-90), (np.nan)])
+def test_checklat_scalar(lat):
+    """Test good latitude check with scalars."""
+    if np.isnan(lat):
+        assert np.isnan(helpers.checklat(lat))
+    else:
+        assert helpers.checklat(lat) == lat
 
 
-def test_checklat_message():
-    with pytest.raises(ValueError) as excinfo:
-        helpers.checklat(100)
-    assert str(excinfo.value).startswith('lat must be in')
-    with pytest.raises(ValueError) as excinfo:
-        helpers.checklat(100, name='glat')
-    assert str(excinfo.value).startswith('glat')
+@pytest.mark.parametrize('lat', [(90 + 1e-5), (-90 - 1e-5)])
+def test_checklat_scalar_clip(lat):
+    """Test good latitude check with scalars just beyond the lat limits."""
+    assert helpers.checklat(lat) == np.sign(lat) * np.floor(abs(lat))
+
+
+@pytest.mark.parametrize('in_args,msg',
+                         [([90 + 1e-4], "lat must be in"),
+                          ([-90 - 1e-4, 'glat'], "glat must be in"),
+                          ([[-90 - 1e-5, -90, 0, 90, 90 + 1e-4], 'glat'],
+                           "glat must be in"),
+                          ([[-90 - 1e-4, -90, np.nan, np.nan, 90 + 1e-5]],
+                           'lat must be in')])
+def test_checklat_error(in_args, msg):
+    """Test bad latitude raises ValueError with appropriate message."""
+    with pytest.raises(ValueError) as verr:
+        helpers.checklat(*in_args)
+
+    assert str(verr.value).startswith(msg)
 
 
 def test_checklat_array():
+    """Test good latitude with finite values."""
     assert_allclose(helpers.checklat([-90 - 1e-5, -90, 0, 90, 90 + 1e-5]),
                     np.array([-90, -90, 0, 90, 90]), rtol=0, atol=1e-8)
 
-    assert type(helpers.checklat([0])) == list
-    assert type(helpers.checklat(np.array([0]))) == np.ndarray
+    return
 
-    with pytest.raises(ValueError):
-        helpers.checklat([-90 - 1e-4, -90, 0, 90, 90 + 1e-5])
 
-    with pytest.raises(ValueError):
-        helpers.checklat([-90 - 1e-5, -90, 0, 90, 90 + 1e-4])
+def test_checklat_array_withnan():
+    """Test good latitude input mixed with NaNs."""
+
+    in_lat = np.array([-90 - 1e-5, -90, 0, 90, 90 + 1e-5, np.nan, np.nan])
+    fin_mask = np.isfinite(in_lat)
+    out_lat = helpers.checklat(in_lat)
+    assert_allclose(np.array([-90, -90, 0, 90, 90]), out_lat[fin_mask],
+                    rtol=0, atol=1e-8)
+
+    assert np.all(np.isnan(out_lat[~fin_mask]))
 
 
 # ============================================================================
@@ -157,7 +166,7 @@ def test_subsol():
 
 
 def datetime64_to_datetime(dt64):
-    """Convert numpy datetime64 object to a datetime datetime object
+    """Convert numpy datetime64 object to a datetime datetime object.
 
     Notes
     -----
@@ -174,7 +183,7 @@ def datetime64_to_datetime(dt64):
 
 
 def test_subsol_array():
-    """Verify subsolar point calculation using an array of np.datetime64
+    """Verify subsolar point calculation using an array of np.datetime64.
 
     Notes
     -----
