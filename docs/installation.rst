@@ -51,7 +51,15 @@ you may install by::
 
   cd apexpy
   python setup.py --user
-  
+
+
+Another benefit of installing apexpy from the command line is specifying the
+fortran compiler you would like to use.  By default, apexpy uses
+`gfortran <https://gcc.gnu.org/wiki/GFortran>`_, but you can alter the
+Makefile in ``src/fortranapex`` to use other compilers or specify different
+compilation flags.  However, if using an Intel compiler, you will need to
+uncomment a line at the top of ``src/fortranapex/igrf.f90`` to ensure all
+necessary libraries are imported.
 
 .. [1] pip is included with Python 2 from v2.7.9 and Python 3 from v3.4.
        If you don't have pip,
