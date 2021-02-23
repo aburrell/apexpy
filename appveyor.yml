@@ -3,6 +3,11 @@ build: off
 configuration: Release
 environment:
   matrix:
+    - TESTENV: 'check'
+      PYTHON_VERSION: '3.7'
+      MINICONDA_HOME: 'C:\Miniconda'
+      TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
+      INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments sphinx_rtd_theme'
     - TESTENV: '2.7-nocover-64'
       PYTHON_VERSION: '2.7'
       MINICONDA_HOME: C:\Miniconda-x64
@@ -53,11 +58,6 @@ environment:
       MINICONDA_HOME: C:\Miniconda
       TESTSCRIPT: 'python -m pytest'
 
-    - TESTENV: 'check'
-      PYTHON_VERSION: '3.7'
-      MINICONDA_HOME: 'C:\Miniconda'
-      TESTSCRIPT: 'python setup.py check --strict --metadata --restructuredtext && check-manifest && flake8 src tests'
-      INSTALL_EXTRA_DEPS: 'pip install docutils check-manifest flake8 readme pygments sphinx_rtd_theme'
 
 init:
   - ps: echo $env:TESTENV

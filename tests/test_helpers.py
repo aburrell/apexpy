@@ -61,7 +61,8 @@ def test_checklat_withnan():
     in_lat = np.array([-90 - 1e-5, -90, 0, 90, 90 + 1e-5, np.nan, np.nan])
     fin_mask = np.isfinite(in_lat)
     out_lat = helpers.checklat(in_lat)
-    assert_allclose(np.array([-90, -90, 0, 90, 90]), out_lat[fin_mask], rtol=0, atol=1e-8)
+    assert_allclose(np.array([-90, -90, 0, 90, 90]), out_lat[fin_mask],
+                    rtol=0, atol=1e-8)
 
     assert np.all(np.isnan(out_lat[~fin_mask]))
 

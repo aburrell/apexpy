@@ -3,7 +3,6 @@
 from __future__ import division, absolute_import, unicode_literals
 
 import datetime as dt
-import warnings
 import itertools
 
 import numpy as np
@@ -382,7 +381,8 @@ def test_convert_invalid_transformation():
 coord_names = ['geo', 'apex', 'qd']
 
 
-@pytest.mark.parametrize('transform', itertools.product(coord_names, coord_names))
+@pytest.mark.parametrize('transform', itertools.product(coord_names,
+                                                        coord_names))
 def test_convert_withnan(transform):
     N_nans = 5
     in_lat = np.arange(0, 10, dtype=float)
