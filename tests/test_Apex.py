@@ -431,17 +431,16 @@ def test_geo2apex_invalid_lat():
                     apex_out.geo2apex(90, 0, 0), rtol=0, atol=1e-8)
 
 
-def test_geo2apex_undefined_warning():
+def test_geo2apex_undefined_warning(recwarn):
     """Test warning and fill values for an undefined location
     """
-    with warnings.catch_warnings(record=True) as wmsg:
-        apex_out = Apex(date=2000, refh=10000)
-        ret = apex_out.geo2apex(0, 0, 0)
+    apex_out = Apex(date=2000, refh=10000)
+    ret = apex_out.geo2apex(0, 0, 0)
 
     assert np.isnan(ret[0])
-    assert len(wmsg) == 1
-    assert issubclass(wmsg[-1].category, UserWarning)
-    assert 'set to NaN where' in str(wmsg[-1].message)
+    assert len(recwarn) == 1
+    assert issubclass(recwarn[-1].category, UserWarning)
+    assert 'set to NaN where' in str(recwarn[-1].message)
 
 
 # ============================================================================
@@ -1253,15 +1252,14 @@ def test_basevectors_apex_delta():
                 assert_allclose(np.sum(d[i] * e[j]), delta, rtol=0, atol=1e-5)
 
 
-def test_basevectors_apex_invalid_scalar():
+def test_basevectors_apex_invalid_scalar(recwarn):
     """ Test warning and fill values for calculating base vectors with bad value
     """
     apex_out = Apex(date=2000, refh=10000)
-    with warnings.catch_warnings(record=True) as wmsg:
-        base_vecs = apex_out.basevectors_apex(0, 0, 0)
+    base_vecs = apex_out.basevectors_apex(0, 0, 0)
 
-    assert issubclass(wmsg[-1].category, UserWarning)
-    assert 'set to NaN where' in str(wmsg[-1].message)
+    assert issubclass(recwarn[-1].category, UserWarning)
+    assert 'set to NaN where' in str(recwarn[-1].message)
 
     invalid = np.ones(3) * np.nan
     for i, bvec in enumerate(base_vecs):
