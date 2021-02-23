@@ -95,13 +95,15 @@ performs documentation tests.  However, there are certain additional style
 elements that have been settled on to ensure the project maintains a consistent
 coding style:
 
-* Line breaks should occur before a binary operator (ignoring flake8 W503)
-* Preferably break long lines on open parentheses instead of using backslashes
-* Use no more than 80 characters per line
-* Several dependent packages have common nicknames, including:
-  * `import datetime as dt`
-  * `import numpy as np`
-* Provide tests with informative failure statements and descriptive, one-line
+- Line breaks should occur before a binary operator (ignoring flake8 W503)
+- Preferably break long lines on open parentheses instead of using backslashes
+- Use no more than 80 characters per line
+- Several dependent packages have common nicknames, including:
+
+  * ``import datetime as dt``
+  * ``import numpy as np``
+
+- Provide tests with informative failure statements and descriptive, one-line
   docstrings.
 
 apexpy is working on modernizing its code style to adhere to these guidelines.

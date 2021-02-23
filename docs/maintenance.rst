@@ -7,22 +7,14 @@ Updating IGRF
 The `International Geomagnetic Reference Field <https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html>`_
 is regularly updated to reflect the most recent changes to the Terrestrial
 magnetic field. apexpy currently uses IRGF-13 coefficients, which are provided
-in the ``apexpy/src/fortranapex/igrf13coeff.txt`` file. To change or update the
-magnetic field coefficients used by apexpy, you need to update the fortran code.
+in the ``apexpy/src/apexpy/igrf13coeff.txt`` file. To change or update the
+magnetic field coefficients used by apexpy, you need to update the python code.
 Assuming your new coefficient file has the same format, the process is simple:
 
 1. Clone the repository or your fork of the repository (see :ref:`contributing`)
-2. Update ``apexpy/src/fortranapex/magfld.f`` variable ``FILENAME`` by setting
+2. Update ``apexpy/src/apexpy/apex.py`` variable ``igrf_fn`` by setting
    it equal to the new target filename
-3. Optional: Test the fortran compilation by running the test executable to
-   ensure that the new coefficients are used and deviate an acceptable amount
-   from prior coefficients::
-
-     make
-     apextest
-     make clean
-
-4. Install the python package from the command line
+3. Install the python package from the command line
    (see :ref:`installation-cmd`)
 
 Updating tests and style standards
