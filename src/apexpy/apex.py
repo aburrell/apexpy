@@ -938,6 +938,8 @@ class Apex(object):
         self.year = np.float64(year)
         fa.loadapxsh(self.datafile, self.year)
         igrf_fn = os.path.join(os.path.dirname(__file__), 'igrf13coeffs.txt')
+        if not os.path.exists(igrf_fn):
+            raise OSError("File {} does not exist".format(igrf_fn))
         fa.cofrm(self.year, igrf_fn)
 
     def set_refh(self, refh):
