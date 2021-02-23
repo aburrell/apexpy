@@ -1338,7 +1338,8 @@ def test_set_epoch_file_error(igrf_file):
     # Test missing coefficient file failure
     with pytest.raises(OSError) as oerr:
         Apex(date=2000.2, refh=300)
-    assert str(oerr.value).startswith("File {:} does not exist".format(igrf_file))
+    error_string = "File {:} does not exist".format(igrf_file)
+    assert str(oerr.value).startswith(error_string)
 
 
 # ============================================================================
