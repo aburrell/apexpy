@@ -91,21 +91,21 @@ Badges
     :target: https://readthedocs.org/projects/apexpy
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=master
+.. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=main
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/aburrell/apexpy
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/aburrell/apexpy?branch=master&svg=true
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/aburrell/apexpy?branch=main&svg=true
     :alt: AppVeyor Build Status
     :target: https://ci.appveyor.com/project/aburrell/apexpy
 
-.. |requires| image:: https://requires.io/github/aburrell/apexpy/requirements.svg?branch=master
+.. |requires| image:: https://requires.io/github/aburrell/apexpy/requirements.svg?branch=main
      :alt: Requirements Status
-     :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=master
+     :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=main
 
-.. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=master
+.. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=main
     :alt: Coverage Status
-    :target: https://coveralls.io/github/aburrell/apexpy?branch=master
+    :target: https://coveralls.io/github/aburrell/apexpy?branch=main
 
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/7d4c1a6c60e747ca95cdf97746c39cda
    :alt: Codacy Badge
@@ -135,7 +135,7 @@ Badges
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/apexpy
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/aburrell/apexpy/master.svg?style=flat
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/aburrell/apexpy/main.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
 
