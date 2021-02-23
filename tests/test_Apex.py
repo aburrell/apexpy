@@ -4,10 +4,10 @@ from __future__ import division, absolute_import, unicode_literals
 
 import datetime as dt
 import itertools
-
 import numpy as np
-import pytest
 from numpy.testing import assert_allclose
+import os
+import pytest
 
 from apexpy import fortranapex as fa
 from apexpy import Apex, ApexHeightError, helpers
@@ -1298,6 +1298,7 @@ def test_get_apex_invalid_lat():
 
 
 def test_set_epoch():
+    """Test successful setting of Apex epoch."""
     apex_out = Apex(date=2000.2, refh=300)
     assert_allclose(apex_out.year, 2000.2)
     ret_2000_2_py = apex_out._geo2apex(60, 15, 100)
@@ -1316,6 +1317,29 @@ def test_set_epoch():
 
     assert_allclose(ret_2000_2_py, ret_2000_2_apex)
     assert_allclose(ret_2000_8_py, ret_2000_8_apex)
+
+
+def test_set_epoch_file_error():
+    """Test raises OSError when IGRF coefficient file is missing."""
+
+    # Ensure the coefficient file exists
+    igrf_file = os.path.join(os.path.dirname(helpers.__file__),
+                             'igrf13coeffs.txt')
+    tmp_file = "temp_coeff.txt"
+    assert os.path.isfile(igrf_file)
+
+    # Move the coefficient file
+    os.rename(igrf_file, tmp_file)
+
+    # Test missing coefficient file failure
+    with pytest.Raises(OSError) as oerr:
+        Apex(date=2000.2, refh=300)
+
+    assert str(oerr.value).startswith(
+        "File {:} does not exist".format(igrf_file))
+
+    # Move the coefficient file back
+    os.rename(tmp_file, igrf_file)
 
 
 # ============================================================================
