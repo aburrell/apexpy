@@ -1319,26 +1319,27 @@ def test_set_epoch():
     assert_allclose(ret_2000_8_py, ret_2000_8_apex)
 
 
-def test_set_epoch_file_error():
-    """Test raises OSError when IGRF coefficient file is missing."""
+@pytest.fixture()
+def igrf_file():
     # Ensure the coefficient file exists
-    igrf_file = os.path.join(os.path.dirname(helpers.__file__),
-                             'igrf13coeffs.txt')
+    original_file = os.path.join(os.path.dirname(helpers.__file__),
+                                 'igrf13coeffs.txt')
     tmp_file = "temp_coeff.txt"
-    assert os.path.isfile(igrf_file)
-
+    assert os.path.isfile(original_file)
     # Move the coefficient file
-    os.rename(igrf_file, tmp_file)
+    os.rename(original_file, tmp_file)
+    yield original_file
+    # Move the coefficient file back
+    os.rename(tmp_file, original_file)
 
+
+def test_set_epoch_file_error(igrf_file):
+    """Test raises OSError when IGRF coefficient file is missing."""
     # Test missing coefficient file failure
     with pytest.raises(OSError) as oerr:
         Apex(date=2000.2, refh=300)
-
-    assert str(oerr.value).startswith(
-        "File {:} does not exist".format(igrf_file))
-
-    # Move the coefficient file back
-    os.rename(tmp_file, igrf_file)
+    error_string = "File {:} does not exist".format(igrf_file)
+    assert str(oerr.value).startswith(error_string)
 
 
 # ============================================================================
