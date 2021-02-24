@@ -187,7 +187,7 @@ def test_subsol_array():
 
     Notes
     -----
-    Tested by ensurnig the array of np.datetime64 is equivalent to converting
+    Tested by ensuring the array of np.datetime64 is equivalent to converting
     using single dt.datetime values
 
     """
