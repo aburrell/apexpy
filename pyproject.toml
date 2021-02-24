@@ -1,2 +1,2 @@
 [build-system]
-requires = ["numpy"]
+requires = ["setuptools", "wheel", "Cython", "numpy"]
