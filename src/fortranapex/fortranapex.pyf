@@ -3,8 +3,9 @@
 
 python module fortranapex ! in 
     interface  ! in :fortranapex
-        subroutine apex(date,dlat,dlon,alt,a,alat,alon,bmag,xmag,ymag,zmag,v) ! in :fortranapex:apex.f
+        subroutine apex(date,igrffilein,dlat,dlon,alt,a,alat,alon,bmag,xmag,ymag,zmag,v) ! in :fortranapex:apex.f
             real :: date
+            character*1000 intent(in) :: filename
             real :: dlat
             real :: dlon
             real :: alt
@@ -305,9 +306,10 @@ python module fortranapex ! in
             real :: x1
             real :: x2
         end subroutine convrt
-        subroutine makeapxsh(datafilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin) ! in :fortranapex:makeapexsh.f90
+        subroutine makeapxsh(datafilein,igrffilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin) ! in :fortranapex:makeapexsh.f90
             use apxshmodule
             character*128 intent(in) :: datafilein
+            character(len=1000), intent(in) :: igrffilein
             real(kind=4) dimension(31),intent(in) :: epochgridin
             integer(kind=4) intent(in) :: nepochin
             integer(kind=4) intent(in) :: lmaxin
