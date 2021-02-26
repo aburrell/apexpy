@@ -21,7 +21,7 @@ Updating ``apexsh.dat``
 -----------------------
 
 After updating the IGRF coefficients file the ``apexsh.dat`` file needs to be
-rebuilt. This file is what makes apexpy so perfromant. For more details, see
+rebuilt. This file is what makes apexpy perfromant. For more details, see
 Emmert et al. [2010] [1]_.
 
 Updating ``apexsh.dat`` is done by modifying and building the fortran source code
