@@ -30,7 +30,7 @@ in the ``apexpy/src/fortranapex`` directory. Working in that directory:
 1. Make sure a copy of the latest IGRF coefficient file is present in the
    selfsame directory.
 2. Modify the ``igrffilein`` in ``checkapexsh.f90`` to the name of the IGRF
-   coefficient file (``igrf13coeff.txt`` for example).
+   coefficient file (``igrf13coeff.txt``, for example).
 3. Modify ``checkapexsh.f90`` by adding the next 5 year epoch to the 
    ``epochgrid`` variable and updating the ``nepochgrid`` variable as
    necessary. For example, if the newest IGRF coefficients are good up to 2025
