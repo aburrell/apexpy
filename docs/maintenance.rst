@@ -28,7 +28,7 @@ Updating ``apexsh.dat`` is done by modifying and building the fortran source cod
 in the ``apexpy/src/fortranapex`` directory. Working in that directory:
 
 1. Make sure a copy of the latest IGRF coefficient file is present in the
-   directory.
+   selfsame directory.
 2. Modify the ``igrffilein`` in ``checkapexsh.f90`` to the name of the IGRF
    coefficient file (``igrf13coeff.txt`` for example).
 3. Modify ``checkapexsh.f90`` by adding the next 5 year epoch to the 
