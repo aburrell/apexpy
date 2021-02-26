@@ -22,7 +22,7 @@ def test_apxg2q():
     qlat, qlon, f1, f2, f = fa.apxg2q(60, 15, 100, 1)
     assert_allclose(qlat, 56.531288146972656)
     assert_allclose(qlon, 94.1068344116211)
-    assert_allclose(f1, [1.07978308, 0.10027108], rtol=1e-6)
+    assert_allclose(f1, [1.079783, 0.10027137], rtol=1e-6)
     assert_allclose(f2, [-0.24546318, 0.90718889], rtol=1e-6)
     assert_allclose(f, 1.0041800737380981)
 
@@ -36,16 +36,16 @@ def test_apxg2all():
     assert_allclose(qlon, 94.1068344116211)
     assert_allclose(mlat, 55.94841766357422)
     assert_allclose(mlon, 94.1068344116211)
-    assert_allclose(f1, [1.07978308, 0.10027108], rtol=1e-6)
+    assert_allclose(f1, [1.079783, 0.10027137], rtol=1e-6)
     assert_allclose(f2, [-0.24546318, 0.90718889], rtol=1e-6)
     assert_allclose(f, 1.0041800737380981)
-    assert_allclose(d1, [0.94957006, 0.2569305, 0.09049489], rtol=1e-6)
-    assert_allclose(d2, [0.10011058, -1.07805467, -0.33892459], rtol=1e-6)
-    assert_allclose(d3, [0.00865366, 0.27327025, -0.86666465], rtol=1e-6)
-    assert_allclose(d, 1.1003910303115845)
-    assert_allclose(e1, [1.02692986, 0.08382936, 0.03668636], rtol=1e-6)
+    assert_allclose(d1, [0.9495701, 0.25693053, 0.09049474], rtol=1e-6)
+    assert_allclose(d2, [0.10011087, -1.0780545, -0.33892432], rtol=1e-6)
+    assert_allclose(d3, [0.00865356, 0.27327004, -0.8666646], rtol=1e-6)
+    assert_allclose(d, 1.100391149520874)
+    assert_allclose(e1, [1.0269295, 0.08382964, 0.03668632], rtol=1e-6)
     assert_allclose(e2, [0.24740215, -0.82374191, -0.25726584], rtol=1e-6)
-    assert_allclose(e3, [0.01047837, 0.33089212, -1.04940987], rtol=1e-6)
+    assert_allclose(e3, [0.01047826,  0.33089194, -1.04941], rtol=1e-6)
 
 
 def test_apxq2g():
