@@ -92,3 +92,8 @@ docs/_build
 *.exe
 *.out
 *.app
+
+# Local f2py wrappers
+src/fortranapex/fortranapex-f2pywrappers.f*
+src/fortranapex/fortranapex-f2pywrappers2.f*
+src/fortranapex/fortranapexmodule.c
