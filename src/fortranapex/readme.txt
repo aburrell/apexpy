@@ -54,5 +54,6 @@ After updating the IGRF coefficients file, we need to rebuild the apexsh.dat fil
 
 1) Adding the next 5 year epoch to "epochgrid" and updateing the "nepochgrid" variable in checkapexsh.f90
    For example, if epochgrid has up to the year 2020 and the newest IGRF coefficients are good up to 2025, we should add 2025 to epochgrid and then increment nepochgrid by 1.
-2) Building the "apextest" binary using the "make" command.
-3) Copying the resulting "apexsh.dat" file to the apexpy/src/apexpy directory.
+2) checkapexsh.f90 also expects the IGRF coefficient file to be in the same directory with the name "igrf13coeffs.txt", so you may also need to update the "igrffilein" variable as well.
+3) Building the "apextest" binary using the "make" command.
+4) Copying the resulting "apexsh.dat" file to the apexpy/src/apexpy directory.
