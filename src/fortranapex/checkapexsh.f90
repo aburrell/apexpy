@@ -12,6 +12,13 @@
 !                vectors, J. Geophys. Res., 115, Axxxxx, doi:10.1029/2010JA015326, 2010.
 !
 !*******************************************************************************
+!
+!  HISTORY (blame):
+!
+!  25 Feb 2021: Modified by Ashton Reimer to pass IGRF coefficients file to the
+!               makeapxsh subroutine call.
+!
+!*******************************************************************************
 
 program checkapexsh
 
@@ -20,6 +27,7 @@ program checkapexsh
   integer(4), parameter :: nepochgrid=25
   integer(4)            :: lmax=3, nmmax=6
   character(1000)       :: apexshfile='apexsh.dat'
+  character(len=1000)   :: igrffilein='igrf13coeffs.txt'
   real(4)               :: epochgrid(0:nepochgrid-1)
   real(4)               :: epoch
   real(4)               :: glat, glon, alt, hr, prec, error
@@ -36,7 +44,7 @@ program checkapexsh
                 1935.0,1940.0,1945.0,1950.0,1955.0,1960.0,1965.0, &
                 1970.0,1975.0,1980.0,1985.0,1990.0,1995.0,2000.0, &
                 2005.0,2010.0,2015.0,2020.0/)
-  call makeapxsh(apexshfile, epochgrid, nepochgrid, lmax, nmmax, nmmax) 
+  call makeapxsh(apexshfile, igrffilein, epochgrid, nepochgrid, lmax, nmmax, nmmax)
 
   !HEIGHT PROFILE OF QD COORDINATES
   epoch = 2005.0
