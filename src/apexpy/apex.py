@@ -215,8 +215,9 @@ class Apex(object):
             estr = 'Unknown coordinate transformation: '
             estr += '{} -> {}'.format(source, dest)
             raise NotImplementedError(estr)
-
-        return lat, lon
+        if np.isscalar(lat) and np.isscalar(lon):
+            return lat, lon
+        return np.broadcast_arrays(lat, lon)
 
     def geo2apex(self, glat, glon, height):
         """Converts geodetic to modified apex coordinates.
@@ -252,7 +253,9 @@ class Apex(object):
                 alat[alat == -9999] = np.nan
 
         # if array is returned, dtype is object, so convert to float
-        return np.float64(alat), np.float64(alon)
+        if np.isscalar(alat) and np.isscalar(alon):
+            return alat, alon
+        return np.broadcast_arrays(np.float64(alat), np.float64(alon))
 
     def apex2geo(self, alat, alon, height, precision=1e-10):
         """Converts modified apex to geodetic coordinates.
@@ -290,8 +293,9 @@ class Apex(object):
 
         qlat, qlon = self.apex2qd(alat, alon, height=height)
         glat, glon, error = self.qd2geo(qlat, qlon, height, precision=precision)
-
-        return glat, glon, error
+        if np.isscalar(glat) and np.isscalar(glon):
+            return glat, glon, error
+        return np.broadcast_arrays(glat, glon, error)
 
     def geo2qd(self, glat, glon, height):
         """Converts geodetic to quasi-dipole coordinates.
@@ -317,9 +321,10 @@ class Apex(object):
         glat = helpers.checklat(glat, name='glat')
 
         qlat, qlon = self._geo2qd(glat, glon, height)
-
+        if np.isscalar(qlat) and np.isscalar(qlon):
+            return qlat, qlon
         # if array is returned, dtype is object, so convert to float
-        return np.float64(qlat), np.float64(qlon)
+        return np.broadcast_arrays(np.float64(qlat), np.float64(qlon))
 
     def qd2geo(self, qlat, qlon, height, precision=1e-10):
         """Converts quasi-dipole to geodetic coordinates.
@@ -356,9 +361,10 @@ class Apex(object):
         qlat = helpers.checklat(qlat, name='qlat')
 
         glat, glon, error = self._qd2geo(qlat, qlon, height, precision)
-
+        if np.isscalar(glat) and np.isscalar(glon):
+            return glat, glon, error
         # if array is returned, dtype is object, so convert to float
-        return np.float64(glat), np.float64(glon), np.float64(error)
+        return np.broadcast_arrays(np.float64(glat), np.float64(glon), np.float64(error))
 
     def _apex2qd_nonvectorized(self, alat, alon, height):
         """Convert from apex to quasi-dipole (not-vectorised)
@@ -430,9 +436,10 @@ class Apex(object):
         """
 
         qlat, qlon = self._apex2qd(alat, alon, height)
-
+        if np.isscalar(qlat) and np.isscalar(qlon):
+            return qlat, qlon
         # if array is returned, the dtype is object, so convert to float
-        return np.float64(qlat), np.float64(qlon)
+        return np.broadcast_arrays(np.float64(qlat), np.float64(qlon))
 
     def _qd2apex_nonvectorized(self, qlat, qlon, height):
 
@@ -483,9 +490,10 @@ class Apex(object):
         """
 
         alat, alon = self._qd2apex(qlat, qlon, height)
-
+        if np.isscalar(alat) and np.isscalar(alon):
+            return alat, alon
         # if array is returned, the dtype is object, so convert to float
-        return np.float64(alat), np.float64(alon)
+        return np.broadcast_arrays(np.float64(alat), np.float64(alon))
 
     def mlon2mlt(self, mlon, datetime, ssheight=50 * 6371):
         """Computes the magnetic local time at the specified magnetic longitude
