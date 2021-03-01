@@ -1,6 +1,6 @@
 C  FILE NAME: apex.f
 
-      SUBROUTINE APEX (DATE,DLAT,DLON,ALT,
+      SUBROUTINE APEX (DATE,IGRFFILEIN,DLAT,DLON,ALT, 
      +                 A,ALAT,ALON,BMAG,XMAG,YMAG,ZMAG,V)
 C          Calculate apex radius, latitude, longitude; and magnetic field and
 C          scalar magnetic potential.
@@ -46,6 +46,8 @@ C                    - Replace computed GO TO in ITRACE with IF blocks.
 C                    - Refine FNDAPX to insure |Bdown/Btot| < 1.E-6 at apex
 C          Nov 2009: Change definition of earth's mean radius (RE) from 6371.2 
 C                    to the WGS84 value (6371.0088), by J.T. Emmert, NRL
+C          Feb 2021: Modified by Ashton Reimer to pass IGRF coefficients file
+C                    to the COFRM subroutine call.
 C
 C------------------------------------------------------------------------------
 C                Reference Spheroid Change                March 2004
@@ -106,7 +108,8 @@ C------------------------------------------------------------------------------
       PARAMETER (RE = 6371.0088, DTOR = .01745329251994330)
       COMMON /DIPOLE/ COLAT,ELON,VP,CTP,STP
 
-      CALL COFRM (DATE)
+      CHARACTER(LEN=1000), intent(in) :: IGRFFILEIN
+      CALL COFRM (DATE,IGRFFILEIN)
       CALL DYPOL (CLATP,POLON,VPOL)
       COLAT = CLATP
       CTP   = COS(CLATP*DTOR)
