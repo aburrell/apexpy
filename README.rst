@@ -14,7 +14,7 @@ is WGS84. MLT calculations are also included. The package is free software
 Quick start
 ===========
 
-Install (requires NumPy before installation)::
+Install from PyPi using ``pip``::
 
     pip install apexpy
 
