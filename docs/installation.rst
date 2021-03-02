@@ -31,6 +31,11 @@ you run into issues, you can get around this problem by using
 
     pip install --global-option='build_ext' apexpy
 
+or on Windows with the Mingw32 compiler, this command::
+
+    pip install --no-use-pep517 --global-option build_ext \
+                --global-option --compiler=mingw32 apexpy
+
 which requires both libgfortran and gfortran to be installed on your system.
 This is the default option for Linux, and so should not be an issue there.
 
