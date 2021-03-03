@@ -11,14 +11,14 @@ NumPy/SciPy, Windows/Mac users should install
 NumPy/SciPy available in
 `their repositories <https://www.scipy.org/scipylib/download.html#third-party-vendor-package-managers>`_.
 
-When you have NumPy, you may use either PyPi or GitHub to install this package.
+When you have NumPy, you may use either PyPI or GitHub to install this package.
 
 
 .. _installation-pip:
 
-PyPi
+PyPI
 ----
-This is the most straigforward option!  From the command line use
+This is the most straightforward option!  From the command line use
 ``pip`` [1]_::
 
     pip install apexpy
@@ -55,8 +55,11 @@ a virtual environment. After clonining the fork (see :ref:`contributing`),
 you may install by::
 
   cd apexpy
-  python setup.py --user
+  python setup.py develop --user
+or with ``pip``::
 
+  cd apexpy
+  pip install -e .
 
 Another benefit of installing apexpy from the command line is specifying the
 fortran compiler you would like to use.  By default, apexpy uses
