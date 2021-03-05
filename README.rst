@@ -22,12 +22,7 @@ This assumes that the same version of libgfortran is installed in the same
 location as when the pip wheel was built (if a wheel was used). If not, you may
 have trouble importing apexpy.  If you run into trouble, try the command::
 
-    pip install --global-option='build_ext' apexpy
-
-or on Windows with the Mingw32 compiler, this command::
-
-    pip install --no-use-pep517 --global-option build_ext \
-                --global-option --compiler=mingw32 apexpy
+    pip install --no-binary :apexpy: apexpy
 
 which requires both libgfortran and gfortran to be installed on your system.
 
