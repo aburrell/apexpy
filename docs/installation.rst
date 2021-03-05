@@ -26,15 +26,12 @@ This is the most straightforward option!  From the command line use
 In the event that you run into issues, you can get around this problem by using
 ``pip`` [1]_::
 
-    pip install --global-option='build_ext' apexpy
-
-or on Windows with the Mingw32 compiler, this command::
-
-    pip install --no-use-pep517 --global-option build_ext \
-                --global-option --compiler=mingw32 apexpy
+    pip install --no-binary :apexpy: apexpy
 
 which requires both libgfortran and gfortran to be installed on your system.
-This is the default option for Linux, and so should not be an issue there.
+This is the default option for Linux, and so should not be an issue there. On
+Windows with the Mingw32 compiler, you might find `this information <https://wiki.python.org/moin/WindowsCompilers#GCC_-_MinGW-w64_.28x86.2C_x64.29>`_
+useful for helping build apexpy.
 
 The package has been tested with the following setups (others might work, too):
 
