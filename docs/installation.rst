@@ -60,8 +60,7 @@ or with ``pip``::
 
 Another benefit of installing apexpy from the command line is specifying the
 fortran compiler you would like to use.  By default, apexpy uses
-`gfortran <https://gcc.gnu.org/wiki/GFortran>`_, but you can alter the
-Makefile in ``src/fortranapex`` to use other compilers or specify different
+`numpy`'s `f2py`, but you can change this using the global `--compiler` flag when running the `python setup.py install` command.
 compilation flags.  However, if using an Intel compiler, you will need to
 uncomment a line at the top of ``src/fortranapex/igrf.f90`` to ensure all
 necessary libraries are imported.
