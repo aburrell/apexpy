@@ -11,28 +11,27 @@ NumPy/SciPy, Windows/Mac users should install
 NumPy/SciPy available in
 `their repositories <https://www.scipy.org/scipylib/download.html#third-party-vendor-package-managers>`_.
 
-When you have NumPy, you may use either PyPi or GitHub to install this package.
+When you have NumPy, you may use either PyPI or GitHub to install this package.
 
 
 .. _installation-pip:
 
-PyPi
+PyPI
 ----
-This is the most straigforward option!  From the command line use
+This is the most straightforward option!  From the command line use
 ``pip`` [1]_::
 
     pip install apexpy
 
-This assumes that the same version of libgfortran is installed in the same
-location as when the pip wheel was built (in the event that a wheel is
-available). If not, you may have trouble importing apexpy.  In the event that
-you run into issues, you can get around this problem by using
+In the event that you run into issues, you can get around this problem by using
 ``pip`` [1]_::
 
-    pip install --global-option='build_ext' apexpy
+    pip install --no-binary :apexpy: apexpy
 
 which requires both libgfortran and gfortran to be installed on your system.
-This is the default option for Linux, and so should not be an issue there.
+This is the default option for Linux, and so should not be an issue there. On
+Windows with the Mingw32 compiler, you might find `this information <https://wiki.python.org/moin/WindowsCompilers#GCC_-_MinGW-w64_.28x86.2C_x64.29>`_
+useful for helping build apexpy.
 
 The package has been tested with the following setups (others might work, too):
 
@@ -50,14 +49,16 @@ a virtual environment. After clonining the fork (see :ref:`contributing`),
 you may install by::
 
   cd apexpy
-  python setup.py --user
+  python setup.py develop --user
+or with ``pip``::
 
+  cd apexpy
+  pip install -e .
 
 Another benefit of installing apexpy from the command line is specifying the
 fortran compiler you would like to use.  By default, apexpy uses
-`gfortran <https://gcc.gnu.org/wiki/GFortran>`_, but you can alter the
-Makefile in ``src/fortranapex`` to use other compilers or specify different
-compilation flags.  However, if using an Intel compiler, you will need to
+`numpy`'s `f2py`, but you can change this using the global `--compiler` flag when running the `python setup.py install` command.
+However, if using an Intel compiler, you will need to
 uncomment a line at the top of ``src/fortranapex/igrf.f90`` to ensure all
 necessary libraries are imported.
 

@@ -15,14 +15,22 @@
 !
 !*******************************************************************************
 !
+!  HISTORY (blame):
+!
+!  25 Feb 2021: Modified by Ashton Reimer to pass IGRF coefficients file to the
+!               COFRM and APEX subroutine calls.
+!
+!*******************************************************************************
+!
 !  MAKEAPXSH
 !  Computes and saves harmonic coefficients for coordinate conversions.
 !
-!  CALL MAKEAPXSH (DATAFILE, EPOCHS, NEPOCHS, L, M, N)
+!  CALL MAKEAPXSH (DATAFILE, IGRFFILE, EPOCHS, NEPOCHS, L, M, N)
 !
 !  INPUT ARGUMENTS
 !    DATAFILE  Name of output data file that will contain the conversion
 !              coefficients
+!    IGRFFILE  Name of the input IGRF coefficients file
 !    EPOCHS    Array of ordered epochs (decimal years, yyyy.y) for which 
 !              coefficients are to be computed.
 !    NEPOCHS   Number of elements in EPOCHS.
@@ -36,7 +44,7 @@
 !
 !*******************************************************************************
 
-subroutine makeapxsh(datafilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
+subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 
     use apxshmodule
 
@@ -45,6 +53,7 @@ subroutine makeapxsh(datafilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
     COMMON /MAGCOF/ NMAXIGRF, GB
     
     character(128), intent(in)  :: datafilein
+    character(len=1000), intent(in) :: igrffilein
     real(4), intent(in)         :: epochgridin(0:30)
     integer(4), intent(in)      :: nmaxin, mmaxin, lmaxin, nepochin
 
@@ -122,7 +131,7 @@ subroutine makeapxsh(datafilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 
       !RETRIEVE IGRF, COMPUTE DIPOLE ROTATION PARAMETERS,
       !AND SET THE CORRESPONDING EXPANSION COEFFICIENTS
-      call COFRM(epochgrid(iepoch))
+      call COFRM(epochgrid(iepoch),igrffilein)
       sinmplat = dble(GB(2) / sqrt(GB(2)*GB(2) + GB(3)*GB(3) + GB(4)*GB(4)))
       cosmplat = dsqrt(1 - sinmplat*sinmplat)
       sinmplon = dble(GB(4) / sqrt(GB(3)*GB(3) + GB(4)*GB(4)))
@@ -159,7 +168,7 @@ subroutine makeapxsh(datafilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 
             !COMPUTE QD LATITUDE AND LONGITUDE OF CURRENT LOCATION
             alt = sngl(altgrid(ialt))
-            call APEX(epochgrid(iepoch),glat,glon,alt,A,ALAT,ALON,dum1,dum2,dum3,dum4,dum5)
+            call APEX(epochgrid(iepoch),igrffilein,glat,glon,alt,A,ALAT,ALON,dum1,dum2,dum3,dum4,dum5)
             cosqlat = dsqrt( (Re + altgrid(ialt)) / (Re + Req*(dble(A)-1D0)) )
             if (cosqlat .gt. 1D0) cosqlat = 1D0
             phiq = dble(ALON) * dtor        

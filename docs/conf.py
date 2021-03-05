@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import os
+import re
 
 
 extensions = [
@@ -18,7 +19,13 @@ project = u'Apex Python library'
 year = u'2015'
 author = u'Christer van der Meeren, Angeline G. Burrell'
 copyright = '{0}, {1}'.format(year, author)
-version = release = u'1.0.3'
+# Get version number from __init__.py
+here = os.path.abspath(os.path.dirname(__file__))
+regex = "(?<=__version__..\s)\S+"
+with open(os.path.join(here,'../src/apexpy/__init__.py'),'r', encoding='utf-8') as f:
+    text = f.read()
+match = re.findall(regex,text)
+version = release = match[0].strip("'")
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 

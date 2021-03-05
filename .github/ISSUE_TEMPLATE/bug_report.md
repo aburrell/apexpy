@@ -26,7 +26,8 @@ If applicable, add screenshots to help explain your problem.
 **Computer (please complete the following information):**
  - OS: [e.g. iOS]
  - Python version [e.g. 3.6]
- - Compiler and version [e.g. ifort 22]
+ - Compiler with version [e.g., gfortran 47]
+ - Apexpy version/branch [e.g., 1.1.0]
 
 **Additional context**
 Add any other context about the problem here.

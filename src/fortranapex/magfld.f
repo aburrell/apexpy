@@ -9,8 +9,8 @@ C          interpolated between five year epochs or extrapolated at a constant
 C          rate after the last epoch.
 C
 C          INPUTS:
-C            DATE = yyyy.fraction (UT)\
-C            FILENAME = filename
+C            DATE = yyyy.fraction (UT)
+C            FILENAME = filename for IGRF coefficient file
 C          OUTPUTS (in comnon block MAGCOF):
 C            NMAX = Maximum order of spherical harmonic coefficients used
 C            GB   = Coefficients for magnetic field calculation

@@ -31,9 +31,9 @@ def test_module_invocation():
 
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.469547, 93.639816],
-                                      [58.522701, 94.044762],
-                                      [59.571465, 94.477257]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
+                                      [58.52458191, 94.03150177],
+                                      [59.57331467, 94.46398163]], rtol=1e-4)
 
 
 def test_convert_YYYY():
@@ -43,9 +43,9 @@ def test_convert_YYYY():
     pipe.wait()
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.469547, 93.639816],
-                                      [58.522701, 94.044762],
-                                      [59.571465, 94.477257]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
+                                      [58.52458191, 94.03150177],
+                                      [59.57331467, 94.46398163]], rtol=1e-4)
 
 
 def test_convert_YYYYMM():
@@ -55,9 +55,9 @@ def test_convert_YYYYMM():
     pipe.wait()
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.469547, 93.639816],
-                                      [58.522701, 94.044762],
-                                      [59.571465, 94.477257]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
+                                      [58.52458191, 94.03150177],
+                                      [59.57331467, 94.46398163]], rtol=1e-4)
 
 
 def test_convert_YYYYMMDD():
@@ -68,9 +68,9 @@ def test_convert_YYYYMMDD():
     pipe.wait()
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.469547, 93.639816],
-                                      [58.522701, 94.044762],
-                                      [59.571465, 94.477257]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
+                                      [58.52458191, 94.03150177],
+                                      [59.57331467, 94.46398163]], rtol=1e-4)
 
 
 def test_convert_YYYYMMDDHHMMSS():
@@ -81,9 +81,9 @@ def test_convert_YYYYMMDDHHMMSS():
     pipe.wait()
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.469547, 93.639816],
-                                      [58.522701, 94.044762],
-                                      [59.571465, 94.477257]], rtol=1e-4)
+    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
+                                      [58.52458191, 94.03150177],
+                                      [59.57331467, 94.46398163]], rtol=1e-4)
 
 
 def test_convert_single_line():
@@ -94,23 +94,24 @@ def test_convert_single_line():
     pipe.wait()
     assert os.path.isfile(outfile)
     data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [57.469547, 93.639816], rtol=1e-4)
+    np.testing.assert_allclose(data, [57.47145462, 93.62657928], rtol=1e-4)
 
 
 def test_convert_stdin_stdout():
     """ Test use of pipe input to command-line call
     """
-    pipe = subprocess.Popen('echo 60 15 | apexpy geo apex 2015 --height 300',
-                            shell=True, stdout=subprocess.PIPE)
+    pipe = subprocess.Popen(
+        'echo 60 15 | python -m apexpy geo apex 2015 --height 300',
+        shell=True, stdout=subprocess.PIPE)
     stdout, _ = pipe.communicate()
     pipe.wait()
     np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float),
-                               [57.469547, 93.639816], rtol=1e-4)
+                               [57.47145462, 93.62657928], rtol=1e-4)
 
 
 def test_convert_refh():
     pipe = subprocess.Popen(
-        'echo 60 15 | apexpy geo apex 2000 --height 100 --refh=300',
+        'echo 60 15 | python -m apexpy geo apex 2000 --height 100 --refh=300',
         shell=True, stdout=subprocess.PIPE)
     stdout, _ = pipe.communicate()
     pipe.wait()

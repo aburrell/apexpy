@@ -30,7 +30,7 @@ your test configuration
 * Operating system: (e.g., Hal)
 * Python version number: (e.g., 3.7)
 * Compiler with version number: (e.g. gfortran 9.0)
-* Any details about your local setup that are relevant
+* Any details about your local setup that are relevant (e.g., apexpy version/branch)
 
 # Checklist:
 
