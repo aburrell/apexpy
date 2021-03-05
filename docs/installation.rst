@@ -23,10 +23,7 @@ This is the most straightforward option!  From the command line use
 
     pip install apexpy
 
-This assumes that the same version of libgfortran is installed in the same
-location as when the pip wheel was built (in the event that a wheel is
-available). If not, you may have trouble importing apexpy.  In the event that
-you run into issues, you can get around this problem by using
+In the event that you run into issues, you can get around this problem by using
 ``pip`` [1]_::
 
     pip install --global-option='build_ext' apexpy
