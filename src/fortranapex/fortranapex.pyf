@@ -1,0 +1,340 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module fortranapex ! in 
+    interface  ! in :fortranapex
+        subroutine apex(date,igrffilein,dlat,dlon,alt,a,alat,alon,bmag,xmag,ymag,zmag,v) ! in :fortranapex:apex.f
+            real :: date
+            character*1000 intent(in) :: filename
+            real :: dlat
+            real :: dlon
+            real :: alt
+            real :: a
+            real :: alat
+            real :: alon
+            real :: bmag
+            real :: xmag
+            real :: ymag
+            real :: zmag
+            real :: v
+            real :: colat
+            real :: elon
+            real :: vp
+            real :: ctp
+            real :: stp
+            common /dipole/ colat,elon,vp,ctp,stp
+        end subroutine apex
+        subroutine linapx(gdlat,glon,alt,a,alat,alon,xmag,ymag,zmag,f) ! in :fortranapex:apex.f
+            real :: gdlat
+            real :: glon
+            real :: alt
+            real :: a
+            real :: alat
+            real :: alon
+            real :: xmag
+            real :: ymag
+            real :: zmag
+            real :: f
+            real :: bx
+            real :: by
+            real :: bz
+            real :: bb
+            real dimension(3,3) :: yapx
+            real :: colat
+            real :: elon
+            real :: vp
+            real :: ctp
+            real :: stp
+            integer :: nstp
+            real dimension(3) :: y
+            real dimension(3) :: yp
+            real :: sgn
+            real :: ds
+            common /fldcomd/ bx,by,bz,bb
+            common /apxin/ yapx
+            common /dipole/ colat,elon,vp,ctp,stp
+            common /itra/ nstp,y,yp,sgn,ds
+        end subroutine linapx
+        subroutine itrace(iapx) ! in :fortranapex:apex.f
+            integer :: iapx
+            real dimension(3,3) :: yapx
+            real :: bx
+            real :: by
+            real :: bz
+            real :: bb
+            integer :: nstp
+            real dimension(3) :: y
+            real dimension(3) :: yold
+            real :: sgn
+            real :: ds
+            common /apxin/ yapx
+            common /fldcomd/ bx,by,bz,bb
+            common /itra/ nstp,y,yold,sgn,ds
+        end subroutine itrace
+        subroutine fndapx(alt,zmag,a,alat,alon) ! in :fortranapex:apex.f
+            real :: alt
+            real :: zmag
+            real :: a
+            real :: alat
+            real :: alon
+            real dimension(3,3) :: yapx
+            real :: colat
+            real :: elon
+            real :: vp
+            real :: ctp
+            real :: stp
+            common /apxin/ yapx
+            common /dipole/ colat,elon,vp,ctp,stp
+        end subroutine fndapx
+        subroutine dipapx(gdlat,gdlon,alt,bnorth,beast,bdown,a,alon) ! in :fortranapex:apex.f
+            real :: gdlat
+            real :: gdlon
+            real :: alt
+            real :: bnorth
+            real :: beast
+            real :: bdown
+            real :: a
+            real :: alon
+            real :: colat
+            real :: elon
+            real :: vp
+            real :: ctp
+            real :: stp
+            common /dipole/ colat,elon,vp,ctp,stp
+        end subroutine dipapx
+        function fint(x1,x2,x3,y1,y2,y3,xfit) ! in :fortranapex:apex.f
+            real :: x1
+            real :: x2
+            real :: x3
+            real :: y1
+            real :: y2
+            real :: y3
+            real :: xfit
+            real :: fint
+        end function fint
+        module apxshmodule ! in :fortranapex:apexsh.f90
+            integer(kind=4) :: nterm
+            integer(kind=4) :: nmax
+            integer(kind=4) :: mmax
+            integer(kind=4) :: lmax
+            integer(kind=4) :: nepoch
+            integer(kind=4) :: ntermsh
+            integer(kind=4) :: vecflag
+            real(kind=8), allocatable,dimension(:,:,:) :: coeff0
+            real(kind=8), allocatable,dimension(:,:) :: qcoeff0
+            real(kind=8), allocatable,dimension(:,:) :: gcoeff0
+            real(kind=8), allocatable,dimension(:) :: xqcoeff
+            real(kind=8), allocatable,dimension(:) :: yqcoeff
+            real(kind=8), allocatable,dimension(:) :: zqcoeff
+            real(kind=8), allocatable,dimension(:) :: dxqdrhocoeff
+            real(kind=8), allocatable,dimension(:) :: dyqdrhocoeff
+            real(kind=8), allocatable,dimension(:) :: dzqdrhocoeff
+            real(kind=8), allocatable,dimension(:) :: xgcoeff
+            real(kind=8), allocatable,dimension(:) :: ygcoeff
+            real(kind=8), allocatable,dimension(:) :: zgcoeff
+            real(kind=8), allocatable,dimension(:) :: sh
+            real(kind=8), allocatable,dimension(:) :: shgradtheta
+            real(kind=8), allocatable,dimension(:) :: shgradphi
+            real(kind=8), allocatable,dimension(:) :: polynomq
+            real(kind=8), allocatable,dimension(:) :: dpolynomq
+            real(kind=8), allocatable,dimension(:) :: polynomg
+            real(kind=8), allocatable,dimension(:,:) :: pbar
+            real(kind=8), allocatable,dimension(:,:) :: vbar
+            real(kind=8), allocatable,dimension(:,:) :: wbar
+            real(kind=4), allocatable,dimension(:) :: epochgrid
+            real(kind=8) :: h
+            real(kind=8) :: reph
+            real(kind=8) :: rho
+            real(kind=8) :: xq
+            real(kind=8) :: yq
+            real(kind=8) :: zq
+            real(kind=8) :: qlat
+            real(kind=8) :: qlon
+            real(kind=8) :: sinqlat
+            real(kind=8) :: cosqlat
+            real(kind=8) :: cosqlon
+            real(kind=8) :: sinqlon
+            real(kind=8) dimension(3) :: xqgrad
+            real(kind=8) dimension(3) :: yqgrad
+            real(kind=8) dimension(3) :: zqgrad
+            real(kind=8) dimension(3) :: qlatgrad
+            real(kind=8) dimension(3) :: qlongrad
+            real(kind=8), parameter,optional :: pi=3.14159265358979323846d0
+            real(kind=8), parameter,optional,depend(pi) :: dtor=pi/180d0
+            real(kind=8), parameter,optional,depend(pi) :: pid2=pi/2d0
+            real(kind=8), parameter,optional,depend(pi) :: twopi=2d0*pi
+            real(kind=8), parameter,optional :: req=6378.1370d0
+            real(kind=8), parameter,optional :: eps=1.d0/298.257223563d0
+            real(kind=8), parameter,optional,depend(req,eps) :: re=req*(1-eps/3d0)
+            real(kind=8), parameter,optional,depend(eps) :: ecc2=0.0066943799901413165
+            real(kind=4), parameter,optional :: missing=-9999.0
+            character(len=1000) :: datafile
+            real(kind=4) :: epoch
+            real(kind=4) :: altlastq
+            real(kind=4) :: altlastg
+            logical, optional :: loadflag=.true.
+        end module apxshmodule
+        subroutine loadapxsh(datafilenew,epochnew) ! in :fortranapex:apexsh.f90
+            use apxshmodule
+            character*1000 intent(in) :: datafilenew
+            real(kind=4) intent(in) :: epochnew
+        end subroutine loadapxsh
+        subroutine allocatearrays ! in :fortranapex:apexsh.f90
+            use apxshmodule
+        end subroutine allocatearrays
+        subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f) ! in :fortranapex:apexsh.f90
+            use apxshmodule
+            real(kind=4) intent(in) :: glat
+            real(kind=4) intent(in) :: glon
+            real(kind=4) intent(in) :: alt
+            integer(kind=4) intent(in) :: vecflagin
+            real(kind=4) intent(out) :: qlatout
+            real(kind=4) intent(out) :: qlonout
+            real(kind=4) dimension(2),intent(out) :: f1
+            real(kind=4) dimension(2),intent(out) :: f2
+            real(kind=4) intent(out) :: f
+        end subroutine apxg2q
+        subroutine apxg2all(glat,glon,alt,hr,vecflagin,qlatout,qlonout,mlat,mlon,f1,f2,f,d1,d2,d3,d,e1,e2,e3) ! in :fortranapex:apexsh.f90
+            use apxshmodule
+            real(kind=4) intent(in) :: glat
+            real(kind=4) intent(in) :: glon
+            real(kind=4) intent(in) :: alt
+            real(kind=4) intent(in) :: hr
+            integer(kind=4) intent(in) :: vecflagin
+            real(kind=4) intent(out) :: qlatout
+            real(kind=4) intent(out) :: qlonout
+            real(kind=4) intent(out) :: mlat
+            real(kind=4) intent(out) :: mlon
+            real(kind=4) dimension(2),intent(out) :: f1
+            real(kind=4) dimension(2),intent(out) :: f2
+            real(kind=4) intent(out) :: f
+            real(kind=4) dimension(3),intent(out) :: d1
+            real(kind=4) dimension(3),intent(out) :: d2
+            real(kind=4) dimension(3),intent(out) :: d3
+            real(kind=4) intent(out) :: d
+            real(kind=4) dimension(3),intent(out) :: e1
+            real(kind=4) dimension(3),intent(out) :: e2
+            real(kind=4) dimension(3),intent(out) :: e3
+        end subroutine apxg2all
+        subroutine apxq2g(qlat0,qlon0,alt,prec,glatout,glonout,error) ! in :fortranapex:apexsh.f90
+            use apxshmodule
+            real(kind=4) intent(in) :: qlat0
+            real(kind=4) intent(in) :: qlon0
+            real(kind=4) intent(in) :: alt
+            real(kind=4) intent(in) :: prec
+            real(kind=4) intent(out) :: glatout
+            real(kind=4) intent(out) :: glonout
+            real(kind=4) intent(out) :: error
+        end subroutine apxq2g
+        subroutine shcalc(theta,phi) ! in :fortranapex:apexsh.f90
+            use apxshmodule
+            real(kind=8) intent(in) :: theta
+            real(kind=8) intent(in) :: phi
+        end subroutine shcalc
+        module alfbasismodule ! in :fortranapex:apexsh.f90
+            integer(kind=4) :: nmax0
+            integer(kind=4) :: mmax0
+            real(kind=8), allocatable,dimension(:,:) :: anm
+            real(kind=8), allocatable,dimension(:) :: cm
+            real(kind=8), allocatable,dimension(:,:) :: bnm
+            real(kind=8), allocatable,dimension(:,:) :: dnm
+            real(kind=8), allocatable,dimension(:) :: en
+            real(kind=8), allocatable,dimension(:) :: marr
+            real(kind=8), allocatable,dimension(:) :: narr
+        end module alfbasismodule
+        subroutine alfbasisinit(nmax0in,mmax0in) ! in :fortranapex:apexsh.f90
+            use alfbasismodule
+            integer(kind=4) intent(in) :: nmax0in
+            integer(kind=4) intent(in) :: mmax0in
+        end subroutine alfbasisinit
+        subroutine alfbasis(nmax,mmax,theta,p,v,w) ! in :fortranapex:apexsh.f90
+            use alfbasismodule
+            integer(kind=4) intent(in) :: nmax
+            integer(kind=4) intent(in) :: mmax
+            real(kind=8) intent(in) :: theta
+            real(kind=8) dimension(nmax + 1,mmax + 1),intent(out),depend(nmax,mmax) :: p
+            real(kind=8) dimension(nmax + 1,mmax + 1),intent(out),depend(nmax,mmax) :: v
+            real(kind=8) dimension(nmax + 1,mmax + 1),intent(out),depend(nmax,mmax) :: w
+        end subroutine alfbasis
+        subroutine cofrm(date,filename) ! in :fortranapex:magfld.f
+            use igrf
+            real(kind=4) intent(in) :: date
+            character*1000 intent(in) :: filename
+            integer :: nmax
+            real dimension(255) :: gb
+            real dimension(225) :: gv
+            integer, optional :: ichg=-99999
+            common /magcof/ nmax,gb,gv,ichg
+        end subroutine cofrm
+        subroutine dypol(colat,elon,vp) ! in :fortranapex:magfld.f
+            real :: colat
+            real :: elon
+            real :: vp
+            integer :: nmax
+            real dimension(255) :: gb
+            real dimension(225) :: gv
+            integer :: ichg
+            common /magcof/ nmax,gb,gv,ichg
+        end subroutine dypol
+        subroutine feldg(ienty,glat,glon,alt,bnrth,beast,bdown,babs) ! in :fortranapex:magfld.f
+            integer intent(in) :: ienty
+            real intent(in) :: glat
+            real intent(in) :: glon
+            real intent(in) :: alt
+            real intent(out) :: bnrth
+            real intent(out) :: beast
+            real intent(out) :: bdown
+            real intent(out) :: babs
+            integer :: nmax
+            real dimension(255) :: gb
+            real dimension(225) :: gv
+            integer :: ichg
+            common /magcof/ nmax,gb,gv,ichg
+        end subroutine feldg
+        subroutine gd2cart(gdlat,glon,alt,x,y,z) ! in :fortranapex:magfld.f
+            real :: gdlat
+            real :: glon
+            real :: alt
+            real :: x
+            real :: y
+            real :: z
+        end subroutine gd2cart
+        subroutine convrt(i,gdlat,alt,x1,x2) ! in :fortranapex:magfld.f
+            integer :: i
+            real :: gdlat
+            real :: alt
+            real :: x1
+            real :: x2
+        end subroutine convrt
+        subroutine makeapxsh(datafilein,igrffilein,epochgridin,nepochin,lmaxin,mmaxin,nmaxin) ! in :fortranapex:makeapexsh.f90
+            use apxshmodule
+            character*128 intent(in) :: datafilein
+            character(len=1000), intent(in) :: igrffilein
+            real(kind=4) dimension(31),intent(in) :: epochgridin
+            integer(kind=4) intent(in) :: nepochin
+            integer(kind=4) intent(in) :: lmaxin
+            integer(kind=4) intent(in) :: mmaxin
+            integer(kind=4) intent(in) :: nmaxin
+            integer(kind=4) :: nmaxigrf
+            real(kind=4) dimension(255) :: gb
+            common /magcof/ nmaxigrf,gb
+        end subroutine makeapxsh
+        subroutine choldc(a,n,np,p) ! in :fortranapex:makeapexsh.f90
+            real(kind=8) dimension(np,np),intent(inout) :: a
+            integer(kind=4) intent(in) :: n
+            integer(kind=4), optional,intent(in),check(shape(a,0)==np),depend(a) :: np=shape(a,0)
+            real(kind=8) dimension(n),intent(out),depend(n) :: p
+        end subroutine choldc
+        subroutine cholsl(a,n,np,p,b,x) ! in :fortranapex:makeapexsh.f90
+            real(kind=8) dimension(np,np),intent(in) :: a
+            integer(kind=4), optional,intent(in),check(len(p)>=n),depend(p) :: n=len(p)
+            integer(kind=4), optional,intent(in),check(shape(a,0)==np),depend(a) :: np=shape(a,0)
+            real(kind=8) dimension(n),intent(in) :: p
+            real(kind=8) dimension(n),intent(in),depend(n) :: b
+            real(kind=8) dimension(n),intent(out),depend(n) :: x
+        end subroutine cholsl
+    end interface 
+end python module fortranapex
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

@@ -8,86 +8,73 @@ import time
 import datetime as dt
 import numpy as np
 
+
 def checklat(lat, name='lat'):
     """Makes sure the latitude is inside [-90, 90], clipping close values
     (tolerance 1e-4).
 
     Parameters
-    ==========
-    lat : array_like
+    ----------
+    lat : array-like
         latitude
     name : str, optional
         parameter name to use in the exception message
 
     Returns
-    =======
+    -------
     lat : ndarray or float
         Same as input where values just outside the range have been
         clipped to [-90, 90]
 
     Raises
-    ======
+    ------
     ValueError
         if any values are too far outside the range [-90, 90]
     """
+    if np.any(np.abs(lat) > 90 + 1e-5):
+        raise ValueError(name + ' must be in [-90, 90]')
 
-    if np.all(np.float64(lat) >= -90) and np.all(np.float64(lat) <= 90):
-        return lat
-
-    if np.isscalar(lat):
-        if lat > 90 and np.isclose(lat, 90, rtol=0, atol=1e-4):
-            lat = 90
-            return lat
-        elif lat < -90 and np.isclose(lat, -90, rtol=0, atol=1e-4):
-            lat = -90
-            return lat
-    else:
-        lat = np.float64(lat)  # make sure we have an array, not list
-        lat[(lat > 90) & (np.isclose(lat, 90, rtol=0, atol=1e-4))] = 90
-        lat[(lat < -90) & (np.isclose(lat, -90, rtol=0, atol=1e-4))] = -90
-        if np.all(lat >= -90) and np.all(lat <= 90):
-            return lat
-
-    # we haven't returned yet, so raise exception
-    raise ValueError(name + ' must be in [-90, 90]')
+    return np.clip(lat, -90.0, 90.0)
 
 
 def getsinIm(alat):
     """Computes sinIm from modified apex latitude.
 
     Parameters
-    ==========
-    alat : array_like
+    ----------
+    alat : array-like
         Modified apex latitude
 
     Returns
-    =======
+    -------
     sinIm : ndarray or float
 
     """
 
     alat = np.float64(alat)
 
-    return 2*np.sin(np.radians(alat))/np.sqrt(4 - 3*np.cos(np.radians(alat))**2)
+    return 2 * np.sin(np.radians(alat)) / np.sqrt(4 - 3
+                                                  * np.cos(np.radians(alat))**2)
 
 
 def getcosIm(alat):
     """Computes cosIm from modified apex latitude.
 
     Parameters
-    ==========
-    alat : array_like
+    ----------
+    alat : array-like
         Modified apex latitude
 
     Returns
-    =======
+    -------
     cosIm : ndarray or float
 
     """
 
     alat = np.float64(alat)
 
-    return np.cos(np.radians(alat))/np.sqrt(4 - 3*np.cos(np.radians(alat))**2)
+    return np.cos(np.radians(alat)) / np.sqrt(4 - 3
+                                              * np.cos(np.radians(alat))**2)
 
 
 def toYearFraction(date):
@@ -95,16 +82,16 @@ def toYearFraction(date):
     year.
 
     Parameters
-    ==========
+    ----------
     date : :class:`datetime.date` or :class:`datetime.datetime`
 
     Returns
-    =======
+    -------
     year : float
         Decimal year
 
     Notes
-    =====
+    -----
     The algorithm is taken from http://stackoverflow.com/a/6451892/2978652
 
     """
@@ -114,11 +101,11 @@ def toYearFraction(date):
         return time.mktime(date.timetuple())
     year = date.year
     startOfThisYear = dt.datetime(year=year, month=1, day=1)
-    startOfNextYear = dt.datetime(year=year+1, month=1, day=1)
+    startOfNextYear = dt.datetime(year=year + 1, month=1, day=1)
 
     yearElapsed = sinceEpoch(date) - sinceEpoch(startOfThisYear)
     yearDuration = sinceEpoch(startOfNextYear) - sinceEpoch(startOfThisYear)
-    fraction = yearElapsed/yearDuration
+    fraction = yearElapsed / yearDuration
 
     return date.year + fraction
 
@@ -127,36 +114,37 @@ def gc2gdlat(gclat):
     """Converts geocentric latitude to geodetic latitude using WGS84.
 
     Parameters
-    ==========
-    gclat : array_like
+    ---------
+    gclat : array-like
         Geocentric latitude
 
     Returns
-    =======
+    -------
     gdlat : ndarray or float
         Geodetic latitude
 
     """
     WGS84_e2 = 0.006694379990141317  # WGS84 first eccentricity squared
-    return np.rad2deg(-np.arctan(np.tan(np.deg2rad(gclat))/(WGS84_e2 - 1)))
+    return np.rad2deg(-np.arctan(np.tan(np.deg2rad(gclat)) / (WGS84_e2 - 1)))
 
 
 def subsol(datetime):
     """Finds subsolar geocentric latitude and longitude.
 
     Parameters
-    ==========
-    datetime : :class:`datetime.datetime`
+    ----------
+    datetime : :class:`datetime.datetime` or :class:`numpy.ndarray[datetime64]`
+        Date and time in UTC (naive objects are treated as UTC)
 
     Returns
-    =======
+    -------
     sbsllat : float
         Latitude of subsolar point
     sbsllon : float
         Longitude of subsolar point
 
     Notes
-    =====
+    -----
     Based on formulas in Astronomical Almanac for the year 1996, p. C24.
     (U.S. Government Printing Office, 1994). Usable for years 1601-2100,
     inclusive. According to the Almanac, results are good to at least 0.01
@@ -170,22 +158,35 @@ def subsol(datetime):
     by K. Laundal.
 
     """
-    # convert to year, day of year and seconds since midnight
-    year = datetime.year
-    doy = datetime.timetuple().tm_yday
-    ut = datetime.hour * 3600 + datetime.minute * 60 + datetime.second
+    # Convert to year, day of year and seconds since midnight
+    if isinstance(datetime, dt.datetime):
+        year = np.asanyarray([datetime.year])
+        doy = np.asanyarray([datetime.timetuple().tm_yday])
+        ut = np.asanyarray([datetime.hour * 3600 + datetime.minute * 60
+                            + datetime.second])
+    elif isinstance(datetime, np.ndarray):
+        # This conversion works for datetime of wrong precision or unit epoch
+        times = datetime.astype('datetime64[s]')
+        year_floor = times.astype('datetime64[Y]')
+        day_floor = times.astype('datetime64[D]')
+        year = year_floor.astype(int) + 1970
+        doy = (day_floor - year_floor).astype(int) + 1
+        ut = (times.astype('datetime64[s]') - day_floor).astype(float)
+    else:
+        raise ValueError("input must be datetime.datetime or numpy array")
 
-    if not 1601 <= year <= 2100:
+    if not (np.all(1601 <= year) and np.all(year <= 2100)):
         raise ValueError('Year must be in [1601, 2100]')
 
     yr = year - 2000
 
-    nleap = int(np.floor((year - 1601.0) / 4.0))
+    nleap = np.floor((year - 1601.0) / 4.0).astype(int)
     nleap -= 99
-    if year <= 1900:
-        ncent = int(np.floor((year - 1601.0) / 100.0))
+    mask_1900 = year <= 1900
+    if np.any(mask_1900):
+        ncent = np.floor((year[mask_1900] - 1601.0) / 100.0).astype(int)
         ncent = 3 - ncent
-        nleap = nleap + ncent
+        nleap[mask_1900] = nleap[mask_1900] + ncent
 
     l0 = -79.549 + (-0.238699 * (yr - 4.0 * nleap) + 3.08514e-2 * nleap)
     g0 = -2.472 + (-0.2558905 * (yr - 4.0 * nleap) - 3.79617e-2 * nleap)
@@ -215,12 +216,15 @@ def subsol(datetime):
 
     # Equation of time (degrees):
     etdeg = lmean - alpha
-    nrot = round(etdeg / 360.0)
+    nrot = np.round(etdeg / 360.0)
     etdeg = etdeg - 360.0 * nrot
 
-    # Subsolar longitude:
-    sslon = 180.0 - (ut / 240.0 + etdeg) # Earth rotates one degree every 240 s.
-    nrot = round(sslon / 360.0)
+    # Subsolar longitude calculation. Earth rotates one degree every 240 s.
+    sslon = 180.0 - (ut / 240.0 + etdeg)
+    nrot = np.round(sslon / 360.0)
     sslon = sslon - 360.0 * nrot
 
+    # Return a single value from the output if the input was a single value
+    if isinstance(datetime, dt.datetime):
+        return sslat[0], sslon[0]
     return sslat, sslon
