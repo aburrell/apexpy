@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import division, print_function, absolute_import
-
 import datetime as dt
 import numpy as np
 import os
 import warnings
 
-from . import helpers
+from apexpy import helpers
 
 # Below try..catch required for autodoc to work on readthedocs
 try:
-    from . import fortranapex as fa
+    from apexpy import fortranapex as fa
 except ImportError as err:
     warnings.warn("".join(["fortranapex module could not be imported, so ",
                            "apexpy probably won't work.  Make sure you have ",
-                           "a gfortran compiler. Wheels installation ",
-                           "assumes your compiler lives in /opt/local/bin"]))
+                           "a gfortran compiler."]))
     raise err
 
 # make sure invalid warnings are always shown
@@ -36,23 +33,32 @@ class Apex(object):
 
     Parameters
     ----------
-    date : float, :class:`dt.date`, or :class:`dt.datetime`, optional
+    date : NoneType, float, :class:`dt.date`, or :class:`dt.datetime`, optional
         Determines which IGRF coefficients are used in conversions. Uses
-        current date as default.  If float, use decimal year.
+        current date as default.  If float, use decimal year.  If None, uses
+        current UTC. (default=None)
     refh : float, optional
-        Reference height in km for apex coordinates (the field lines are mapped
-        to this height)
-    datafile : str, optional
-        Path to custom coefficient file
+        Reference height in km for apex coordinates, the field lines are mapped
+        to this height. (default=0)
+    datafile : str or NoneType, optional
+        Path to custom coefficient file, if None uses `apexsh.dat` file
+        (default=None)
+    fortranlib : str or NoneType, optional
+        Path to Fortran Apex CPython library, if None uses linked library file
+        (default=None)
 
     Attributes
     ----------
     year : float
         Decimal year used for the IGRF model
+    RE : float
+        Earth radius in km, defaults to mean Earth radius
     refh : float
         Reference height in km for apex coordinates
     datafile : str
         Path to coefficient file
+    fortranlib : str
+        Path to Fortran Apex CPython library
 
     Notes
     -----
@@ -77,8 +83,8 @@ class Apex(object):
         if fortranlib is None:
             fortranlib = fa.__file__
 
-        self.RE = 6371.009  # mean Earth radius
-        self.set_refh(refh)  # reference height
+        self.RE = 6371.009  # mean Earth radius in km
+        self.set_refh(refh)  # reference height in km
 
         if date is None:
             self.year = helpers.toYearFraction(dt.datetime.utcnow())
@@ -127,6 +133,8 @@ class Apex(object):
         self._apex2qd = np.frompyfunc(self._apex2qd_nonvectorized, 3, 2)
         self._qd2apex = np.frompyfunc(self._qd2apex_nonvectorized, 3, 2)
         self._get_babs = np.frompyfunc(self._get_babs_nonvectorized, 3, 1)
+
+        return
 
     def convert(self, lat, lon, source, dest, height=0, datetime=None,
                 precision=1e-10, ssheight=50 * 6371):
@@ -378,6 +386,7 @@ class Apex(object):
             Quasi-dipole latitude in degrees
         qlon : (float)
             Quasi-diplole longitude in degrees
+
         """
 
         alat = helpers.checklat(alat, name='alat')
@@ -386,20 +395,21 @@ class Apex(object):
         qlon = alon
 
         # apex height
-        hA = self.get_apex(alat)
+        h_apex = self.get_apex(alat)
 
-        if hA < height:
-            if np.isclose(hA, height, rtol=0, atol=1e-5):
+        if h_apex < height:
+            if np.isclose(h_apex, height, rtol=0, atol=1e-5):
                 # allow for values that are close
-                hA = height
+                h_apex = height
             else:
-                estr = 'height {:.3g} is > apex height'.format(np.max(height))\
-                       + ' {:.3g} for alat {:.3g}'.format(hA, alat)
+                estr = ''.join(['height {:.3g} is > '.format(np.max(height)),
+                                'apex height {:.3g} for alat {:.3g}'.format(
+                                    h_apex, alat)])
                 raise ApexHeightError(estr)
 
         salat = np.sign(alat) if alat != 0 else 1
         qlat = salat * np.degrees(np.arccos(np.sqrt((self.RE + height) /
-                                                    (self.RE + hA))))
+                                                    (self.RE + h_apex))))
 
         return qlat, qlon
 
@@ -439,20 +449,21 @@ class Apex(object):
         qlat = helpers.checklat(qlat, name='qlat')
 
         alon = qlon
-        hA = self.get_apex(qlat, height)  # apex height
+        h_apex = self.get_apex(qlat, height)  # apex height
 
-        if hA < self.refh:
-            if np.isclose(hA, self.refh, rtol=0, atol=1e-5):
+        if h_apex < self.refh:
+            if np.isclose(h_apex, self.refh, rtol=0, atol=1e-5):
                 # allow for values that are close
-                hA = self.refh
+                h_apex = self.refh
             else:
-                estr = 'apex height ({:.3g}) is < reference height '.format(hA)
-                estr += '({:.3g}) for qlat {:.3g}'.format(self.refh, qlat)
+                estr = ''.join(['apex height ({:.3g}) is < '.format(h_apex),
+                                'reference height ({:.3g})'.format(self.refh),
+                                ' for qlat {:.3g}'.format(qlat)])
                 raise ApexHeightError(estr)
 
         sqlat = np.sign(qlat) if qlat != 0 else 1
         alat = sqlat * np.degrees(np.arccos(np.sqrt((self.RE + self.refh) /
-                                                    (self.RE + hA))))
+                                                    (self.RE + h_apex))))
 
         return alat, alon
 
@@ -611,7 +622,7 @@ class Apex(object):
             newglat, newglon, error = self.apex2geo(alat, alon, newheight,
                                                     precision=precision)
         except ApexHeightError:
-            raise ApexHeightError("newheight is > apex height")
+            raise ApexHeightError("input height is > apex height")
 
         return newglat, newglon, error
 
@@ -904,17 +915,18 @@ class Apex(object):
         """ Calculate apex height
 
         Parameters
-        -----------
-        lat : (float)
-            Latitude in degrees
-        height : (float or NoneType)
-            Height above the surface of the earth in km or NoneType to use
+        ----------
+        lat : float
+            Apex latitude in degrees
+        height : float or NoneType
+            Height above the surface of the Earth in km or NoneType to use
             reference height (default=None)
 
         Returns
-        ----------
-        apex_height : (float)
+        -------
+        apex_height : float
             Height of the field line apex in km
+
         """
         lat = helpers.checklat(lat, name='alat')
         if height is None:

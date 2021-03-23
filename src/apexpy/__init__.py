@@ -1,16 +1,15 @@
-from __future__ import absolute_import, division, print_function
+from sys import stderr
 
-from .apex import Apex, ApexHeightError
-from . import helpers
+from apexpy.apex import Apex, ApexHeightError
+from apexpy import helpers
 
 # Below try..catch required for autodoc to work on readthedocs
 try:
-    from . import fortranapex
+    from apexpy import fortranapex
 except ImportError:
-    print("".join(["ERROR: fortranapex module could not be imported. ",
-                   "apexpy probably won't work"]))
+    stderr.write("".join(["fortranapex module could not be imported. ",
+                          "apexpy probably won't work"]))
 
-
+# Define the global variables
 __version__ = "1.1.0"
-
 __all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']
