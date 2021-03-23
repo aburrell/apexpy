@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-from __future__ import absolute_import
-
 from glob import glob
 from os import path, environ
-from setuptools import setup, find_packages
+from setuptools import setup
 
 # Include extensions only when not on readthedocs.org
 if environ.get('READTHEDOCS', None) == 'True':
@@ -22,7 +20,6 @@ else:
 
 setup_kwargs = {'py_modules': [path.splitext(path.basename(pp))[0]
                                for pp in glob('src/*.py')],
-                'ext_modules': extensions,
-                'packages': find_packages(where='src')}
+                'ext_modules': extensions}
 
 setup(**setup_kwargs)
