@@ -2,7 +2,6 @@
 
 from numpy.testing import assert_allclose
 import os
-import pytest
 
 import apexpy
 from apexpy import fortranapex as fa
@@ -77,7 +76,3 @@ def test_apxq2g_lowprecision():
     assert_allclose(glat, 51.00891876220703)
     assert_allclose(glon, -66.11973571777344)
     assert_allclose(error, -9999.0)
-
-
-if __name__ == '__main__':
-    pytest.main()
