@@ -33,10 +33,13 @@ This is the default option for Linux, and so should not be an issue there. On
 Windows with the Mingw32 compiler, you might find `this information <https://wiki.python.org/moin/WindowsCompilers#GCC_-_MinGW-w64_.28x86.2C_x64.29>`_
 useful for helping build apexpy.
 
+ApexPy is not compatible with numpy version 1.19.X, older and newer versions
+of numpy work without issue.
+
 The package has been tested with the following setups (others might work, too):
 
 * Windows (32/64 bit Python), Linux (64 bit), and Mac (64 bit)
-* Python 2.7, 3.6, 3.7, 3.8, 3.9
+* Python 3.6, 3.7, 3.8, 3.9
 
 
 .. _installation-cmd:
