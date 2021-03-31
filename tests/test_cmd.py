@@ -1,163 +1,161 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for command line execution."""
 
 import numpy as np
 import os
+import pytest
 import subprocess
 
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-outfile = os.path.join('tests', 'output.txt')
-infile = os.path.join('tests', 'test_convert.txt')
-singlefile = os.path.join('tests', 'test_convert_single_line.txt')
 
+class TestCommandLine():
+    def setup(self):
+        """Runs before every test method to create a clean environment."""
+        # Define the desired working paths
+        self.startdir = os.path.abspath(os.path.curdir)
+        split_dirs = os.path.split(os.path.dirname(os.path.abspath(__file__)))
+        self.workdir = split_dirs[0]
 
-def setup_function(function):
-    try:
-        os.remove(outfile)
-    except OSError:
-        pass
+        # Change directory, if needed
+        if self.startdir != self.workdir:
+            os.chdir(self.workdir)
 
+        # Define the test filenames
+        self.outfile = os.path.join(split_dirs[1], 'output.txt')
+        self.infile = os.path.join(split_dirs[1], 'test_convert.txt')
+        self.singlefile = os.path.join(split_dirs[1],
+                                       'test_convert_single_line.txt')
 
-teardown_function = setup_function
+    def teardown(self):
+        """Runs after every method to clean up previous testing."""
+        # Remove testing output
+        if os.path.isfile(self.outfile):
+            os.remove(self.outfile)
 
+        # Return to starting directory
+        if self.startdir != os.path.abspath(os.path.curdir):
+            os.chdir(self.startdir)
 
-def test_module_invocation():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
-                             '--height', '300', '-i', infile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
+        del self.outfile, self.infile, self.singlefile
 
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
-                                      [58.52458191, 94.03150177],
-                                      [59.57331467, 94.46398163]], rtol=1e-4)
+    def execute_command_line(self, command):
+        """Execute the command and load data from self.outfile
 
+        Parameters
+        ----------
+        command : list or str
+            List or string containing command to execute using subprocess
 
-def test_convert_YYYY():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '2015',
-                             '--height', '300', '-i', infile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
-                                      [58.52458191, 94.03150177],
-                                      [59.57331467, 94.46398163]], rtol=1e-4)
+        Returns
+        -------
+        data : np.array or NoneType
+            Numpy array of data from output file or None if no file was created
 
+        """
+        pipe = subprocess.Popen(command)
+        pipe.communicate()
+        pipe.wait()
 
-def test_convert_YYYYMM():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex', '201501',
-                             '--height', '300', '-i', infile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
-                                      [58.52458191, 94.03150177],
-                                      [59.57331467, 94.46398163]], rtol=1e-4)
+        if os.path.isfile(self.outfile):
+            data = np.loadtxt(self.outfile)
+        else:
+            data = None
 
+        return data
 
-def test_convert_YYYYMMDD():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
-                             '20150101', '--height', '300', '-i',
-                             infile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
-                                      [58.52458191, 94.03150177],
-                                      [59.57331467, 94.46398163]], rtol=1e-4)
+    @pytest.mark.parametrize("date_str", [("2015"), ("201501"), ('20150101'),
+                                          ('2015010100'), ('201501010000'),
+                                          ('20150101000000')])
+    def test_convert_w_datetime(self, date_str):
+        """Test command line with different date and time specification."""
+        # Build and execute the apexpy command line call
+        cmd = ['python', '-m', 'apexpy', 'geo', 'apex', date_str, '--height',
+               '300', '-i', self.infile, '-o', self.outfile]
+        data = self.execute_command_line(cmd)
 
+        # Test the outfile existance and values
+        assert data is not None, 'error executing: {:s}'.format(' '.join(cmd))
+        np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
+                                          [58.52458191, 94.03150177],
+                                          [59.57331467, 94.46398163]],
+                                   rtol=1e-4)
+        return
 
-def test_convert_YYYYMMDDHHMMSS():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
-                             '20150101000000', '--height', '300', '-i',
-                             infile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [[57.47145462, 93.62657928],
-                                      [58.52458191, 94.03150177],
-                                      [59.57331467, 94.46398163]], rtol=1e-4)
+    def test_convert_single_line(self):
+        """Test command line with a single line of output."""
+        # Build and execute the apexpy command line call
+        cmd = ['python', '-m', 'apexpy', 'geo', 'apex', '20150101000000',
+               '--height', '300', '-i', self.singlefile, '-o', self.outfile]
+        data = self.execute_command_line(cmd)
 
+        # Test the outfile existance and values
+        assert data is not None, 'error executing: {:s}'.format(' '.join(cmd))
+        np.testing.assert_allclose(data, [57.47145462, 93.62657928], rtol=1e-4)
+        return
 
-def test_convert_single_line():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'apex',
-                             '20150101000000', '--height', '300', '-i',
-                             singlefile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [57.47145462, 93.62657928], rtol=1e-4)
+    @pytest.mark.parametrize("height, out_list",
+                             [("300", [57.47145462, 93.62657928]),
+                              ("100 --refh=300", [55.94841766, 94.1068344])])
+    def test_convert_stdin_stdout_w_height_flags(self, height, out_list):
+        """Test use of pipe input to command-line call with height flags."""
+        # Build and execute the apexpy command line call
+        pipe = subprocess.Popen(
+            'echo 60 15 | python -m apexpy geo apex 2015 --height {:s}'.format(
+                height), shell=True, stdout=subprocess.PIPE)
+        stdout, _ = pipe.communicate()
+        pipe.wait()
+        np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float),
+                                   out_list, rtol=1e-4)
+        return
 
+    def test_convert_mlt(self):
+        """Test magnetic local time conversion."""
+        # Build and execute the apexpy command line call
+        cmd = ['python', '-m', 'apexpy', 'geo', 'mlt', '20150101000000',
+               '--height', '300', '-i', self.singlefile, '-o', self.outfile]
+        data = self.execute_command_line(cmd)
 
-def test_convert_stdin_stdout():
-    """ Test use of pipe input to command-line call
-    """
-    pipe = subprocess.Popen(
-        'echo 60 15 | python -m apexpy geo apex 2015 --height 300',
-        shell=True, stdout=subprocess.PIPE)
-    stdout, _ = pipe.communicate()
-    pipe.wait()
-    np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float),
-                               [57.47145462, 93.62657928], rtol=1e-4)
+        # Test the outfile existance and values
+        assert data is not None, 'error executing: {:s}'.format(' '.join(cmd))
+        np.testing.assert_allclose(data, [57.469547, 1.06324], rtol=1e-4)
+        return
 
+    @pytest.mark.parametrize("date_str", [("201501010"), ("2015010100000")])
+    def test_invalid_date(self, date_str):
+        """Test raises ValueError with an invalid input date."""
+        # Build and execute the command
+        pipe = subprocess.Popen(
+            'echo 60 15 | python -m apexpy geo apex {:s}'.format(date_str),
+            shell=True, stderr=subprocess.PIPE)
+        _, stderr = pipe.communicate()
+        pipe.wait()
 
-def test_convert_refh():
-    pipe = subprocess.Popen(
-        'echo 60 15 | python -m apexpy geo apex 2000 --height 100 --refh=300',
-        shell=True, stdout=subprocess.PIPE)
-    stdout, _ = pipe.communicate()
-    pipe.wait()
-    np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float),
-                               [55.94841766, 94.1068344], rtol=1e-4)
+        # Evaluate the error output
+        assert b'ValueError' in stderr, 'invalid date error not raised'
+        return
 
+    def test_mlt_nodatetime(self):
+        """Test raises ValueError when time not provided for MLT calc."""
+        # Build and execute the command
+        pipe = subprocess.Popen(
+            'echo 60 15 | python -m apexpy geo mlt 20150101', shell=True,
+            stderr=subprocess.PIPE)
+        _, stderr = pipe.communicate()
+        pipe.wait()
 
-def test_convert_mlt():
-    pipe = subprocess.Popen(['python', '-m', 'apexpy', 'geo', 'mlt',
-                             '20150101000000', '--height', '300', '-i',
-                             singlefile, '-o', outfile])
-    pipe.communicate()
-    pipe.wait()
-    assert os.path.isfile(outfile)
-    data = np.loadtxt(outfile)
-    np.testing.assert_allclose(data, [57.469547, 1.06324], rtol=1e-4)
+        # Evaluate the error output
+        assert b'ValueError' in stderr, 'invalid time error not raised'
+        return
 
+    @pytest.mark.parametrize("coords", [("foobar apex"), ("geo foobar")])
+    def test_invalid_coord(self, coords):
+        """Test raises error when bad coordinate input provided."""
+        # Build and execute the command
+        pipe = subprocess.Popen(
+            'echo 60 15 | python -m apexpy {:s} 2015'.format(coords),
+            shell=True, stderr=subprocess.PIPE)
+        _, stderr = pipe.communicate()
+        pipe.wait()
 
-def test_invalid_date():
-    pipe = subprocess.Popen('echo 60 15 | apexpy geo apex 201501010',
-                            shell=True, stderr=subprocess.PIPE)
-    _, stderr = pipe.communicate()
-    pipe.wait()
-    assert b'ValueError' in stderr
-
-    pipe = subprocess.Popen('echo 60 15 | apexpy geo apex 2015010100000',
-                            shell=True, stderr=subprocess.PIPE)
-    _, stderr = pipe.communicate()
-    pipe.wait()
-    assert b'ValueError' in stderr
-
-
-def test_mlt_nodatetime():
-    pipe = subprocess.Popen('echo 60 15 | apexpy geo mlt 20150101', shell=True,
-                            stderr=subprocess.PIPE)
-    _, stderr = pipe.communicate()
-    pipe.wait()
-    assert b'ValueError' in stderr
-
-
-def test_invalid_coord():
-    pipe = subprocess.Popen('echo 60 15 | apexpy foobar apex 2015', shell=True,
-                            stderr=subprocess.PIPE)
-    _, stderr = pipe.communicate()
-    pipe.wait()
-    assert b'invalid choice' in stderr
-
-    pipe = subprocess.Popen('echo 60 15 | apexpy geo foobar 2015', shell=True,
-                            stderr=subprocess.PIPE)
-    _, stderr = pipe.communicate()
-    pipe.wait()
-    assert b'invalid choice' in stderr
+        # Evaluate the error output
+        assert b'invalid choice' in stderr, 'invalid coord error not raised'
+        return
