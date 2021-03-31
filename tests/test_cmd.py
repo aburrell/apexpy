@@ -63,7 +63,6 @@ class TestCommandLine():
         return data
 
     @pytest.mark.parametrize("date_str", [("2015"), ("201501"), ('20150101'),
-                                          ('2015010100'), ('201501010000'),
                                           ('20150101000000')])
     def test_convert_w_datetime(self, date_str):
         """Test command line with different date and time specification."""
@@ -94,7 +93,7 @@ class TestCommandLine():
 
     @pytest.mark.parametrize("height, out_list",
                              [("300", [57.47145462, 93.62657928]),
-                              ("100 --refh=300", [55.94841766, 94.1068344])])
+                              ("100 --refh=300", [56.01779556, 93.35305023])])
     def test_convert_stdin_stdout_w_height_flags(self, height, out_list):
         """Test use of pipe input to command-line call with height flags."""
         # Build and execute the apexpy command line call
