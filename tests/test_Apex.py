@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import division, absolute_import, unicode_literals
-
 import datetime as dt
 import itertools
 import numpy as np
@@ -1401,7 +1399,3 @@ def test_bvectors_apex():
         for j in range(output.size):
             assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,
                             atol=1e-5)
-
-
-if __name__ == '__main__':
-    pytest.main()

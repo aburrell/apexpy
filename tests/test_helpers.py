@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import division, absolute_import, unicode_literals
-
 import datetime as dt
-
 import numpy as np
-import pytest
 from numpy.testing import assert_allclose
+import pytest
 
 from apexpy import helpers
 
@@ -199,7 +196,3 @@ def test_subsol_array():
         true_sslat, true_sslon = helpers.subsol(datetime)
         assert sslat[i] == true_sslat
         assert sslon[i] == true_sslon
-
-
-if __name__ == '__main__':
-    pytest.main()

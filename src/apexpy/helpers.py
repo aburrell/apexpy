@@ -2,11 +2,9 @@
 
 """This module contains helper functions used by :class:`~apexpy.Apex`."""
 
-from __future__ import division, print_function, absolute_import
-
-import time
 import datetime as dt
 import numpy as np
+import time
 
 
 def checklat(lat, name='lat'):
@@ -30,9 +28,10 @@ def checklat(lat, name='lat'):
     ------
     ValueError
         if any values are too far outside the range [-90, 90]
+
     """
     if np.any(np.abs(lat) > 90 + 1e-5):
-        raise ValueError(name + ' must be in [-90, 90]')
+        raise ValueError('{:} must be in [-90, 90]'.format(name))
 
     return np.clip(lat, -90.0, 90.0)
 
@@ -84,6 +83,7 @@ def toYearFraction(date):
     Parameters
     ----------
     date : :class:`datetime.date` or :class:`datetime.datetime`
+        Input date or datetime object
 
     Returns
     -------
@@ -99,6 +99,7 @@ def toYearFraction(date):
     def sinceEpoch(date):
         """returns seconds since epoch"""
         return time.mktime(date.timetuple())
+
     year = date.year
     startOfThisYear = dt.datetime(year=year, month=1, day=1)
     startOfNextYear = dt.datetime(year=year + 1, month=1, day=1)
@@ -107,7 +108,9 @@ def toYearFraction(date):
     yearDuration = sinceEpoch(startOfNextYear) - sinceEpoch(startOfThisYear)
     fraction = yearElapsed / yearDuration
 
-    return date.year + fraction
+    year += fraction
+
+    return year
 
 
 def gc2gdlat(gclat):

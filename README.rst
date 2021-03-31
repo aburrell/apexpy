@@ -29,28 +29,33 @@ which requires both libgfortran and gfortran to be installed on your system.
 Conversion is done by creating an ``Apex`` object and using its methods to
 perform the desired calculations. Some simple examples::
 
-    >>> from apexpy import Apex
-    >>> from __future__ import print_function
-    >>> A = Apex(date=2015.3)  # datetime objects are also supported
-    >>> # geo to apex, scalar input
-    >>> mlat, mlon = A.convert(60, 15, 'geo', 'apex', height=300)
-    >>> print("{:.12f}, {:.12f}".format(mlat, mlon))
+    from apexpy import Apex
+    import datetime as dt
+    atime = dt.datetime(2015, 2, 10, 18, 0, 0)
+    apex15 = Apex(date=2015.3)  # dt.date and dt.datetime objects also work
+
+    # Geodetic to apex, scalar input
+    mlat, mlon = apex15.convert(60, 15, 'geo', 'apex', height=300)
+    print("{:.12f}, {:.12f}".format(mlat, mlon))
     57.477310180664, 93.590156555176
-    >>> # apex to geo, array input
-    >>> glat, glon = A.convert([90, -90], 0, 'apex', 'geo', height=0)
-    >>> print(["{:.12f}, {:.12f}".format(ll, glon[i]) for i,ll in enumerate(glat)])
+
+    # Apex to geodetic, array input
+    glat, glon = apex15.convert([90, -90], 0, 'apex', 'geo', height=0)
+    print(["{:.12f}, {:.12f}".format(ll, glon[i]) for i,ll in enumerate(glat)])
     ['83.103820800781, -84.526657104492', '-74.388252258301, 125.736274719238']
-    >>> # geo to MLT
-    >>> import datetime as dt
-    >>> mlat, mlt = A.convert(60, 15, 'geo', 'mlt', datetime=dt.datetime(2015, 2, 10, 18, 0, 0))
-    >>> print("{:.12f}, {:.12f}".format(mlat, mlt))
+
+    # Geodetic to magnetic local time
+    mlat, mlt = apex15.convert(60, 15, 'geo', 'mlt', datetime=atime)
+    print("{:.12f}, {:.12f}".format(mlat, mlt))
     56.598316192627, 19.107861709595
-    >>> # can also convert magnetic longitude to mlt
-    >>> mlt = A.mlon2mlt(120, dt.datetime(2015, 2, 10, 18, 0, 0))
-    >>> print("{:.2f}".format(mlt))
+
+    # can also convert magnetic longitude to mlt
+    mlt = apex15.mlon2mlt(120, atime)
+    print("{:.2f}".format(mlt))
     20.90
 
-If you don't know or use Python, you can also use the command line. See details in the full documentation.
+If you don't know or use Python, you can also use the command line. See details
+in the full documentation.
 
 Documentation
 =============
@@ -88,7 +93,7 @@ Badges
         | |wheel| |supported-implementations|
 
 .. |docs| image:: https://readthedocs.org/projects/apexpy/badge/?style=flat
-    :target: https://readthedocs.org/projects/apexpy
+    :target: https://apexpy.readthedocs.io/en/latest/
     :alt: Documentation Status
 
 .. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=main

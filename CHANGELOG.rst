@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.1.1 (2021-06-05)
+------------------
+* Removed Python 2 support
+* Updated community and package documentation
+
 1.1.0 (2021-03-05)
 ------------------
 * Adapted Fortran to read IRGF coefficients from a file (updated to IGRF-13)
