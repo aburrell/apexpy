@@ -30,7 +30,7 @@ class TestApex():
         self.test_refh = 0
 
     def teardown(self):
-        del self.apex_out, self.test_date, self.refh
+        del self.apex_out, self.test_date, self.test_refh
 
     def eval_date(self):
         """Evaluate the times in self.test_date and self.apex_out."""
@@ -46,10 +46,10 @@ class TestApex():
     def eval_refh(self):
         """Evaluate the reference height in self.refh and self.apex_out."""
         eval_str = "".join(["expected reference height [",
-                            "{:}] not equal to Apex ".format(self.refh),
+                            "{:}] not equal to Apex ".format(self.test_refh),
                             "reference height ",
                             "[{:}]".format(self.apex_out.refh)])
-        assert self.refh == self.apex_out.refh, eval_str
+        assert self.test_refh == self.apex_out.refh, eval_str
         return
 
     def test_init_defaults(self):
@@ -73,8 +73,8 @@ class TestApex():
     @pytest.mark.parametrize("in_refh", [(0.0), (300.0), (30000.0), (-1.0)])
     def test_init_refh(self, in_refh):
         """Test Apex class with reference height initialization."""
-        self.refh = in_refh
-        self.apex_out = Apex(refh=self.in_refh)
+        self.test_refh = in_refh
+        self.apex_out = Apex(refh=self.test_refh)
         self.eval_date()
         self.eval_refh()
         return
