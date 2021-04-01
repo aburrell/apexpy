@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+"""Test the apexpy.Apex class
+
+Notes
+-----
+Whenever function outputs are tested against hard-coded numbers, the test
+results (numbers) were obtained by running the code that is tested.  Therefore,
+these tests below only check that nothing changes when refactoring, etc., and
+not if the results are actually correct.
+
+These results are expected to change when IGRF is updated.
+
+"""
 
 import datetime as dt
 import itertools
@@ -11,53 +23,74 @@ from apexpy import fortranapex as fa
 from apexpy import Apex, ApexHeightError, helpers
 
 
-# ----------------------------------------------------------------------------
-# NOTE: whenever function outputs are tested against hard-coded numbers, the
-# test results (numbers) were obtained by running the code that is tested.
-# Therefore these tests below only check that nothing changes when refactoring,
-# etc., and not if the results are actually correct.
-# -----------------------------------------------------------------------------
+class TestApex():
+    def setup(self):
+        self.apex_out = None
+        self.test_date = dt.datetime.utcnow()
+        self.test_refh = 0
 
+    def teardown(self):
+        del self.apex_out, self.test_date, self.refh, self.date_tol
 
-# ============================================================================
-#  Test initiating the Apex class
-# ============================================================================
+    def eval_date(self):
+        """Evaluate the times in self.test_date and self.apex_out."""
+        if isinstance(self.test_date, dt.datetime) \
+           or isinstance(self.test_date, dt.date):
+            self.test_date = helpers.toYearFraction(self.test_date)
 
+        # Assert the times are the same on the order of tens of seconds.
+        # Necessary to evaluate the current UTC
+        np.testing.assert_almost_equal(self.test_date, self.apex_out.year, 6)
+        return
 
-def test_init_defaults():
-    Apex()
+    def eval_refh(self):
+        """Evaluate the reference height in self.refh and self.apex_out."""
+        eval_str = "".join(["expected reference height [",
+                            "{:}] not equal to Apex ".format(self.refh),
+                            "reference height ",
+                            "[{:}]".format(self.apex_out.refh)])
+        assert self.refh == self.apex_out.refh, eval_str
+        return
 
+    def test_init_defaults(self):
+        """Test Apex class default initialization."""
+        self.apex_out = Apex()
+        self.eval_date()
+        self.eval_refh()
+        return
 
-def test_init_date_int():
-    apex_out = Apex(date=2015)
-    assert apex_out.year == 2015
+    @pytest.mark.parametrize("in_date",
+                             [(2015), (2015.5), (dt.date(2015, 1, 1)),
+                              (dt.datetime(2015, 6, 1, 18, 23, 45))])
+    def test_init_date(self, in_date):
+        """Test Apex class with date initialization."""
+        self.test_date = in_date
+        self.apex_out = Apex(date=self.test_date)
+        self.eval_date()
+        self.eval_refh()
+        return
 
+    @pytest.mark.parametrize("in_refh", [(0.0), (300.0) (30000.0) (-1.0)])
+    def test_init_refh(self, in_refh):
+        """Test Apex class with reference height initialization."""
+        self.refh = in_refh
+        self.apex_out = Apex(refh=self.in_refh)
+        self.eval_date()
+        self.eval_refh()
+        return
 
-def test_init_date_float():
-    apex_out = Apex(date=2015.5)
-    assert apex_out.year == 2015.5
+    def test_init_with_bad_datafile(self):
+        """Test raises IOError with non-existent datafile input."""
+        with pytest.raises(IOError):
+            Apex(datafile='foo/path/to/datafile.blah')
 
-
-def test_init_date():
-    date = dt.date(2015, 1, 1)
-    apex_out = Apex(date=date)
-    assert apex_out.year == helpers.toYearFraction(date)
-
-
-def test_init_datetime():
-    datetime = dt.datetime(2015, 6, 1, 18, 23, 45)
-    apex_out = Apex(date=datetime)
-    assert apex_out.year == helpers.toYearFraction(datetime)
-
-
-def test_init_datafile_IOError():
-    with pytest.raises(IOError):
-        Apex(date=2015, datafile='foo/path/to/datafile.blah')
+        return
 
 
 # ============================================================================
 #  Test the low-level interfaces to the fortran wrappers
 # ============================================================================
+# HERE
 
 def test__geo2qd_scalar():
     apex_out = Apex(date=2000, refh=300)
