@@ -70,7 +70,7 @@ class TestApex():
         self.eval_refh()
         return
 
-    @pytest.mark.parametrize("in_refh", [(0.0), (300.0) (30000.0) (-1.0)])
+    @pytest.mark.parametrize("in_refh", [(0.0), (300.0), (30000.0), (-1.0)])
     def test_init_refh(self, in_refh):
         """Test Apex class with reference height initialization."""
         self.refh = in_refh
