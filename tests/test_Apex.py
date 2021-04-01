@@ -30,7 +30,7 @@ class TestApex():
         self.test_refh = 0
 
     def teardown(self):
-        del self.apex_out, self.test_date, self.refh, self.date_tol
+        del self.apex_out, self.test_date, self.refh
 
     def eval_date(self):
         """Evaluate the times in self.test_date and self.apex_out."""
