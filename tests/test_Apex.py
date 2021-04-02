@@ -15,7 +15,7 @@ These results are expected to change when IGRF is updated.
 import datetime as dt
 import itertools
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_array_almost_equal
 import os
 import pytest
 
@@ -92,188 +92,192 @@ class TestApex():
 # ============================================================================
 # HERE
 
-def test__geo2qd_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(apex_out._geo2qd(lat, lon, 100),
-                            fa.apxg2q(lat, lon, 100, 0)[:2])
+class TestApexFortranInterface():
+    def setup(self):
+        self.apex_out = Apex(date=2000, refh=300)
 
+    def teardown(self):
+        del self.apex_out
 
-def test__geo2qd_array():
-    apex_out = Apex(date=2000, refh=300)
-    lats, lons = apex_out._geo2qd([[0, 30], [60, 90]], 15,
-                                  [[100, 200], [300, 400]])
-    lat1, lon1 = fa.apxg2q(0, 15, 100, 0)[:2]
-    lat2, lon2 = fa.apxg2q(30, 15, 200, 0)[:2]
-    lat3, lon3 = fa.apxg2q(60, 15, 300, 0)[:2]
-    lat4, lon4 = fa.apxg2q(90, 15, 400, 0)[:2]
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
-                                                 dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
-                                                 dtype=float))
+    def get_input_args(self, method_name, lat, lon, alt, precision=0.0):
+        """Set the input arguments for the different Apex methods.
 
+        Parameters
+        ----------
+        method_name : str
+            Name of the Apex class method
+        lat : float or array-like
+            Value for the latitude
+        lon : float or array-like
+            Value for the longitude
+        alt : float or array-like
+            Value for the altitude
+        precision : float
+            Value for the precision (default=0.0)
 
-def test__geo2qd_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._geo2qd(60, 180, 100),
-                    fa.apxg2q(60, 180, 100, 0)[:2])
-    assert_allclose(apex_out._geo2qd(60, -180, 100),
-                    fa.apxg2q(60, -180, 100, 0)[:2])
-    assert_allclose(apex_out._geo2qd(60, -180, 100),
-                    apex_out._geo2qd(60, 180, 100))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._geo2qd(lat, 15 + i * 360, 100),
-                            fa.apxg2q(lat, 15, 100, 0)[:2])
+        Returns
+        -------
+        in_args : list
+            List of the appropriate input arguments
 
+        """
+        in_args = [lat, lon, alt]
 
-def test__geo2apex_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(apex_out._geo2apex(lat, lon, 100),
-                            fa.apxg2all(lat, lon, 100, 300, 0)[2:4])
+        # Add precision, if needed
+        if method_name in ["_qd2geo", "apxq2g"]:
+            in_args.append(precision)
 
+        # Add a reference height, if needed
+        if method_name in ["apxg2all"]:
+            in_args.append(300)
 
-def test__geo2apex_array():
-    apex_out = Apex(date=2000, refh=300)
-    lats, lons = apex_out._geo2apex([[0, 30], [60, 90]], 15,
-                                    [[100, 200], [300, 400]])
-    lat1, lon1 = fa.apxg2all(0, 15, 100, 300, 0)[2:4]
-    lat2, lon2 = fa.apxg2all(30, 15, 200, 300, 0)[2:4]
-    lat3, lon3 = fa.apxg2all(60, 15, 300, 300, 0)[2:4]
-    lat4, lon4 = fa.apxg2all(90, 15, 400, 300, 0)[2:4]
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
-                                                 dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
-                                                 dtype=float))
+        # Add a vector flag, if needed
+        if method_name in ["apxg2all", "apxg2q"]:
+            in_args.append(1)
 
+        return in_args
 
-def test__geo2apex_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._geo2apex(60, 180, 100),
-                    fa.apxg2all(60, 180, 100, 300, 0)[2:4])
-    assert_allclose(apex_out._geo2apex(60, -180, 100),
-                    fa.apxg2all(60, -180, 100, 300, 0)[2:4])
-    assert_allclose(apex_out._geo2apex(60, -180, 100),
-                    apex_out._geo2apex(60, 180, 100))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._geo2apex(lat, 15 + i * 360, 100),
-                            fa.apxg2all(lat, 15, 100, 300, 0)[2:4])
+    @pytest.mark.parametrize("apex_method,fortran_method,fslice",
+                             [("_geo2qd", "apxg2q", slice(0, 2, 1)),
+                              ("_geo2apex", "apxg2all", slice(2, 4, 1)),
+                              ("_qd2geo", "apxq2g", slice(None)),
+                              ("_basevec", "apxg2q", slice(2, 4, 1))])
+    @pytest.mark.parametrize("lat", [(0), (30), (60), (89)])
+    @pytest.mark.parametrize("lon", [(-179), (-90), (0), (90), (180)])
+    def test_scalar_input(self, apex_method, fortran_method, fslice, lat, lon):
+        """Tests Apex/fortran interface consistency for scalars."""
+        # Get the Apex class method and the fortran function call
+        apex_func = getattr(self.apex_out, apex_method)
+        fortran_func = getattr(fa, fortran_method)
 
+        # Get the appropriate input arguments
+        apex_args = self.get_input_args(apex_method, lat, lon, 100)
+        fortran_args = self.get_input_args(fortran_method, lat, lon, 100)
 
-def test__geo2apexall_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            ret1 = apex_out._geo2apexall(lat, lon, 100)
-            ret2 = fa.apxg2all(lat, lon, 100, 300, 1)
-            for r1, r2 in zip(ret1, ret2):
-                assert_allclose(r1, r2)
+        # Evaluate the equivalent function calls
+        assert_allclose(apex_func(*apex_args),
+                        fortran_func(*fortran_args)[fslice])
+        return
 
+    @pytest.mark.parametrize("apex_method,fortran_method,fslice",
+                             [("_geo2qd", "apxg2q", slice(0, 2, 1)),
+                              ("_geo2apex", "apxg2all", slice(2, 4, 1)),
+                              ("_qd2geo", "apxq2g", slice(None)),
+                              ("_basevec", "apxg2q", slice(2, 4, 1))])
+    @pytest.mark.parametrize("lat", [(0), (30), (60), (89)])
+    @pytest.mark.parametrize("lon1,lon2", [(180, 180), (-180, -180),
+                                           (180, -180), (-180, 180),
+                                           (-345, 15), (375, 15)])
+    def test_longitude_rollover(self, apex_method, fortran_method,
+                                       fslice, lat, lon1, lon2):
+        """Tests Apex/fortran interface consistency for longitude rollover."""
+        # Get the Apex class method and the fortran function call
+        apex_func = getattr(self.apex_out, apex_method)
+        fortran_func = getattr(fa, fortran_method)
 
-def test__geo2apexall_array():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out._geo2apexall([[0, 30], [60, 90]], 15,
-                                [[100, 200], [300, 400]])
-    ret1 = fa.apxg2all(0, 15, 100, 300, 1)
-    ret2 = fa.apxg2all(30, 15, 200, 300, 1)
-    ret3 = fa.apxg2all(60, 15, 300, 300, 1)
-    ret4 = fa.apxg2all(90, 15, 400, 300, 1)
-    for i in range(len(ret)):
+        # Get the appropriate input arguments
+        apex_args = self.get_input_args(apex_method, lat, lon1, 100)
+        fortran_args = self.get_input_args(fortran_method, lat, lon2, 100)
+
+        # Evaluate the equivalent function calls
+        assert_allclose(apex_func(*apex_args),
+                        fortran_func(*fortran_args)[fslice])
+        return
+
+    @pytest.mark.parametrize("apex_method,fortran_method,fslice",
+                             [("_geo2qd", "apxg2q", slice(0, 2, 1)),
+                              ("_geo2apex", "apxg2all", slice(2, 4, 1)),
+                              ("_qd2geo", "apxq2g", slice(None)),
+                              ("_basevec", "apxg2q", slice(2, 4, 1))])
+    def test_array_input(self, apex_method, fortran_method, fslice):
+        """Tests Apex/fortran interface consistency for array input."""
+        # Get the Apex class method and the fortran function call
+        apex_func = getattr(self.apex_out, apex_method)
+        fortran_func = getattr(fa, fortran_method)
+
+        # Set up the input arrays
+        in_lats = np.array([0, 30, 60, 90])
+        in_lon = 15
+        in_alts = np.array([100, 200, 300, 400])
+        apex_args = self.get_input_args(apex_method, in_lats.reshape((2, 2)),
+                                        in_lon, in_alts.reshape((2, 2)))
+
+        # Get the Apex class results
+        aret = apex_func(*apex_args)
+
+        # Get the fortran function results
+        flats = list()
+        flons = list()
+            
+        for i, lat in enumerate(in_lats):
+            fortran_args = self.get_input_args(fortran_method, lat, in_lon,
+                                               in_alts[i])
+            fret = fortran_func(*fortran_args)[fslice]
+            flats.append(fret[0])
+            flons.append(fret[1])
+
+        flats = np.array(flats)
+        flons = np.array(flons)
+
+        # Evaluate results
         try:
-            # ret[i] is array of floats
-            assert_allclose(ret[i].astype(float),
-                            np.array([[ret1[i], ret2[i]], [ret3[i], ret4[i]]],
-                                     dtype=float))
+            # This returned value is array of floats
+            assert_allclose(aret[0].astype(float),
+                            flats.reshape((2, 2)).astype(float))
+            assert_allclose(aret[1].astype(float),
+                            flons.reshape((2, 2)).astype(float))
         except ValueError:
-            # ret[i] is array of arrays
-            assert_allclose(ret[i][0, 0], ret1[i])
-            assert_allclose(ret[i][0, 1], ret2[i])
-            assert_allclose(ret[i][1, 0], ret3[i])
-            assert_allclose(ret[i][1, 1], ret4[i])
+            # This returned value is array of arrays
+            alats = aret[0].reshape((4,))
+            alons = aret[1].reshape((4,))
+            for i, flat in enumerate(flats):
+                assert_array_almost_equal(alats[i], flat, 2)
+                assert_array_almost_equal(alons[i], flons[i], 2)
+            
+        return
 
+    @pytest.mark.parametrize("lat", [(0), (30), (60), (89)])
+    @pytest.mark.parametrize("lon", [(-179), (-90), (0), (90), (180)])
+    def test_geo2apexall_scalar(self, lat, lon):
+        """Test Apex/fortran geo2apexall interface consistency for scalars."""
+        # Get the Apex and Fortran results
+        aret = self.apex_out._geo2apexall(lat, lon, 100)
+        fret = fa.apxg2all(lat, lon, 100, 300, 1)
 
-def test__qd2geo_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            for prec in [-1, 1e-2, 1e-10]:
-                assert_allclose(apex_out._qd2geo(lat, lon, 100, prec),
-                                fa.apxq2g(lat, lon, 100, prec))
+        # Evaluate each element in the results
+        for aval, fval in zip(aret, fret):
+            assert_allclose(aval, fval)
 
+    def test_geo2apexall_array(self):
+        """Test Apex/fortran geo2apexall interface consistency for arrays."""
+        # Set the input
+        in_lats = np.array([0, 30, 60, 90])
+        in_lon = 15
+        in_alts = np.array([100, 200, 300, 400])
 
-def test__qd2geo_array():
-    apex_out = Apex(date=2000, refh=300)
-    lats, lons, errs = apex_out._qd2geo([[0, 30], [60, 90]], 15,
-                                        [[100, 200], [300, 400]], 1e-2)
-    lat1, lon1, err1 = fa.apxq2g(0, 15, 100, 1e-2)
-    lat2, lon2, err2 = fa.apxq2g(30, 15, 200, 1e-2)
-    lat3, lon3, err3 = fa.apxq2g(60, 15, 300, 1e-2)
-    lat4, lon4, err4 = fa.apxq2g(90, 15, 400, 1e-2)
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
-                                                 dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
-                                                 dtype=float))
-    assert_allclose(errs.astype(float), np.array([[err1, err2], [err3, err4]],
-                                                 dtype=float))
+        # Get the Apex class results
+        aret = self.apex_out._geo2apexall(in_lats.reshape((2, 2)), in_lon,
+                                          in_alts.reshape((2, 2)))
 
+        # For each lat/alt pair, get the Fortran results
+        fret = list()
+        for i, lat in enumerate(in_lats):
+            fret.append(fa.apxg2all(in_lats[i], in_lon, in_alts[i], 300, 1))
 
-def test__qd2geo_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._qd2geo(60, 180, 100, 1e-2),
-                    fa.apxq2g(60, 180, 100, 1e-2))
-    assert_allclose(apex_out._qd2geo(60, -180, 100, 1e-2),
-                    fa.apxq2g(60, -180, 100, 1e-2))
-    assert_allclose(apex_out._qd2geo(60, -180, 100, 1e-2),
-                    apex_out._qd2geo(60, 180, 100, 1e-2))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._qd2geo(lat, 15 + i * 360, 100, 1e-2),
-                            fa.apxq2g(lat, 15, 100, 1e-2))
-
-
-def test__basevec_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(apex_out._basevec(lat, lon, 100),
-                            fa.apxg2q(lat, lon, 100, 1)[2:4])
-
-
-def test__basevec_array():
-    apex_out = Apex(date=2000, refh=300)
-    f1s, f2s = apex_out._basevec([[0, 30], [60, 90]], 15,
-                                 [[100, 200], [300, 400]])
-    f11, f21 = fa.apxg2q(0, 15, 100, 1)[2:4]
-    f12, f22 = fa.apxg2q(30, 15, 200, 1)[2:4]
-    f13, f23 = fa.apxg2q(60, 15, 300, 1)[2:4]
-    f14, f24 = fa.apxg2q(90, 15, 400, 1)[2:4]
-    assert_allclose(f1s[0, 0], f11)
-    assert_allclose(f1s[0, 1], f12)
-    assert_allclose(f1s[1, 0], f13)
-    assert_allclose(f1s[1, 1], f14)
-    assert_allclose(f2s[0, 0], f21)
-    assert_allclose(f2s[0, 1], f22)
-    assert_allclose(f2s[1, 0], f23)
-    assert_allclose(f2s[1, 1], f24)
-
-
-def test__basevec_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._basevec(60, 180, 100),
-                    fa.apxg2q(60, 180, 100, 1)[2:4])
-    assert_allclose(apex_out._basevec(60, -180, 100),
-                    fa.apxg2q(60, -180, 100, 1)[2:4])
-    assert_allclose(apex_out._basevec(60, -180, 100),
-                    apex_out._basevec(60, 180, 100))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._basevec(lat, 15 + i * 360, 100),
-                            fa.apxg2q(lat, 15, 100, 1)[2:4])
-
+        # Cycle through all returned values
+        for i, ret in enumerate(aret):
+            try:
+                # This returned value is array of floats
+                assert_allclose(ret.astype(float),
+                                np.array([[fret[0][i], fret[1][i]],
+                                          [fret[2][i], fret[3][i]]],
+                                         dtype=float))
+            except ValueError:
+                # This returned value is array of arrays
+                ret = ret.reshape((4,))
+                for j, single_fret in enumerate(fret):
+                    assert_allclose(ret[j], single_fret[i])
+        return
 
 # ============================================================================
 #  Test the convert() method
