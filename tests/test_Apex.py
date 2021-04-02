@@ -169,7 +169,7 @@ class TestApexFortranInterface():
                                            (180, -180), (-180, 180),
                                            (-345, 15), (375, 15)])
     def test_longitude_rollover(self, apex_method, fortran_method,
-                                       fslice, lat, lon1, lon2):
+                                fslice, lat, lon1, lon2):
         """Tests Apex/fortran interface consistency for longitude rollover."""
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
@@ -208,7 +208,7 @@ class TestApexFortranInterface():
         # Get the fortran function results
         flats = list()
         flons = list()
-            
+
         for i, lat in enumerate(in_lats):
             fortran_args = self.get_input_args(fortran_method, lat, in_lon,
                                                in_alts[i])
@@ -233,7 +233,7 @@ class TestApexFortranInterface():
             for i, flat in enumerate(flats):
                 assert_array_almost_equal(alats[i], flat, 2)
                 assert_array_almost_equal(alons[i], flons[i], 2)
-            
+
         return
 
     @pytest.mark.parametrize("lat", [(0), (30), (60), (89)])
