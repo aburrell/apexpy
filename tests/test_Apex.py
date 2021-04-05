@@ -13,7 +13,6 @@ These results are expected to change when IGRF is updated.
 """
 
 import datetime as dt
-import itertools
 import numpy as np
 from numpy.testing import assert_allclose, assert_array_almost_equal
 import os
@@ -23,7 +22,7 @@ from apexpy import fortranapex as fa
 from apexpy import Apex, ApexHeightError, helpers
 
 
-class TestApex():
+class TestApexInit():
     def setup(self):
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
@@ -87,16 +86,14 @@ class TestApex():
         return
 
 
-# ============================================================================
-#  Test the low-level interfaces to the fortran wrappers
-# ============================================================================
-# HERE
-
-class TestApexFortranInterface():
+class TestApexMethod():
+    """Test the Apex methods."""
     def setup(self):
+        """Initialize all tests."""
         self.apex_out = Apex(date=2000, refh=300)
 
     def teardown(self):
+        """Clean up after each test."""
         del self.apex_out
 
     def get_input_args(self, method_name, lat, lon, alt, precision=0.0):
@@ -124,7 +121,7 @@ class TestApexFortranInterface():
         in_args = [lat, lon, alt]
 
         # Add precision, if needed
-        if method_name in ["_qd2geo", "apxq2g"]:
+        if method_name in ["_qd2geo", "apxq2g", "apex2geo", "qd2geo"]:
             in_args.append(precision)
 
         # Add a reference height, if needed
@@ -279,159 +276,139 @@ class TestApexFortranInterface():
                     assert_allclose(ret[j], single_fret[i])
         return
 
-# ============================================================================
-#  Test the convert() method
-# ============================================================================
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    def test_convert_consistency(self, in_coord, out_coord):
+        """Test the self-consistency of the Apex convert method."""
+        if in_coord == out_coord:
+            pytest.skip("Test not needed for same src and dest coordinates")
 
+        # Define the method name
+        method_name = "2".join([in_coord, out_coord])
 
-def test_convert_geo2apex():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'geo', 'apex', height=100),
-                    apex_out.geo2apex(60, 15, 100))
+        # Get the method and method inputs
+        convert_kwargs = {'height': 100, 'precision': 0.0}
+        apex_args = self.get_input_args(method_name, 60, 15, 100)
+        apex_method = getattr(self.apex_out, method_name)
 
+        # Define the slice needed to get equivalent output from the named method
+        mslice = slice(0, -1, 1) if out_coord == "geo" else slice(None)
 
-def test_convert_geo2qd():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'geo', 'qd', height=100),
-                    apex_out.geo2qd(60, 15, 100))
+        # Get output using convert and named method
+        convert_out = self.apex_out.convert(60, 15, in_coord, out_coord,
+                                            **convert_kwargs)
+        method_out = apex_method(*apex_args)[mslice]
 
+        # Compare both outputs, should be identical
+        assert_allclose(convert_out, method_out)
+        return
 
-def test_convert_geo2mlt_nodate():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.convert(60, 15, 'geo', 'mlt')
+    @pytest.mark.parametrize("bound_lat", [(90), (-90)])
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    def test_convert_at_lat_boundary(self, bound_lat, in_coord, out_coord):
+        """Test the conversion at the latitude boundary, with allowed excess."""
+        excess_lat = np.sign(bound_lat) * (abs(bound_lat) + 1.0e-5)
 
+        # Get the two outputs, slight tolerance outside of boundary allowed
+        bound_out = self.apex_out.convert(bound_lat, 0, in_coord, out_coord)
+        excess_out = self.apex_out.convert(excess_lat, 0, in_coord, out_coord)
 
-def test_convert_geo2mlt():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'geo', 'mlt', height=100,
-                                     ssheight=2e5, datetime=datetime)[1],
-                    apex_out.mlon2mlt(apex_out.geo2apex(60, 15, 100)[1],
-                                      datetime, ssheight=2e5))
+        # Test the outputs
+        assert_allclose(excess_out, bound_out, rtol=0, atol=1e-8)
+        return
 
+    def test_convert_qd2apex_at_equator(self):
+        """Test the quasi-dipole to apex conversion at the magnetic equator."""
+        eq_out = self.apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
+                                      height=320.0)
+        close_out = self.apex_out.convert(lat=0.001, lon=0, source='qd',
+                                          dest='apex', height=320.0)
+        assert_allclose(eq_out, close_out, atol=1e-4)
 
-def test_convert_apex2geo():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'apex', 'geo', height=100,
-                                     precision=1e-2),
-                    apex_out.apex2geo(60, 15, 100, precision=1e-2)[:-1])
+    @pytest.mark.parametrize("src", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("dest", ["geo", "apex", "qd"])
+    def test_convert_withnan(self, src, dest):
+        """Test Apex.convert success with NaN input."""
+        if src == dest:
+            pytest.skip("Test not needed for same src and dest coordinates")
 
+        num_nans = 5
+        in_loc = np.arange(0, 10, dtype=float)
+        in_loc[:num_nans] = np.nan
 
-def test_convert_apex2qd():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'apex', 'qd', height=100),
-                    apex_out.apex2qd(60, 15, height=100))
+        out_loc = self.apex_out.convert(in_loc, in_loc, src, dest, height=320)
 
+        for out in out_loc:
+            assert np.all(np.isnan(out[:num_nans])), "NaN output expected"
+            assert np.all(np.isfinite(out[num_nans:])), "Finite output expected"
 
-def test_convert_apex2mlt():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'apex', 'mlt', height=100,
-                                     datetime=datetime, ssheight=2e5)[1],
-                    apex_out.mlon2mlt(15, datetime, ssheight=2e5))
+        return
 
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    def test_convert_to_mlt(self, in_coord):
+        """Test the conversions to MLT using Apex convert."""
+        in_time = dt.datetime(2000, 3, 9, 14, 25, 58)
 
-def test_convert_qd2geo():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'qd', 'geo', height=100,
-                                     precision=1e-2),
-                    apex_out.qd2geo(60, 15, 100, precision=1e-2)[:-1])
+        # Get the magnetic longitude from the appropriate method
+        if in_coord == "geo":
+            apex_method = getattr(self.apex_out, "{:s}2apex".format(in_coord))
+            mlon = apex_method(60, 15, 100)[1]
+        else:
+            mlon = 15
 
+        # Get the output MLT values
+        convert_mlt = self.apex_out.convert(60, 15, in_coord, 'mlt', height=100,
+                                            ssheight=2e5, datetime=in_time)[1]
+        method_mlt = self.apex_out.mlon2mlt(mlon, in_time, ssheight=2e5)
 
-def test_convert_qd2apex():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'qd', 'apex', height=100),
-                    apex_out.qd2apex(60, 15, height=100))
+        # Test the outputs
+        assert_allclose(convert_mlt, method_mlt)
+        return
 
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    def test_convert_mlt_to_lon(self, out_coord):
+        """Test the conversions from MLT using Apex convert."""
+        in_time = dt.datetime(2000, 3, 9, 14, 25, 58)
 
-def test_convert_qd2apex_at_equator():
-    """Test the quasi-dipole to apex conversion at the magnetic equator."""
-    apex_out = Apex(date=2000, refh=80)
-    elat, elon = apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
-                                  height=120.0)
-    clat, clon = apex_out.convert(lat=0.001, lon=0, source='qd', dest='apex',
-                                  height=120.0)
-    assert_allclose([elat, elon], [clat, clon], atol=1e-4)
+        # Get the output longitudes
+        convert_out = self.apex_out.convert(60, 15, 'mlt', out_coord,
+                                            height=100, ssheight=2e5,
+                                            datetime=in_time, precision=1e-2)
+        mlon = self.apex_out.mlt2mlon(15, in_time, ssheight=2e5)
 
+        if out_coord == "geo":
+            method_out = self.apex_out.apex2geo(60, mlon, 100,
+                                                precision=1e-2)[:-1]
+        elif out_coord == "qd":
+            method_out = self.apex_out.apex2qd(60, mlon, 100)
+        else:
+            method_out = (60, mlon)
 
-def test_convert_qd2mlt():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'qd', 'mlt', height=100,
-                                     datetime=datetime, ssheight=2e5)[1],
-                    apex_out.mlon2mlt(15, datetime, ssheight=2e5))
+        # Evaluate the outputs
+        assert_allclose(convert_out, method_out)
+        return
 
+    def test_convert_geo2mlt_nodate(self):
+        """Test convert from geo to MLT raises ValueError with no datetime."""
+        with pytest.raises(ValueError):
+            self.apex_out.convert(60, 15, 'geo', 'mlt')
+        return
 
-def test_convert_mlt2geo():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'mlt', 'geo', height=100,
-                                     datetime=datetime, precision=1e-2,
-                                     ssheight=2e5),
-                    apex_out.apex2geo(60, apex_out.mlt2mlon(15, datetime,
-                                                            ssheight=2e5), 100,
-                                      precision=1e-2)[:-1])
+    @pytest.mark.parametrize("bad_lat", [(91), (-91)])
+    def test_convert_invalid_lat(self, bad_lat):
+        """Test convert raises ValueError for invalid latitudes."""
 
+        with pytest.raises(ValueError):
+            self.apex_out.convert(bad_lat, 0, 'geo', 'geo')
+        return
 
-def test_convert_mlt2apex():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'mlt', 'apex', height=100,
-                                     datetime=datetime, ssheight=2e5),
-                    (60, apex_out.mlt2mlon(15, datetime, ssheight=2e5)))
-
-
-def test_convert_mlt2qd():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'mlt', 'qd', height=100,
-                                     datetime=datetime, ssheight=2e5),
-                    apex_out.apex2qd(60, apex_out.mlt2mlon(15, datetime,
-                                                           ssheight=2e5),
-                                     height=100))
-
-
-def test_convert_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.convert(91, 0, 'geo', 'geo')
-    with pytest.raises(ValueError):
-        apex_out.convert(-91, 0, 'geo', 'geo')
-    apex_out.convert(90, 0, 'geo', 'geo')
-    apex_out.convert(-90, 0, 'geo', 'geo')
-
-    assert_allclose(apex_out.convert(90 + 1e-5, 0, 'geo', 'apex'),
-                    apex_out.convert(90, 0, 'geo', 'apex'), rtol=0, atol=1e-8)
-
-
-def test_convert_invalid_transformation():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(NotImplementedError):
-        apex_out.convert(0, 0, 'foobar', 'geo')
-    with pytest.raises(NotImplementedError):
-        apex_out.convert(0, 0, 'geo', 'foobar')
-
-
-coord_names = ['geo', 'apex', 'qd']
-
-
-@pytest.mark.parametrize('transform', itertools.product(coord_names,
-                                                        coord_names))
-def test_convert_withnan(transform):
-    """Test Apex.convert success with NaN input."""
-    num_nans = 5
-    in_lat = np.arange(0, 10, dtype=float)
-    in_lat[:num_nans] = np.nan
-    in_lon = np.arange(0, 10, dtype=float)
-    in_lon[:num_nans] = np.nan
-    src, dest = transform
-    apex_out = Apex(date=2000, refh=80)
-    out_lat, out_lon = apex_out.convert(in_lat, in_lon, src, dest, height=120)
-    assert np.all(np.isnan(out_lat[:num_nans]))
-    assert np.all(np.isnan(out_lon[:num_nans]))
-    assert np.all(np.isfinite(out_lat[num_nans:]))
-    assert np.all(np.isfinite(out_lat[num_nans:]))
+    @pytest.mark.parametrize("coords", [("foobar", "geo"), ("geo", "foobar")])
+    def test_convert_invalid_transformation(self, coords):
+        """Test raises NotImplementedError for bad coordinates."""
+        with pytest.raises(NotImplementedError):
+            self.apex_out.convert(0, 0, *coords)
+        return
 
 
 # ============================================================================
