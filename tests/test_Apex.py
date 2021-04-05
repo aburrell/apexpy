@@ -321,7 +321,7 @@ class TestApexMethod():
     def test_convert_qd2apex_at_equator(self):
         """Test the quasi-dipole to apex conversion at the magnetic equator."""
         eq_out = self.apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
-                                      height=320.0)
+                                       height=320.0)
         close_out = self.apex_out.convert(lat=0.001, lon=0, source='qd',
                                           dest='apex', height=320.0)
         assert_allclose(eq_out, close_out, atol=1e-4)
