@@ -155,7 +155,7 @@ class TestApexMethod():
 
         # Evaluate the equivalent function calls
         np.testing.assert_allclose(apex_func(*apex_args),
-                        fortran_func(*fortran_args)[fslice])
+                                   fortran_func(*fortran_args)[fslice])
         return
 
     @pytest.mark.parametrize("apex_method,fortran_method,fslice",
@@ -180,7 +180,7 @@ class TestApexMethod():
 
         # Evaluate the equivalent function calls
         np.testing.assert_allclose(apex_func(*apex_args),
-                        fortran_func(*fortran_args)[fslice])
+                                   fortran_func(*fortran_args)[fslice])
         return
 
     @pytest.mark.parametrize("apex_method,fortran_method,fslice",
@@ -222,9 +222,9 @@ class TestApexMethod():
         try:
             # This returned value is array of floats
             np.testing.assert_allclose(aret[0].astype(float),
-                            flats.reshape((2, 2)).astype(float))
+                                       flats.reshape((2, 2)).astype(float))
             np.testing.assert_allclose(aret[1].astype(float),
-                            flons.reshape((2, 2)).astype(float))
+                                       flons.reshape((2, 2)).astype(float))
         except ValueError:
             # This returned value is array of arrays
             alats = aret[0].reshape((4,))
@@ -268,9 +268,9 @@ class TestApexMethod():
             try:
                 # This returned value is array of floats
                 np.testing.assert_allclose(ret.astype(float),
-                                np.array([[fret[0][i], fret[1][i]],
-                                          [fret[2][i], fret[3][i]]],
-                                         dtype=float))
+                                           np.array([[fret[0][i], fret[1][i]],
+                                                     [fret[2][i], fret[3][i]]],
+                                                    dtype=float))
             except ValueError:
                 # This returned value is array of arrays
                 ret = ret.reshape((4,))
@@ -564,16 +564,18 @@ def test_mlon2mlt_ssheight():
 
 def test_mlon2mlt_1Darray():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.mlon2mlt([0, 180],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [23.019261, 11.019261], rtol=1e-4)
+    np.testing.assert_allclose(
+        apex_out.mlon2mlt([0, 180],
+                          dt.datetime(2000, 2, 3, 4, 5, 6)),
+        [23.019261, 11.019261], rtol=1e-4)
 
 
 def test_mlon2mlt_2Darray():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.mlon2mlt([[0, 180], [0, 180]],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [[23.019261, 11.019261], [23.019261, 11.019261]], rtol=1e-4)
+    np.testing.assert_allclose(
+        apex_out.mlon2mlt([[0, 180], [0, 180]],
+                          dt.datetime(2000, 2, 3, 4, 5, 6)),
+        [[23.019261, 11.019261], [23.019261, 11.019261]], rtol=1e-4)
 
 
 def test_mlon2mlt_diffdates():
@@ -587,19 +589,20 @@ def test_mlon2mlt_offset():
     apex_out = Apex(date=2000, refh=300)
     date = dt.datetime(2000, 2, 3, 4, 5, 6)
     np.testing.assert_allclose(apex_out.mlon2mlt(0, date),
-                    apex_out.mlon2mlt(-15, date) + 1)
+                               apex_out.mlon2mlt(-15, date) + 1)
     np.testing.assert_allclose(apex_out.mlon2mlt(0, date),
-                    apex_out.mlon2mlt(-10 * 15, date) + 10)
+                               apex_out.mlon2mlt(-10 * 15, date) + 10)
 
 
 def test_mlon2mlt_range():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.mlon2mlt(range(0, 361, 30),
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
-                     9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
-                     19.01963, 21.01963, 23.01963],
-                    rtol=1e-4)
+    np.testing.assert_allclose(
+        apex_out.mlon2mlt(range(0, 361, 30),
+                          dt.datetime(2000, 2, 3, 4, 5, 6)),
+        [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
+         9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
+         19.01963, 21.01963, 23.01963],
+        rtol=1e-4)
 
 
 # ============================================================================
@@ -623,17 +626,18 @@ def test_mlt2mlon_ssheight():
 
 def test_mlt2mlon_1Darray():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.mlt2mlon([0, 12],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [14.705551, 194.705551], rtol=1e-4)
+    np.testing.assert_allclose(
+        apex_out.mlt2mlon([0, 12],
+                          dt.datetime(2000, 2, 3, 4, 5, 6)),
+        [14.705551, 194.705551], rtol=1e-4)
 
 
 def test_mlt2mlon_2Darray():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.mlt2mlon([[0, 12], [0, 12]],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [[14.705551, 194.705551], [14.705551, 194.705551]],
-                    rtol=1e-4)
+    np.testing.assert_allclose(
+        apex_out.mlt2mlon([[0, 12], [0, 12]],
+                          dt.datetime(2000, 2, 3, 4, 5, 6)),
+        [[14.705551, 194.705551], [14.705551, 194.705551]], rtol=1e-4)
 
 
 def test_mlt2mlon_diffdates():
@@ -646,19 +650,21 @@ def test_mlt2mlon_diffdates():
 def test_mlt2mlon_offset():
     apex_out = Apex(date=2000, refh=300)
     date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    np.testing.assert_allclose(apex_out.mlt2mlon(0, date), apex_out.mlt2mlon(1, date) - 15)
     np.testing.assert_allclose(apex_out.mlt2mlon(0, date),
-                    apex_out.mlt2mlon(10, date) - 150)
+                               apex_out.mlt2mlon(1, date) - 15)
+    np.testing.assert_allclose(apex_out.mlt2mlon(0, date),
+                               apex_out.mlt2mlon(10, date) - 150)
 
 
 def test_mlt2mlon_range():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.mlt2mlon(range(0, 25, 2),
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [14.705551, 44.705551, 74.705551, 104.705551, 134.705551,
-                     164.705551, 194.705551, 224.705551, 254.705551, 284.705551,
-                     314.705551, 344.705551, 14.705551],
-                    rtol=1e-4)
+    np.testing.assert_allclose(
+        apex_out.mlt2mlon(range(0, 25, 2),
+                          dt.datetime(2000, 2, 3, 4, 5, 6)),
+        [14.705551, 44.705551, 74.705551, 104.705551, 134.705551,
+         164.705551, 194.705551, 224.705551, 254.705551, 284.705551,
+         314.705551, 344.705551, 14.705551],
+        rtol=1e-4)
 
 
 # ============================================================================
@@ -669,21 +675,31 @@ def test_mlt2mlon_range():
 def test_mlon2mlt2mlon():
     apex_out = Apex(date=2000, refh=300)
     date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(0, date), date), 0)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(6, date), date), 6)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(12, date), date), 12)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(18, date), date), 18)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(24, date), date), 0)
+    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(0, date),
+                                                 date), 0)
+    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(6, date),
+                                                 date), 6)
+    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(12, date),
+                                                 date), 12)
+    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(18, date),
+                                                 date), 18)
+    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(24, date),
+                                                 date), 0)
 
 
 def test_mlt2mlon2mlt():
     apex_out = Apex(date=2000, refh=300)
     date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(0, date), date), 0)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(90, date), date), 90)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(180, date), date), 180)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(270, date), date), 270)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(360, date), date), 0)
+    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(0, date),
+                                                 date), 0)
+    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(90, date),
+                                                 date), 90)
+    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(180, date),
+                                                 date), 180)
+    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(270, date),
+                                                 date), 270)
+    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(360, date),
+                                                 date), 0)
 
 
 # ============================================================================
@@ -693,45 +709,54 @@ def test_mlt2mlon2mlt():
 
 def test_map_to_height():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=False,
-                                           precision=1e-10),
-                    (31.841466903686523, 17.916635513305664,
-                     1.7075473124350538e-6))
-    np.testing.assert_allclose(apex_out.map_to_height(30, 170, 100, 500, conjugate=False,
-                                           precision=1e-2),
-                    (25.727270126342773, 169.60546875, 0.00017573432705830783))
+    np.testing.assert_allclose(
+        apex_out.map_to_height(60, 15, 100, 10000, conjugate=False,
+                               precision=1e-10),
+        (31.841466903686523, 17.916635513305664,
+         1.7075473124350538e-6))
+    np.testing.assert_allclose(
+        apex_out.map_to_height(30, 170, 100, 500, conjugate=False,
+                               precision=1e-2),
+        (25.727270126342773, 169.60546875, 0.00017573432705830783))
 
 
 def test_map_to_height_same_height():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
-                                           precision=1e-10),
-                    (60.0, 15.000003814697266, 0.0), rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
+                               precision=1e-10),
+        (60.0, 15.000003814697266, 0.0), rtol=1e-5)
 
 
 def test_map_to_height_conjugate():
     """Test results of map_to_height using conjugacy."""
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
-                                           precision=1e-10),
-                    (-25.424888610839844, 27.310426712036133,
-                     1.2074182222931995e-6), atol=1e-6)
-    np.testing.assert_allclose(apex_out.map_to_height(30, 170, 100, 500, conjugate=True,
-                                           precision=1e-2),
-                    (-13.76642894744873, 164.24259948730469,
-                     0.00056820799363777041), atol=1e-6)
+    np.testing.assert_allclose(
+        apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
+                               precision=1e-10),
+        (-25.424888610839844, 27.310426712036133,
+         1.2074182222931995e-6), atol=1e-6)
+    np.testing.assert_allclose(
+        apex_out.map_to_height(30, 170, 100, 500, conjugate=True,
+                               precision=1e-2),
+        (-13.76642894744873, 164.24259948730469,
+         0.00056820799363777041), atol=1e-6)
 
 
 def test_map_to_height_vectorization():
     apex_out = Apex(date=2000, refh=300)
     np.testing.assert_allclose(apex_out.map_to_height([60, 60], 15, 100, 100),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
+                               ([60] * 2, [15.00000381] * 2, [0] * 2),
+                               rtol=1e-5)
     np.testing.assert_allclose(apex_out.map_to_height(60, [15, 15], 100, 100),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
+                               ([60] * 2, [15.00000381] * 2, [0] * 2),
+                               rtol=1e-5)
     np.testing.assert_allclose(apex_out.map_to_height(60, 15, [100, 100], 100),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
+                               ([60] * 2, [15.00000381] * 2, [0] * 2),
+                               rtol=1e-5)
     np.testing.assert_allclose(apex_out.map_to_height(60, 15, 100, [100, 100]),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
+                               ([60] * 2, [15.00000381] * 2, [0] * 2),
+                               rtol=1e-5)
 
 
 def test_map_to_height_ApexHeightError():
@@ -755,49 +780,60 @@ def test_map_E_to_height():
     out_70_15_100_500 = [0.72760378, 2.18082305, 0.29141979]
 
     # scalar
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 15, 100, 500, [1, 2, 3]),
-                    out_60_15_100_500, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 15, 100, 500, [2, 3, 4]),
-                    out_60_15_100_500_234, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 15, 100, 1000, [1, 2, 3]),
-                    out_60_15_100_1000, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 15, 200, 500, [1, 2, 3]),
-                    out_60_15_200_500, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 30, 100, 500, [1, 2, 3]),
-                    out_60_30_100_500, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_E_to_height(70, 15, 100, 500, [1, 2, 3]),
-                    out_70_15_100_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 15, 100, 500, [1, 2, 3]),
+        out_60_15_100_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 15, 100, 500, [2, 3, 4]),
+        out_60_15_100_500_234, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 15, 100, 1000, [1, 2, 3]),
+        out_60_15_100_1000, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 15, 200, 500, [1, 2, 3]),
+        out_60_15_200_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 30, 100, 500, [1, 2, 3]),
+        out_60_30_100_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(70, 15, 100, 500, [1, 2, 3]),
+        out_70_15_100_500, rtol=1e-5)
 
     # vectorize lat
-    np.testing.assert_allclose(apex_out.map_E_to_height([60, 70], 15, 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_70_15_100_500]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height([60, 70], 15, 100, 500,
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_70_15_100_500]).T,
+        rtol=1e-5)
 
     # vectorize lon
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, [15, 30], 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_30_100_500]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, [15, 30], 100, 500,
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_60_30_100_500]).T,
+        rtol=1e-5)
 
     # vectorize height
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 15, [100, 200], 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_200_500]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 15, [100, 200], 500,
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_60_15_200_500]).T,
+        rtol=1e-5)
 
     # vectorize newheight
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 15, 100, [500, 1000],
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_100_1000]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 15, 100, [500, 1000],
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_60_15_100_1000]).T,
+        rtol=1e-5)
 
     # vectorize E
-    np.testing.assert_allclose(apex_out.map_E_to_height(60, 15, 100, 500,
-                                             np.array([[1, 2, 3],
-                                                       [2, 3, 4]]).T),
-                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_E_to_height(60, 15, 100, 500,
+                                 np.array([[1, 2, 3],
+                                           [2, 3, 4]]).T),
+        np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
+        rtol=1e-5)
 
 
 # ============================================================================
@@ -815,49 +851,60 @@ def test_map_V_to_height():
     out_70_15_100_500 = [0.84681866, 2.5925821,  0.34792655]
 
     # scalar
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 15, 100, 500, [1, 2, 3]),
-                    out_60_15_100_500, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 15, 100, 500, [2, 3, 4]),
-                    out_60_15_100_500_234, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 15, 100, 1000, [1, 2, 3]),
-                    out_60_15_100_1000, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 15, 200, 500, [1, 2, 3]),
-                    out_60_15_200_500, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 30, 100, 500, [1, 2, 3]),
-                    out_60_30_100_500, rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_V_to_height(70, 15, 100, 500, [1, 2, 3]),
-                    out_70_15_100_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 15, 100, 500, [1, 2, 3]),
+        out_60_15_100_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 15, 100, 500, [2, 3, 4]),
+        out_60_15_100_500_234, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 15, 100, 1000, [1, 2, 3]),
+        out_60_15_100_1000, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 15, 200, 500, [1, 2, 3]),
+        out_60_15_200_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 30, 100, 500, [1, 2, 3]),
+        out_60_30_100_500, rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(70, 15, 100, 500, [1, 2, 3]),
+        out_70_15_100_500, rtol=1e-5)
 
     # vectorize lat
-    np.testing.assert_allclose(apex_out.map_V_to_height([60, 70], 15, 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_70_15_100_500]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height([60, 70], 15, 100, 500,
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_70_15_100_500]).T,
+        rtol=1e-5)
 
     # vectorize lon
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, [15, 30], 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_30_100_500]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, [15, 30], 100, 500,
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_60_30_100_500]).T,
+        rtol=1e-5)
 
     # vectorize height
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 15, [100, 200], 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_200_500]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 15, [100, 200], 500,
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_60_15_200_500]).T,
+        rtol=1e-5)
 
     # vectorize newheight
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 15, 100, [500, 1000],
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_100_1000]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 15, 100, [500, 1000],
+                                 np.array([[1, 2, 3]] * 2).T),
+        np.array([out_60_15_100_500, out_60_15_100_1000]).T,
+        rtol=1e-5)
 
     # vectorize E
-    np.testing.assert_allclose(apex_out.map_V_to_height(60, 15, 100, 500,
-                                             np.array([[1, 2, 3],
-                                                       [2, 3, 4]]).T),
-                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
-                    rtol=1e-5)
+    np.testing.assert_allclose(
+        apex_out.map_V_to_height(60, 15, 100, 500,
+                                 np.array([[1, 2, 3],
+                                           [2, 3, 4]]).T),
+        np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
+        rtol=1e-5)
 
 
 # ============================================================================
@@ -869,24 +916,27 @@ def test_map_V_to_height():
 
 def test_basevectors_qd_scalar_geo():
     apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.basevectors_qd(60, 15, 100, coords='geo'),
-                    apex_out._basevec(60, 15, 100))
+    np.testing.assert_allclose(
+        apex_out.basevectors_qd(60, 15, 100, coords='geo'),
+        apex_out._basevec(60, 15, 100))
 
 
 def test_basevectors_qd_scalar_apex():
     apex_out = Apex(date=2000, refh=300)
     glat, glon, _ = apex_out.apex2geo(60, 15, 100, precision=1e-2)
-    np.testing.assert_allclose(apex_out.basevectors_qd(60, 15, 100, coords='apex',
-                                            precision=1e-2),
-                    apex_out._basevec(glat, glon, 100))
+    np.testing.assert_allclose(
+        apex_out.basevectors_qd(60, 15, 100, coords='apex',
+                                precision=1e-2),
+        apex_out._basevec(glat, glon, 100))
 
 
 def test_basevectors_qd_scalar_qd():
     apex_out = Apex(date=2000, refh=300)
     glat, glon, _ = apex_out.qd2geo(60, 15, 100, precision=1e-2)
-    np.testing.assert_allclose(apex_out.basevectors_qd(60, 15, 100, coords='qd',
-                                            precision=1e-2),
-                    apex_out._basevec(glat, glon, 100))
+    np.testing.assert_allclose(
+        apex_out.basevectors_qd(60, 15, 100, coords='qd',
+                                precision=1e-2),
+        apex_out._basevec(glat, glon, 100))
 
 
 # test shapes and vectorization of arguments
@@ -1038,12 +1088,15 @@ def test_basevectors_apex_vectorization_height():
     np.testing.assert_allclose(e2[:, 0], e2_1)
     np.testing.assert_allclose(e3[:, 0], e3_1)
 
-    np.testing.assert_allclose(f3[:, 0], np.array([-0.088671, -0.018272, 0.993576]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 0], np.array([0.903098, 0.245273, 0.085107]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 0], np.array([-0.103495, 1.072078, 0.01048]),
-                    rtol=1e-4)
+    np.testing.assert_allclose(f3[:, 0],
+                               np.array([-0.088671, -0.018272, 0.993576]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g1[:, 0],
+                               np.array([0.903098, 0.245273, 0.085107]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g2[:, 0],
+                               np.array([-0.103495, 1.072078, 0.01048]),
+                               rtol=1e-4)
     np.testing.assert_allclose(g3[:, 0], np.array([0, 0, 1.006465]), rtol=1e-4)
 
     np.testing.assert_allclose(f1[:, 1], f1_2)
@@ -1055,13 +1108,17 @@ def test_basevectors_apex_vectorization_height():
     np.testing.assert_allclose(e2[:, 1], e2_2)
     np.testing.assert_allclose(e3[:, 1], e3_2)
 
-    np.testing.assert_allclose(f3[:, 1], np.array([-0.085415, -0.021176, 0.989645]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 1], np.array([0.902695, 0.246919, 0.083194]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 1], np.array([-0.11051, 1.066094, 0.013274]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g3[:, 1], np.array([0, 0, 1.010463]), rtol=1e-4)
+    np.testing.assert_allclose(f3[:, 1],
+                               np.array([-0.085415, -0.021176, 0.989645]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g1[:, 1],
+                               np.array([0.902695, 0.246919, 0.083194]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g2[:, 1],
+                               np.array([-0.11051, 1.066094, 0.013274]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g3[:, 1],
+                               np.array([0, 0, 1.010463]), rtol=1e-4)
 
 
 # test scalar return values
@@ -1083,9 +1140,12 @@ def test_basevectors_apex_scalar():
     np.testing.assert_allclose(e2, e2_1)
     np.testing.assert_allclose(e3, e3_1)
 
-    np.testing.assert_allclose(f3, np.array([0.092637, -0.245951, 0.938848]), rtol=1e-4)
-    np.testing.assert_allclose(g1, np.array([0.939012, 0.073416, -0.07342]), rtol=1e-4)
-    np.testing.assert_allclose(g2, np.array([0.055389, 1.004155, 0.257594]), rtol=1e-4)
+    np.testing.assert_allclose(f3, np.array([0.092637, -0.245951, 0.938848]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g1, np.array([0.939012, 0.073416, -0.07342]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g2, np.array([0.055389, 1.004155, 0.257594]),
+                               rtol=1e-4)
     np.testing.assert_allclose(g3, np.array([0, 0, 1.065135]), rtol=1e-4)
 
 
@@ -1109,13 +1169,17 @@ def test_basevectors_apex_array():
     np.testing.assert_allclose(e2[:, 0], e2_1)
     np.testing.assert_allclose(e3[:, 0], e3_1)
 
-    np.testing.assert_allclose(f3[:, 0], np.array([0.092637, -0.245951, 0.938848]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 0], np.array([0.939012, 0.073416, -0.07342]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 0], np.array([0.055389, 1.004155, 0.257594]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g3[:, 0], np.array([0, 0, 1.065135]), rtol=1e-4)
+    np.testing.assert_allclose(f3[:, 0],
+                               np.array([0.092637, -0.245951, 0.938848]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g1[:, 0],
+                               np.array([0.939012, 0.073416, -0.07342]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g2[:, 0],
+                               np.array([0.055389, 1.004155, 0.257594]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g3[:, 0],
+                               np.array([0, 0, 1.065135]), rtol=1e-4)
 
     np.testing.assert_allclose(f1[:, 1], f1_2)
     np.testing.assert_allclose(f2[:, 1], f2_2)
@@ -1126,12 +1190,15 @@ def test_basevectors_apex_array():
     np.testing.assert_allclose(e2[:, 1], e2_2)
     np.testing.assert_allclose(e3[:, 1], e3_2)
 
-    np.testing.assert_allclose(f3[:, 1], np.array([-0.036618, -0.071019, 0.861604]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 1], np.array([0.844391, 0.015353, 0.037152]),
-                    rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 1], np.array([0.050808, 1.02131, 0.086342]),
-                    rtol=1e-4)
+    np.testing.assert_allclose(f3[:, 1],
+                               np.array([-0.036618, -0.071019, 0.861604]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g1[:, 1],
+                               np.array([0.844391, 0.015353, 0.037152]),
+                               rtol=1e-4)
+    np.testing.assert_allclose(g2[:, 1],
+                               np.array([0.050808, 1.02131, 0.086342]),
+                               rtol=1e-4)
     np.testing.assert_allclose(g3[:, 1], np.array([0, 0, 1.160625]), rtol=1e-4)
 
 
@@ -1149,8 +1216,10 @@ def test_basevectors_apex_delta():
             e = [e1, e2, e3]
             for i, j in [(i, j) for i in range(3) for j in range(3)]:
                 delta = 1 if i == j else 0
-                np.testing.assert_allclose(np.sum(f[i] * g[j]), delta, rtol=0, atol=1e-5)
-                np.testing.assert_allclose(np.sum(d[i] * e[j]), delta, rtol=0, atol=1e-5)
+                np.testing.assert_allclose(np.sum(f[i] * g[j]), delta,
+                                           rtol=0, atol=1e-5)
+                np.testing.assert_allclose(np.sum(d[i] * e[j]), delta,
+                                           rtol=0, atol=1e-5)
 
 
 def test_basevectors_apex_invalid_scalar(recwarn):
@@ -1190,8 +1259,9 @@ def test_get_apex_invalid_lat():
     apex_out.get_apex(90)
     apex_out.get_apex(-90)
 
-    np.testing.assert_allclose(apex_out.get_apex(90 + 1e-5), apex_out.get_apex(90),
-                    rtol=0, atol=1e-8)
+    np.testing.assert_allclose(apex_out.get_apex(90 + 1e-5),
+                               apex_out.get_apex(90),
+                               rtol=0, atol=1e-8)
 
 
 # ============================================================================
@@ -1279,7 +1349,8 @@ def test_get_babs():
         if isinstance(outputs, np.float64):
             outputs = [outputs]
         for j, output in enumerate(outputs):
-            np.testing.assert_allclose(output, expected[i][j], rtol=0, atol=1e-5)
+            np.testing.assert_allclose(output, expected[i][j], rtol=0,
+                                       atol=1e-5)
 
 
 # ============================================================================
@@ -1304,5 +1375,6 @@ def test_bvectors_apex():
     outputs = apex_out.bvectors_apex(*inputs, coords='geo', precision=1e-10)
     for i, output in enumerate(outputs):
         for j in range(output.size):
-            np.testing.assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,
-                            atol=1e-5)
+            np.testing.assert_allclose(output.ravel()[j],
+                                       expected[i].ravel()[j], rtol=0,
+                                       atol=1e-5)
