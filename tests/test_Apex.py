@@ -347,56 +347,6 @@ class TestApexMethod():
 
         return
 
-    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
-    def test_convert_to_mlt(self, in_coord):
-        """Test the conversions to MLT using Apex convert."""
-        in_time = dt.datetime(2000, 3, 9, 14, 25, 58)
-
-        # Get the magnetic longitude from the appropriate method
-        if in_coord == "geo":
-            apex_method = getattr(self.apex_out, "{:s}2apex".format(in_coord))
-            mlon = apex_method(60, 15, 100)[1]
-        else:
-            mlon = 15
-
-        # Get the output MLT values
-        convert_mlt = self.apex_out.convert(60, 15, in_coord, 'mlt', height=100,
-                                            ssheight=2e5, datetime=in_time)[1]
-        method_mlt = self.apex_out.mlon2mlt(mlon, in_time, ssheight=2e5)
-
-        # Test the outputs
-        np.testing.assert_allclose(convert_mlt, method_mlt)
-        return
-
-    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
-    def test_convert_mlt_to_lon(self, out_coord):
-        """Test the conversions from MLT using Apex convert."""
-        in_time = dt.datetime(2000, 3, 9, 14, 25, 58)
-
-        # Get the output longitudes
-        convert_out = self.apex_out.convert(60, 15, 'mlt', out_coord,
-                                            height=100, ssheight=2e5,
-                                            datetime=in_time, precision=1e-2)
-        mlon = self.apex_out.mlt2mlon(15, in_time, ssheight=2e5)
-
-        if out_coord == "geo":
-            method_out = self.apex_out.apex2geo(60, mlon, 100,
-                                                precision=1e-2)[:-1]
-        elif out_coord == "qd":
-            method_out = self.apex_out.apex2qd(60, mlon, 100)
-        else:
-            method_out = (60, mlon)
-
-        # Evaluate the outputs
-        np.testing.assert_allclose(convert_out, method_out)
-        return
-
-    def test_convert_geo2mlt_nodate(self):
-        """Test convert from geo to MLT raises ValueError with no datetime."""
-        with pytest.raises(ValueError):
-            self.apex_out.convert(60, 15, 'geo', 'mlt')
-        return
-
     @pytest.mark.parametrize("bad_lat", [(91), (-91)])
     def test_convert_invalid_lat(self, bad_lat):
         """Test convert raises ValueError for invalid latitudes."""
@@ -543,67 +493,112 @@ class TestApexMethod():
         assert str(aerr).find(msg) > 0
         return
 
-# ============================================================================
-#  Test mlon2mlt()
-# ============================================================================
 
+class TestApexMLTMethods():
+    """Test the Apex Magnetic Local Time (MLT) methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
+        self.in_time = dt.datetime(2000, 2, 3, 4, 5, 6)
 
-def test_mlon2mlt_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    mlon = apex_out.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6))
-    np.testing.assert_allclose(mlon, 23.019629923502603)
-    assert type(mlon) != np.ndarray
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out, self.in_time
 
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    def test_convert_to_mlt(self, in_coord):
+        """Test the conversions to MLT using Apex convert."""
 
-def test_mlon2mlt_ssheight():
-    apex_out = Apex(date=2000, refh=300)
-    mlt = apex_out.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6),
-                            ssheight=50 * 2000)
-    np.testing.assert_allclose(mlt, 23.026712036132814)
+        # Get the magnetic longitude from the appropriate method
+        if in_coord == "geo":
+            apex_method = getattr(self.apex_out, "{:s}2apex".format(in_coord))
+            mlon = apex_method(60, 15, 100)[1]
+        else:
+            mlon = 15
 
+        # Get the output MLT values
+        convert_mlt = self.apex_out.convert(60, 15, in_coord, 'mlt',
+                                            height=100, ssheight=2e5,
+                                            datetime=self.in_time)[1]
+        method_mlt = self.apex_out.mlon2mlt(mlon, self.in_time, ssheight=2e5)
 
-def test_mlon2mlt_1Darray():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.mlon2mlt([0, 180],
-                          dt.datetime(2000, 2, 3, 4, 5, 6)),
-        [23.019261, 11.019261], rtol=1e-4)
+        # Test the outputs
+        np.testing.assert_allclose(convert_mlt, method_mlt)
+        return
 
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    def test_convert_mlt_to_lon(self, out_coord):
+        """Test the conversions from MLT using Apex convert."""
+        # Get the output longitudes
+        convert_out = self.apex_out.convert(60, 15, 'mlt', out_coord,
+                                            height=100, ssheight=2e5,
+                                            datetime=self.in_time,
+                                            precision=1e-2)
+        mlon = self.apex_out.mlt2mlon(15, self.in_time, ssheight=2e5)
 
-def test_mlon2mlt_2Darray():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.mlon2mlt([[0, 180], [0, 180]],
-                          dt.datetime(2000, 2, 3, 4, 5, 6)),
-        [[23.019261, 11.019261], [23.019261, 11.019261]], rtol=1e-4)
+        if out_coord == "geo":
+            method_out = self.apex_out.apex2geo(60, mlon, 100,
+                                                precision=1e-2)[:-1]
+        elif out_coord == "qd":
+            method_out = self.apex_out.apex2qd(60, mlon, 100)
+        else:
+            method_out = (60, mlon)
 
+        # Evaluate the outputs
+        np.testing.assert_allclose(convert_out, method_out)
+        return
 
-def test_mlon2mlt_diffdates():
-    apex_out = Apex(date=2000, refh=300)
-    dtime1 = dt.datetime(2000, 2, 3, 4, 5, 6)
-    dtime2 = dt.datetime(2000, 2, 3, 5, 5, 6)
-    assert apex_out.mlon2mlt(0, dtime1) != apex_out.mlon2mlt(0, dtime2)
+    def test_convert_geo2mlt_nodate(self):
+        """Test convert from geo to MLT raises ValueError with no datetime."""
+        with pytest.raises(ValueError):
+            self.apex_out.convert(60, 15, 'geo', 'mlt')
+        return
 
+    @pytest.mark.parametrize("mlon_kwargs,test_mlt",
+                             [({}, 23.019629923502603),
+                              ({"ssheight": 100000}, 23.026712036132814)])
+    def test_mlon2mlt_scalar_inputs(self, mlon_kwargs, test_mlt):
+        """Test mlon2mlt with scalar inputs."""
+        mlt = self.apex_out.mlon2mlt(0, self.in_time, **mlon_kwargs)
 
-def test_mlon2mlt_offset():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    np.testing.assert_allclose(apex_out.mlon2mlt(0, date),
-                               apex_out.mlon2mlt(-15, date) + 1)
-    np.testing.assert_allclose(apex_out.mlon2mlt(0, date),
-                               apex_out.mlon2mlt(-10 * 15, date) + 10)
+        np.testing.assert_allclose(mlt, test_mlt)
+        assert np.asarray(mlt).shape == ()
+        return
 
+    @pytest.mark.parametrize("mlon,test_mlt",
+                             [([0, 180], [23.019261, 11.019261]),
+                              (np.array([0, 180]), [23.019261, 11.019261]),
+                              ([[0, 180], [0, 180]], [[23.019261, 11.019261],
+                                                      [23.019261, 11.019261]]),
+                              (range(0, 361, 30),
+                               [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
+                                9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
+                                19.01963, 21.01963, 23.01963])])
+    def test_mlon2mlt_array(self, mlon, test_mlt):
+        """Test mlon2mlt with array inputs."""
+        mlt = self.apex_out.mlon2mlt(mlon, self.in_time)
 
-def test_mlon2mlt_range():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.mlon2mlt(range(0, 361, 30),
-                          dt.datetime(2000, 2, 3, 4, 5, 6)),
-        [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
-         9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
-         19.01963, 21.01963, 23.01963],
-        rtol=1e-4)
+        assert mlt.shape == np.asarray(test_mlt).shape
+        np.testing.assert_allclose(mlt, test_mlt, rtol=1e-4)
+        return
 
+    def test_mlon2mlt_diffdates(self):
+        """Test that MLT varies with universal time."""
+        mlt1 = self.apex_out.mlon2mlt(0, self.in_time)
+        mlt2 = self.apex_out.mlon2mlt(0, self.in_time + dt.timedelta(hours=1))
+
+        assert mlt1 != mlt2
+        return
+
+    @pytest.mark.parametrize("mlt_offset", [1.0, 10.0])
+    def test_mlon2mlt_offset(self, mlt_offset):
+        """Test the time wrapping logic for the MLT."""
+        mlt1 = self.apex_out.mlon2mlt(0.0, self.in_time)
+        mlt2 = self.apex_out.mlon2mlt(-15.0 * mlt_offset,
+                                      self.in_time) + mlt_offset
+
+        np.testing.assert_allclose(mlt1, mlt2)
+        return
 
 # ============================================================================
 #  Test mlt2mlon()
