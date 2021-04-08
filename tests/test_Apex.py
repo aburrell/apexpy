@@ -565,6 +565,17 @@ class TestApexMLTMethods():
         assert np.asarray(mlt).shape == ()
         return
 
+    @pytest.mark.parametrize("mlt_kwargs,test_mlon",
+                             [({}, 14.705535888671875),
+                              ({"ssheight": 100000}, 14.599319458007812)])
+    def test_mlt2mlon_scalar_inputs(self, mlt_kwargs, test_mlon):
+        """Test mlt2mlon with scalar inputs."""
+        mlon = self.apex_out.mlt2mlon(0, self.in_time, **mlt_kwargs)
+
+        np.testing.assert_allclose(mlon, test_mlon)
+        assert np.asarray(mlon).shape == ()
+        return
+
     @pytest.mark.parametrize("mlon,test_mlt",
                              [([0, 180], [23.019261, 11.019261]),
                               (np.array([0, 180]), [23.019261, 11.019261]),
@@ -582,10 +593,30 @@ class TestApexMLTMethods():
         np.testing.assert_allclose(mlt, test_mlt, rtol=1e-4)
         return
 
-    def test_mlon2mlt_diffdates(self):
+    @pytest.mark.parametrize("mlt,test_mlon",
+                             [([0, 12], [14.705551, 194.705551]),
+                              (np.array([0, 12]), [14.705551, 194.705551]),
+                              ([[0, 12], [0, 12]], [[14.705551, 194.705551],
+                                                    [14.705551, 194.705551]]),
+                              (range(0, 25, 2),
+                               [14.705551, 44.705551, 74.705551, 104.705551,
+                                134.705551, 164.705551, 194.705551, 224.705551,
+                                254.705551, 284.705551, 314.705551, 344.705551,
+                                14.705551])])
+    def test_mlt2mlon_array(self, mlt, test_mlon):
+        """Test mlt2mlon with array inputs."""
+        mlon = self.apex_out.mlt2mlon(mlt, self.in_time)
+
+        assert mlon.shape == np.asarray(test_mlon).shape
+        np.testing.assert_allclose(mlon, test_mlon, rtol=1e-4)
+        return
+
+    @pytest.mark.parametrize("method_name", ["mlon2mlt", "mlt2mlon"])
+    def test_mlon2mlt_diffdates(self, method_name):
         """Test that MLT varies with universal time."""
-        mlt1 = self.apex_out.mlon2mlt(0, self.in_time)
-        mlt2 = self.apex_out.mlon2mlt(0, self.in_time + dt.timedelta(hours=1))
+        apex_method = getattr(self.apex_out, method_name)
+        mlt1 = apex_method(0, self.in_time)
+        mlt2 = apex_method(0, self.in_time + dt.timedelta(hours=1))
 
         assert mlt1 != mlt2
         return
@@ -600,101 +631,28 @@ class TestApexMLTMethods():
         np.testing.assert_allclose(mlt1, mlt2)
         return
 
-# ============================================================================
-#  Test mlt2mlon()
-# ============================================================================
+    @pytest.mark.parametrize("mlon_offset", [15.0, 150.0])
+    def test_mlt2mlon_offset(self, mlon_offset):
+        """Test the time wrapping logic for the magnetic longitude."""
+        mlon1 = self.apex_out.mlt2mlon(0, self.in_time)
+        mlon2 = self.apex_out.mlt2mlon(mlon_offset / 15.0,
+                                       self.in_time) - mlon_offset
 
+        np.testing.assert_allclose(mlon1, mlon2)
+        return
 
-def test_mlt2mlon_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    mlt = apex_out.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6))
-    np.testing.assert_allclose(mlt, 14.705535888671875)
-    assert type(mlt) != np.ndarray
+    @pytest.mark.parametrize("order", [["mlt", "mlon"], ["mlon", "mlt"]])
+    @pytest.mark.parametrize("start_val", [0, 6, 12, 18, 22])
+    def test_convert_and_return(self, order, start_val):
+        """Test the conversion to magnetic longitude or MLT and back again."""
+        first_method = getattr(self.apex_out, "2".join(order))
+        second_method = getattr(self.apex_out, "2".join([order[1], order[0]]))
 
+        middle_val = first_method(start_val, self.in_time)
+        end_val = second_method(middle_val, self.in_time)
 
-def test_mlt2mlon_ssheight():
-    apex_out = Apex(date=2000, refh=300)
-    mlt = apex_out.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6),
-                            ssheight=50 * 2000)
-    np.testing.assert_allclose(mlt, 14.599319458007812)
-
-
-def test_mlt2mlon_1Darray():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.mlt2mlon([0, 12],
-                          dt.datetime(2000, 2, 3, 4, 5, 6)),
-        [14.705551, 194.705551], rtol=1e-4)
-
-
-def test_mlt2mlon_2Darray():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.mlt2mlon([[0, 12], [0, 12]],
-                          dt.datetime(2000, 2, 3, 4, 5, 6)),
-        [[14.705551, 194.705551], [14.705551, 194.705551]], rtol=1e-4)
-
-
-def test_mlt2mlon_diffdates():
-    apex_out = Apex(date=2000, refh=300)
-    dtime1 = dt.datetime(2000, 2, 3, 4, 5, 6)
-    dtime2 = dt.datetime(2000, 2, 3, 5, 5, 6)
-    assert apex_out.mlt2mlon(0, dtime1) != apex_out.mlt2mlon(0, dtime2)
-
-
-def test_mlt2mlon_offset():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    np.testing.assert_allclose(apex_out.mlt2mlon(0, date),
-                               apex_out.mlt2mlon(1, date) - 15)
-    np.testing.assert_allclose(apex_out.mlt2mlon(0, date),
-                               apex_out.mlt2mlon(10, date) - 150)
-
-
-def test_mlt2mlon_range():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.mlt2mlon(range(0, 25, 2),
-                          dt.datetime(2000, 2, 3, 4, 5, 6)),
-        [14.705551, 44.705551, 74.705551, 104.705551, 134.705551,
-         164.705551, 194.705551, 224.705551, 254.705551, 284.705551,
-         314.705551, 344.705551, 14.705551],
-        rtol=1e-4)
-
-
-# ============================================================================
-#  Test mlt/mlon back and forth
-# ============================================================================
-
-
-def test_mlon2mlt2mlon():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(0, date),
-                                                 date), 0)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(6, date),
-                                                 date), 6)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(12, date),
-                                                 date), 12)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(18, date),
-                                                 date), 18)
-    np.testing.assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(24, date),
-                                                 date), 0)
-
-
-def test_mlt2mlon2mlt():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(0, date),
-                                                 date), 0)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(90, date),
-                                                 date), 90)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(180, date),
-                                                 date), 180)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(270, date),
-                                                 date), 270)
-    np.testing.assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(360, date),
-                                                 date), 0)
+        np.testing.assert_allclose(start_val, end_val)
+        return
 
 
 # ============================================================================
