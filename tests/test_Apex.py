@@ -655,68 +655,67 @@ class TestApexMLTMethods():
         return
 
 
-# ============================================================================
-#  Test the map_to_height() method
-# ============================================================================
+class TestApexMapMethods():
+    """Test the Apex height mapping methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
 
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out
 
-def test_map_to_height():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.map_to_height(60, 15, 100, 10000, conjugate=False,
-                               precision=1e-10),
-        (31.841466903686523, 17.916635513305664,
-         1.7075473124350538e-6))
-    np.testing.assert_allclose(
-        apex_out.map_to_height(30, 170, 100, 500, conjugate=False,
-                               precision=1e-2),
-        (25.727270126342773, 169.60546875, 0.00017573432705830783))
+    @pytest.mark.parametrize("in_args,test_mapped",
+                             [([60, 15, 100, 10000],
+                               [31.841466903686523, 17.916635513305664,
+                                1.7075473124350538e-6]),
+                              ([30, 170, 100, 500, False, 1e-2],
+                               [25.727270126342773, 169.60546875,
+                                0.00017573432705830783]),
+                              ([60, 15, 100, 10000, True],
+                               [-25.424888610839844, 27.310426712036133,
+                                1.2074182222931995e-6]),
+                              ([30, 170, 100, 500, True, 1e-2],
+                               [-13.76642894744873, 164.24259948730469,
+                                0.00056820799363777041])])
+    def test_map_to_height(self, in_args, test_mapped):
+        """Test the map_to_height function."""
+        mapped = self.apex_out.map_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, atol=1e-6)
+        return
 
+    def test_map_to_height_same_height(self):
+        """Test the map_to_height function when mapping to same height."""
+        mapped = self.apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
+                                             precision=1e-10)
+        np.testing.assert_allclose(mapped, (60.0, 15.000003814697266, 0.0),
+                                   rtol=1e-5)
+        return
 
-def test_map_to_height_same_height():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
-                               precision=1e-10),
-        (60.0, 15.000003814697266, 0.0), rtol=1e-5)
+    @pytest.mark.parametrize('ivec', range(0, 4))
+    def test_map_to_height_vectorization(self, ivec):
+        """Test map_to_height with array input."""
+        # Set the base input and output values
+        in_args = [60, 15, 100, 100]
+        test_mapped = np.full(shape=(2, 3),
+                              fill_value=[60, 15.00000381, 0.0]).transpose()
 
+        # Update inputs for one vectorized value
+        in_args[ivec] = [in_args[ivec], in_args[ivec]]
 
-def test_map_to_height_conjugate():
-    """Test results of map_to_height using conjugacy."""
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
-                               precision=1e-10),
-        (-25.424888610839844, 27.310426712036133,
-         1.2074182222931995e-6), atol=1e-6)
-    np.testing.assert_allclose(
-        apex_out.map_to_height(30, 170, 100, 500, conjugate=True,
-                               precision=1e-2),
-        (-13.76642894744873, 164.24259948730469,
-         0.00056820799363777041), atol=1e-6)
+        # Calculate and test function
+        mapped = self.apex_out.map_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
 
+    def test_map_to_height_ApexHeightError(self):
+        """Test map_to_height raises ApexHeightError."""
 
-def test_map_to_height_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.map_to_height([60, 60], 15, 100, 100),
-                               ([60] * 2, [15.00000381] * 2, [0] * 2),
-                               rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_to_height(60, [15, 15], 100, 100),
-                               ([60] * 2, [15.00000381] * 2, [0] * 2),
-                               rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_to_height(60, 15, [100, 100], 100),
-                               ([60] * 2, [15.00000381] * 2, [0] * 2),
-                               rtol=1e-5)
-    np.testing.assert_allclose(apex_out.map_to_height(60, 15, 100, [100, 100]),
-                               ([60] * 2, [15.00000381] * 2, [0] * 2),
-                               rtol=1e-5)
+        with pytest.raises(ApexHeightError) as aerr:
+            self.apex_out.map_to_height(0, 15, 100, 10000)
 
-
-def test_map_to_height_ApexHeightError():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ApexHeightError):
-        apex_out.map_to_height(0, 15, 100, 10000)
-
+        assert str(aerr).find("newheight is > apex height") >= 0
+        return
 
 # ============================================================================
 #  Test the map_E_to_height() method
