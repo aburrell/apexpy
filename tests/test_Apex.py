@@ -714,7 +714,7 @@ class TestApexMapMethods():
         with pytest.raises(ApexHeightError) as aerr:
             self.apex_out.map_to_height(0, 15, 100, 10000)
 
-        assert aerr.match("newheight is > apex height")
+        assert aerr.match("height is > apex height")
         return
 
 # ============================================================================
