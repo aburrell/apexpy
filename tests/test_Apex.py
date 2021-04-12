@@ -693,7 +693,7 @@ class TestApexMapMethods():
         return
 
     @pytest.mark.parametrize('ivec', range(0, 4))
-    def test_map_to_height_vectorization(self, ivec):
+    def test_map_to_height_array_location(self, ivec):
         """Test map_to_height with array input."""
         # Set the base input and output values
         in_args = [60, 15, 100, 100]
@@ -711,6 +711,8 @@ class TestApexMapMethods():
     @pytest.mark.parametrize("method_name,in_args",
                              [("map_to_height", [0, 15, 100, 10000]),
                               ("map_E_to_height",
+                               [0, 15, 100, 10000, [1, 2, 3]]),
+                              ("map_V_to_height",
                                [0, 15, 100, 10000, [1, 2, 3]])])
     def test_mapping_height_raises_ApexHeightError(self, method_name, in_args):
         """Test map_to_height raises ApexHeightError."""
@@ -760,76 +762,43 @@ class TestApexMapMethods():
         np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
         return
 
+    @pytest.mark.parametrize("in_args,test_mapped",
+                             [([60, 15, 100, 500, [1, 2, 3]],
+                               [0.81971957, 2.84512495, 0.69545001]),
+                              ([60, 15, 100, 500, [2, 3, 4]],
+                               [1.83027746, 4.14346436, 0.94764179]),
+                              ([60, 15, 100, 1000, [1, 2, 3]],
+                               [0.92457698, 3.14997661, 0.85135187]),
+                              ([60, 15, 200, 500, [1, 2, 3]],
+                               [0.80388262, 2.79321504, 0.68285158]),
+                              ([60, 30, 100, 500, [1, 2, 3]],
+                               [0.76141245, 2.87884673, 0.73655941]),
+                              ([70, 15, 100, 500, [1, 2, 3]],
+                               [0.84681866, 2.5925821,  0.34792655])])
+    def test_map_V_to_height_scalar_location(self, in_args, test_mapped):
+        """Test mapping of velocity to a specified height."""
+        mapped = self.apex_out.map_V_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
 
-# ============================================================================
-#  Test the map_V_to_height() method
-# ============================================================================
+    @pytest.mark.parametrize('ivec', range(0, 5))
+    def test_map_V_to_height_array_location(self, ivec):
+        """Test mapping of velocity to a specified height with array input."""
+        # Set the base input and output values
+        evel = np.array([[1, 2, 3]] * 2).transpose()
+        in_args = [60, 15, 100, 500, evel]
+        test_mapped = np.full(shape=(2, 3),
+                              fill_value=[0.81971957, 2.84512495,
+                                          0.69545001]).transpose()
 
+        # Update inputs for one vectorized value if this is a location input
+        if ivec < 4:
+            in_args[ivec] = [in_args[ivec], in_args[ivec]]
 
-def test_map_V_to_height():
-    apex_out = Apex(date=2000, refh=300)
-    out_60_15_100_500 = [0.81971957, 2.84512495, 0.69545001]
-    out_60_15_100_500_234 = [1.83027746, 4.14346436, 0.94764179]
-    out_60_15_100_1000 = [0.92457698, 3.14997661, 0.85135187]
-    out_60_15_200_500 = [0.80388262, 2.79321504, 0.68285158]
-    out_60_30_100_500 = [0.76141245, 2.87884673, 0.73655941]
-    out_70_15_100_500 = [0.84681866, 2.5925821,  0.34792655]
-
-    # scalar
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 15, 100, 500, [1, 2, 3]),
-        out_60_15_100_500, rtol=1e-5)
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 15, 100, 500, [2, 3, 4]),
-        out_60_15_100_500_234, rtol=1e-5)
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 15, 100, 1000, [1, 2, 3]),
-        out_60_15_100_1000, rtol=1e-5)
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 15, 200, 500, [1, 2, 3]),
-        out_60_15_200_500, rtol=1e-5)
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 30, 100, 500, [1, 2, 3]),
-        out_60_30_100_500, rtol=1e-5)
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(70, 15, 100, 500, [1, 2, 3]),
-        out_70_15_100_500, rtol=1e-5)
-
-    # vectorize lat
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height([60, 70], 15, 100, 500,
-                                 np.array([[1, 2, 3]] * 2).T),
-        np.array([out_60_15_100_500, out_70_15_100_500]).T,
-        rtol=1e-5)
-
-    # vectorize lon
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, [15, 30], 100, 500,
-                                 np.array([[1, 2, 3]] * 2).T),
-        np.array([out_60_15_100_500, out_60_30_100_500]).T,
-        rtol=1e-5)
-
-    # vectorize height
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 15, [100, 200], 500,
-                                 np.array([[1, 2, 3]] * 2).T),
-        np.array([out_60_15_100_500, out_60_15_200_500]).T,
-        rtol=1e-5)
-
-    # vectorize newheight
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 15, 100, [500, 1000],
-                                 np.array([[1, 2, 3]] * 2).T),
-        np.array([out_60_15_100_500, out_60_15_100_1000]).T,
-        rtol=1e-5)
-
-    # vectorize E
-    np.testing.assert_allclose(
-        apex_out.map_V_to_height(60, 15, 100, 500,
-                                 np.array([[1, 2, 3],
-                                           [2, 3, 4]]).T),
-        np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
-        rtol=1e-5)
+        # Get the mapped output and test the results
+        mapped = self.apex_out.map_V_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
 
 
 # ============================================================================
