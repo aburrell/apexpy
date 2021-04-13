@@ -801,218 +801,107 @@ class TestApexMapMethods():
         return
 
 
-# ============================================================================
-#  Test basevectors_qd()
-# ============================================================================
+class TestApexBasevectorMethods():
+    """Test the Apex height base vector methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
+        self.test_basevec = None
 
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out, self.test_basevec
 
-# test coords
+    def get_comparison_results(self, bv_coord, coords, precision):
+        """Get the base vector results using the hidden function for comparison.
 
-def test_basevectors_qd_scalar_geo():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(
-        apex_out.basevectors_qd(60, 15, 100, coords='geo'),
-        apex_out._basevec(60, 15, 100))
+        Parameters
+        ----------
+        bv_coord : str
+            Basevector coordinate scheme, expects on of 'apex' or 'qd'
+        coords : str
+            Expects one of 'geo', 'apex', or 'qd'
+        precision : float
+            Float specifiying precision
 
+        """
+        if coords == "geo":
+            glat = 60
+            glon = 15
+        else:
+            apex_method = getattr(self.apex_out, "{:s}2geo".format(coords))
+            glat, glon, _ = apex_method(60, 15, 100, precision=precision)
 
-def test_basevectors_qd_scalar_apex():
-    apex_out = Apex(date=2000, refh=300)
-    glat, glon, _ = apex_out.apex2geo(60, 15, 100, precision=1e-2)
-    np.testing.assert_allclose(
-        apex_out.basevectors_qd(60, 15, 100, coords='apex',
-                                precision=1e-2),
-        apex_out._basevec(glat, glon, 100))
+        if bv_coord == 'qd':
+            self.test_basevec = self.apex_out._basevec(glat, glon, 100)
+        else:
+            (_, _, _, _, f1, f2, _, d1, d2, d3, _, e1, e2,
+             e3) = self.apex_out._geo2apexall(glat, glon, 100)
+            self.test_basevec = (f1, f2, d1, d2, d3, e1, e2, e3)
 
+        return
 
-def test_basevectors_qd_scalar_qd():
-    apex_out = Apex(date=2000, refh=300)
-    glat, glon, _ = apex_out.qd2geo(60, 15, 100, precision=1e-2)
-    np.testing.assert_allclose(
-        apex_out.basevectors_qd(60, 15, 100, coords='qd',
-                                precision=1e-2),
-        apex_out._basevec(glat, glon, 100))
+    @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
+    @pytest.mark.parametrize("coords,precision",
+                             [("geo", 1e-10), ("apex", 1.0e-2), ("qd", 1.0e-2)])
+    def test_basevectors_scalar(self, bv_coord, coords, precision):
+        """Test the base vector calculations with scalars."""
+        # Get the base vectors
+        base_method = getattr(self.apex_out,
+                              "basevectors_{:s}".format(bv_coord))
+        basevec = base_method(60, 15, 100, coords=coords, precision=precision)
+        self.get_comparison_results(bv_coord, coords, precision)
+        if bv_coord == "apex":
+            basevec = list(basevec)
+            for i in range(4):
+                # Not able to compare indices 2, 3, 4, and 5
+                basevec.pop(2)
 
+        # Test the results
+        for i, vec in enumerate(basevec):
+            np.testing.assert_allclose(vec, self.test_basevec[i])
+        return
 
-# test shapes and vectorization of arguments
-def test_basevectors_qd_scalar_shape():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_qd(60, 15, 100)
-    for r in ret:
-        assert r.shape == (2,)
+    @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
+    def test_basevectors_scalar_shape(self, bv_coord):
+        """Test the shape of the scalar output."""
+        base_method = getattr(self.apex_out,
+                              "basevectors_{:s}".format(bv_coord))
+        basevec = base_method(60, 15, 100)
 
+        for i, vec in enumerate(basevec):
+            if i < 2:
+                assert vec.shape == (2,)
+            else:
+                assert vec.shape == (3,)
+        return
 
-def test_basevectors_qd_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_qd([60, 60, 60, 60], 15, 100, coords='geo')
-    for r in ret:
-        assert r.shape == (2, 4)
-    ret = apex_out.basevectors_qd(60, [15, 15, 15, 15], 100, coords='geo')
-    for r in ret:
-        assert r.shape == (2, 4)
-    ret = apex_out.basevectors_qd(60, 15, [100, 100, 100, 100], coords='geo')
-    for r in ret:
-        assert r.shape == (2, 4)
+    @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
+    @pytest.mark.parametrize("ivec", range(3))
+    def test_basevectors_array(self, bv_coord, ivec):
+        """Test the output shape for array inputs."""
+        # Define the input arguments
+        in_args = [60, 15, 100]
+        in_args[ivec] = [in_args[ivec] for i in range(4)]
 
+        # Get the basevectors
+        base_method = getattr(self.apex_out,
+                              "basevectors_{:s}".format(bv_coord))
+        basevec = base_method(*in_args, coords='geo', precision=1e-10)
+        self.get_comparison_results(bv_coord, "geo", 1e-10)
+        if bv_coord == "apex":
+            basevec = list(basevec)
+            for i in range(4):
+                # Not able to compare indices 2, 3, 4, and 5
+                basevec.pop(2)
 
-# test array return values
-
-def test_basevectors_qd_array():
-    apex_out = Apex(date=2000, refh=300)
-    f1, f2 = apex_out.basevectors_qd([0, 30], 15, 100, coords='geo')
-    f1_lat0, f2_lat0 = apex_out._basevec(0, 15, 100)
-    f1_lat30, f2_lat30 = apex_out._basevec(30, 15, 100)
-    np.testing.assert_allclose(f1[:, 0], f1_lat0)
-    np.testing.assert_allclose(f2[:, 0], f2_lat0)
-    np.testing.assert_allclose(f1[:, 1], f1_lat30)
-    np.testing.assert_allclose(f2[:, 1], f2_lat30)
-
-
-# ============================================================================
-#  Test basevectors_apex()
-# ============================================================================
-
-
-# test against return from _geo2apexall for different coords
-
-def test_basevectors_apex_scalar_geo():
-    apex_out = Apex(date=2000, refh=300)
-
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, 100, coords='geo')
-
-    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
-     e3_) = apex_out._geo2apexall(60, 15, 100)
-
-    np.testing.assert_allclose(f1, f1_)
-    np.testing.assert_allclose(f2, f2_)
-    np.testing.assert_allclose(d1, d1_)
-    np.testing.assert_allclose(d2, d2_)
-    np.testing.assert_allclose(d3, d3_)
-    np.testing.assert_allclose(e1, e1_)
-    np.testing.assert_allclose(e2, e2_)
-    np.testing.assert_allclose(e3, e3_)
-
-
-def test_basevectors_apex_scalar_apex():
-    apex_out = Apex(date=2000, refh=300)
-
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, 100, coords='apex', precision=1e-2)
-
-    glat, glon, _ = apex_out.apex2geo(60, 15, 100, precision=1e-2)
-    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
-     e3_) = apex_out._geo2apexall(glat, glon, 100)
-
-    np.testing.assert_allclose(f1, f1_)
-    np.testing.assert_allclose(f2, f2_)
-    np.testing.assert_allclose(d1, d1_)
-    np.testing.assert_allclose(d2, d2_)
-    np.testing.assert_allclose(d3, d3_)
-    np.testing.assert_allclose(e1, e1_)
-    np.testing.assert_allclose(e2, e2_)
-    np.testing.assert_allclose(e3, e3_)
-
-
-def test_basevectors_apex_scalar_qd():
-    apex_out = Apex(date=2000, refh=300)
-
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, 100, coords='qd', precision=1e-2)
-
-    glat, glon, _ = apex_out.qd2geo(60, 15, 100, precision=1e-2)
-    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
-     e3_) = apex_out._geo2apexall(glat, glon, 100)
-
-    np.testing.assert_allclose(f1, f1_)
-    np.testing.assert_allclose(f2, f2_)
-    np.testing.assert_allclose(d1, d1_)
-    np.testing.assert_allclose(d2, d2_)
-    np.testing.assert_allclose(d3, d3_)
-    np.testing.assert_allclose(e1, e1_)
-    np.testing.assert_allclose(e2, e2_)
-    np.testing.assert_allclose(e3, e3_)
-
-
-# test shapes and vectorization of arguments
-
-def test_basevectors_apex_scalar_shape():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_apex(60, 15, 100, precision=1e-2)
-    for r in ret[:2]:
-        assert r.shape == (2,)
-    for r in ret[2:]:
-        assert r.shape == (3,)
-
-
-def test_basevectors_apex_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_apex([60, 60, 60, 60], 15, 100)
-    for r in ret[:2]:
-        assert r.shape == (2, 4)
-    for r in ret[2:]:
-        assert r.shape == (3, 4)
-    ret = apex_out.basevectors_apex(60, [15, 15, 15, 15], 100)
-    for r in ret[:2]:
-        assert r.shape == (2, 4)
-    for r in ret[2:]:
-        assert r.shape == (3, 4)
-    ret = apex_out.basevectors_apex(60, 15, [100, 100, 100, 100])
-    for r in ret[:2]:
-        assert r.shape == (2, 4)
-    for r in ret[2:]:
-        assert r.shape == (3, 4)
-
-
-# test correct vectorization of height
-def test_basevectors_apex_vectorization_height():
-    apex_out = Apex(date=2000, refh=0)
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, [200, 400], coords='geo')
-    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
-     e3_1) = apex_out._geo2apexall(60, 15, 200)
-    (_, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2,
-     e3_2) = apex_out._geo2apexall(60, 15, 400)
-
-    np.testing.assert_allclose(f1[:, 0], f1_1)
-    np.testing.assert_allclose(f2[:, 0], f2_1)
-    np.testing.assert_allclose(d1[:, 0], d1_1)
-    np.testing.assert_allclose(d2[:, 0], d2_1)
-    np.testing.assert_allclose(d3[:, 0], d3_1)
-    np.testing.assert_allclose(e1[:, 0], e1_1)
-    np.testing.assert_allclose(e2[:, 0], e2_1)
-    np.testing.assert_allclose(e3[:, 0], e3_1)
-
-    np.testing.assert_allclose(f3[:, 0],
-                               np.array([-0.088671, -0.018272, 0.993576]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 0],
-                               np.array([0.903098, 0.245273, 0.085107]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 0],
-                               np.array([-0.103495, 1.072078, 0.01048]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g3[:, 0], np.array([0, 0, 1.006465]), rtol=1e-4)
-
-    np.testing.assert_allclose(f1[:, 1], f1_2)
-    np.testing.assert_allclose(f2[:, 1], f2_2)
-    np.testing.assert_allclose(d1[:, 1], d1_2)
-    np.testing.assert_allclose(d2[:, 1], d2_2)
-    np.testing.assert_allclose(d3[:, 1], d3_2)
-    np.testing.assert_allclose(e1[:, 1], e1_2)
-    np.testing.assert_allclose(e2[:, 1], e2_2)
-    np.testing.assert_allclose(e3[:, 1], e3_2)
-
-    np.testing.assert_allclose(f3[:, 1],
-                               np.array([-0.085415, -0.021176, 0.989645]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 1],
-                               np.array([0.902695, 0.246919, 0.083194]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 1],
-                               np.array([-0.11051, 1.066094, 0.013274]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g3[:, 1],
-                               np.array([0, 0, 1.010463]), rtol=1e-4)
+        # Evaluate the shape and the values
+        for i, vec in enumerate(basevec):
+            idim = 2 if i < 2 else 3
+            assert vec.shape == (idim, 4)
+            assert np.all(self.test_basevec[i][0] == vec[0])
+            assert np.all(self.test_basevec[i][1] == vec[1])
+        return
 
 
 # test scalar return values
