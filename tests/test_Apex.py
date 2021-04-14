@@ -903,123 +903,61 @@ class TestApexBasevectorMethods():
             assert np.all(self.test_basevec[i][1] == vec[1])
         return
 
+    def test_basevectors_apex_extra_values(self):
+        """Test specific values in the apex base vector output."""
+        # Set the testing arrays
+        self.test_basevec = [np.array([0.092637, -0.245951, 0.938848]),
+                             np.array([0.939012, 0.073416, -0.07342]),
+                             np.array([0.055389, 1.004155, 0.257594]),
+                             np.array([0, 0, 1.065135])]
 
-# test scalar return values
+        # Get the desired output
+        basevec = self.apex_out.basevectors_apex(0, 15, 100, coords='geo')
 
-def test_basevectors_apex_scalar():
-    apex_out = Apex(date=2000, refh=300)
+        # Test the values not covered by `test_basevectors_scalar`
+        for itest, ibase in enumerate(np.arange(2, 6, 1)):
+            np.testing.assert_allclose(basevec[ibase],
+                                       self.test_basevec[itest], rtol=1e-4)
+        return
 
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(0, 15, 100, coords='geo')
-    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
-     e3_1) = apex_out._geo2apexall(0, 15, 100)
+    @pytest.mark.parametrize("lat", range(0, 90, 10))
+    @pytest.mark.parametrize("lon", range(0, 360, 15))
+    def test_basevectors_apex_delta(self, lat, lon):
+        """Test that vectors are calculated correctly."""
+        # Get the apex base vectors and sort them for easy testing
+        (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+         e3) = self.apex_out.basevectors_apex(lat, lon, 500)
+        fvec = [np.append(f1, 0), np.append(f2, 0), f3]
+        gvec = [g1, g2, g3]
+        dvec = [d1, d2, d3]
+        evec = [e1, e2, e3]
 
-    np.testing.assert_allclose(f1, f1_1)
-    np.testing.assert_allclose(f2, f2_1)
-    np.testing.assert_allclose(d1, d1_1)
-    np.testing.assert_allclose(d2, d2_1)
-    np.testing.assert_allclose(d3, d3_1)
-    np.testing.assert_allclose(e1, e1_1)
-    np.testing.assert_allclose(e2, e2_1)
-    np.testing.assert_allclose(e3, e3_1)
+        for idelta, jdelta in [(i, j) for i in range(3) for j in range(3)]:
+            delta = 1 if idelta == jdelta else 0
+            np.testing.assert_allclose(np.sum(fvec[idelta] * gvec[jdelta]),
+                                       delta, rtol=0, atol=1e-5)
+            np.testing.assert_allclose(np.sum(dvec[idelta] * evec[jdelta]),
+                                       delta, rtol=0, atol=1e-5)
+        return
 
-    np.testing.assert_allclose(f3, np.array([0.092637, -0.245951, 0.938848]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g1, np.array([0.939012, 0.073416, -0.07342]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g2, np.array([0.055389, 1.004155, 0.257594]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g3, np.array([0, 0, 1.065135]), rtol=1e-4)
+    def test_basevectors_apex_invalid_scalar(self):
+        """Test warning and fill values for base vectors with bad inputs."""
+        self.apex_out = Apex(date=2000, refh=10000)
+        invalid = np.full(shape=(3,), fill_value=np.nan)
 
+        # Get the output and the warnings
+        with warnings.catch_warnings(record=True) as warn_rec:
+            basevec = self.apex_out.basevectors_apex(0, 0, 0)
 
-# test 1D array return values
+        for i, bvec in enumerate(basevec):
+            if i < 2:
+                assert not np.allclose(bvec, invalid[:2])
+            else:
+                np.testing.assert_allclose(bvec, invalid)
 
-def test_basevectors_apex_array():
-    apex_out = Apex(date=2000, refh=300)
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex([0, 30], 15, 100, coords='geo')
-    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
-     e3_1) = apex_out._geo2apexall(0, 15, 100)
-    (_, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2,
-     e3_2) = apex_out._geo2apexall(30, 15, 100)
-
-    np.testing.assert_allclose(f1[:, 0], f1_1)
-    np.testing.assert_allclose(f2[:, 0], f2_1)
-    np.testing.assert_allclose(d1[:, 0], d1_1)
-    np.testing.assert_allclose(d2[:, 0], d2_1)
-    np.testing.assert_allclose(d3[:, 0], d3_1)
-    np.testing.assert_allclose(e1[:, 0], e1_1)
-    np.testing.assert_allclose(e2[:, 0], e2_1)
-    np.testing.assert_allclose(e3[:, 0], e3_1)
-
-    np.testing.assert_allclose(f3[:, 0],
-                               np.array([0.092637, -0.245951, 0.938848]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 0],
-                               np.array([0.939012, 0.073416, -0.07342]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 0],
-                               np.array([0.055389, 1.004155, 0.257594]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g3[:, 0],
-                               np.array([0, 0, 1.065135]), rtol=1e-4)
-
-    np.testing.assert_allclose(f1[:, 1], f1_2)
-    np.testing.assert_allclose(f2[:, 1], f2_2)
-    np.testing.assert_allclose(d1[:, 1], d1_2)
-    np.testing.assert_allclose(d2[:, 1], d2_2)
-    np.testing.assert_allclose(d3[:, 1], d3_2)
-    np.testing.assert_allclose(e1[:, 1], e1_2)
-    np.testing.assert_allclose(e2[:, 1], e2_2)
-    np.testing.assert_allclose(e3[:, 1], e3_2)
-
-    np.testing.assert_allclose(f3[:, 1],
-                               np.array([-0.036618, -0.071019, 0.861604]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g1[:, 1],
-                               np.array([0.844391, 0.015353, 0.037152]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g2[:, 1],
-                               np.array([0.050808, 1.02131, 0.086342]),
-                               rtol=1e-4)
-    np.testing.assert_allclose(g3[:, 1], np.array([0, 0, 1.160625]), rtol=1e-4)
-
-
-# test that vectors are calculated correctly
-
-def test_basevectors_apex_delta():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in range(0, 90, 10):
-        for lon in range(0, 360, 15):
-            (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-             e3) = apex_out.basevectors_apex(lat, lon, 500)
-            f = [np.append(f1, 0), np.append(f2, 0), f3]
-            g = [g1, g2, g3]
-            d = [d1, d2, d3]
-            e = [e1, e2, e3]
-            for i, j in [(i, j) for i in range(3) for j in range(3)]:
-                delta = 1 if i == j else 0
-                np.testing.assert_allclose(np.sum(f[i] * g[j]), delta,
-                                           rtol=0, atol=1e-5)
-                np.testing.assert_allclose(np.sum(d[i] * e[j]), delta,
-                                           rtol=0, atol=1e-5)
-
-
-def test_basevectors_apex_invalid_scalar(recwarn):
-    """Test warning and fill values for calculating base vectors with bad value.
-    """
-    apex_out = Apex(date=2000, refh=10000)
-    base_vecs = apex_out.basevectors_apex(0, 0, 0)
-
-    assert issubclass(recwarn[-1].category, UserWarning)
-    assert 'set to NaN where' in str(recwarn[-1].message)
-
-    invalid = np.ones(3) * np.nan
-    for i, bvec in enumerate(base_vecs):
-        if i < 2:
-            assert not np.allclose(bvec, invalid[:2])
-        else:
-            np.testing.assert_allclose(bvec, invalid)
+        assert issubclass(warn_rec[-1].category, UserWarning)
+        assert 'set to NaN where' in str(warn_rec[-1].message)
+        return
 
 
 # ============================================================================
