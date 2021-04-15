@@ -22,6 +22,34 @@ from apexpy import fortranapex as fa
 from apexpy import Apex, ApexHeightError, helpers
 
 
+@pytest.fixture()
+def igrf_file():
+    """A fixture for handling the coefficient file."""
+    # Ensure the coefficient file exists
+    original_file = os.path.join(os.path.dirname(helpers.__file__),
+                                 'igrf13coeffs.txt')
+    tmp_file = "temp_coeff.txt"
+    assert os.path.isfile(original_file)
+
+    # Move the coefficient file
+    os.rename(original_file, tmp_file)
+    yield original_file
+
+    # Move the coefficient file back
+    os.rename(tmp_file, original_file)
+    return
+
+
+def test_set_epoch_file_error(igrf_file):
+    """Test raises OSError when IGRF coefficient file is missing."""
+    # Test missing coefficient file failure
+    with pytest.raises(OSError) as oerr:
+        Apex()
+    error_string = "File {:} does not exist".format(igrf_file)
+    assert str(oerr.value).startswith(error_string)
+    return
+
+
 class TestApexInit():
     def setup(self):
         self.apex_out = None
@@ -59,8 +87,8 @@ class TestApexInit():
         return
 
     @pytest.mark.parametrize("in_date",
-                             [(2015), (2015.5), (dt.date(2015, 1, 1)),
-                              (dt.datetime(2015, 6, 1, 18, 23, 45))])
+                             [2015, 2015.5, dt.date(2015, 1, 1),
+                              dt.datetime(2015, 6, 1, 18, 23, 45)])
     def test_init_date(self, in_date):
         """Test Apex class with date initialization."""
         self.test_date = in_date
@@ -69,12 +97,41 @@ class TestApexInit():
         self.eval_refh()
         return
 
-    @pytest.mark.parametrize("in_refh", [(0.0), (300.0), (30000.0), (-1.0)])
+    @pytest.mark.parametrize("new_date", [2015, 2015.5])
+    def test_set_epoch(self, new_date):
+        """Test successful setting of Apex epoch after initialization."""
+        # Evaluate the default initialization
+        self.apex_out = Apex()
+        self.eval_date()
+        self.eval_refh()
+
+        # Update the epoch
+        self.test_date = new_date
+        self.apex_out.set_epoch(new_date)
+        self.eval_date()
+        self.eval_refh()
+        return
+
+    @pytest.mark.parametrize("in_refh", [0.0, 300.0, 30000.0, -1.0])
     def test_init_refh(self, in_refh):
         """Test Apex class with reference height initialization."""
         self.test_refh = in_refh
         self.apex_out = Apex(refh=self.test_refh)
         self.eval_date()
+        self.eval_refh()
+        return
+
+    @pytest.mark.parametrize("new_refh", [0.0, 300.0, 30000.0, -1.0])
+    def test_set_refh(self, new_refh):
+        """Test the method used to set the reference height after the init."""
+        # Verify the defaults are set
+        self.apex_out = Apex(date=self.test_date)
+        self.eval_date()
+        self.eval_refh()
+
+        # Update to a new reference height and test
+        self.test_refh = new_refh
+        self.apex_out.set_refh(new_refh)
         self.eval_refh()
         return
 
@@ -806,11 +863,14 @@ class TestApexBasevectorMethods():
     def setup(self):
         """Initialize all tests."""
         self.apex_out = Apex(date=2000, refh=300)
+        self.lat = 60
+        self.lon = 15
+        self.height = 100
         self.test_basevec = None
 
     def teardown(self):
         """Clean up after each test."""
-        del self.apex_out, self.test_basevec
+        del self.apex_out, self.test_basevec, self.lat, self.lon, self.height
 
     def get_comparison_results(self, bv_coord, coords, precision):
         """Get the base vector results using the hidden function for comparison.
@@ -818,7 +878,8 @@ class TestApexBasevectorMethods():
         Parameters
         ----------
         bv_coord : str
-            Basevector coordinate scheme, expects on of 'apex' or 'qd'
+            Basevector coordinate scheme, expects on of 'apex', 'qd',
+            or 'bvectors_apex'
         coords : str
             Expects one of 'geo', 'apex', or 'qd'
         precision : float
@@ -826,18 +887,51 @@ class TestApexBasevectorMethods():
 
         """
         if coords == "geo":
-            glat = 60
-            glon = 15
+            glat = self.lat
+            glon = self.lon
         else:
             apex_method = getattr(self.apex_out, "{:s}2geo".format(coords))
-            glat, glon, _ = apex_method(60, 15, 100, precision=precision)
+            glat, glon, _ = apex_method(self.lat, self.lon, self.height,
+                                        precision=precision)
 
         if bv_coord == 'qd':
-            self.test_basevec = self.apex_out._basevec(glat, glon, 100)
-        else:
+            self.test_basevec = self.apex_out._basevec(glat, glon, self.height)
+        elif bv_coord == 'apex':
             (_, _, _, _, f1, f2, _, d1, d2, d3, _, e1, e2,
              e3) = self.apex_out._geo2apexall(glat, glon, 100)
             self.test_basevec = (f1, f2, d1, d2, d3, e1, e2, e3)
+        else:
+            # These are set results that need to be updated with IGRF
+            if coords == "geo":
+                self.test_basevec = (
+                    np.array([4.42368795e-05, 4.42368795e-05]),
+                    np.array([[0.01047826, 0.01047826],
+                              [0.33089194, 0.33089194],
+                              [-1.04941, -1.04941]]),
+                    np.array([5.3564698e-05, 5.3564698e-05]),
+                    np.array([[0.00865356, 0.00865356],
+                              [0.27327004, 0.27327004],
+                              [-0.8666646, -0.8666646]]))
+            elif coords == "apex":
+                self.test_basevec = (
+                    np.array([4.48672735e-05, 4.48672735e-05]),
+                    np.array([[-0.12510721, -0.12510721],
+                              [ 0.28945938, 0.28945938],
+                              [-1.1505738, -1.1505738]]),
+                    np.array([6.38577444e-05, 6.38577444e-05]),
+                    np.array([[-0.08790194, -0.08790194],
+                              [0.2033779, 0.2033779],
+                              [-0.808408, -0.808408]]))
+            else:
+                self.test_basevec = (
+                    np.array([4.46348578e-05, 4.46348578e-05]),
+                    np.array([[-0.12642345, -0.12642345],
+                              [ 0.29695055, 0.29695055],
+                              [-1.1517885, -1.1517885]]),
+                    np.array([6.38626285e-05, 6.38626285e-05]),
+                    np.array([[-0.08835986, -0.08835986],
+                              [0.20754464, 0.20754464],
+                              [-0.8050078, -0.8050078]]))
 
         return
 
@@ -849,7 +943,8 @@ class TestApexBasevectorMethods():
         # Get the base vectors
         base_method = getattr(self.apex_out,
                               "basevectors_{:s}".format(bv_coord))
-        basevec = base_method(60, 15, 100, coords=coords, precision=precision)
+        basevec = base_method(self.lat, self.lon, self.height, coords=coords,
+                              precision=precision)
         self.get_comparison_results(bv_coord, coords, precision)
         if bv_coord == "apex":
             basevec = list(basevec)
@@ -867,7 +962,7 @@ class TestApexBasevectorMethods():
         """Test the shape of the scalar output."""
         base_method = getattr(self.apex_out,
                               "basevectors_{:s}".format(bv_coord))
-        basevec = base_method(60, 15, 100)
+        basevec = base_method(self.lat, self.lon, self.height)
 
         for i, vec in enumerate(basevec):
             if i < 2:
@@ -881,7 +976,7 @@ class TestApexBasevectorMethods():
     def test_basevectors_array(self, bv_coord, ivec):
         """Test the output shape for array inputs."""
         # Define the input arguments
-        in_args = [60, 15, 100]
+        in_args = [self.lat, self.lon, self.height]
         in_args[ivec] = [in_args[ivec] for i in range(4)]
 
         # Get the basevectors
@@ -901,6 +996,20 @@ class TestApexBasevectorMethods():
             assert vec.shape == (idim, 4)
             assert np.all(self.test_basevec[i][0] == vec[0])
             assert np.all(self.test_basevec[i][1] == vec[1])
+        return
+
+    @pytest.mark.parametrize("coords", ["geo", "apex", "qd"])
+    def test_bvectors_apex(self, coords):
+        """Test the bvectors_apex method."""
+        in_args = [[self.lat, self.lat], [self.lon, self.lon],
+                   [self.height, self.height]]
+        self.get_comparison_results("bvectors_apex", coords, 1e-10)
+
+        basevec = self.apex_out.bvectors_apex(*in_args, coords=coords,
+                                              precision=1e-10)
+        for i, vec in enumerate(basevec):
+            np.testing.assert_array_almost_equal(vec, self.test_basevec[i],
+                                                 decimal=5)
         return
 
     def test_basevectors_apex_extra_values(self):
@@ -960,142 +1069,55 @@ class TestApexBasevectorMethods():
         return
 
 
-# ============================================================================
-#  Test the get_apex() method
-# ============================================================================
+class TestApexGetMethods():
+    """Test the Apex `get` methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
 
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out
 
-def test_get_apex():
-    apex_out = Apex(date=2000, refh=300)
-    np.testing.assert_allclose(apex_out.get_apex(10), 507.409702543805)
-    np.testing.assert_allclose(apex_out.get_apex(60), 20313.026999999987)
+    @pytest.mark.parametrize("alat, aheight", [(10, 507.409702543805),
+                                               (60, 20313.026999999987)])
+    def test_get_apex(self, alat, aheight):
+        """Test the apex height retrieval results."""
+        alt = self.apex_out.get_apex(alat)
+        np.testing.assert_allclose(alt, aheight)
+        return
 
+    @pytest.mark.parametrize("glat,glon,height,test_bmag",
+                             [([80], [100], [300], 5.100682377815247e-05),
+                              (range(50, 90, 8), range(0, 360, 80), [300] * 5,
+                               np.array([4.18657154e-05, 5.11118114e-05,
+                                         4.91969854e-05, 5.10519207e-05,
+                                         4.90054816e-05])),
+                              (90.0, 0, 1000, 3.7834718823432923e-05)])
+    def test_get_babs(self, glat, glon, height, test_bmag):
+        """Test the method to get the magnitude of the magnetic field."""
+        bmag = self.apex_out.get_babs(glat, glon, height)
+        np.testing.assert_allclose(bmag, test_bmag, rtol=0, atol=1e-5)
+        return
 
-def test_get_apex_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.get_apex(91)
-    with pytest.raises(ValueError):
-        apex_out.get_apex(-91)
-    apex_out.get_apex(90)
-    apex_out.get_apex(-90)
+    @pytest.mark.parametrize("bad_lat", [(91), (-91)])
+    def test_get_with_invalid_lat(self, bad_lat):
+        """Test get methods raise ValueError for invalid latitudes."""
 
-    np.testing.assert_allclose(apex_out.get_apex(90 + 1e-5),
-                               apex_out.get_apex(90),
-                               rtol=0, atol=1e-8)
+        with pytest.raises(ValueError):
+            self.apex_out.get_apex(bad_lat)
+        return
 
+    @pytest.mark.parametrize("bound_lat", [(90), (-90)])
+    def test_get_at_lat_boundary(self, bound_lat):
+        """Test get methods at the latitude boundary, with allowed excess."""
+        # Get a latitude just beyond the limit
+        excess_lat = np.sign(bound_lat) * (abs(bound_lat) + 1.0e-5)
 
-# ============================================================================
-#  Test the set_epoch() method
-# ============================================================================
+        # Get the two outputs, slight tolerance outside of boundary allowed
+        bound_out = self.apex_out.get_apex(bound_lat)
+        excess_out = self.apex_out.get_apex(excess_lat)
 
-
-def test_set_epoch():
-    """Test successful setting of Apex epoch."""
-    apex_out = Apex(date=2000.2, refh=300)
-    np.testing.assert_allclose(apex_out.year, 2000.2)
-    ret_2000_2_py = apex_out._geo2apex(60, 15, 100)
-    apex_out.set_epoch(2000.8)
-    np.testing.assert_allclose(apex_out.year, 2000.8)
-    ret_2000_8_py = apex_out._geo2apex(60, 15, 100)
-
-    assert ret_2000_2_py != ret_2000_8_py
-
-    fa.loadapxsh(apex_out.datafile, 2000.2)
-    ret_2000_2_apex = fa.apxg2all(60, 15, 100, 300, 0)[2:4]
-    fa.loadapxsh(apex_out.datafile, 2000.8)
-    ret_2000_8_apex = fa.apxg2all(60, 15, 100, 300, 0)[2:4]
-
-    assert ret_2000_2_apex != ret_2000_8_apex
-
-    np.testing.assert_allclose(ret_2000_2_py, ret_2000_2_apex)
-    np.testing.assert_allclose(ret_2000_8_py, ret_2000_8_apex)
-
-
-@pytest.fixture()
-def igrf_file():
-    # Ensure the coefficient file exists
-    original_file = os.path.join(os.path.dirname(helpers.__file__),
-                                 'igrf13coeffs.txt')
-    tmp_file = "temp_coeff.txt"
-    assert os.path.isfile(original_file)
-    # Move the coefficient file
-    os.rename(original_file, tmp_file)
-    yield original_file
-    # Move the coefficient file back
-    os.rename(tmp_file, original_file)
-
-
-def test_set_epoch_file_error(igrf_file):
-    """Test raises OSError when IGRF coefficient file is missing."""
-    # Test missing coefficient file failure
-    with pytest.raises(OSError) as oerr:
-        Apex(date=2000.2, refh=300)
-    error_string = "File {:} does not exist".format(igrf_file)
-    assert str(oerr.value).startswith(error_string)
-
-
-# ============================================================================
-#  Test the set_refh() method
-# ============================================================================
-
-
-def test_set_refh():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.refh, 300
-    ret_300 = apex_out._geo2apex(60, 15, 100)
-    apex_out.set_refh(500)
-    assert apex_out.refh == 500
-    ret_500 = apex_out._geo2apex(60, 15, 100)
-
-    np.testing.assert_allclose(ret_300, fa.apxg2all(60, 15, 100, 300, 0)[2:4])
-    np.testing.assert_allclose(ret_500, fa.apxg2all(60, 15, 100, 500, 0)[2:4])
-
-
-# ============================================================================
-#  Test the get_babs() method
-# ============================================================================
-
-
-def test_get_babs():
-    inputs = [[[80], [100], [300]], [range(50, 90, 8), range(0, 360, 80),
-                                     [300] * 5], [90.0, 0, 1000]]
-    temp1 = np.array([4.22045410e-05, 5.15672743e-05, 4.98150200e-05,
-                     5.06769359e-05, 4.91028428e-05])
-    expected = [[5.1303124427795412e-05], temp1, [3.793962299823761e-05]]
-
-    apex_out = Apex(date=2018.1, refh=0)
-    for i in range(len(inputs)):
-        outputs = apex_out.get_babs(*inputs[i])
-        if isinstance(outputs, np.float64):
-            outputs = [outputs]
-        for j, output in enumerate(outputs):
-            np.testing.assert_allclose(output, expected[i][j], rtol=0,
-                                       atol=1e-5)
-
-
-# ============================================================================
-#  Test the bvectors_apex() method
-# ============================================================================
-
-
-def test_bvectors_apex():
-    inputs = [[80, 81], [100, 120], [100, 200]]
-
-    expected = (np.array([5.95166171e-05, 5.95958974e-05]),
-                np.array([[0.0191583, 0.0020023],
-                          [0.03547136, 0.03392595],
-                          [-0.9412518, -0.8991005]]),
-                np.array([5.28257734e-05, 4.82450628e-05]),
-                np.array([[0.02158486, 0.00247339],
-                          [0.03996412, 0.04190787],
-                          [-1.0604696, -1.110636]]))
-
-    apex_out = Apex(date=2018.1, refh=0)
-
-    outputs = apex_out.bvectors_apex(*inputs, coords='geo', precision=1e-10)
-    for i, output in enumerate(outputs):
-        for j in range(output.size):
-            np.testing.assert_allclose(output.ravel()[j],
-                                       expected[i].ravel()[j], rtol=0,
-                                       atol=1e-5)
+        # Test the outputs
+        np.testing.assert_allclose(excess_out, bound_out, rtol=0, atol=1e-8)
+        return
