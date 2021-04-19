@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Test the apexpy.Apex class
+"""Test the apexpy.helper submodule
 
 Notes
 -----
