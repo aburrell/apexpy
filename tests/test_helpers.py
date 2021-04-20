@@ -174,12 +174,21 @@ class TestHelpers():
 
     @pytest.mark.parametrize('in_time', [dt.datetime(1600, 12, 31, 23, 59, 59),
                                          dt.datetime(2101, 1, 1, 0, 0, 0)])
-    def test_bad_subsol(self, in_time):
+    def test_bad_subsol_date(self, in_time):
         """Test raises ValueError for bad time in subsolar calculation."""
         with pytest.raises(ValueError) as verr:
             helpers.subsol(in_time)
 
         assert str(verr.value).startswith('Year must be in')
+        return
+
+    @pytest.mark.parametrize('in_time', [None, 2015.0])
+    def test_bad_subsol_input(self, in_time):
+        """Test raises ValueError for bad input type in subsolar calculation."""
+        with pytest.raises(ValueError) as verr:
+            helpers.subsol(in_time)
+
+        assert str(verr.value).startswith('input must be datetime')
         return
 
     def test_subsol_array(self):
