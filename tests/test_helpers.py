@@ -19,6 +19,34 @@ import pytest
 from apexpy import helpers
 
 
+def datetime64_to_datetime(dt64):
+    """Convert numpy datetime64 object to a datetime datetime object.
+
+    Parameters
+    ----------
+    dt64 : np.datetime64
+        Numpy datetime64 object
+
+    Returns
+    -------
+    dt.datetime
+        Equivalent datetime object with a resolution of days
+
+    Notes
+    -----
+    Works outside 32 bit int second range of 1970
+
+    """
+    year_floor = dt64.astype('datetime64[Y]')
+    month_floor = dt64.astype('datetime64[M]')
+    day_floor = dt64.astype('datetime64[D]')
+    year = year_floor.astype(int) + 1970
+    month = (month_floor
+             - year_floor).astype('timedelta64[M]').astype(int) + 1
+    day = (day_floor - month_floor).astype('timedelta64[D]').astype(int) + 1
+    return dt.datetime(year, month, day)
+
+
 class TestHelpers():
     def setup(self):
         self.in_shape = None
@@ -36,46 +64,23 @@ class TestHelpers():
         assert np.asarray(self.calc_val).shape == self.in_shape
         return
 
-    def datetime64_to_datetime(self, dt64):
-        """Convert numpy datetime64 object to a datetime datetime object.
-
-        Parameters
-        ----------
-        dt64 : np.datetime64
-            Numpy datetime64 object
-
-        Returns
-        -------
-        dt.datetime
-            Equivalent datetime object with a resolution of days
-
-        Notes
-        -----
-        Works outside 32 bit int second range of 1970
-
-        """
-        year_floor = dt64.astype('datetime64[Y]')
-        month_floor = dt64.astype('datetime64[M]')
-        day_floor = dt64.astype('datetime64[D]')
-        year = year_floor.astype(int) + 1970
-        month = (month_floor
-                 - year_floor).astype('timedelta64[M]').astype(int) + 1
-        day = (day_floor - month_floor).astype('timedelta64[D]').astype(int) + 1
-        return dt.datetime(year, month, day)
-
     @pytest.mark.parametrize('lat', [90, 0, -90, np.nan])
     def test_checklat_scalar(self, lat):
         """Test good latitude check with scalars."""
+        self.calc_val = helpers.checklat(lat)
+
         if np.isnan(lat):
-            assert np.isnan(helpers.checklat(lat))
+            assert np.isnan(self.calc_val)
         else:
-            assert helpers.checklat(lat) == lat
+            assert self.calc_val == lat
         return
 
     @pytest.mark.parametrize('lat', [(90 + 1e-5), (-90 - 1e-5)])
     def test_checklat_scalar_clip(self, lat):
         """Test good latitude check with scalars just beyond the lat limits."""
-        assert helpers.checklat(lat) == np.sign(lat) * np.floor(abs(lat))
+        self.calc_val = helpers.checklat(lat)
+        self.test_val = np.sign(lat) * np.floor(abs(lat))
+        assert self.calc_val == self.test_val
         return
 
     @pytest.mark.parametrize('in_args,msg',
@@ -210,7 +215,7 @@ class TestHelpers():
 
         # Test the values
         for i, in_date in enumerate(in_dates):
-            dtime = self.datetime64_to_datetime(in_date)
+            dtime = datetime64_to_datetime(in_date)
             true_sslat, true_sslon = helpers.subsol(dtime)
             assert sslat[i] == true_sslat
             assert sslon[i] == true_sslon
