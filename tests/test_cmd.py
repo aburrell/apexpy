@@ -37,25 +37,34 @@ class TestCommandLine():
 
         del self.outfile, self.infile, self.singlefile
 
-    def execute_command_line(self, command):
+    def execute_command_line(self, command, command_kwargs={}, pipe_out=False):
         """Execute the command and load data from self.outfile
 
         Parameters
         ----------
         command : list or str
             List or string containing command to execute using subprocess
+        command_kwargs : dict
+            Dict containing optional kwargs for subprocess.Popen command
+            (default={})
+        pipe_out : bool
+            Return pipe output instead of output from a data file if True
+            (default=False)
 
         Returns
         -------
-        data : np.array or NoneType
-            Numpy array of data from output file or None if no file was created
+        data : np.array, NoneType, or subprocess.Popen attribute
+            Numpy array of data from output file, None if no file was created,
+            or the requested output from the pipe command.
 
         """
-        pipe = subprocess.Popen(command)
-        pipe.communicate()
+        pipe = subprocess.Popen(command, **command_kwargs)
+        out = pipe.communicate()
         pipe.wait()
 
-        if os.path.isfile(self.outfile):
+        if pipe_out:
+            data = out
+        elif os.path.isfile(self.outfile):
             data = np.loadtxt(self.outfile)
         else:
             data = None
@@ -97,11 +106,12 @@ class TestCommandLine():
     def test_convert_stdin_stdout_w_height_flags(self, height, out_list):
         """Test use of pipe input to command-line call with height flags."""
         # Build and execute the apexpy command line call
-        pipe = subprocess.Popen(
-            'echo 60 15 | python -m apexpy geo apex 2015 --height {:s}'.format(
-                height), shell=True, stdout=subprocess.PIPE)
-        stdout, _ = pipe.communicate()
-        pipe.wait()
+        cmd = ''.join(['echo 60 15 | python -m apexpy geo apex 2015 --height ',
+                       '{:s}'.format(height)])
+        cmd_kwargs = {'shell': True, 'stdout': subprocess.PIPE}
+        stdout, _ = self.execute_command_line(cmd, cmd_kwargs, True)
+
+        assert stdout is not None, 'error executing: {:s}'.format(' '.join(cmd))
         np.testing.assert_allclose(np.array(stdout.split(b' '), dtype=float),
                                    out_list, rtol=1e-4)
         return
@@ -122,26 +132,24 @@ class TestCommandLine():
     def test_invalid_date(self, date_str):
         """Test raises ValueError with an invalid input date."""
         # Build and execute the command
-        pipe = subprocess.Popen(
-            'echo 60 15 | python -m apexpy geo apex {:s}'.format(date_str),
-            shell=True, stderr=subprocess.PIPE)
-        _, stderr = pipe.communicate()
-        pipe.wait()
+        cmd = 'echo 60 15 | python -m apexpy geo apex {:s}'.format(date_str)
+        cmd_kwargs = {'shell': True, 'stderr': subprocess.PIPE}
+        _, stderr = self.execute_command_line(cmd, cmd_kwargs, True)
 
         # Evaluate the error output
+        assert stderr is not None, 'error executing: {:s}'.format(' '.join(cmd))
         assert b'ValueError' in stderr, 'invalid date error not raised'
         return
 
     def test_mlt_nodatetime(self):
         """Test raises ValueError when time not provided for MLT calc."""
         # Build and execute the command
-        pipe = subprocess.Popen(
-            'echo 60 15 | python -m apexpy geo mlt 20150101', shell=True,
-            stderr=subprocess.PIPE)
-        _, stderr = pipe.communicate()
-        pipe.wait()
+        cmd = 'echo 60 15 | python -m apexpy geo mlt 20150101'
+        cmd_kwargs = {'shell': True, 'stderr': subprocess.PIPE}
+        _, stderr = self.execute_command_line(cmd, cmd_kwargs, True)
 
         # Evaluate the error output
+        assert stderr is not None, 'error executing: {:s}'.format(' '.join(cmd))
         assert b'ValueError' in stderr, 'invalid time error not raised'
         return
 
@@ -149,12 +157,11 @@ class TestCommandLine():
     def test_invalid_coord(self, coords):
         """Test raises error when bad coordinate input provided."""
         # Build and execute the command
-        pipe = subprocess.Popen(
-            'echo 60 15 | python -m apexpy {:s} 2015'.format(coords),
-            shell=True, stderr=subprocess.PIPE)
-        _, stderr = pipe.communicate()
-        pipe.wait()
+        cmd = 'echo 60 15 | python -m apexpy {:s} 2015'.format(coords)
+        cmd_kwargs = {'shell': True, 'stderr': subprocess.PIPE}
+        _, stderr = self.execute_command_line(cmd, cmd_kwargs, True)
 
         # Evaluate the error output
+        assert stderr is not None, 'error executing: {:s}'.format(' '.join(cmd))
         assert b'invalid choice' in stderr, 'invalid coord error not raised'
         return
