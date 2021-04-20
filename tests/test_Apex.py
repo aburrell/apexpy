@@ -156,24 +156,21 @@ class TestApexMethod():
     def setup(self):
         """Initialize all tests."""
         self.apex_out = Apex(date=2000, refh=300)
+        self.in_lat = 60
+        self.in_lon = 15
+        self.in_alt = 100
 
     def teardown(self):
         """Clean up after each test."""
-        del self.apex_out
+        del self.apex_out, self.in_lat, self.in_lon, self.in_alt
 
-    def get_input_args(self, method_name, lat, lon, alt, precision=0.0):
+    def get_input_args(self, method_name, precision=0.0):
         """Set the input arguments for the different Apex methods.
 
         Parameters
         ----------
         method_name : str
             Name of the Apex class method
-        lat : float or array-like
-            Value for the latitude
-        lon : float or array-like
-            Value for the longitude
-        alt : float or array-like
-            Value for the altitude
         precision : float
             Value for the precision (default=0.0)
 
@@ -183,7 +180,7 @@ class TestApexMethod():
             List of the appropriate input arguments
 
         """
-        in_args = [lat, lon, alt]
+        in_args = [self.in_lat, self.in_lon, self.in_alt]
 
         # Add precision, if needed
         if method_name in ["_qd2geo", "apxq2g", "apex2geo", "qd2geo",
@@ -205,18 +202,22 @@ class TestApexMethod():
                               ("_geo2apex", "apxg2all", slice(2, 4, 1)),
                               ("_qd2geo", "apxq2g", slice(None)),
                               ("_basevec", "apxg2q", slice(2, 4, 1))])
-    @pytest.mark.parametrize("lat", [(0), (30), (60), (89)])
-    @pytest.mark.parametrize("lon", [(-179), (-90), (0), (90), (180)])
+    @pytest.mark.parametrize("lat", [0, 30, 60, 89])
+    @pytest.mark.parametrize("lon", [-179, -90, 0, 90, 180])
     def test_fortran_scalar_input(self, apex_method, fortran_method, fslice,
                                   lat, lon):
         """Tests Apex/fortran interface consistency for scalars."""
+        # Set the input coordinates
+        self.in_lat = lat
+        self.in_lon = lon
+        
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
         fortran_func = getattr(fa, fortran_method)
 
         # Get the appropriate input arguments
-        apex_args = self.get_input_args(apex_method, lat, lon, 100)
-        fortran_args = self.get_input_args(fortran_method, lat, lon, 100)
+        apex_args = self.get_input_args(apex_method)
+        fortran_args = self.get_input_args(fortran_method)
 
         # Evaluate the equivalent function calls
         np.testing.assert_allclose(apex_func(*apex_args),
@@ -228,20 +229,26 @@ class TestApexMethod():
                               ("_geo2apex", "apxg2all", slice(2, 4, 1)),
                               ("_qd2geo", "apxq2g", slice(None)),
                               ("_basevec", "apxg2q", slice(2, 4, 1))])
-    @pytest.mark.parametrize("lat", [(0), (30), (60), (89)])
+    @pytest.mark.parametrize("lat", [0, 30, 60, 89])
     @pytest.mark.parametrize("lon1,lon2", [(180, 180), (-180, -180),
                                            (180, -180), (-180, 180),
                                            (-345, 15), (375, 15)])
     def test_fortran_longitude_rollover(self, apex_method, fortran_method,
                                         fslice, lat, lon1, lon2):
         """Tests Apex/fortran interface consistency for longitude rollover."""
+        # Set the fixed input coordinate
+        self.in_lat = lat
+
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
         fortran_func = getattr(fa, fortran_method)
 
         # Get the appropriate input arguments
-        apex_args = self.get_input_args(apex_method, lat, lon1, 100)
-        fortran_args = self.get_input_args(fortran_method, lat, lon2, 100)
+        self.in_lon = lon1
+        apex_args = self.get_input_args(apex_method)
+
+        self.in_lon = lon2
+        fortran_args = self.get_input_args(fortran_method)
 
         # Evaluate the equivalent function calls
         np.testing.assert_allclose(apex_func(*apex_args),
@@ -260,11 +267,11 @@ class TestApexMethod():
         fortran_func = getattr(fa, fortran_method)
 
         # Set up the input arrays
-        in_lats = np.array([0, 30, 60, 90])
-        in_lon = 15
-        in_alts = np.array([100, 200, 300, 400])
-        apex_args = self.get_input_args(apex_method, in_lats.reshape((2, 2)),
-                                        in_lon, in_alts.reshape((2, 2)))
+        ref_lat = np.array([0, 30, 60, 90])
+        ref_alt = np.array([100, 200, 300, 400])
+        self.in_lat = ref_lat.reshape((2, 2))
+        self.in_alt = ref_alt.reshape((2, 2))
+        apex_args = self.get_input_args(apex_method)
 
         # Get the Apex class results
         aret = apex_func(*apex_args)
@@ -273,9 +280,10 @@ class TestApexMethod():
         flats = list()
         flons = list()
 
-        for i, lat in enumerate(in_lats):
-            fortran_args = self.get_input_args(fortran_method, lat, in_lon,
-                                               in_alts[i])
+        for i, lat in enumerate(ref_lat):
+            self.in_lat = lat
+            self.in_alt = ref_alt[i]
+            fortran_args = self.get_input_args(fortran_method)
             fret = fortran_func(*fortran_args)[fslice]
             flats.append(fret[0])
             flons.append(fret[1])
@@ -300,13 +308,13 @@ class TestApexMethod():
 
         return
 
-    @pytest.mark.parametrize("lat", [(0), (30), (60), (89)])
-    @pytest.mark.parametrize("lon", [(-179), (-90), (0), (90), (180)])
+    @pytest.mark.parametrize("lat", [0, 30, 60, 89])
+    @pytest.mark.parametrize("lon", [-179, -90, 0, 90, 180])
     def test_geo2apexall_scalar(self, lat, lon):
         """Test Apex/fortran geo2apexall interface consistency for scalars."""
         # Get the Apex and Fortran results
-        aret = self.apex_out._geo2apexall(lat, lon, 100)
-        fret = fa.apxg2all(lat, lon, 100, 300, 1)
+        aret = self.apex_out._geo2apexall(lat, lon, self.in_alt)
+        fret = fa.apxg2all(lat, lon, self.in_alt, 300, 1)
 
         # Evaluate each element in the results
         for aval, fval in zip(aret, fret):
@@ -315,18 +323,18 @@ class TestApexMethod():
     def test_geo2apexall_array(self):
         """Test Apex/fortran geo2apexall interface consistency for arrays."""
         # Set the input
-        in_lats = np.array([0, 30, 60, 90])
-        in_lon = 15
-        in_alts = np.array([100, 200, 300, 400])
+        self.in_lat = np.array([0, 30, 60, 90])
+        self.in_alt = np.array([100, 200, 300, 400])
 
         # Get the Apex class results
-        aret = self.apex_out._geo2apexall(in_lats.reshape((2, 2)), in_lon,
-                                          in_alts.reshape((2, 2)))
+        aret = self.apex_out._geo2apexall(self.in_lat.reshape((2, 2)),
+                                          self.in_lon,
+                                          self.in_alt.reshape((2, 2)))
 
         # For each lat/alt pair, get the Fortran results
         fret = list()
-        for i, lat in enumerate(in_lats):
-            fret.append(fa.apxg2all(in_lats[i], in_lon, in_alts[i], 300, 1))
+        for i, lat in enumerate(self.in_lat):
+            fret.append(fa.apxg2all(lat, self.in_lon, self.in_alt[i], 300, 1))
 
         # Cycle through all returned values
         for i, ret in enumerate(aret):
@@ -354,23 +362,23 @@ class TestApexMethod():
         method_name = "2".join([in_coord, out_coord])
 
         # Get the method and method inputs
-        convert_kwargs = {'height': 100, 'precision': 0.0}
-        apex_args = self.get_input_args(method_name, 60, 15, 100)
+        convert_kwargs = {'height': self.in_alt, 'precision': 0.0}
+        apex_args = self.get_input_args(method_name)
         apex_method = getattr(self.apex_out, method_name)
 
         # Define the slice needed to get equivalent output from the named method
         mslice = slice(0, -1, 1) if out_coord == "geo" else slice(None)
 
         # Get output using convert and named method
-        convert_out = self.apex_out.convert(60, 15, in_coord, out_coord,
-                                            **convert_kwargs)
+        convert_out = self.apex_out.convert(self.in_lat, self.in_lon, in_coord,
+                                            out_coord, **convert_kwargs)
         method_out = apex_method(*apex_args)[mslice]
 
         # Compare both outputs, should be identical
         np.testing.assert_allclose(convert_out, method_out)
         return
 
-    @pytest.mark.parametrize("bound_lat", [(90), (-90)])
+    @pytest.mark.parametrize("bound_lat", [90, -90])
     @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
     def test_convert_at_lat_boundary(self, bound_lat, in_coord, out_coord):
@@ -392,6 +400,7 @@ class TestApexMethod():
         close_out = self.apex_out.convert(lat=0.001, lon=0, source='qd',
                                           dest='apex', height=320.0)
         np.testing.assert_allclose(eq_out, close_out, atol=1e-4)
+        return
 
     @pytest.mark.parametrize("src", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("dest", ["geo", "apex", "qd"])
@@ -412,7 +421,7 @@ class TestApexMethod():
 
         return
 
-    @pytest.mark.parametrize("bad_lat", [(91), (-91)])
+    @pytest.mark.parametrize("bad_lat", [91, -91])
     def test_convert_invalid_lat(self, bad_lat):
         """Test convert raises ValueError for invalid latitudes."""
 
@@ -443,7 +452,7 @@ class TestApexMethod():
         user_method = getattr(self.apex_out, method_name)
 
         # Get the user output
-        user_out = user_method(60, 15, 100)
+        user_out = user_method(self.in_lat, self.in_lon, self.in_alt)
 
         # Evaluate the user output
         np.testing.assert_allclose(user_out, out_comp)
@@ -480,7 +489,7 @@ class TestApexMethod():
 
     @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
-    @pytest.mark.parametrize("bad_lat", [(91), (-91)])
+    @pytest.mark.parametrize("bad_lat", [91, -91])
     def test_method_invalid_lat(self, in_coord, out_coord, bad_lat):
         """Test convert raises ValueError for invalid latitudes."""
         if in_coord == out_coord:
@@ -496,7 +505,7 @@ class TestApexMethod():
 
     @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
-    @pytest.mark.parametrize("bound_lat", [(90), (-90)])
+    @pytest.mark.parametrize("bound_lat", [90, -90])
     def test_method_at_lat_boundary(self, in_coord, out_coord, bound_lat):
         """Test user methods at the latitude boundary, with allowed excess."""
         if in_coord == out_coord:
