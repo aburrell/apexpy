@@ -14,7 +14,6 @@ except ImportError as err:
     warnings.warn("".join(["fortranapex module could not be imported, so ",
                            "apexpy probably won't work.  Make sure you have ",
                            "a gfortran compiler."]))
-    raise err
 
 # make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to NaN where*',
