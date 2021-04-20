@@ -210,7 +210,7 @@ class TestApexMethod():
         # Set the input coordinates
         self.in_lat = lat
         self.in_lon = lon
-        
+
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
         fortran_func = getattr(fa, fortran_method)
