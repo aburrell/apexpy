@@ -55,9 +55,10 @@ class TestApexInit():
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
+        self.bad_file = 'foo/path/to/datafile.blah'
 
     def teardown(self):
-        del self.apex_out, self.test_date, self.test_refh
+        del self.apex_out, self.test_date, self.test_refh, self.bad_file
 
     def eval_date(self):
         """Evaluate the times in self.test_date and self.apex_out."""
@@ -137,9 +138,16 @@ class TestApexInit():
 
     def test_init_with_bad_datafile(self):
         """Test raises IOError with non-existent datafile input."""
-        with pytest.raises(IOError):
-            Apex(datafile='foo/path/to/datafile.blah')
+        with pytest.raises(IOError) as oerr:
+            Apex(datafile=self.bad_file)
+        assert str(oerr.value).startswith('Data file does not exist')
+        return
 
+    def test_init_with_bad_fortranlib(self):
+        """Test raises IOError with non-existent datafile input."""
+        with pytest.raises(IOError) as oerr:
+            Apex(fortranlib=self.bad_file)
+        assert str(oerr.value).startswith('Fortran library does not exist')
         return
 
 
@@ -527,10 +535,11 @@ class TestApexMethod():
         return
 
     @pytest.mark.parametrize("method_name", ["apex2qd", "qd2apex"])
-    def test_quasidipole_apexheight_close(self, method_name):
+    @pytest.mark.parametrize("delta_h", [1.0e-6, -1.0e-6])
+    def test_quasidipole_apexheight_close(self, method_name, delta_h):
         """Test quasi-dipole success with a height close to the reference."""
         qd_method = getattr(self.apex_out, method_name)
-        in_args = [0, 15, self.apex_out.refh + 1e-6]
+        in_args = [0, 15, self.apex_out.refh + delta_h]
         out_coords = qd_method(*in_args)
 
         for i, out_val in enumerate(out_coords):
@@ -779,6 +788,20 @@ class TestApexMapMethods():
             apex_method(*in_args)
 
         assert aerr.match("is > apex height")
+        return
+
+    @pytest.mark.parametrize("method_name",
+                             ["map_E_to_height", "map_V_to_height"])
+    @pytest.mark.parametrize("ev_input", [([1, 2, 3, 4, 5]),
+                                          ([[1, 2], [3, 4], [5, 6], [7, 8]])])
+    def test_mapping_EV_bad_shape(self, method_name, ev_input):
+        """Test map_to_height raises ApexHeightError."""
+        apex_method = getattr(self.apex_out, method_name)
+        in_args = [60, 15, 100, 500, ev_input]
+        with pytest.raises(ValueError) as verr:
+            apex_method(*in_args)
+
+        assert str(verr.value).find("must be (3, N) or (3,) ndarray") >= 0
         return
 
     @pytest.mark.parametrize("in_args,test_mapped",
