@@ -30,10 +30,10 @@ If applicable, add screenshots to help explain your problem.
 Computer
 --------
 Please provide the following information:
-  * OS: (e.g., iOS)
-  * Python version: (e.g., 3.6)
-  * Compiler with version: (e.g., gfortran 47)
-  * Apexpy version/branch: (e.g., 1.1.0/main)
+* OS: (e.g., iOS)
+* Python version: (e.g., 3.6)
+* Compiler with version: (e.g., gfortran 47)
+* Apexpy version/branch: (e.g., 1.1.0/main)
 
 Additional context
 ------------------

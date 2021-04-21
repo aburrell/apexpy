@@ -30,10 +30,10 @@ If applicable, add screenshots to help explain your question.
 Computer
 --------
 Please complete the following information:
-  * OS: (e.g., iOS)
-  * Python version: (e.g., 3.6)
-  * Compiler with version: (e.g., gfortran 22)
-  * Apexpy version/branch: (e.g., 1.1.0/main)
+* OS: (e.g., iOS)
+* Python version: (e.g., 3.6)
+* Compiler with version: (e.g., gfortran 22)
+* Apexpy version/branch: (e.g., 1.1.0/main)
 
 Additional context
 ------------------

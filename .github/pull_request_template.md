@@ -11,25 +11,28 @@ Type of change
 --------------
 Please delete options that are not relevant.
 
-  * Bug fix (non-breaking change which fixes an issue)
-  * New feature (non-breaking change which adds functionality)
-  * Breaking change (fix or feature that changes existing functionality)
-  * This change requires a documentation update
-  * Release candidate
+* Bug fix (non-breaking change which fixes an issue)
+* New feature (non-breaking change which adds functionality)
+* Breaking change (fix or feature that changes existing functionality)
+* This change requires a documentation update
+* Release candidate
 
 How Has This Been Tested?
 -------------------------
 Please describe the tests that you ran to verify your changes. Provide
 instructions so we can reproduce the desired behaviour.
 
-  * Test A
-  * Test B
+```
+import apexpy
+# Test to perform
+```
 
 ### Test Configuration
-  * Operating system: (e.g., Hal)
-  * Python version number: (e.g., 3.7)
-  * Compiler with version number: (e.g. gfortran 9.0)
-  * Relevant local setup details: (e.g., apexpy version/branch)
+
+* Operating system: (e.g., Hal)
+* Python version number: (e.g., 3.7)
+* Compiler with version number: (e.g. gfortran 9.0)
+* Relevant local setup details: (e.g., apexpy version/branch)
 
 Checklist
 ---------
