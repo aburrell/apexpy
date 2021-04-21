@@ -11,7 +11,8 @@ Describe the problem or ask the question
 ========================================
 A clear and concise description of what the problem or question is.
 
-## Provide an example, if applicable
+Provide an example, if applicable
+---------------------------------
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -29,10 +30,10 @@ If applicable, add screenshots to help explain your question.
 Computer
 --------
 Please complete the following information:
-* OS: (e.g., iOS)
-* Python version: (e.g., 3.6)
-* Compiler with version: (e.g., gfortran 22)
-* Apexpy version/branch: (e.g., 1.1.0/main)
+  * OS: (e.g., iOS)
+  * Python version: (e.g., 3.6)
+  * Compiler with version: (e.g., gfortran 22)
+  * Apexpy version/branch: (e.g., 1.1.0/main)
 
 Additional context
 ------------------
