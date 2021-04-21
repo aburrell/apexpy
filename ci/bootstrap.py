@@ -21,14 +21,14 @@ if __name__ == "__main__":
     if not os.path.exists(env_path):
         print("Making bootstrap env in: {0} ...".format(env_path))
         try:
-            subprocess.check_call(["virtualenv", env_path], shell=True)
+            subprocess.check_call(["virtualenv", env_path])
         except Exception:
             subprocess.check_call([sys.executable, "-m", "virtualenv",
-                                   env_path], shell=True)
+                                   env_path])
 
         print("Installing `jinja2` and `matrix` into bootstrap environment ...")
         subprocess.check_call([os.path.join(bin_path, "pip"), "install",
-                               "jinja2", "matrix"], shell=True)
+                               "jinja2", "matrix"])
 
     activate = os.path.join(bin_path, "activate_this.py")
     act_dict = {__file__: activate}
