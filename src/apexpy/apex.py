@@ -10,11 +10,10 @@ from apexpy import helpers
 # Below try..catch required for autodoc to work on readthedocs
 try:
     from apexpy import fortranapex as fa
-except ImportError as err:
+except ImportError:
     warnings.warn("".join(["fortranapex module could not be imported, so ",
                            "apexpy probably won't work.  Make sure you have ",
                            "a gfortran compiler."]))
-    raise err
 
 # make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to NaN where*',
@@ -529,7 +528,7 @@ class Apex(object):
 
         """
         ssglat, ssglon = helpers.subsol(datetime)
-        ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
+        _, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # np.float64 will ensure lists are converted to arrays
         return (180 + np.float64(mlon) - ssalon) / 15 % 24
@@ -565,7 +564,7 @@ class Apex(object):
         """
 
         ssglat, ssglon = helpers.subsol(datetime)
-        ssalat, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
+        _, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # np.float64 will ensure lists are converted to arrays
         return (15 * np.float64(mlt) - 180 + ssalon + 360) % 360
@@ -971,9 +970,27 @@ class Apex(object):
         self.refh = refh
 
     def _get_babs_nonvectorized(self, glat, glon, height):
-        bnorth, beast, bdown, babs = fa.feldg(1, glat, glon, height)
-        # BABS is in guass, so convert to tesla
-        return babs / 10000.0
+        """Get the absolute value of the B-field in Tesla
+
+        Parameters
+        ----------
+        glat : float
+            Geodetic latitude in degrees
+        glon : float
+            Geodetic longitude in degrees
+        height : float
+            Altitude in km
+
+        Returns
+        -------
+        babs : float
+            Absolute value of the magnetic field in Tesla
+
+        """
+        bout = fa.feldg(1, glat, glon, height)  # N, E, D, Abs
+        babs = bout[-1] / 10000.0  # BABS is in Guass, so convert to Tesla
+
+        return babs
 
     def get_babs(self, glat, glon, height):
         """Returns the magnitude of the IGRF magnetic field in tesla.
@@ -981,16 +998,16 @@ class Apex(object):
         Parameters
         ----------
         glat : array_like
-            Geodetic latitude
+            Geodetic latitude in degrees
         glon : array_like
-            Geodetic longitude
+            Geodetic longitude in degrees
         height : array_like
             Altitude in km
 
         Returns
         -------
         babs : ndarray or float
-            Magnitude of the IGRF magnetic field
+            Magnitude of the IGRF magnetic field in Tesla
 
         """
 

@@ -1,1401 +1,1155 @@
 # -*- coding: utf-8 -*-
+"""Test the apexpy.Apex class
+
+Notes
+-----
+Whenever function outputs are tested against hard-coded numbers, the test
+results (numbers) were obtained by running the code that is tested.  Therefore,
+these tests below only check that nothing changes when refactoring, etc., and
+not if the results are actually correct.
+
+These results are expected to change when IGRF is updated.
+
+"""
 
 import datetime as dt
-import itertools
 import numpy as np
-from numpy.testing import assert_allclose
 import os
 import pytest
+import warnings
 
 from apexpy import fortranapex as fa
 from apexpy import Apex, ApexHeightError, helpers
 
 
-# ----------------------------------------------------------------------------
-# NOTE: whenever function outputs are tested against hard-coded numbers, the
-# test results (numbers) were obtained by running the code that is tested.
-# Therefore these tests below only check that nothing changes when refactoring,
-# etc., and not if the results are actually correct.
-# -----------------------------------------------------------------------------
-
-
-# ============================================================================
-#  Test initiating the Apex class
-# ============================================================================
-
-
-def test_init_defaults():
-    Apex()
-
-
-def test_init_date_int():
-    apex_out = Apex(date=2015)
-    assert apex_out.year == 2015
-
-
-def test_init_date_float():
-    apex_out = Apex(date=2015.5)
-    assert apex_out.year == 2015.5
-
-
-def test_init_date():
-    date = dt.date(2015, 1, 1)
-    apex_out = Apex(date=date)
-    assert apex_out.year == helpers.toYearFraction(date)
-
-
-def test_init_datetime():
-    datetime = dt.datetime(2015, 6, 1, 18, 23, 45)
-    apex_out = Apex(date=datetime)
-    assert apex_out.year == helpers.toYearFraction(datetime)
-
-
-def test_init_datafile_IOError():
-    with pytest.raises(IOError):
-        Apex(date=2015, datafile='foo/path/to/datafile.blah')
-
-
-# ============================================================================
-#  Test the low-level interfaces to the fortran wrappers
-# ============================================================================
-
-def test__geo2qd_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(apex_out._geo2qd(lat, lon, 100),
-                            fa.apxg2q(lat, lon, 100, 0)[:2])
-
-
-def test__geo2qd_array():
-    apex_out = Apex(date=2000, refh=300)
-    lats, lons = apex_out._geo2qd([[0, 30], [60, 90]], 15,
-                                  [[100, 200], [300, 400]])
-    lat1, lon1 = fa.apxg2q(0, 15, 100, 0)[:2]
-    lat2, lon2 = fa.apxg2q(30, 15, 200, 0)[:2]
-    lat3, lon3 = fa.apxg2q(60, 15, 300, 0)[:2]
-    lat4, lon4 = fa.apxg2q(90, 15, 400, 0)[:2]
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
-                                                 dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
-                                                 dtype=float))
-
-
-def test__geo2qd_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._geo2qd(60, 180, 100),
-                    fa.apxg2q(60, 180, 100, 0)[:2])
-    assert_allclose(apex_out._geo2qd(60, -180, 100),
-                    fa.apxg2q(60, -180, 100, 0)[:2])
-    assert_allclose(apex_out._geo2qd(60, -180, 100),
-                    apex_out._geo2qd(60, 180, 100))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._geo2qd(lat, 15 + i * 360, 100),
-                            fa.apxg2q(lat, 15, 100, 0)[:2])
-
-
-def test__geo2apex_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(apex_out._geo2apex(lat, lon, 100),
-                            fa.apxg2all(lat, lon, 100, 300, 0)[2:4])
-
-
-def test__geo2apex_array():
-    apex_out = Apex(date=2000, refh=300)
-    lats, lons = apex_out._geo2apex([[0, 30], [60, 90]], 15,
-                                    [[100, 200], [300, 400]])
-    lat1, lon1 = fa.apxg2all(0, 15, 100, 300, 0)[2:4]
-    lat2, lon2 = fa.apxg2all(30, 15, 200, 300, 0)[2:4]
-    lat3, lon3 = fa.apxg2all(60, 15, 300, 300, 0)[2:4]
-    lat4, lon4 = fa.apxg2all(90, 15, 400, 300, 0)[2:4]
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
-                                                 dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
-                                                 dtype=float))
-
-
-def test__geo2apex_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._geo2apex(60, 180, 100),
-                    fa.apxg2all(60, 180, 100, 300, 0)[2:4])
-    assert_allclose(apex_out._geo2apex(60, -180, 100),
-                    fa.apxg2all(60, -180, 100, 300, 0)[2:4])
-    assert_allclose(apex_out._geo2apex(60, -180, 100),
-                    apex_out._geo2apex(60, 180, 100))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._geo2apex(lat, 15 + i * 360, 100),
-                            fa.apxg2all(lat, 15, 100, 300, 0)[2:4])
-
-
-def test__geo2apexall_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            ret1 = apex_out._geo2apexall(lat, lon, 100)
-            ret2 = fa.apxg2all(lat, lon, 100, 300, 1)
-            for r1, r2 in zip(ret1, ret2):
-                assert_allclose(r1, r2)
-
-
-def test__geo2apexall_array():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out._geo2apexall([[0, 30], [60, 90]], 15,
-                                [[100, 200], [300, 400]])
-    ret1 = fa.apxg2all(0, 15, 100, 300, 1)
-    ret2 = fa.apxg2all(30, 15, 200, 300, 1)
-    ret3 = fa.apxg2all(60, 15, 300, 300, 1)
-    ret4 = fa.apxg2all(90, 15, 400, 300, 1)
-    for i in range(len(ret)):
-        try:
-            # ret[i] is array of floats
-            assert_allclose(ret[i].astype(float),
-                            np.array([[ret1[i], ret2[i]], [ret3[i], ret4[i]]],
-                                     dtype=float))
-        except ValueError:
-            # ret[i] is array of arrays
-            assert_allclose(ret[i][0, 0], ret1[i])
-            assert_allclose(ret[i][0, 1], ret2[i])
-            assert_allclose(ret[i][1, 0], ret3[i])
-            assert_allclose(ret[i][1, 1], ret4[i])
-
-
-def test__qd2geo_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            for prec in [-1, 1e-2, 1e-10]:
-                assert_allclose(apex_out._qd2geo(lat, lon, 100, prec),
-                                fa.apxq2g(lat, lon, 100, prec))
-
-
-def test__qd2geo_array():
-    apex_out = Apex(date=2000, refh=300)
-    lats, lons, errs = apex_out._qd2geo([[0, 30], [60, 90]], 15,
-                                        [[100, 200], [300, 400]], 1e-2)
-    lat1, lon1, err1 = fa.apxq2g(0, 15, 100, 1e-2)
-    lat2, lon2, err2 = fa.apxq2g(30, 15, 200, 1e-2)
-    lat3, lon3, err3 = fa.apxq2g(60, 15, 300, 1e-2)
-    lat4, lon4, err4 = fa.apxq2g(90, 15, 400, 1e-2)
-    assert_allclose(lats.astype(float), np.array([[lat1, lat2], [lat3, lat4]],
-                                                 dtype=float))
-    assert_allclose(lons.astype(float), np.array([[lon1, lon2], [lon3, lon4]],
-                                                 dtype=float))
-    assert_allclose(errs.astype(float), np.array([[err1, err2], [err3, err4]],
-                                                 dtype=float))
-
-
-def test__qd2geo_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._qd2geo(60, 180, 100, 1e-2),
-                    fa.apxq2g(60, 180, 100, 1e-2))
-    assert_allclose(apex_out._qd2geo(60, -180, 100, 1e-2),
-                    fa.apxq2g(60, -180, 100, 1e-2))
-    assert_allclose(apex_out._qd2geo(60, -180, 100, 1e-2),
-                    apex_out._qd2geo(60, 180, 100, 1e-2))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._qd2geo(lat, 15 + i * 360, 100, 1e-2),
-                            fa.apxq2g(lat, 15, 100, 1e-2))
-
-
-def test__basevec_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in [0, 30, 60, 89]:
-        for lon in [-179, -90, 0, 90, 180]:
-            assert_allclose(apex_out._basevec(lat, lon, 100),
-                            fa.apxg2q(lat, lon, 100, 1)[2:4])
-
-
-def test__basevec_array():
-    apex_out = Apex(date=2000, refh=300)
-    f1s, f2s = apex_out._basevec([[0, 30], [60, 90]], 15,
-                                 [[100, 200], [300, 400]])
-    f11, f21 = fa.apxg2q(0, 15, 100, 1)[2:4]
-    f12, f22 = fa.apxg2q(30, 15, 200, 1)[2:4]
-    f13, f23 = fa.apxg2q(60, 15, 300, 1)[2:4]
-    f14, f24 = fa.apxg2q(90, 15, 400, 1)[2:4]
-    assert_allclose(f1s[0, 0], f11)
-    assert_allclose(f1s[0, 1], f12)
-    assert_allclose(f1s[1, 0], f13)
-    assert_allclose(f1s[1, 1], f14)
-    assert_allclose(f2s[0, 0], f21)
-    assert_allclose(f2s[0, 1], f22)
-    assert_allclose(f2s[1, 0], f23)
-    assert_allclose(f2s[1, 1], f24)
-
-
-def test__basevec_longitude():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out._basevec(60, 180, 100),
-                    fa.apxg2q(60, 180, 100, 1)[2:4])
-    assert_allclose(apex_out._basevec(60, -180, 100),
-                    fa.apxg2q(60, -180, 100, 1)[2:4])
-    assert_allclose(apex_out._basevec(60, -180, 100),
-                    apex_out._basevec(60, 180, 100))
-    for i in range(-5, 5):
-        for lat in [0, 30, 60, 90]:
-            assert_allclose(apex_out._basevec(lat, 15 + i * 360, 100),
-                            fa.apxg2q(lat, 15, 100, 1)[2:4])
-
-
-# ============================================================================
-#  Test the convert() method
-# ============================================================================
-
-
-def test_convert_geo2apex():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'geo', 'apex', height=100),
-                    apex_out.geo2apex(60, 15, 100))
-
-
-def test_convert_geo2qd():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'geo', 'qd', height=100),
-                    apex_out.geo2qd(60, 15, 100))
-
-
-def test_convert_geo2mlt_nodate():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.convert(60, 15, 'geo', 'mlt')
-
-
-def test_convert_geo2mlt():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'geo', 'mlt', height=100,
-                                     ssheight=2e5, datetime=datetime)[1],
-                    apex_out.mlon2mlt(apex_out.geo2apex(60, 15, 100)[1],
-                                      datetime, ssheight=2e5))
-
-
-def test_convert_apex2geo():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'apex', 'geo', height=100,
-                                     precision=1e-2),
-                    apex_out.apex2geo(60, 15, 100, precision=1e-2)[:-1])
-
-
-def test_convert_apex2qd():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'apex', 'qd', height=100),
-                    apex_out.apex2qd(60, 15, height=100))
-
-
-def test_convert_apex2mlt():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'apex', 'mlt', height=100,
-                                     datetime=datetime, ssheight=2e5)[1],
-                    apex_out.mlon2mlt(15, datetime, ssheight=2e5))
-
-
-def test_convert_qd2geo():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'qd', 'geo', height=100,
-                                     precision=1e-2),
-                    apex_out.qd2geo(60, 15, 100, precision=1e-2)[:-1])
-
-
-def test_convert_qd2apex():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'qd', 'apex', height=100),
-                    apex_out.qd2apex(60, 15, height=100))
-
-
-def test_convert_qd2apex_at_equator():
-    """Test the quasi-dipole to apex conversion at the magnetic equator."""
-    apex_out = Apex(date=2000, refh=80)
-    elat, elon = apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
-                                  height=120.0)
-    clat, clon = apex_out.convert(lat=0.001, lon=0, source='qd', dest='apex',
-                                  height=120.0)
-    assert_allclose([elat, elon], [clat, clon], atol=1e-4)
-
-
-def test_convert_qd2mlt():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'qd', 'mlt', height=100,
-                                     datetime=datetime, ssheight=2e5)[1],
-                    apex_out.mlon2mlt(15, datetime, ssheight=2e5))
-
-
-def test_convert_mlt2geo():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'mlt', 'geo', height=100,
-                                     datetime=datetime, precision=1e-2,
-                                     ssheight=2e5),
-                    apex_out.apex2geo(60, apex_out.mlt2mlon(15, datetime,
-                                                            ssheight=2e5), 100,
-                                      precision=1e-2)[:-1])
-
-
-def test_convert_mlt2apex():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'mlt', 'apex', height=100,
-                                     datetime=datetime, ssheight=2e5),
-                    (60, apex_out.mlt2mlon(15, datetime, ssheight=2e5)))
-
-
-def test_convert_mlt2qd():
-    datetime = dt.datetime(2000, 3, 9, 14, 25, 58)
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.convert(60, 15, 'mlt', 'qd', height=100,
-                                     datetime=datetime, ssheight=2e5),
-                    apex_out.apex2qd(60, apex_out.mlt2mlon(15, datetime,
-                                                           ssheight=2e5),
-                                     height=100))
-
-
-def test_convert_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.convert(91, 0, 'geo', 'geo')
-    with pytest.raises(ValueError):
-        apex_out.convert(-91, 0, 'geo', 'geo')
-    apex_out.convert(90, 0, 'geo', 'geo')
-    apex_out.convert(-90, 0, 'geo', 'geo')
-
-    assert_allclose(apex_out.convert(90 + 1e-5, 0, 'geo', 'apex'),
-                    apex_out.convert(90, 0, 'geo', 'apex'), rtol=0, atol=1e-8)
-
-
-def test_convert_invalid_transformation():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(NotImplementedError):
-        apex_out.convert(0, 0, 'foobar', 'geo')
-    with pytest.raises(NotImplementedError):
-        apex_out.convert(0, 0, 'geo', 'foobar')
-
-
-coord_names = ['geo', 'apex', 'qd']
-
-
-@pytest.mark.parametrize('transform', itertools.product(coord_names,
-                                                        coord_names))
-def test_convert_withnan(transform):
-    """Test Apex.convert success with NaN input."""
-    num_nans = 5
-    in_lat = np.arange(0, 10, dtype=float)
-    in_lat[:num_nans] = np.nan
-    in_lon = np.arange(0, 10, dtype=float)
-    in_lon[:num_nans] = np.nan
-    src, dest = transform
-    apex_out = Apex(date=2000, refh=80)
-    out_lat, out_lon = apex_out.convert(in_lat, in_lon, src, dest, height=120)
-    assert np.all(np.isnan(out_lat[:num_nans]))
-    assert np.all(np.isnan(out_lon[:num_nans]))
-    assert np.all(np.isfinite(out_lat[num_nans:]))
-    assert np.all(np.isfinite(out_lat[num_nans:]))
-
-
-# ============================================================================
-#  Test the geo2apex() method
-# ============================================================================
-
-
-def test_geo2apex():
-    apex_out = Apex(date=2000, refh=300)
-    lat, lon = apex_out.geo2apex(60, 15, 100)
-    assert_allclose((lat, lon), apex_out._geo2apex(60, 15, 100))
-    assert type(lat) != np.ndarray
-    assert type(lon) != np.ndarray
-
-
-def test_geo2apex_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.geo2apex([60, 60], 15, 100)[0].shape == (2,)
-    assert apex_out.geo2apex(60, [15, 15], 100)[0].shape == (2,)
-    assert apex_out.geo2apex(60, 15, [100, 100])[0].shape == (2,)
-
-
-def test_geo2apex_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.geo2apex(91, 0, 0)
-    with pytest.raises(ValueError):
-        apex_out.geo2apex(-91, 0, 0)
-    apex_out.geo2apex(90, 0, 0)
-    apex_out.geo2apex(-90, 0, 0)
-
-    assert_allclose(apex_out.geo2apex(90 + 1e-5, 0, 0),
-                    apex_out.geo2apex(90, 0, 0), rtol=0, atol=1e-8)
-
-
-def test_geo2apex_undefined_warning(recwarn):
-    """Test warning and fill values for an undefined location."""
-    apex_out = Apex(date=2000, refh=10000)
-    ret = apex_out.geo2apex(0, 0, 0)
-
-    assert np.isnan(ret[0])
-    assert len(recwarn) == 1
-    assert issubclass(recwarn[-1].category, UserWarning)
-    assert 'set to NaN where' in str(recwarn[-1].message)
-
-
-# ============================================================================
-#  Test the apex2geo() method
-# ============================================================================
-
-
-def test_apex2geo():
-    apex_out = Apex(date=2000, refh=300)
-    lat, lon, error = apex_out.apex2geo(60, 15, 100, precision=1e-2)
-    assert_allclose((lat, lon, error),
-                    apex_out.qd2geo(*apex_out.apex2qd(60, 15, 100), height=100,
-                                    precision=1e-2))
-
-    assert type(lat) != np.ndarray
-    assert type(lon) != np.ndarray
-    assert type(error) != np.ndarray
-
-
-def test_apex2geo_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.apex2geo([60, 60], 15, 100)[0].shape == (2,)
-    assert apex_out.apex2geo(60, [15, 15], 100)[0].shape == (2,)
-    assert apex_out.apex2geo(60, 15, [100, 100])[0].shape == (2,)
-
-
-def test_apex2geo_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.apex2geo(91, 0, 0, 1e-2)
-    with pytest.raises(ValueError):
-        apex_out.apex2geo(-91, 0, 0, 1e-2)
-    apex_out.apex2geo(90, 0, 0, 1e-2)
-    apex_out.apex2geo(-90, 0, 0, 1e-2)
-
-    assert_allclose(apex_out.apex2geo(90 + 1e-5, 0, 0, 1e-2),
-                    apex_out.apex2geo(90, 0, 0, 1e-2), rtol=0, atol=1e-8)
-
-
-# ============================================================================
-#  Test the geo2qd() method
-# ============================================================================
-
-
-def test_geo2qd():
-    apex_out = Apex(date=2000, refh=300)
-    lat, lon = apex_out.geo2qd(60, 15, 100)
-    assert_allclose((lat, lon), apex_out._geo2qd(60, 15, 100))
-    assert type(lat) != np.ndarray
-    assert type(lon) != np.ndarray
-
-
-def test_geo2qd_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.geo2qd([60, 60], 15, 100)[0].shape == (2,)
-    assert apex_out.geo2qd(60, [15, 15], 100)[0].shape == (2,)
-    assert apex_out.geo2qd(60, 15, [100, 100])[0].shape == (2,)
-
-
-def test_geo2qd_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.geo2qd(91, 0, 0)
-    with pytest.raises(ValueError):
-        apex_out.geo2qd(-91, 0, 0)
-    apex_out.geo2qd(90, 0, 0)
-    apex_out.geo2qd(-90, 0, 0)
-
-    assert_allclose(apex_out.geo2qd(90 + 1e-5, 0, 0), apex_out.geo2qd(90, 0, 0),
-                    rtol=0, atol=1e-8)
-
-
-# ============================================================================
-#  Test the qd2geo() method
-# ============================================================================
-
-
-def test_qd2geo():
-    apex_out = Apex(date=2000, refh=300)
-    lat, lon, error = apex_out.qd2geo(60, 15, 100, precision=1e-2)
-    assert_allclose((lat, lon, error), apex_out._qd2geo(60, 15, 100, 1e-2))
-    assert type(lat) != np.ndarray
-    assert type(lon) != np.ndarray
-    assert type(error) != np.ndarray
-
-
-def test_qd2geo_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.qd2geo([60, 60], 15, 100)[0].shape == (2,)
-    assert apex_out.qd2geo(60, [15, 15], 100)[0].shape == (2,)
-    assert apex_out.qd2geo(60, 15, [100, 100])[0].shape == (2,)
-
-
-def test_qd2geo_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.qd2geo(91, 0, 0, precision=1e-2)
-    with pytest.raises(ValueError):
-        apex_out.qd2geo(-91, 0, 0, precision=1e-2)
-    apex_out.qd2geo(90, 0, 0, precision=1e-2)
-    apex_out.qd2geo(-90, 0, 0, precision=1e-2)
-
-    assert_allclose(apex_out.qd2geo(90 + 1e-5, 0, 0, 1e-2),
-                    apex_out.qd2geo(90, 0, 0, 1e-2), rtol=0, atol=1e-8)
-
-
-# ============================================================================
-#  Test the apex2qd() method
-# ============================================================================
-
-
-def test_apex2qd():
-    apex_out = Apex(date=2000, refh=300)
-    lat, lon = apex_out.apex2qd(60, 15, 100)
-    assert_allclose((lat, lon),
-                    [60.498401, 15])
-    assert type(lat) != np.ndarray
-    assert type(lon) != np.ndarray
-
-
-def test_apex2qd_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.apex2qd([60, 60], 15, 100)[0].shape == (2,)
-    assert apex_out.apex2qd(60, [15, 15], 100)[0].shape == (2,)
-    assert apex_out.apex2qd(60, 15, [100, 100])[0].shape == (2,)
-
-
-def test_apex2qd_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.apex2qd(91, 0, 0)
-    with pytest.raises(ValueError):
-        apex_out.apex2qd(-91, 0, 0)
-    apex_out.apex2qd(90, 0, 0)
-    apex_out.apex2qd(-90, 0, 0)
-
-    assert_allclose(apex_out.apex2qd(90 + 1e-5, 0, 0),
-                    apex_out.apex2qd(90, 0, 0), rtol=0, atol=1e-8)
-
-
-def test_apex2qd_apexheight_close():
-    apex_out = Apex(date=2000, refh=300)
-    apex_out.apex2qd(0, 15, 300 + 1e-6)
-
-
-def test_apex2qd_apexheight_over():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ApexHeightError):
-        apex_out.apex2qd(0, 15, 301)
-
-
-# ============================================================================
-#  Test the qd2apex() method
-# ============================================================================
-
-
-def test_qd2apex():
-    apex_out = Apex(date=2000, refh=300)
-    lat, lon = apex_out.qd2apex(60, 15, 100)
-    assert_allclose((lat, lon),
-                    [59.491381, 15])
-    assert type(lat) != np.ndarray
-    assert type(lon) != np.ndarray
-
-
-def test_qd2apex_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.qd2apex([60, 60], 15, 100)[0].shape == (2,)
-    assert apex_out.qd2apex(60, [15, 15], 100)[0].shape == (2,)
-    assert apex_out.qd2apex(60, 15, [100, 100])[0].shape == (2,)
-
-
-def test_qd2apex_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.qd2apex(91, 0, 0)
-    with pytest.raises(ValueError):
-        apex_out.qd2apex(-91, 0, 0)
-    apex_out.qd2apex(90, 0, 0)
-    apex_out.qd2apex(-90, 0, 0)
-
-    assert_allclose(apex_out.qd2apex(90 + 1e-5, 0, 0),
-                    apex_out.qd2apex(90, 0, 0), rtol=0, atol=1e-8)
-
-
-def test_qd2apex_apexheight_close():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.qd2apex(0, 15, 300 - 1e-5),
-                    apex_out.qd2apex(0, 15, 300))
-
-
-def test_qd2apex_apexheight_over():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ApexHeightError):
-        apex_out.qd2apex(0, 15, 299)
-
-
-# ============================================================================
-#  Test mlon2mlt()
-# ============================================================================
-
-
-def test_mlon2mlt_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    mlon = apex_out.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6))
-    assert_allclose(mlon, 23.019629923502603)
-    assert type(mlon) != np.ndarray
-
-
-def test_mlon2mlt_ssheight():
-    apex_out = Apex(date=2000, refh=300)
-    mlt = apex_out.mlon2mlt(0, dt.datetime(2000, 2, 3, 4, 5, 6),
-                            ssheight=50 * 2000)
-    assert_allclose(mlt, 23.026712036132814)
-
-
-def test_mlon2mlt_1Darray():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.mlon2mlt([0, 180],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [23.019261, 11.019261], rtol=1e-4)
-
-
-def test_mlon2mlt_2Darray():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.mlon2mlt([[0, 180], [0, 180]],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [[23.019261, 11.019261], [23.019261, 11.019261]], rtol=1e-4)
-
-
-def test_mlon2mlt_diffdates():
-    apex_out = Apex(date=2000, refh=300)
-    dtime1 = dt.datetime(2000, 2, 3, 4, 5, 6)
-    dtime2 = dt.datetime(2000, 2, 3, 5, 5, 6)
-    assert apex_out.mlon2mlt(0, dtime1) != apex_out.mlon2mlt(0, dtime2)
-
-
-def test_mlon2mlt_offset():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    assert_allclose(apex_out.mlon2mlt(0, date),
-                    apex_out.mlon2mlt(-15, date) + 1)
-    assert_allclose(apex_out.mlon2mlt(0, date),
-                    apex_out.mlon2mlt(-10 * 15, date) + 10)
-
-
-def test_mlon2mlt_range():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.mlon2mlt(range(0, 361, 30),
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
-                     9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
-                     19.01963, 21.01963, 23.01963],
-                    rtol=1e-4)
-
-
-# ============================================================================
-#  Test mlt2mlon()
-# ============================================================================
-
-
-def test_mlt2mlon_scalar():
-    apex_out = Apex(date=2000, refh=300)
-    mlt = apex_out.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6))
-    assert_allclose(mlt, 14.705535888671875)
-    assert type(mlt) != np.ndarray
-
-
-def test_mlt2mlon_ssheight():
-    apex_out = Apex(date=2000, refh=300)
-    mlt = apex_out.mlt2mlon(0, dt.datetime(2000, 2, 3, 4, 5, 6),
-                            ssheight=50 * 2000)
-    assert_allclose(mlt, 14.599319458007812)
-
-
-def test_mlt2mlon_1Darray():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.mlt2mlon([0, 12],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [14.705551, 194.705551], rtol=1e-4)
-
-
-def test_mlt2mlon_2Darray():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.mlt2mlon([[0, 12], [0, 12]],
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [[14.705551, 194.705551], [14.705551, 194.705551]],
-                    rtol=1e-4)
-
-
-def test_mlt2mlon_diffdates():
-    apex_out = Apex(date=2000, refh=300)
-    dtime1 = dt.datetime(2000, 2, 3, 4, 5, 6)
-    dtime2 = dt.datetime(2000, 2, 3, 5, 5, 6)
-    assert apex_out.mlt2mlon(0, dtime1) != apex_out.mlt2mlon(0, dtime2)
-
-
-def test_mlt2mlon_offset():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    assert_allclose(apex_out.mlt2mlon(0, date), apex_out.mlt2mlon(1, date) - 15)
-    assert_allclose(apex_out.mlt2mlon(0, date),
-                    apex_out.mlt2mlon(10, date) - 150)
-
-
-def test_mlt2mlon_range():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.mlt2mlon(range(0, 25, 2),
-                                      dt.datetime(2000, 2, 3, 4, 5, 6)),
-                    [14.705551, 44.705551, 74.705551, 104.705551, 134.705551,
-                     164.705551, 194.705551, 224.705551, 254.705551, 284.705551,
-                     314.705551, 344.705551, 14.705551],
-                    rtol=1e-4)
-
-
-# ============================================================================
-#  Test mlt/mlon back and forth
-# ============================================================================
-
-
-def test_mlon2mlt2mlon():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(0, date), date), 0)
-    assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(6, date), date), 6)
-    assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(12, date), date), 12)
-    assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(18, date), date), 18)
-    assert_allclose(apex_out.mlon2mlt(apex_out.mlt2mlon(24, date), date), 0)
-
-
-def test_mlt2mlon2mlt():
-    apex_out = Apex(date=2000, refh=300)
-    date = dt.datetime(2000, 2, 3, 4, 5, 6)
-    assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(0, date), date), 0)
-    assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(90, date), date), 90)
-    assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(180, date), date), 180)
-    assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(270, date), date), 270)
-    assert_allclose(apex_out.mlt2mlon(apex_out.mlon2mlt(360, date), date), 0)
-
-
-# ============================================================================
-#  Test the map_to_height() method
-# ============================================================================
-
-
-def test_map_to_height():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=False,
-                                           precision=1e-10),
-                    (31.841466903686523, 17.916635513305664,
-                     1.7075473124350538e-6))
-    assert_allclose(apex_out.map_to_height(30, 170, 100, 500, conjugate=False,
-                                           precision=1e-2),
-                    (25.727270126342773, 169.60546875, 0.00017573432705830783))
-
-
-def test_map_to_height_same_height():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
-                                           precision=1e-10),
-                    (60.0, 15.000003814697266, 0.0), rtol=1e-5)
-
-
-def test_map_to_height_conjugate():
-    """Test results of map_to_height using conjugacy."""
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.map_to_height(60, 15, 100, 10000, conjugate=True,
-                                           precision=1e-10),
-                    (-25.424888610839844, 27.310426712036133,
-                     1.2074182222931995e-6), atol=1e-6)
-    assert_allclose(apex_out.map_to_height(30, 170, 100, 500, conjugate=True,
-                                           precision=1e-2),
-                    (-13.76642894744873, 164.24259948730469,
-                     0.00056820799363777041), atol=1e-6)
-
-
-def test_map_to_height_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.map_to_height([60, 60], 15, 100, 100),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
-    assert_allclose(apex_out.map_to_height(60, [15, 15], 100, 100),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
-    assert_allclose(apex_out.map_to_height(60, 15, [100, 100], 100),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
-    assert_allclose(apex_out.map_to_height(60, 15, 100, [100, 100]),
-                    ([60] * 2, [15.00000381] * 2, [0] * 2), rtol=1e-5)
-
-
-def test_map_to_height_ApexHeightError():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ApexHeightError):
-        apex_out.map_to_height(0, 15, 100, 10000)
-
-
-# ============================================================================
-#  Test the map_E_to_height() method
-# ============================================================================
-
-
-def test_map_E_to_height():
-    apex_out = Apex(date=2000, refh=300)
-    out_60_15_100_500 = [0.71152183, 2.35624876, 0.57260784]
-    out_60_15_100_500_234 = [1.56028502, 3.43916636, 0.78235384]
-    out_60_15_100_1000 = [0.67796492, 2.08982134, 0.55860785]
-    out_60_15_200_500 = [0.72377397, 2.42737471, 0.59083726]
-    out_60_30_100_500 = [0.68626344, 2.37530133, 0.60060124]
-    out_70_15_100_500 = [0.72760378, 2.18082305, 0.29141979]
-
-    # scalar
-    assert_allclose(apex_out.map_E_to_height(60, 15, 100, 500, [1, 2, 3]),
-                    out_60_15_100_500, rtol=1e-5)
-    assert_allclose(apex_out.map_E_to_height(60, 15, 100, 500, [2, 3, 4]),
-                    out_60_15_100_500_234, rtol=1e-5)
-    assert_allclose(apex_out.map_E_to_height(60, 15, 100, 1000, [1, 2, 3]),
-                    out_60_15_100_1000, rtol=1e-5)
-    assert_allclose(apex_out.map_E_to_height(60, 15, 200, 500, [1, 2, 3]),
-                    out_60_15_200_500, rtol=1e-5)
-    assert_allclose(apex_out.map_E_to_height(60, 30, 100, 500, [1, 2, 3]),
-                    out_60_30_100_500, rtol=1e-5)
-    assert_allclose(apex_out.map_E_to_height(70, 15, 100, 500, [1, 2, 3]),
-                    out_70_15_100_500, rtol=1e-5)
-
-    # vectorize lat
-    assert_allclose(apex_out.map_E_to_height([60, 70], 15, 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_70_15_100_500]).T,
-                    rtol=1e-5)
-
-    # vectorize lon
-    assert_allclose(apex_out.map_E_to_height(60, [15, 30], 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_30_100_500]).T,
-                    rtol=1e-5)
-
-    # vectorize height
-    assert_allclose(apex_out.map_E_to_height(60, 15, [100, 200], 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_200_500]).T,
-                    rtol=1e-5)
-
-    # vectorize newheight
-    assert_allclose(apex_out.map_E_to_height(60, 15, 100, [500, 1000],
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_100_1000]).T,
-                    rtol=1e-5)
-
-    # vectorize E
-    assert_allclose(apex_out.map_E_to_height(60, 15, 100, 500,
-                                             np.array([[1, 2, 3],
-                                                       [2, 3, 4]]).T),
-                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
-                    rtol=1e-5)
-
-
-# ============================================================================
-#  Test the map_V_to_height() method
-# ============================================================================
-
-
-def test_map_V_to_height():
-    apex_out = Apex(date=2000, refh=300)
-    out_60_15_100_500 = [0.81971957, 2.84512495, 0.69545001]
-    out_60_15_100_500_234 = [1.83027746, 4.14346436, 0.94764179]
-    out_60_15_100_1000 = [0.92457698, 3.14997661, 0.85135187]
-    out_60_15_200_500 = [0.80388262, 2.79321504, 0.68285158]
-    out_60_30_100_500 = [0.76141245, 2.87884673, 0.73655941]
-    out_70_15_100_500 = [0.84681866, 2.5925821,  0.34792655]
-
-    # scalar
-    assert_allclose(apex_out.map_V_to_height(60, 15, 100, 500, [1, 2, 3]),
-                    out_60_15_100_500, rtol=1e-5)
-    assert_allclose(apex_out.map_V_to_height(60, 15, 100, 500, [2, 3, 4]),
-                    out_60_15_100_500_234, rtol=1e-5)
-    assert_allclose(apex_out.map_V_to_height(60, 15, 100, 1000, [1, 2, 3]),
-                    out_60_15_100_1000, rtol=1e-5)
-    assert_allclose(apex_out.map_V_to_height(60, 15, 200, 500, [1, 2, 3]),
-                    out_60_15_200_500, rtol=1e-5)
-    assert_allclose(apex_out.map_V_to_height(60, 30, 100, 500, [1, 2, 3]),
-                    out_60_30_100_500, rtol=1e-5)
-    assert_allclose(apex_out.map_V_to_height(70, 15, 100, 500, [1, 2, 3]),
-                    out_70_15_100_500, rtol=1e-5)
-
-    # vectorize lat
-    assert_allclose(apex_out.map_V_to_height([60, 70], 15, 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_70_15_100_500]).T,
-                    rtol=1e-5)
-
-    # vectorize lon
-    assert_allclose(apex_out.map_V_to_height(60, [15, 30], 100, 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_30_100_500]).T,
-                    rtol=1e-5)
-
-    # vectorize height
-    assert_allclose(apex_out.map_V_to_height(60, 15, [100, 200], 500,
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_200_500]).T,
-                    rtol=1e-5)
-
-    # vectorize newheight
-    assert_allclose(apex_out.map_V_to_height(60, 15, 100, [500, 1000],
-                                             np.array([[1, 2, 3]] * 2).T),
-                    np.array([out_60_15_100_500, out_60_15_100_1000]).T,
-                    rtol=1e-5)
-
-    # vectorize E
-    assert_allclose(apex_out.map_V_to_height(60, 15, 100, 500,
-                                             np.array([[1, 2, 3],
-                                                       [2, 3, 4]]).T),
-                    np.array([out_60_15_100_500, out_60_15_100_500_234]).T,
-                    rtol=1e-5)
-
-
-# ============================================================================
-#  Test basevectors_qd()
-# ============================================================================
-
-
-# test coords
-
-def test_basevectors_qd_scalar_geo():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.basevectors_qd(60, 15, 100, coords='geo'),
-                    apex_out._basevec(60, 15, 100))
-
-
-def test_basevectors_qd_scalar_apex():
-    apex_out = Apex(date=2000, refh=300)
-    glat, glon, _ = apex_out.apex2geo(60, 15, 100, precision=1e-2)
-    assert_allclose(apex_out.basevectors_qd(60, 15, 100, coords='apex',
-                                            precision=1e-2),
-                    apex_out._basevec(glat, glon, 100))
-
-
-def test_basevectors_qd_scalar_qd():
-    apex_out = Apex(date=2000, refh=300)
-    glat, glon, _ = apex_out.qd2geo(60, 15, 100, precision=1e-2)
-    assert_allclose(apex_out.basevectors_qd(60, 15, 100, coords='qd',
-                                            precision=1e-2),
-                    apex_out._basevec(glat, glon, 100))
-
-
-# test shapes and vectorization of arguments
-def test_basevectors_qd_scalar_shape():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_qd(60, 15, 100)
-    for r in ret:
-        assert r.shape == (2,)
-
-
-def test_basevectors_qd_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_qd([60, 60, 60, 60], 15, 100, coords='geo')
-    for r in ret:
-        assert r.shape == (2, 4)
-    ret = apex_out.basevectors_qd(60, [15, 15, 15, 15], 100, coords='geo')
-    for r in ret:
-        assert r.shape == (2, 4)
-    ret = apex_out.basevectors_qd(60, 15, [100, 100, 100, 100], coords='geo')
-    for r in ret:
-        assert r.shape == (2, 4)
-
-
-# test array return values
-
-def test_basevectors_qd_array():
-    apex_out = Apex(date=2000, refh=300)
-    f1, f2 = apex_out.basevectors_qd([0, 30], 15, 100, coords='geo')
-    f1_lat0, f2_lat0 = apex_out._basevec(0, 15, 100)
-    f1_lat30, f2_lat30 = apex_out._basevec(30, 15, 100)
-    assert_allclose(f1[:, 0], f1_lat0)
-    assert_allclose(f2[:, 0], f2_lat0)
-    assert_allclose(f1[:, 1], f1_lat30)
-    assert_allclose(f2[:, 1], f2_lat30)
-
-
-# ============================================================================
-#  Test basevectors_apex()
-# ============================================================================
-
-
-# test against return from _geo2apexall for different coords
-
-def test_basevectors_apex_scalar_geo():
-    apex_out = Apex(date=2000, refh=300)
-
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, 100, coords='geo')
-
-    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
-     e3_) = apex_out._geo2apexall(60, 15, 100)
-
-    assert_allclose(f1, f1_)
-    assert_allclose(f2, f2_)
-    assert_allclose(d1, d1_)
-    assert_allclose(d2, d2_)
-    assert_allclose(d3, d3_)
-    assert_allclose(e1, e1_)
-    assert_allclose(e2, e2_)
-    assert_allclose(e3, e3_)
-
-
-def test_basevectors_apex_scalar_apex():
-    apex_out = Apex(date=2000, refh=300)
-
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, 100, coords='apex', precision=1e-2)
-
-    glat, glon, _ = apex_out.apex2geo(60, 15, 100, precision=1e-2)
-    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
-     e3_) = apex_out._geo2apexall(glat, glon, 100)
-
-    assert_allclose(f1, f1_)
-    assert_allclose(f2, f2_)
-    assert_allclose(d1, d1_)
-    assert_allclose(d2, d2_)
-    assert_allclose(d3, d3_)
-    assert_allclose(e1, e1_)
-    assert_allclose(e2, e2_)
-    assert_allclose(e3, e3_)
-
-
-def test_basevectors_apex_scalar_qd():
-    apex_out = Apex(date=2000, refh=300)
-
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, 100, coords='qd', precision=1e-2)
-
-    glat, glon, _ = apex_out.qd2geo(60, 15, 100, precision=1e-2)
-    (_, _, _, _, f1_, f2_, _, d1_, d2_, d3_, _, e1_, e2_,
-     e3_) = apex_out._geo2apexall(glat, glon, 100)
-
-    assert_allclose(f1, f1_)
-    assert_allclose(f2, f2_)
-    assert_allclose(d1, d1_)
-    assert_allclose(d2, d2_)
-    assert_allclose(d3, d3_)
-    assert_allclose(e1, e1_)
-    assert_allclose(e2, e2_)
-    assert_allclose(e3, e3_)
-
-
-# test shapes and vectorization of arguments
-
-def test_basevectors_apex_scalar_shape():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_apex(60, 15, 100, precision=1e-2)
-    for r in ret[:2]:
-        assert r.shape == (2,)
-    for r in ret[2:]:
-        assert r.shape == (3,)
-
-
-def test_basevectors_apex_vectorization():
-    apex_out = Apex(date=2000, refh=300)
-    ret = apex_out.basevectors_apex([60, 60, 60, 60], 15, 100)
-    for r in ret[:2]:
-        assert r.shape == (2, 4)
-    for r in ret[2:]:
-        assert r.shape == (3, 4)
-    ret = apex_out.basevectors_apex(60, [15, 15, 15, 15], 100)
-    for r in ret[:2]:
-        assert r.shape == (2, 4)
-    for r in ret[2:]:
-        assert r.shape == (3, 4)
-    ret = apex_out.basevectors_apex(60, 15, [100, 100, 100, 100])
-    for r in ret[:2]:
-        assert r.shape == (2, 4)
-    for r in ret[2:]:
-        assert r.shape == (3, 4)
-
-
-# test correct vectorization of height
-def test_basevectors_apex_vectorization_height():
-    apex_out = Apex(date=2000, refh=0)
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(60, 15, [200, 400], coords='geo')
-    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
-     e3_1) = apex_out._geo2apexall(60, 15, 200)
-    (_, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2,
-     e3_2) = apex_out._geo2apexall(60, 15, 400)
-
-    assert_allclose(f1[:, 0], f1_1)
-    assert_allclose(f2[:, 0], f2_1)
-    assert_allclose(d1[:, 0], d1_1)
-    assert_allclose(d2[:, 0], d2_1)
-    assert_allclose(d3[:, 0], d3_1)
-    assert_allclose(e1[:, 0], e1_1)
-    assert_allclose(e2[:, 0], e2_1)
-    assert_allclose(e3[:, 0], e3_1)
-
-    assert_allclose(f3[:, 0], np.array([-0.088671, -0.018272, 0.993576]),
-                    rtol=1e-4)
-    assert_allclose(g1[:, 0], np.array([0.903098, 0.245273, 0.085107]),
-                    rtol=1e-4)
-    assert_allclose(g2[:, 0], np.array([-0.103495, 1.072078, 0.01048]),
-                    rtol=1e-4)
-    assert_allclose(g3[:, 0], np.array([0, 0, 1.006465]), rtol=1e-4)
-
-    assert_allclose(f1[:, 1], f1_2)
-    assert_allclose(f2[:, 1], f2_2)
-    assert_allclose(d1[:, 1], d1_2)
-    assert_allclose(d2[:, 1], d2_2)
-    assert_allclose(d3[:, 1], d3_2)
-    assert_allclose(e1[:, 1], e1_2)
-    assert_allclose(e2[:, 1], e2_2)
-    assert_allclose(e3[:, 1], e3_2)
-
-    assert_allclose(f3[:, 1], np.array([-0.085415, -0.021176, 0.989645]),
-                    rtol=1e-4)
-    assert_allclose(g1[:, 1], np.array([0.902695, 0.246919, 0.083194]),
-                    rtol=1e-4)
-    assert_allclose(g2[:, 1], np.array([-0.11051, 1.066094, 0.013274]),
-                    rtol=1e-4)
-    assert_allclose(g3[:, 1], np.array([0, 0, 1.010463]), rtol=1e-4)
-
-
-# test scalar return values
-
-def test_basevectors_apex_scalar():
-    apex_out = Apex(date=2000, refh=300)
-
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex(0, 15, 100, coords='geo')
-    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
-     e3_1) = apex_out._geo2apexall(0, 15, 100)
-
-    assert_allclose(f1, f1_1)
-    assert_allclose(f2, f2_1)
-    assert_allclose(d1, d1_1)
-    assert_allclose(d2, d2_1)
-    assert_allclose(d3, d3_1)
-    assert_allclose(e1, e1_1)
-    assert_allclose(e2, e2_1)
-    assert_allclose(e3, e3_1)
-
-    assert_allclose(f3, np.array([0.092637, -0.245951, 0.938848]), rtol=1e-4)
-    assert_allclose(g1, np.array([0.939012, 0.073416, -0.07342]), rtol=1e-4)
-    assert_allclose(g2, np.array([0.055389, 1.004155, 0.257594]), rtol=1e-4)
-    assert_allclose(g3, np.array([0, 0, 1.065135]), rtol=1e-4)
-
-
-# test 1D array return values
-
-def test_basevectors_apex_array():
-    apex_out = Apex(date=2000, refh=300)
-    (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-     e3) = apex_out.basevectors_apex([0, 30], 15, 100, coords='geo')
-    (_, _, _, _, f1_1, f2_1, _, d1_1, d2_1, d3_1, _, e1_1, e2_1,
-     e3_1) = apex_out._geo2apexall(0, 15, 100)
-    (_, _, _, _, f1_2, f2_2, _, d1_2, d2_2, d3_2, _, e1_2, e2_2,
-     e3_2) = apex_out._geo2apexall(30, 15, 100)
-
-    assert_allclose(f1[:, 0], f1_1)
-    assert_allclose(f2[:, 0], f2_1)
-    assert_allclose(d1[:, 0], d1_1)
-    assert_allclose(d2[:, 0], d2_1)
-    assert_allclose(d3[:, 0], d3_1)
-    assert_allclose(e1[:, 0], e1_1)
-    assert_allclose(e2[:, 0], e2_1)
-    assert_allclose(e3[:, 0], e3_1)
-
-    assert_allclose(f3[:, 0], np.array([0.092637, -0.245951, 0.938848]),
-                    rtol=1e-4)
-    assert_allclose(g1[:, 0], np.array([0.939012, 0.073416, -0.07342]),
-                    rtol=1e-4)
-    assert_allclose(g2[:, 0], np.array([0.055389, 1.004155, 0.257594]),
-                    rtol=1e-4)
-    assert_allclose(g3[:, 0], np.array([0, 0, 1.065135]), rtol=1e-4)
-
-    assert_allclose(f1[:, 1], f1_2)
-    assert_allclose(f2[:, 1], f2_2)
-    assert_allclose(d1[:, 1], d1_2)
-    assert_allclose(d2[:, 1], d2_2)
-    assert_allclose(d3[:, 1], d3_2)
-    assert_allclose(e1[:, 1], e1_2)
-    assert_allclose(e2[:, 1], e2_2)
-    assert_allclose(e3[:, 1], e3_2)
-
-    assert_allclose(f3[:, 1], np.array([-0.036618, -0.071019, 0.861604]),
-                    rtol=1e-4)
-    assert_allclose(g1[:, 1], np.array([0.844391, 0.015353, 0.037152]),
-                    rtol=1e-4)
-    assert_allclose(g2[:, 1], np.array([0.050808, 1.02131, 0.086342]),
-                    rtol=1e-4)
-    assert_allclose(g3[:, 1], np.array([0, 0, 1.160625]), rtol=1e-4)
-
-
-# test that vectors are calculated correctly
-
-def test_basevectors_apex_delta():
-    apex_out = Apex(date=2000, refh=300)
-    for lat in range(0, 90, 10):
-        for lon in range(0, 360, 15):
-            (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
-             e3) = apex_out.basevectors_apex(lat, lon, 500)
-            f = [np.append(f1, 0), np.append(f2, 0), f3]
-            g = [g1, g2, g3]
-            d = [d1, d2, d3]
-            e = [e1, e2, e3]
-            for i, j in [(i, j) for i in range(3) for j in range(3)]:
-                delta = 1 if i == j else 0
-                assert_allclose(np.sum(f[i] * g[j]), delta, rtol=0, atol=1e-5)
-                assert_allclose(np.sum(d[i] * e[j]), delta, rtol=0, atol=1e-5)
-
-
-def test_basevectors_apex_invalid_scalar(recwarn):
-    """Test warning and fill values for calculating base vectors with bad value.
-    """
-    apex_out = Apex(date=2000, refh=10000)
-    base_vecs = apex_out.basevectors_apex(0, 0, 0)
-
-    assert issubclass(recwarn[-1].category, UserWarning)
-    assert 'set to NaN where' in str(recwarn[-1].message)
-
-    invalid = np.ones(3) * np.nan
-    for i, bvec in enumerate(base_vecs):
-        if i < 2:
-            assert not np.allclose(bvec, invalid[:2])
-        else:
-            assert_allclose(bvec, invalid)
-
-
-# ============================================================================
-#  Test the get_apex() method
-# ============================================================================
-
-
-def test_get_apex():
-    apex_out = Apex(date=2000, refh=300)
-    assert_allclose(apex_out.get_apex(10), 507.409702543805)
-    assert_allclose(apex_out.get_apex(60), 20313.026999999987)
-
-
-def test_get_apex_invalid_lat():
-    apex_out = Apex(date=2000, refh=300)
-    with pytest.raises(ValueError):
-        apex_out.get_apex(91)
-    with pytest.raises(ValueError):
-        apex_out.get_apex(-91)
-    apex_out.get_apex(90)
-    apex_out.get_apex(-90)
-
-    assert_allclose(apex_out.get_apex(90 + 1e-5), apex_out.get_apex(90),
-                    rtol=0, atol=1e-8)
-
-
-# ============================================================================
-#  Test the set_epoch() method
-# ============================================================================
-
-
-def test_set_epoch():
-    """Test successful setting of Apex epoch."""
-    apex_out = Apex(date=2000.2, refh=300)
-    assert_allclose(apex_out.year, 2000.2)
-    ret_2000_2_py = apex_out._geo2apex(60, 15, 100)
-    apex_out.set_epoch(2000.8)
-    assert_allclose(apex_out.year, 2000.8)
-    ret_2000_8_py = apex_out._geo2apex(60, 15, 100)
-
-    assert ret_2000_2_py != ret_2000_8_py
-
-    fa.loadapxsh(apex_out.datafile, 2000.2)
-    ret_2000_2_apex = fa.apxg2all(60, 15, 100, 300, 0)[2:4]
-    fa.loadapxsh(apex_out.datafile, 2000.8)
-    ret_2000_8_apex = fa.apxg2all(60, 15, 100, 300, 0)[2:4]
-
-    assert ret_2000_2_apex != ret_2000_8_apex
-
-    assert_allclose(ret_2000_2_py, ret_2000_2_apex)
-    assert_allclose(ret_2000_8_py, ret_2000_8_apex)
-
-
 @pytest.fixture()
 def igrf_file():
+    """A fixture for handling the coefficient file."""
     # Ensure the coefficient file exists
     original_file = os.path.join(os.path.dirname(helpers.__file__),
                                  'igrf13coeffs.txt')
     tmp_file = "temp_coeff.txt"
     assert os.path.isfile(original_file)
+
     # Move the coefficient file
     os.rename(original_file, tmp_file)
     yield original_file
+
     # Move the coefficient file back
     os.rename(tmp_file, original_file)
+    return
 
 
 def test_set_epoch_file_error(igrf_file):
     """Test raises OSError when IGRF coefficient file is missing."""
     # Test missing coefficient file failure
     with pytest.raises(OSError) as oerr:
-        Apex(date=2000.2, refh=300)
+        Apex()
     error_string = "File {:} does not exist".format(igrf_file)
     assert str(oerr.value).startswith(error_string)
+    return
 
 
-# ============================================================================
-#  Test the set_refh() method
-# ============================================================================
+class TestApexInit():
+    def setup(self):
+        self.apex_out = None
+        self.test_date = dt.datetime.utcnow()
+        self.test_refh = 0
+        self.bad_file = 'foo/path/to/datafile.blah'
+
+    def teardown(self):
+        del self.apex_out, self.test_date, self.test_refh, self.bad_file
+
+    def eval_date(self):
+        """Evaluate the times in self.test_date and self.apex_out."""
+        if isinstance(self.test_date, dt.datetime) \
+           or isinstance(self.test_date, dt.date):
+            self.test_date = helpers.toYearFraction(self.test_date)
+
+        # Assert the times are the same on the order of tens of seconds.
+        # Necessary to evaluate the current UTC
+        np.testing.assert_almost_equal(self.test_date, self.apex_out.year, 6)
+        return
+
+    def eval_refh(self):
+        """Evaluate the reference height in self.refh and self.apex_out."""
+        eval_str = "".join(["expected reference height [",
+                            "{:}] not equal to Apex ".format(self.test_refh),
+                            "reference height ",
+                            "[{:}]".format(self.apex_out.refh)])
+        assert self.test_refh == self.apex_out.refh, eval_str
+        return
+
+    def test_init_defaults(self):
+        """Test Apex class default initialization."""
+        self.apex_out = Apex()
+        self.eval_date()
+        self.eval_refh()
+        return
+
+    @pytest.mark.parametrize("in_date",
+                             [2015, 2015.5, dt.date(2015, 1, 1),
+                              dt.datetime(2015, 6, 1, 18, 23, 45)])
+    def test_init_date(self, in_date):
+        """Test Apex class with date initialization."""
+        self.test_date = in_date
+        self.apex_out = Apex(date=self.test_date)
+        self.eval_date()
+        self.eval_refh()
+        return
+
+    @pytest.mark.parametrize("new_date", [2015, 2015.5])
+    def test_set_epoch(self, new_date):
+        """Test successful setting of Apex epoch after initialization."""
+        # Evaluate the default initialization
+        self.apex_out = Apex()
+        self.eval_date()
+        self.eval_refh()
+
+        # Update the epoch
+        self.test_date = new_date
+        self.apex_out.set_epoch(new_date)
+        self.eval_date()
+        self.eval_refh()
+        return
+
+    @pytest.mark.parametrize("in_refh", [0.0, 300.0, 30000.0, -1.0])
+    def test_init_refh(self, in_refh):
+        """Test Apex class with reference height initialization."""
+        self.test_refh = in_refh
+        self.apex_out = Apex(refh=self.test_refh)
+        self.eval_date()
+        self.eval_refh()
+        return
+
+    @pytest.mark.parametrize("new_refh", [0.0, 300.0, 30000.0, -1.0])
+    def test_set_refh(self, new_refh):
+        """Test the method used to set the reference height after the init."""
+        # Verify the defaults are set
+        self.apex_out = Apex(date=self.test_date)
+        self.eval_date()
+        self.eval_refh()
+
+        # Update to a new reference height and test
+        self.test_refh = new_refh
+        self.apex_out.set_refh(new_refh)
+        self.eval_refh()
+        return
+
+    def test_init_with_bad_datafile(self):
+        """Test raises IOError with non-existent datafile input."""
+        with pytest.raises(IOError) as oerr:
+            Apex(datafile=self.bad_file)
+        assert str(oerr.value).startswith('Data file does not exist')
+        return
+
+    def test_init_with_bad_fortranlib(self):
+        """Test raises IOError with non-existent datafile input."""
+        with pytest.raises(IOError) as oerr:
+            Apex(fortranlib=self.bad_file)
+        assert str(oerr.value).startswith('Fortran library does not exist')
+        return
 
 
-def test_set_refh():
-    apex_out = Apex(date=2000, refh=300)
-    assert apex_out.refh, 300
-    ret_300 = apex_out._geo2apex(60, 15, 100)
-    apex_out.set_refh(500)
-    assert apex_out.refh == 500
-    ret_500 = apex_out._geo2apex(60, 15, 100)
+class TestApexMethod():
+    """Test the Apex methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
+        self.in_lat = 60
+        self.in_lon = 15
+        self.in_alt = 100
 
-    assert_allclose(ret_300, fa.apxg2all(60, 15, 100, 300, 0)[2:4])
-    assert_allclose(ret_500, fa.apxg2all(60, 15, 100, 500, 0)[2:4])
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out, self.in_lat, self.in_lon, self.in_alt
+
+    def get_input_args(self, method_name, precision=0.0):
+        """Set the input arguments for the different Apex methods.
+
+        Parameters
+        ----------
+        method_name : str
+            Name of the Apex class method
+        precision : float
+            Value for the precision (default=0.0)
+
+        Returns
+        -------
+        in_args : list
+            List of the appropriate input arguments
+
+        """
+        in_args = [self.in_lat, self.in_lon, self.in_alt]
+
+        # Add precision, if needed
+        if method_name in ["_qd2geo", "apxq2g", "apex2geo", "qd2geo",
+                           "_apex2geo"]:
+            in_args.append(precision)
+
+        # Add a reference height, if needed
+        if method_name in ["apxg2all"]:
+            in_args.append(300)
+
+        # Add a vector flag, if needed
+        if method_name in ["apxg2all", "apxg2q"]:
+            in_args.append(1)
+
+        return in_args
+
+    @pytest.mark.parametrize("apex_method,fortran_method,fslice",
+                             [("_geo2qd", "apxg2q", slice(0, 2, 1)),
+                              ("_geo2apex", "apxg2all", slice(2, 4, 1)),
+                              ("_qd2geo", "apxq2g", slice(None)),
+                              ("_basevec", "apxg2q", slice(2, 4, 1))])
+    @pytest.mark.parametrize("lat", [0, 30, 60, 89])
+    @pytest.mark.parametrize("lon", [-179, -90, 0, 90, 180])
+    def test_fortran_scalar_input(self, apex_method, fortran_method, fslice,
+                                  lat, lon):
+        """Tests Apex/fortran interface consistency for scalars."""
+        # Set the input coordinates
+        self.in_lat = lat
+        self.in_lon = lon
+
+        # Get the Apex class method and the fortran function call
+        apex_func = getattr(self.apex_out, apex_method)
+        fortran_func = getattr(fa, fortran_method)
+
+        # Get the appropriate input arguments
+        apex_args = self.get_input_args(apex_method)
+        fortran_args = self.get_input_args(fortran_method)
+
+        # Evaluate the equivalent function calls
+        np.testing.assert_allclose(apex_func(*apex_args),
+                                   fortran_func(*fortran_args)[fslice])
+        return
+
+    @pytest.mark.parametrize("apex_method,fortran_method,fslice",
+                             [("_geo2qd", "apxg2q", slice(0, 2, 1)),
+                              ("_geo2apex", "apxg2all", slice(2, 4, 1)),
+                              ("_qd2geo", "apxq2g", slice(None)),
+                              ("_basevec", "apxg2q", slice(2, 4, 1))])
+    @pytest.mark.parametrize("lat", [0, 30, 60, 89])
+    @pytest.mark.parametrize("lon1,lon2", [(180, 180), (-180, -180),
+                                           (180, -180), (-180, 180),
+                                           (-345, 15), (375, 15)])
+    def test_fortran_longitude_rollover(self, apex_method, fortran_method,
+                                        fslice, lat, lon1, lon2):
+        """Tests Apex/fortran interface consistency for longitude rollover."""
+        # Set the fixed input coordinate
+        self.in_lat = lat
+
+        # Get the Apex class method and the fortran function call
+        apex_func = getattr(self.apex_out, apex_method)
+        fortran_func = getattr(fa, fortran_method)
+
+        # Get the appropriate input arguments
+        self.in_lon = lon1
+        apex_args = self.get_input_args(apex_method)
+
+        self.in_lon = lon2
+        fortran_args = self.get_input_args(fortran_method)
+
+        # Evaluate the equivalent function calls
+        np.testing.assert_allclose(apex_func(*apex_args),
+                                   fortran_func(*fortran_args)[fslice])
+        return
+
+    @pytest.mark.parametrize("apex_method,fortran_method,fslice",
+                             [("_geo2qd", "apxg2q", slice(0, 2, 1)),
+                              ("_geo2apex", "apxg2all", slice(2, 4, 1)),
+                              ("_qd2geo", "apxq2g", slice(None)),
+                              ("_basevec", "apxg2q", slice(2, 4, 1))])
+    def test_fortran_array_input(self, apex_method, fortran_method, fslice):
+        """Tests Apex/fortran interface consistency for array input."""
+        # Get the Apex class method and the fortran function call
+        apex_func = getattr(self.apex_out, apex_method)
+        fortran_func = getattr(fa, fortran_method)
+
+        # Set up the input arrays
+        ref_lat = np.array([0, 30, 60, 90])
+        ref_alt = np.array([100, 200, 300, 400])
+        self.in_lat = ref_lat.reshape((2, 2))
+        self.in_alt = ref_alt.reshape((2, 2))
+        apex_args = self.get_input_args(apex_method)
+
+        # Get the Apex class results
+        aret = apex_func(*apex_args)
+
+        # Get the fortran function results
+        flats = list()
+        flons = list()
+
+        for i, lat in enumerate(ref_lat):
+            self.in_lat = lat
+            self.in_alt = ref_alt[i]
+            fortran_args = self.get_input_args(fortran_method)
+            fret = fortran_func(*fortran_args)[fslice]
+            flats.append(fret[0])
+            flons.append(fret[1])
+
+        flats = np.array(flats)
+        flons = np.array(flons)
+
+        # Evaluate results
+        try:
+            # This returned value is array of floats
+            np.testing.assert_allclose(aret[0].astype(float),
+                                       flats.reshape((2, 2)).astype(float))
+            np.testing.assert_allclose(aret[1].astype(float),
+                                       flons.reshape((2, 2)).astype(float))
+        except ValueError:
+            # This returned value is array of arrays
+            alats = aret[0].reshape((4,))
+            alons = aret[1].reshape((4,))
+            for i, flat in enumerate(flats):
+                np.testing.assert_array_almost_equal(alats[i], flat, 2)
+                np.testing.assert_array_almost_equal(alons[i], flons[i], 2)
+
+        return
+
+    @pytest.mark.parametrize("lat", [0, 30, 60, 89])
+    @pytest.mark.parametrize("lon", [-179, -90, 0, 90, 180])
+    def test_geo2apexall_scalar(self, lat, lon):
+        """Test Apex/fortran geo2apexall interface consistency for scalars."""
+        # Get the Apex and Fortran results
+        aret = self.apex_out._geo2apexall(lat, lon, self.in_alt)
+        fret = fa.apxg2all(lat, lon, self.in_alt, 300, 1)
+
+        # Evaluate each element in the results
+        for aval, fval in zip(aret, fret):
+            np.testing.assert_allclose(aval, fval)
+
+    def test_geo2apexall_array(self):
+        """Test Apex/fortran geo2apexall interface consistency for arrays."""
+        # Set the input
+        self.in_lat = np.array([0, 30, 60, 90])
+        self.in_alt = np.array([100, 200, 300, 400])
+
+        # Get the Apex class results
+        aret = self.apex_out._geo2apexall(self.in_lat.reshape((2, 2)),
+                                          self.in_lon,
+                                          self.in_alt.reshape((2, 2)))
+
+        # For each lat/alt pair, get the Fortran results
+        fret = list()
+        for i, lat in enumerate(self.in_lat):
+            fret.append(fa.apxg2all(lat, self.in_lon, self.in_alt[i], 300, 1))
+
+        # Cycle through all returned values
+        for i, ret in enumerate(aret):
+            try:
+                # This returned value is array of floats
+                np.testing.assert_allclose(ret.astype(float),
+                                           np.array([[fret[0][i], fret[1][i]],
+                                                     [fret[2][i], fret[3][i]]],
+                                                    dtype=float))
+            except ValueError:
+                # This returned value is array of arrays
+                ret = ret.reshape((4,))
+                for j, single_fret in enumerate(fret):
+                    np.testing.assert_allclose(ret[j], single_fret[i])
+        return
+
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    def test_convert_consistency(self, in_coord, out_coord):
+        """Test the self-consistency of the Apex convert method."""
+        if in_coord == out_coord:
+            pytest.skip("Test not needed for same src and dest coordinates")
+
+        # Define the method name
+        method_name = "2".join([in_coord, out_coord])
+
+        # Get the method and method inputs
+        convert_kwargs = {'height': self.in_alt, 'precision': 0.0}
+        apex_args = self.get_input_args(method_name)
+        apex_method = getattr(self.apex_out, method_name)
+
+        # Define the slice needed to get equivalent output from the named method
+        mslice = slice(0, -1, 1) if out_coord == "geo" else slice(None)
+
+        # Get output using convert and named method
+        convert_out = self.apex_out.convert(self.in_lat, self.in_lon, in_coord,
+                                            out_coord, **convert_kwargs)
+        method_out = apex_method(*apex_args)[mslice]
+
+        # Compare both outputs, should be identical
+        np.testing.assert_allclose(convert_out, method_out)
+        return
+
+    @pytest.mark.parametrize("bound_lat", [90, -90])
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    def test_convert_at_lat_boundary(self, bound_lat, in_coord, out_coord):
+        """Test the conversion at the latitude boundary, with allowed excess."""
+        excess_lat = np.sign(bound_lat) * (abs(bound_lat) + 1.0e-5)
+
+        # Get the two outputs, slight tolerance outside of boundary allowed
+        bound_out = self.apex_out.convert(bound_lat, 0, in_coord, out_coord)
+        excess_out = self.apex_out.convert(excess_lat, 0, in_coord, out_coord)
+
+        # Test the outputs
+        np.testing.assert_allclose(excess_out, bound_out, rtol=0, atol=1e-8)
+        return
+
+    def test_convert_qd2apex_at_equator(self):
+        """Test the quasi-dipole to apex conversion at the magnetic equator."""
+        eq_out = self.apex_out.convert(lat=0.0, lon=0, source='qd', dest='apex',
+                                       height=320.0)
+        close_out = self.apex_out.convert(lat=0.001, lon=0, source='qd',
+                                          dest='apex', height=320.0)
+        np.testing.assert_allclose(eq_out, close_out, atol=1e-4)
+        return
+
+    @pytest.mark.parametrize("src", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("dest", ["geo", "apex", "qd"])
+    def test_convert_withnan(self, src, dest):
+        """Test Apex.convert success with NaN input."""
+        if src == dest:
+            pytest.skip("Test not needed for same src and dest coordinates")
+
+        num_nans = 5
+        in_loc = np.arange(0, 10, dtype=float)
+        in_loc[:num_nans] = np.nan
+
+        out_loc = self.apex_out.convert(in_loc, in_loc, src, dest, height=320)
+
+        for out in out_loc:
+            assert np.all(np.isnan(out[:num_nans])), "NaN output expected"
+            assert np.all(np.isfinite(out[num_nans:])), "Finite output expected"
+
+        return
+
+    @pytest.mark.parametrize("bad_lat", [91, -91])
+    def test_convert_invalid_lat(self, bad_lat):
+        """Test convert raises ValueError for invalid latitudes."""
+
+        with pytest.raises(ValueError):
+            self.apex_out.convert(bad_lat, 0, 'geo', 'geo')
+        return
+
+    @pytest.mark.parametrize("coords", [("foobar", "geo"), ("geo", "foobar")])
+    def test_convert_invalid_transformation(self, coords):
+        """Test raises NotImplementedError for bad coordinates."""
+        with pytest.raises(NotImplementedError):
+            self.apex_out.convert(0, 0, *coords)
+        return
+
+    @pytest.mark.parametrize("method_name, out_comp",
+                             [("geo2apex",
+                               (55.94841766357422, 94.10684204101562)),
+                              ("apex2geo",
+                               (51.476322174072266, -66.22817993164062,
+                                5.727287771151168e-06)),
+                              ("geo2qd",
+                               (56.531288146972656, 94.10684204101562)),
+                              ("apex2qd", (60.498401178276744, 15.0)),
+                              ("qd2apex", (59.49138097045895, 15.0))])
+    def test_method_scalar_input(self, method_name, out_comp):
+        """Test the user method against set values with scalars."""
+        # Get the desired methods
+        user_method = getattr(self.apex_out, method_name)
+
+        # Get the user output
+        user_out = user_method(self.in_lat, self.in_lon, self.in_alt)
+
+        # Evaluate the user output
+        np.testing.assert_allclose(user_out, out_comp)
+
+        for out_val in user_out:
+            assert np.asarray(out_val).shape == (), "output is not a scalar"
+        return
+
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("method_args, out_shape",
+                             [([[60, 60], 15, 100], (2,)),
+                              ([60, [15, 15], 100], (2,)),
+                              ([60, 15, [100, 100]], (2,)),
+                              ([[50, 60], [15, 16], [100, 200]], (2,))])
+    def test_method_broadcast_input(self, in_coord, out_coord, method_args,
+                                    out_shape):
+        """Test the user method with inputs that require some broadcasting."""
+        if in_coord == out_coord:
+            pytest.skip("Test not needed for same src and dest coordinates")
+
+        # Get the desired methods
+        method_name = "2".join([in_coord, out_coord])
+        user_method = getattr(self.apex_out, method_name)
+
+        # Get the user output
+        user_out = user_method(*method_args)
+
+        # Evaluate the user output
+        for out_val in user_out:
+            assert hasattr(out_val, 'shape'), "output coordinate isn't np.array"
+            assert out_val.shape == out_shape
+        return
+
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("bad_lat", [91, -91])
+    def test_method_invalid_lat(self, in_coord, out_coord, bad_lat):
+        """Test convert raises ValueError for invalid latitudes."""
+        if in_coord == out_coord:
+            pytest.skip("Test not needed for same src and dest coordinates")
+
+        # Get the desired methods
+        method_name = "2".join([in_coord, out_coord])
+        user_method = getattr(self.apex_out, method_name)
+
+        with pytest.raises(ValueError):
+            user_method(bad_lat, 15, 100)
+        return
+
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    @pytest.mark.parametrize("bound_lat", [90, -90])
+    def test_method_at_lat_boundary(self, in_coord, out_coord, bound_lat):
+        """Test user methods at the latitude boundary, with allowed excess."""
+        if in_coord == out_coord:
+            pytest.skip("Test not needed for same src and dest coordinates")
+
+        # Get the desired methods
+        method_name = "2".join([in_coord, out_coord])
+        user_method = getattr(self.apex_out, method_name)
+
+        # Get a latitude just beyond the limit
+        excess_lat = np.sign(bound_lat) * (abs(bound_lat) + 1.0e-5)
+
+        # Get the two outputs, slight tolerance outside of boundary allowed
+        bound_out = user_method(bound_lat, 0, 100)
+        excess_out = user_method(excess_lat, 0, 100)
+
+        # Test the outputs
+        np.testing.assert_allclose(excess_out, bound_out, rtol=0, atol=1e-8)
+        return
+
+    def test_geo2apex_undefined_warning(self):
+        """Test geo2apex warning and fill values for an undefined location."""
+
+        # Update the apex object
+        self.apex_out = Apex(date=2000, refh=10000)
+
+        # Get the output and the warnings
+        with warnings.catch_warnings(record=True) as warn_rec:
+            user_lat, user_lon = self.apex_out.geo2apex(0, 0, 0)
+
+        assert np.isnan(user_lat)
+        assert np.isfinite(user_lon)
+        assert len(warn_rec) == 1
+        assert issubclass(warn_rec[-1].category, UserWarning)
+        assert 'latitude set to NaN where' in str(warn_rec[-1].message)
+        return
+
+    @pytest.mark.parametrize("method_name", ["apex2qd", "qd2apex"])
+    @pytest.mark.parametrize("delta_h", [1.0e-6, -1.0e-6])
+    def test_quasidipole_apexheight_close(self, method_name, delta_h):
+        """Test quasi-dipole success with a height close to the reference."""
+        qd_method = getattr(self.apex_out, method_name)
+        in_args = [0, 15, self.apex_out.refh + delta_h]
+        out_coords = qd_method(*in_args)
+
+        for i, out_val in enumerate(out_coords):
+            np.testing.assert_almost_equal(out_val, in_args[i], decimal=3)
+        return
+
+    @pytest.mark.parametrize("method_name, hinc, msg",
+                             [("apex2qd", 1.0, "is > apex height"),
+                              ("qd2apex", -1.0, "is < reference height")])
+    def test_quasidipole_raises_apexheight(self, method_name, hinc, msg):
+        """Quasi-dipole raises ApexHeightError when height above reference."""
+        qd_method = getattr(self.apex_out, method_name)
+
+        with pytest.raises(ApexHeightError) as aerr:
+            qd_method(0, 15, self.apex_out.refh + hinc)
+
+        assert str(aerr).find(msg) > 0
+        return
 
 
-# ============================================================================
-#  Test the get_babs() method
-# ============================================================================
+class TestApexMLTMethods():
+    """Test the Apex Magnetic Local Time (MLT) methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
+        self.in_time = dt.datetime(2000, 2, 3, 4, 5, 6)
+
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out, self.in_time
+
+    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
+    def test_convert_to_mlt(self, in_coord):
+        """Test the conversions to MLT using Apex convert."""
+
+        # Get the magnetic longitude from the appropriate method
+        if in_coord == "geo":
+            apex_method = getattr(self.apex_out, "{:s}2apex".format(in_coord))
+            mlon = apex_method(60, 15, 100)[1]
+        else:
+            mlon = 15
+
+        # Get the output MLT values
+        convert_mlt = self.apex_out.convert(60, 15, in_coord, 'mlt',
+                                            height=100, ssheight=2e5,
+                                            datetime=self.in_time)[1]
+        method_mlt = self.apex_out.mlon2mlt(mlon, self.in_time, ssheight=2e5)
+
+        # Test the outputs
+        np.testing.assert_allclose(convert_mlt, method_mlt)
+        return
+
+    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
+    def test_convert_mlt_to_lon(self, out_coord):
+        """Test the conversions from MLT using Apex convert."""
+        # Get the output longitudes
+        convert_out = self.apex_out.convert(60, 15, 'mlt', out_coord,
+                                            height=100, ssheight=2e5,
+                                            datetime=self.in_time,
+                                            precision=1e-2)
+        mlon = self.apex_out.mlt2mlon(15, self.in_time, ssheight=2e5)
+
+        if out_coord == "geo":
+            method_out = self.apex_out.apex2geo(60, mlon, 100,
+                                                precision=1e-2)[:-1]
+        elif out_coord == "qd":
+            method_out = self.apex_out.apex2qd(60, mlon, 100)
+        else:
+            method_out = (60, mlon)
+
+        # Evaluate the outputs
+        np.testing.assert_allclose(convert_out, method_out)
+        return
+
+    def test_convert_geo2mlt_nodate(self):
+        """Test convert from geo to MLT raises ValueError with no datetime."""
+        with pytest.raises(ValueError):
+            self.apex_out.convert(60, 15, 'geo', 'mlt')
+        return
+
+    @pytest.mark.parametrize("mlon_kwargs,test_mlt",
+                             [({}, 23.019629923502603),
+                              ({"ssheight": 100000}, 23.026712036132814)])
+    def test_mlon2mlt_scalar_inputs(self, mlon_kwargs, test_mlt):
+        """Test mlon2mlt with scalar inputs."""
+        mlt = self.apex_out.mlon2mlt(0, self.in_time, **mlon_kwargs)
+
+        np.testing.assert_allclose(mlt, test_mlt)
+        assert np.asarray(mlt).shape == ()
+        return
+
+    @pytest.mark.parametrize("mlt_kwargs,test_mlon",
+                             [({}, 14.705535888671875),
+                              ({"ssheight": 100000}, 14.599319458007812)])
+    def test_mlt2mlon_scalar_inputs(self, mlt_kwargs, test_mlon):
+        """Test mlt2mlon with scalar inputs."""
+        mlon = self.apex_out.mlt2mlon(0, self.in_time, **mlt_kwargs)
+
+        np.testing.assert_allclose(mlon, test_mlon)
+        assert np.asarray(mlon).shape == ()
+        return
+
+    @pytest.mark.parametrize("mlon,test_mlt",
+                             [([0, 180], [23.019261, 11.019261]),
+                              (np.array([0, 180]), [23.019261, 11.019261]),
+                              ([[0, 180], [0, 180]], [[23.019261, 11.019261],
+                                                      [23.019261, 11.019261]]),
+                              (range(0, 361, 30),
+                               [23.01963, 1.01963, 3.01963, 5.01963, 7.01963,
+                                9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
+                                19.01963, 21.01963, 23.01963])])
+    def test_mlon2mlt_array(self, mlon, test_mlt):
+        """Test mlon2mlt with array inputs."""
+        mlt = self.apex_out.mlon2mlt(mlon, self.in_time)
+
+        assert mlt.shape == np.asarray(test_mlt).shape
+        np.testing.assert_allclose(mlt, test_mlt, rtol=1e-4)
+        return
+
+    @pytest.mark.parametrize("mlt,test_mlon",
+                             [([0, 12], [14.705551, 194.705551]),
+                              (np.array([0, 12]), [14.705551, 194.705551]),
+                              ([[0, 12], [0, 12]], [[14.705551, 194.705551],
+                                                    [14.705551, 194.705551]]),
+                              (range(0, 25, 2),
+                               [14.705551, 44.705551, 74.705551, 104.705551,
+                                134.705551, 164.705551, 194.705551, 224.705551,
+                                254.705551, 284.705551, 314.705551, 344.705551,
+                                14.705551])])
+    def test_mlt2mlon_array(self, mlt, test_mlon):
+        """Test mlt2mlon with array inputs."""
+        mlon = self.apex_out.mlt2mlon(mlt, self.in_time)
+
+        assert mlon.shape == np.asarray(test_mlon).shape
+        np.testing.assert_allclose(mlon, test_mlon, rtol=1e-4)
+        return
+
+    @pytest.mark.parametrize("method_name", ["mlon2mlt", "mlt2mlon"])
+    def test_mlon2mlt_diffdates(self, method_name):
+        """Test that MLT varies with universal time."""
+        apex_method = getattr(self.apex_out, method_name)
+        mlt1 = apex_method(0, self.in_time)
+        mlt2 = apex_method(0, self.in_time + dt.timedelta(hours=1))
+
+        assert mlt1 != mlt2
+        return
+
+    @pytest.mark.parametrize("mlt_offset", [1.0, 10.0])
+    def test_mlon2mlt_offset(self, mlt_offset):
+        """Test the time wrapping logic for the MLT."""
+        mlt1 = self.apex_out.mlon2mlt(0.0, self.in_time)
+        mlt2 = self.apex_out.mlon2mlt(-15.0 * mlt_offset,
+                                      self.in_time) + mlt_offset
+
+        np.testing.assert_allclose(mlt1, mlt2)
+        return
+
+    @pytest.mark.parametrize("mlon_offset", [15.0, 150.0])
+    def test_mlt2mlon_offset(self, mlon_offset):
+        """Test the time wrapping logic for the magnetic longitude."""
+        mlon1 = self.apex_out.mlt2mlon(0, self.in_time)
+        mlon2 = self.apex_out.mlt2mlon(mlon_offset / 15.0,
+                                       self.in_time) - mlon_offset
+
+        np.testing.assert_allclose(mlon1, mlon2)
+        return
+
+    @pytest.mark.parametrize("order", [["mlt", "mlon"], ["mlon", "mlt"]])
+    @pytest.mark.parametrize("start_val", [0, 6, 12, 18, 22])
+    def test_convert_and_return(self, order, start_val):
+        """Test the conversion to magnetic longitude or MLT and back again."""
+        first_method = getattr(self.apex_out, "2".join(order))
+        second_method = getattr(self.apex_out, "2".join([order[1], order[0]]))
+
+        middle_val = first_method(start_val, self.in_time)
+        end_val = second_method(middle_val, self.in_time)
+
+        np.testing.assert_allclose(start_val, end_val)
+        return
 
 
-def test_get_babs():
-    inputs = [[[80], [100], [300]], [range(50, 90, 8), range(0, 360, 80),
-                                     [300] * 5], [90.0, 0, 1000]]
-    temp1 = np.array([4.22045410e-05, 5.15672743e-05, 4.98150200e-05,
-                     5.06769359e-05, 4.91028428e-05])
-    expected = [[5.1303124427795412e-05], temp1, [3.793962299823761e-05]]
+class TestApexMapMethods():
+    """Test the Apex height mapping methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
 
-    apex_out = Apex(date=2018.1, refh=0)
-    for i in range(len(inputs)):
-        outputs = apex_out.get_babs(*inputs[i])
-        if isinstance(outputs, np.float64):
-            outputs = [outputs]
-        for j, output in enumerate(outputs):
-            assert_allclose(output, expected[i][j], rtol=0, atol=1e-5)
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out
+
+    @pytest.mark.parametrize("in_args,test_mapped",
+                             [([60, 15, 100, 10000],
+                               [31.841466903686523, 17.916635513305664,
+                                1.7075473124350538e-6]),
+                              ([30, 170, 100, 500, False, 1e-2],
+                               [25.727270126342773, 169.60546875,
+                                0.00017573432705830783]),
+                              ([60, 15, 100, 10000, True],
+                               [-25.424888610839844, 27.310426712036133,
+                                1.2074182222931995e-6]),
+                              ([30, 170, 100, 500, True, 1e-2],
+                               [-13.76642894744873, 164.24259948730469,
+                                0.00056820799363777041])])
+    def test_map_to_height(self, in_args, test_mapped):
+        """Test the map_to_height function."""
+        mapped = self.apex_out.map_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, atol=1e-6)
+        return
+
+    def test_map_to_height_same_height(self):
+        """Test the map_to_height function when mapping to same height."""
+        mapped = self.apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
+                                             precision=1e-10)
+        np.testing.assert_allclose(mapped, (60.0, 15.000003814697266, 0.0),
+                                   rtol=1e-5)
+        return
+
+    @pytest.mark.parametrize('ivec', range(0, 4))
+    def test_map_to_height_array_location(self, ivec):
+        """Test map_to_height with array input."""
+        # Set the base input and output values
+        in_args = [60, 15, 100, 100]
+        test_mapped = np.full(shape=(2, 3),
+                              fill_value=[60, 15.00000381, 0.0]).transpose()
+
+        # Update inputs for one vectorized value
+        in_args[ivec] = [in_args[ivec], in_args[ivec]]
+
+        # Calculate and test function
+        mapped = self.apex_out.map_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
+
+    @pytest.mark.parametrize("method_name,in_args",
+                             [("map_to_height", [0, 15, 100, 10000]),
+                              ("map_E_to_height",
+                               [0, 15, 100, 10000, [1, 2, 3]]),
+                              ("map_V_to_height",
+                               [0, 15, 100, 10000, [1, 2, 3]])])
+    def test_mapping_height_raises_ApexHeightError(self, method_name, in_args):
+        """Test map_to_height raises ApexHeightError."""
+        apex_method = getattr(self.apex_out, method_name)
+
+        with pytest.raises(ApexHeightError) as aerr:
+            apex_method(*in_args)
+
+        assert aerr.match("is > apex height")
+        return
+
+    @pytest.mark.parametrize("method_name",
+                             ["map_E_to_height", "map_V_to_height"])
+    @pytest.mark.parametrize("ev_input", [([1, 2, 3, 4, 5]),
+                                          ([[1, 2], [3, 4], [5, 6], [7, 8]])])
+    def test_mapping_EV_bad_shape(self, method_name, ev_input):
+        """Test map_to_height raises ApexHeightError."""
+        apex_method = getattr(self.apex_out, method_name)
+        in_args = [60, 15, 100, 500, ev_input]
+        with pytest.raises(ValueError) as verr:
+            apex_method(*in_args)
+
+        assert str(verr.value).find("must be (3, N) or (3,) ndarray") >= 0
+        return
+
+    @pytest.mark.parametrize("in_args,test_mapped",
+                             [([60, 15, 100, 500, [1, 2, 3]],
+                               [0.71152183, 2.35624876, 0.57260784]),
+                              ([60, 15, 100, 500, [2, 3, 4]],
+                               [1.56028502, 3.43916636, 0.78235384]),
+                              ([60, 15, 100, 1000, [1, 2, 3]],
+                               [0.67796492, 2.08982134, 0.55860785]),
+                              ([60, 15, 200, 500, [1, 2, 3]],
+                               [0.72377397, 2.42737471, 0.59083726]),
+                              ([60, 30, 100, 500, [1, 2, 3]],
+                               [0.68626344, 2.37530133, 0.60060124]),
+                              ([70, 15, 100, 500, [1, 2, 3]],
+                               [0.72760378, 2.18082305, 0.29141979])])
+    def test_map_E_to_height_scalar_location(self, in_args, test_mapped):
+        """Test mapping of E-field to a specified height."""
+        mapped = self.apex_out.map_E_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
+
+    @pytest.mark.parametrize('ivec', range(0, 5))
+    def test_map_E_to_height_array_location(self, ivec):
+        """Test mapping of E-field to a specified height with array input."""
+        # Set the base input and output values
+        efield = np.array([[1, 2, 3]] * 2).transpose()
+        in_args = [60, 15, 100, 500, efield]
+        test_mapped = np.full(shape=(2, 3),
+                              fill_value=[0.71152183, 2.35624876,
+                                          0.57260784]).transpose()
+
+        # Update inputs for one vectorized value if this is a location input
+        if ivec < 4:
+            in_args[ivec] = [in_args[ivec], in_args[ivec]]
+
+        # Get the mapped output and test the results
+        mapped = self.apex_out.map_E_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
+
+    @pytest.mark.parametrize("in_args,test_mapped",
+                             [([60, 15, 100, 500, [1, 2, 3]],
+                               [0.81971957, 2.84512495, 0.69545001]),
+                              ([60, 15, 100, 500, [2, 3, 4]],
+                               [1.83027746, 4.14346436, 0.94764179]),
+                              ([60, 15, 100, 1000, [1, 2, 3]],
+                               [0.92457698, 3.14997661, 0.85135187]),
+                              ([60, 15, 200, 500, [1, 2, 3]],
+                               [0.80388262, 2.79321504, 0.68285158]),
+                              ([60, 30, 100, 500, [1, 2, 3]],
+                               [0.76141245, 2.87884673, 0.73655941]),
+                              ([70, 15, 100, 500, [1, 2, 3]],
+                               [0.84681866, 2.5925821,  0.34792655])])
+    def test_map_V_to_height_scalar_location(self, in_args, test_mapped):
+        """Test mapping of velocity to a specified height."""
+        mapped = self.apex_out.map_V_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
+
+    @pytest.mark.parametrize('ivec', range(0, 5))
+    def test_map_V_to_height_array_location(self, ivec):
+        """Test mapping of velocity to a specified height with array input."""
+        # Set the base input and output values
+        evel = np.array([[1, 2, 3]] * 2).transpose()
+        in_args = [60, 15, 100, 500, evel]
+        test_mapped = np.full(shape=(2, 3),
+                              fill_value=[0.81971957, 2.84512495,
+                                          0.69545001]).transpose()
+
+        # Update inputs for one vectorized value if this is a location input
+        if ivec < 4:
+            in_args[ivec] = [in_args[ivec], in_args[ivec]]
+
+        # Get the mapped output and test the results
+        mapped = self.apex_out.map_V_to_height(*in_args)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        return
 
 
-# ============================================================================
-#  Test the bvectors_apex() method
-# ============================================================================
+class TestApexBasevectorMethods():
+    """Test the Apex height base vector methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
+        self.lat = 60
+        self.lon = 15
+        self.height = 100
+        self.test_basevec = None
+
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out, self.test_basevec, self.lat, self.lon, self.height
+
+    def get_comparison_results(self, bv_coord, coords, precision):
+        """Get the base vector results using the hidden function for comparison.
+
+        Parameters
+        ----------
+        bv_coord : str
+            Basevector coordinate scheme, expects on of 'apex', 'qd',
+            or 'bvectors_apex'
+        coords : str
+            Expects one of 'geo', 'apex', or 'qd'
+        precision : float
+            Float specifiying precision
+
+        """
+        if coords == "geo":
+            glat = self.lat
+            glon = self.lon
+        else:
+            apex_method = getattr(self.apex_out, "{:s}2geo".format(coords))
+            glat, glon, _ = apex_method(self.lat, self.lon, self.height,
+                                        precision=precision)
+
+        if bv_coord == 'qd':
+            self.test_basevec = self.apex_out._basevec(glat, glon, self.height)
+        elif bv_coord == 'apex':
+            (_, _, _, _, f1, f2, _, d1, d2, d3, _, e1, e2,
+             e3) = self.apex_out._geo2apexall(glat, glon, 100)
+            self.test_basevec = (f1, f2, d1, d2, d3, e1, e2, e3)
+        else:
+            # These are set results that need to be updated with IGRF
+            if coords == "geo":
+                self.test_basevec = (
+                    np.array([4.42368795e-05, 4.42368795e-05]),
+                    np.array([[0.01047826, 0.01047826],
+                              [0.33089194, 0.33089194],
+                              [-1.04941, -1.04941]]),
+                    np.array([5.3564698e-05, 5.3564698e-05]),
+                    np.array([[0.00865356, 0.00865356],
+                              [0.27327004, 0.27327004],
+                              [-0.8666646, -0.8666646]]))
+            elif coords == "apex":
+                self.test_basevec = (
+                    np.array([4.48672735e-05, 4.48672735e-05]),
+                    np.array([[-0.12510721, -0.12510721],
+                              [0.28945938, 0.28945938],
+                              [-1.1505738, -1.1505738]]),
+                    np.array([6.38577444e-05, 6.38577444e-05]),
+                    np.array([[-0.08790194, -0.08790194],
+                              [0.2033779, 0.2033779],
+                              [-0.808408, -0.808408]]))
+            else:
+                self.test_basevec = (
+                    np.array([4.46348578e-05, 4.46348578e-05]),
+                    np.array([[-0.12642345, -0.12642345],
+                              [0.29695055, 0.29695055],
+                              [-1.1517885, -1.1517885]]),
+                    np.array([6.38626285e-05, 6.38626285e-05]),
+                    np.array([[-0.08835986, -0.08835986],
+                              [0.20754464, 0.20754464],
+                              [-0.8050078, -0.8050078]]))
+
+        return
+
+    @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
+    @pytest.mark.parametrize("coords,precision",
+                             [("geo", 1e-10), ("apex", 1.0e-2), ("qd", 1.0e-2)])
+    def test_basevectors_scalar(self, bv_coord, coords, precision):
+        """Test the base vector calculations with scalars."""
+        # Get the base vectors
+        base_method = getattr(self.apex_out,
+                              "basevectors_{:s}".format(bv_coord))
+        basevec = base_method(self.lat, self.lon, self.height, coords=coords,
+                              precision=precision)
+        self.get_comparison_results(bv_coord, coords, precision)
+        if bv_coord == "apex":
+            basevec = list(basevec)
+            for i in range(4):
+                # Not able to compare indices 2, 3, 4, and 5
+                basevec.pop(2)
+
+        # Test the results
+        for i, vec in enumerate(basevec):
+            np.testing.assert_allclose(vec, self.test_basevec[i])
+        return
+
+    @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
+    def test_basevectors_scalar_shape(self, bv_coord):
+        """Test the shape of the scalar output."""
+        base_method = getattr(self.apex_out,
+                              "basevectors_{:s}".format(bv_coord))
+        basevec = base_method(self.lat, self.lon, self.height)
+
+        for i, vec in enumerate(basevec):
+            if i < 2:
+                assert vec.shape == (2,)
+            else:
+                assert vec.shape == (3,)
+        return
+
+    @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
+    @pytest.mark.parametrize("ivec", range(3))
+    def test_basevectors_array(self, bv_coord, ivec):
+        """Test the output shape for array inputs."""
+        # Define the input arguments
+        in_args = [self.lat, self.lon, self.height]
+        in_args[ivec] = [in_args[ivec] for i in range(4)]
+
+        # Get the basevectors
+        base_method = getattr(self.apex_out,
+                              "basevectors_{:s}".format(bv_coord))
+        basevec = base_method(*in_args, coords='geo', precision=1e-10)
+        self.get_comparison_results(bv_coord, "geo", 1e-10)
+        if bv_coord == "apex":
+            basevec = list(basevec)
+            for i in range(4):
+                # Not able to compare indices 2, 3, 4, and 5
+                basevec.pop(2)
+
+        # Evaluate the shape and the values
+        for i, vec in enumerate(basevec):
+            idim = 2 if i < 2 else 3
+            assert vec.shape == (idim, 4)
+            assert np.all(self.test_basevec[i][0] == vec[0])
+            assert np.all(self.test_basevec[i][1] == vec[1])
+        return
+
+    @pytest.mark.parametrize("coords", ["geo", "apex", "qd"])
+    def test_bvectors_apex(self, coords):
+        """Test the bvectors_apex method."""
+        in_args = [[self.lat, self.lat], [self.lon, self.lon],
+                   [self.height, self.height]]
+        self.get_comparison_results("bvectors_apex", coords, 1e-10)
+
+        basevec = self.apex_out.bvectors_apex(*in_args, coords=coords,
+                                              precision=1e-10)
+        for i, vec in enumerate(basevec):
+            np.testing.assert_array_almost_equal(vec, self.test_basevec[i],
+                                                 decimal=5)
+        return
+
+    def test_basevectors_apex_extra_values(self):
+        """Test specific values in the apex base vector output."""
+        # Set the testing arrays
+        self.test_basevec = [np.array([0.092637, -0.245951, 0.938848]),
+                             np.array([0.939012, 0.073416, -0.07342]),
+                             np.array([0.055389, 1.004155, 0.257594]),
+                             np.array([0, 0, 1.065135])]
+
+        # Get the desired output
+        basevec = self.apex_out.basevectors_apex(0, 15, 100, coords='geo')
+
+        # Test the values not covered by `test_basevectors_scalar`
+        for itest, ibase in enumerate(np.arange(2, 6, 1)):
+            np.testing.assert_allclose(basevec[ibase],
+                                       self.test_basevec[itest], rtol=1e-4)
+        return
+
+    @pytest.mark.parametrize("lat", range(0, 90, 10))
+    @pytest.mark.parametrize("lon", range(0, 360, 15))
+    def test_basevectors_apex_delta(self, lat, lon):
+        """Test that vectors are calculated correctly."""
+        # Get the apex base vectors and sort them for easy testing
+        (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
+         e3) = self.apex_out.basevectors_apex(lat, lon, 500)
+        fvec = [np.append(f1, 0), np.append(f2, 0), f3]
+        gvec = [g1, g2, g3]
+        dvec = [d1, d2, d3]
+        evec = [e1, e2, e3]
+
+        for idelta, jdelta in [(i, j) for i in range(3) for j in range(3)]:
+            delta = 1 if idelta == jdelta else 0
+            np.testing.assert_allclose(np.sum(fvec[idelta] * gvec[jdelta]),
+                                       delta, rtol=0, atol=1e-5)
+            np.testing.assert_allclose(np.sum(dvec[idelta] * evec[jdelta]),
+                                       delta, rtol=0, atol=1e-5)
+        return
+
+    def test_basevectors_apex_invalid_scalar(self):
+        """Test warning and fill values for base vectors with bad inputs."""
+        self.apex_out = Apex(date=2000, refh=10000)
+        invalid = np.full(shape=(3,), fill_value=np.nan)
+
+        # Get the output and the warnings
+        with warnings.catch_warnings(record=True) as warn_rec:
+            basevec = self.apex_out.basevectors_apex(0, 0, 0)
+
+        for i, bvec in enumerate(basevec):
+            if i < 2:
+                assert not np.allclose(bvec, invalid[:2])
+            else:
+                np.testing.assert_allclose(bvec, invalid)
+
+        assert issubclass(warn_rec[-1].category, UserWarning)
+        assert 'set to NaN where' in str(warn_rec[-1].message)
+        return
 
 
-def test_bvectors_apex():
-    inputs = [[80, 81], [100, 120], [100, 200]]
+class TestApexGetMethods():
+    """Test the Apex `get` methods."""
+    def setup(self):
+        """Initialize all tests."""
+        self.apex_out = Apex(date=2000, refh=300)
 
-    expected = (np.array([5.95166171e-05, 5.95958974e-05]),
-                np.array([[0.0191583, 0.0020023],
-                          [0.03547136, 0.03392595],
-                          [-0.9412518, -0.8991005]]),
-                np.array([5.28257734e-05, 4.82450628e-05]),
-                np.array([[0.02158486, 0.00247339],
-                          [0.03996412, 0.04190787],
-                          [-1.0604696, -1.110636]]))
+    def teardown(self):
+        """Clean up after each test."""
+        del self.apex_out
 
-    apex_out = Apex(date=2018.1, refh=0)
+    @pytest.mark.parametrize("alat, aheight", [(10, 507.409702543805),
+                                               (60, 20313.026999999987)])
+    def test_get_apex(self, alat, aheight):
+        """Test the apex height retrieval results."""
+        alt = self.apex_out.get_apex(alat)
+        np.testing.assert_allclose(alt, aheight)
+        return
 
-    outputs = apex_out.bvectors_apex(*inputs, coords='geo', precision=1e-10)
-    for i, output in enumerate(outputs):
-        for j in range(output.size):
-            assert_allclose(output.ravel()[j], expected[i].ravel()[j], rtol=0,
-                            atol=1e-5)
+    @pytest.mark.parametrize("glat,glon,height,test_bmag",
+                             [([80], [100], [300], 5.100682377815247e-05),
+                              (range(50, 90, 8), range(0, 360, 80), [300] * 5,
+                               np.array([4.18657154e-05, 5.11118114e-05,
+                                         4.91969854e-05, 5.10519207e-05,
+                                         4.90054816e-05])),
+                              (90.0, 0, 1000, 3.7834718823432923e-05)])
+    def test_get_babs(self, glat, glon, height, test_bmag):
+        """Test the method to get the magnitude of the magnetic field."""
+        bmag = self.apex_out.get_babs(glat, glon, height)
+        np.testing.assert_allclose(bmag, test_bmag, rtol=0, atol=1e-5)
+        return
+
+    @pytest.mark.parametrize("bad_lat", [(91), (-91)])
+    def test_get_with_invalid_lat(self, bad_lat):
+        """Test get methods raise ValueError for invalid latitudes."""
+
+        with pytest.raises(ValueError):
+            self.apex_out.get_apex(bad_lat)
+        return
+
+    @pytest.mark.parametrize("bound_lat", [(90), (-90)])
+    def test_get_at_lat_boundary(self, bound_lat):
+        """Test get methods at the latitude boundary, with allowed excess."""
+        # Get a latitude just beyond the limit
+        excess_lat = np.sign(bound_lat) * (abs(bound_lat) + 1.0e-5)
+
+        # Get the two outputs, slight tolerance outside of boundary allowed
+        bound_out = self.apex_out.get_apex(bound_lat)
+        excess_out = self.apex_out.get_apex(excess_lat)
+
+        # Test the outputs
+        np.testing.assert_allclose(excess_out, bound_out, rtol=0, atol=1e-8)
+        return
