@@ -9,15 +9,15 @@ assignees: ''
 # Requested feature
 A short description of what you are proposing.
 
-## Is your feature request related to a problem? Please describe.
+## The problem or gap this feature will address
 A clear and concise description of what the problem is. For example, I'm always
 frustrated when ...
 
-## Describe the solution you'd like
+## The desired solution
 A clear and concise description of what you want to happen.  Keep the scope as
 narrow as possible, to make it easier to implement
 
-## Describe alternatives you've considered
+## Possible alternatives
 A clear and concise description of any alternative solutions or features you've
 considered.
 

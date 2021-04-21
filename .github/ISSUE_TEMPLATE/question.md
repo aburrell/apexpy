@@ -23,11 +23,12 @@ A clear and concise description of what you expected (or wanted) to happen.
 ## Screenshots
 If applicable, add screenshots to help explain your question.
 
-## Desktop (please complete the following information)
- - OS: (e.g., iOS)
- - Python version: (e.g., 3.6)
- - Compiler with version: (e.g., gfortran 22)
- - Apexpy version/branch: (e.g., 1.1.0/main)
+## Desktop
+Please complete the following information:
+ * OS: (e.g., iOS)
+ * Python version: (e.g., 3.6)
+ * Compiler with version: (e.g., gfortran 22)
+ * Apexpy version/branch: (e.g., 1.1.0/main)
 
 ## Additional context
 Add any other context about the problem here.
