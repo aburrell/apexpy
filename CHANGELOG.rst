@@ -6,6 +6,8 @@ Changelog
 ------------------
 * Removed Python 2 support
 * Updated community and package documentation
+* Updated unit test style to reduce duplication and better follow PEP8
+* Updated code style using codacy suggestions
 
 1.1.0 (2021-03-05)
 ------------------

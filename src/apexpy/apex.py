@@ -15,7 +15,7 @@ except ImportError:
                            "apexpy probably won't work.  Make sure you have ",
                            "a gfortran compiler."]))
 
-# make sure invalid warnings are always shown
+# Make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to NaN where*',
                         module='apexpy.apex')
 
@@ -1046,18 +1046,20 @@ class Apex(object):
 
         Returns
         -------
-        Be3: (1, N) or (1,) ndarray
+        main_mag_e3: (1, N) or (1,) ndarray
+           IGRF magnitude divided by a scaling factor, D (d_scale) to give
+           the main B field magnitude along the e3 base vector
         e3 : (3, N) or (3,) ndarray
-        Bd3: (1, N) or (1,) ndarray
+           Base vector tangent to the contours of constant V_0 and Phi_A
+        main_mag_d3: (1, N) or (1,) ndarray
+           IGRF magnitude multiplied by a scaling factor, D (d_scale) to give
+           the main B field magnitudee along the d3 base vector
         d3 : (3, N) or (3,) ndarray
+           Base vector equivalent to the scaled main field unit vector
 
         Notes
         -----
-        Be3 is not equivalent to the magnitude of the IGRF magnitude, but is
-        instead equal to the IGRF magnitude divided by a scaling factor, D.
-        Similarly, Bd3 is the IGRF magnitude multiplied by D.
-
-        See Richmond, A. D. (1995) [4]_ equations 3.13 and 3.14
+        See Richmond, A. D. (1995) [4]_ equations 3.8-3.14
 
         References
         ----------
@@ -1073,9 +1075,9 @@ class Apex(object):
         _, _, _, _, _, _, d1, d2, d3, _, _, e3 = self.basevectors_apex(
             glat, glon, height, coords='geo')
         d1_cross_d2 = np.cross(d1.T, d2.T).T
-        D = np.sqrt(np.sum(d1_cross_d2 ** 2, axis=0))
+        d_scale = np.sqrt(np.sum(d1_cross_d2 ** 2, axis=0))  # D in [4] 3.13
 
-        Be3 = babs / D
-        Bd3 = babs * D
+        main_mag_e3 = babs / d_scale  # solve for b0 in [4] 3.13
+        main_mag_d3 = babs * d_scale  # solve for b0 in [4] 3.10
 
-        return Be3, e3, Bd3, d3
+        return main_mag_e3, e3, main_mag_d3, d3

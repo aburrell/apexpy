@@ -37,16 +37,17 @@ class TestCommandLine():
 
         del self.outfile, self.infile, self.singlefile
 
-    def execute_command_line(self, command, command_kwargs={}, pipe_out=False):
+    def execute_command_line(self, command, command_kwargs=None,
+                             pipe_out=False):
         """Execute the command and load data from self.outfile
 
         Parameters
         ----------
         command : list or str
             List or string containing command to execute using subprocess
-        command_kwargs : dict
-            Dict containing optional kwargs for subprocess.Popen command
-            (default={})
+        command_kwargs : dict or NoneType
+            Dict containing optional kwargs for subprocess.Popen command or
+            None if using defaults. (default=None)
         pipe_out : bool
             Return pipe output instead of output from a data file if True
             (default=False)
@@ -58,6 +59,9 @@ class TestCommandLine():
             or the requested output from the pipe command.
 
         """
+        if command_kwargs is None:
+            command_kwargs = {}
+
         pipe = subprocess.Popen(command, **command_kwargs)
         out = pipe.communicate()
         pipe.wait()
