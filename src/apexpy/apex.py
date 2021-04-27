@@ -1082,7 +1082,7 @@ class Apex(object):
                                   precision=precision)
 
         # Retrieve the desired magnetic locations and base vectors
-        returnvals = self._geo2apexall(glat, glon, height)
+        returnvals = list(self._geo2apexall(glat, glon, height))
         qlat = np.float64(returnvals[0])
         alat = np.float64(returnvals[2])
         bvec_ind = [4, 5, 7, 8, 9, 11, 12, 13]
