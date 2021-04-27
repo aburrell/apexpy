@@ -432,8 +432,10 @@ class TestApexMethod():
     @pytest.mark.parametrize("coords", [("foobar", "geo"), ("geo", "foobar")])
     def test_convert_invalid_transformation(self, coords):
         """Test raises NotImplementedError for bad coordinates."""
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(ValueError) as verr:
             self.apex_out.convert(0, 0, *coords)
+
+        assert str(verr).find("Unknown coordinate transformation") >= 0
         return
 
     @pytest.mark.parametrize("method_name, out_comp",
