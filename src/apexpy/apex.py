@@ -359,11 +359,11 @@ class Apex(object):
         # Get the necessary base vectors at the current and new height
         v1 = list()
         v2 = list()
-        for alt in [height, newheight]:
+        for i, alt in enumerate([height, newheight]):
             _, _, _, _, _, _, d1, d2, _, e1, e2, _ = self.basevectors_apex(
                 alat, alon, alt, coords='apex')
 
-            if ev_flag == 'E':
+            if ev_flag == 'E' and i == 0 or ev_flag == 'V' and i == 1:
                 v1.append(e1)
                 v2.append(e2)
             else:
@@ -378,6 +378,7 @@ class Apex(object):
         # at the current height
         data1 = np.sum(data * v1[0], axis=0)
         data2 = np.sum(data * v2[0], axis=0)
+        print("BI", data, v1[0], np.sum(data * v1[0], axis=0), data1)
 
         # Map the data to the new height, removing any axes of length 1
         # after the calculation
