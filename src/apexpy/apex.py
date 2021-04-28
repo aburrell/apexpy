@@ -163,7 +163,7 @@ class Apex(object):
 
         out_str = '\n'.join(["Apex class conversions performed with",
                              "-------------------------------------",
-                             "Decimal Year: {:.8f}".format(self.year),
+                             "Decimal year: {:.8f}".format(self.year),
                              "Reference height: {:.3f} km".format(self.refh),
                              "Earth radius: {:.3f} km".format(self.RE), '',
                              "Coefficient file: '{:s}'".format(self.datafile),
