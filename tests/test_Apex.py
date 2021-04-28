@@ -172,6 +172,38 @@ class TestApexInit():
         assert new_apex == self.apex_out
         return
 
+    def test_ne_other_class(self):
+        """Test Apex class inequality to a different class."""
+        self.apex_out = apexpy.Apex()
+        self.eval_date()
+        self.eval_refh()
+
+        assert self.apex_out != self.test_date
+        return
+
+    def test_ne_missing_attr(self):
+        """Test Apex class inequality when attributes are missing from one."""
+        self.apex_out = apexpy.Apex()
+        self.eval_date()
+        self.eval_refh()
+        ref_apex = eval(self.apex_out.__repr__())
+        del ref_apex.RE
+
+        assert ref_apex != self.apex_out
+        assert self.apex_out != ref_apex
+        return
+
+    def test_eq_missing_attr(self):
+        """Test Apex class equality when attributes are missing from both."""
+        self.apex_out = apexpy.Apex()
+        self.eval_date()
+        self.eval_refh()
+        ref_apex = eval(self.apex_out.__repr__())
+        del ref_apex.RE, self.apex_out.RE
+
+        assert ref_apex == self.apex_out
+        return
+
     def test_str_eval(self):
         """Test the Apex.__str__ results."""
         # Initialize the apex object
@@ -1188,7 +1220,7 @@ class TestApexGetMethods():
         return
 
     @pytest.mark.parametrize("bad_lat", [(91), (-91)])
-    def test_get_with_invalid_lat(self, bad_lat):
+    def test_get_apex_with_invalid_lat(self, bad_lat):
         """Test get methods raise ValueError for invalid latitudes."""
 
         with pytest.raises(ValueError) as verr:
@@ -1198,7 +1230,7 @@ class TestApexGetMethods():
         return
 
     @pytest.mark.parametrize("bad_lat", [(91), (-91)])
-    def test_get_with_invalid_lat(self, bad_lat):
+    def test_get_babs_with_invalid_lat(self, bad_lat):
         """Test get methods raise ValueError for invalid latitudes."""
 
         with pytest.raises(ValueError) as verr:
