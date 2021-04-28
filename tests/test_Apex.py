@@ -12,7 +12,6 @@ These results are expected to change when IGRF is updated.
 
 """
 
-import copy
 import datetime as dt
 import numpy as np
 import os
@@ -107,7 +106,7 @@ class TestApexInit():
         self.eval_refh()
 
         # Update the epoch
-        ref_apex = copy.deepcopy(self.apex_out)
+        ref_apex = eval(self.apex_out.__repr__())
         self.apex_out.set_epoch(new_date)
         assert ref_apex != self.apex_out
         self.test_date = new_date
@@ -132,7 +131,7 @@ class TestApexInit():
         self.eval_refh()
 
         # Update to a new reference height and test
-        ref_apex = copy.deepcopy(self.apex_out)
+        ref_apex = eval(self.apex_out.__repr__())
         self.apex_out.set_refh(new_refh)
 
         if self.test_refh == new_refh:
