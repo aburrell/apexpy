@@ -189,13 +189,14 @@ class Apex(object):
 
         if isinstance(comp_obj, self.__class__):
             # Objects are the same if all the attributes are the same
-            for apex_attr in ['year', 'refh', 'RE', 'datafile', 'fortranlib']:
+            for apex_attr in ['year', 'refh', 'RE', 'datafile', 'fortranlib',
+                              'igrf_fn']:
                 bad_attr = False
                 if hasattr(self, apex_attr):
                     aval = getattr(self, apex_attr)
 
                     if hasattr(comp_obj, apex_attr):
-                        cval = getattr(self, apex_attr)
+                        cval = getattr(comp_obj, apex_attr)
 
                         if cval != aval:
                             bad_attr = True
