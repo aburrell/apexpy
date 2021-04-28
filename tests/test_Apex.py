@@ -12,21 +12,21 @@ These results are expected to change when IGRF is updated.
 
 """
 
+import copy
 import datetime as dt
 import numpy as np
 import os
 import pytest
 import warnings
 
-from apexpy import fortranapex as fa
-from apexpy import Apex, ApexHeightError, helpers
+import apexpy
 
 
 @pytest.fixture()
 def igrf_file():
     """A fixture for handling the coefficient file."""
     # Ensure the coefficient file exists
-    original_file = os.path.join(os.path.dirname(helpers.__file__),
+    original_file = os.path.join(os.path.dirname(apexpy.helpers.__file__),
                                  'igrf13coeffs.txt')
     tmp_file = "temp_coeff.txt"
     assert os.path.isfile(original_file)
@@ -44,7 +44,7 @@ def test_set_epoch_file_error(igrf_file):
     """Test raises OSError when IGRF coefficient file is missing."""
     # Test missing coefficient file failure
     with pytest.raises(OSError) as oerr:
-        Apex()
+        apexpy.Apex()
     error_string = "File {:} does not exist".format(igrf_file)
     assert str(oerr.value).startswith(error_string)
     return
@@ -64,7 +64,7 @@ class TestApexInit():
         """Evaluate the times in self.test_date and self.apex_out."""
         if isinstance(self.test_date, dt.datetime) \
            or isinstance(self.test_date, dt.date):
-            self.test_date = helpers.toYearFraction(self.test_date)
+            self.test_date = apexpy.helpers.toYearFraction(self.test_date)
 
         # Assert the times are the same on the order of tens of seconds.
         # Necessary to evaluate the current UTC
@@ -82,7 +82,7 @@ class TestApexInit():
 
     def test_init_defaults(self):
         """Test Apex class default initialization."""
-        self.apex_out = Apex()
+        self.apex_out = apexpy.Apex()
         self.eval_date()
         self.eval_refh()
         return
@@ -93,7 +93,7 @@ class TestApexInit():
     def test_init_date(self, in_date):
         """Test Apex class with date initialization."""
         self.test_date = in_date
-        self.apex_out = Apex(date=self.test_date)
+        self.apex_out = apexpy.Apex(date=self.test_date)
         self.eval_date()
         self.eval_refh()
         return
@@ -102,22 +102,23 @@ class TestApexInit():
     def test_set_epoch(self, new_date):
         """Test successful setting of Apex epoch after initialization."""
         # Evaluate the default initialization
-        self.apex_out = Apex()
+        self.apex_out = apexpy.Apex()
         self.eval_date()
         self.eval_refh()
 
         # Update the epoch
-        self.test_date = new_date
+        ref_apex = copy.deepcopy(self.apex_out)
         self.apex_out.set_epoch(new_date)
+        assert ref_apex != self.apex_out
+        self.test_date = new_date
         self.eval_date()
-        self.eval_refh()
         return
 
     @pytest.mark.parametrize("in_refh", [0.0, 300.0, 30000.0, -1.0])
     def test_init_refh(self, in_refh):
         """Test Apex class with reference height initialization."""
         self.test_refh = in_refh
-        self.apex_out = Apex(refh=self.test_refh)
+        self.apex_out = apexpy.Apex(refh=self.test_refh)
         self.eval_date()
         self.eval_refh()
         return
@@ -126,28 +127,62 @@ class TestApexInit():
     def test_set_refh(self, new_refh):
         """Test the method used to set the reference height after the init."""
         # Verify the defaults are set
-        self.apex_out = Apex(date=self.test_date)
+        self.apex_out = apexpy.Apex(date=self.test_date)
         self.eval_date()
         self.eval_refh()
 
         # Update to a new reference height and test
-        self.test_refh = new_refh
+        ref_apex = copy.deepcopy(self.apex_out)
         self.apex_out.set_refh(new_refh)
+
+        if self.test_refh == new_refh:
+            assert ref_apex == self.apex_out
+        else:
+            assert ref_apex != self.apex_out
+            self.test_refh = new_refh
         self.eval_refh()
         return
 
     def test_init_with_bad_datafile(self):
         """Test raises IOError with non-existent datafile input."""
         with pytest.raises(IOError) as oerr:
-            Apex(datafile=self.bad_file)
+            apexpy.Apex(datafile=self.bad_file)
         assert str(oerr.value).startswith('Data file does not exist')
         return
 
     def test_init_with_bad_fortranlib(self):
         """Test raises IOError with non-existent datafile input."""
         with pytest.raises(IOError) as oerr:
-            Apex(fortranlib=self.bad_file)
+            apexpy.Apex(fortranlib=self.bad_file)
         assert str(oerr.value).startswith('Fortran library does not exist')
+        return
+
+    def test_repr_eval(self):
+        """Test the Apex.__repr__ results."""
+        # Initialize the apex object
+        self.apex_out = apexpy.Apex()
+        self.eval_date()
+        self.eval_refh()
+
+        # Get and test the repr string
+        out_str = self.apex_out.__repr__()
+        assert out_str.find("apexpy.Apex(") == 0
+
+        # Test the ability to re-create the apex object from the repr string
+        new_apex = eval(out_str)
+        assert new_apex == self.apex_out
+        return
+
+    def test_str_eval(self):
+        """Test the Apex.__str__ results."""
+        # Initialize the apex object
+        self.apex_out = apexpy.Apex()
+        self.eval_date()
+        self.eval_refh()
+
+        # Get and test the printed string
+        out_str = self.apex_out.__str__()
+        assert out_str.find("Decimal year") > 0
         return
 
 
@@ -155,7 +190,7 @@ class TestApexMethod():
     """Test the Apex methods."""
     def setup(self):
         """Initialize all tests."""
-        self.apex_out = Apex(date=2000, refh=300)
+        self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_lat = 60
         self.in_lon = 15
         self.in_alt = 100
@@ -213,7 +248,7 @@ class TestApexMethod():
 
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
-        fortran_func = getattr(fa, fortran_method)
+        fortran_func = getattr(apexpy.fortranapex, fortran_method)
 
         # Get the appropriate input arguments
         apex_args = self.get_input_args(apex_method)
@@ -241,7 +276,7 @@ class TestApexMethod():
 
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
-        fortran_func = getattr(fa, fortran_method)
+        fortran_func = getattr(apexpy.fortranapex, fortran_method)
 
         # Get the appropriate input arguments
         self.in_lon = lon1
@@ -264,7 +299,7 @@ class TestApexMethod():
         """Tests Apex/fortran interface consistency for array input."""
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
-        fortran_func = getattr(fa, fortran_method)
+        fortran_func = getattr(apexpy.fortranapex, fortran_method)
 
         # Set up the input arrays
         ref_lat = np.array([0, 30, 60, 90])
@@ -314,7 +349,7 @@ class TestApexMethod():
         """Test Apex/fortran geo2apexall interface consistency for scalars."""
         # Get the Apex and Fortran results
         aret = self.apex_out._geo2apexall(lat, lon, self.in_alt)
-        fret = fa.apxg2all(lat, lon, self.in_alt, 300, 1)
+        fret = apexpy.fortranapex.apxg2all(lat, lon, self.in_alt, 300, 1)
 
         # Evaluate each element in the results
         for aval, fval in zip(aret, fret):
@@ -334,7 +369,8 @@ class TestApexMethod():
         # For each lat/alt pair, get the Fortran results
         fret = list()
         for i, lat in enumerate(self.in_lat):
-            fret.append(fa.apxg2all(lat, self.in_lon, self.in_alt[i], 300, 1))
+            fret.append(apexpy.fortranapex.apxg2all(lat, self.in_lon,
+                                                    self.in_alt[i], 300, 1))
 
         # Cycle through all returned values
         for i, ret in enumerate(aret):
@@ -425,17 +461,25 @@ class TestApexMethod():
     def test_convert_invalid_lat(self, bad_lat):
         """Test convert raises ValueError for invalid latitudes."""
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as verr:
             self.apex_out.convert(bad_lat, 0, 'geo', 'geo')
+
+        assert str(verr.value).find("must be in [-90, 90]") > 0
         return
 
-    @pytest.mark.parametrize("coords", [("foobar", "geo"), ("geo", "foobar")])
+    @pytest.mark.parametrize("coords", [("foobar", "geo"), ("geo", "foobar"),
+                                        ("geo", "mlt")])
     def test_convert_invalid_transformation(self, coords):
         """Test raises NotImplementedError for bad coordinates."""
+        if "mlt" in coords:
+            estr = "datetime must be given for MLT calculations"
+        else:
+            estr = "Unknown coordinate transformation"
+
         with pytest.raises(ValueError) as verr:
             self.apex_out.convert(0, 0, *coords)
 
-        assert str(verr).find("Unknown coordinate transformation") >= 0
+        assert str(verr).find(estr) >= 0
         return
 
     @pytest.mark.parametrize("method_name, out_comp",
@@ -501,8 +545,10 @@ class TestApexMethod():
         method_name = "2".join([in_coord, out_coord])
         user_method = getattr(self.apex_out, method_name)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as verr:
             user_method(bad_lat, 15, 100)
+
+        assert str(verr.value).find("must be in [-90, 90]") > 0
         return
 
     @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
@@ -532,7 +578,7 @@ class TestApexMethod():
         """Test geo2apex warning and fill values for an undefined location."""
 
         # Update the apex object
-        self.apex_out = Apex(date=2000, refh=10000)
+        self.apex_out = apexpy.Apex(date=2000, refh=10000)
 
         # Get the output and the warnings
         with warnings.catch_warnings(record=True) as warn_rec:
@@ -564,7 +610,7 @@ class TestApexMethod():
         """Quasi-dipole raises ApexHeightError when height above reference."""
         qd_method = getattr(self.apex_out, method_name)
 
-        with pytest.raises(ApexHeightError) as aerr:
+        with pytest.raises(apexpy.ApexHeightError) as aerr:
             qd_method(0, 15, self.apex_out.refh + hinc)
 
         assert str(aerr).find(msg) > 0
@@ -575,7 +621,7 @@ class TestApexMLTMethods():
     """Test the Apex Magnetic Local Time (MLT) methods."""
     def setup(self):
         """Initialize all tests."""
-        self.apex_out = Apex(date=2000, refh=300)
+        self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_time = dt.datetime(2000, 2, 3, 4, 5, 6)
 
     def teardown(self):
@@ -736,7 +782,7 @@ class TestApexMapMethods():
     """Test the Apex height mapping methods."""
     def setup(self):
         """Initialize all tests."""
-        self.apex_out = Apex(date=2000, refh=300)
+        self.apex_out = apexpy.Apex(date=2000, refh=300)
 
     def teardown(self):
         """Clean up after each test."""
@@ -795,7 +841,7 @@ class TestApexMapMethods():
         """Test map_to_height raises ApexHeightError."""
         apex_method = getattr(self.apex_out, method_name)
 
-        with pytest.raises(ApexHeightError) as aerr:
+        with pytest.raises(apexpy.ApexHeightError) as aerr:
             apex_method(*in_args)
 
         assert aerr.match("is > apex height")
@@ -806,13 +852,21 @@ class TestApexMapMethods():
     @pytest.mark.parametrize("ev_input", [([1, 2, 3, 4, 5]),
                                           ([[1, 2], [3, 4], [5, 6], [7, 8]])])
     def test_mapping_EV_bad_shape(self, method_name, ev_input):
-        """Test map_to_height raises ApexHeightError."""
+        """Test height mapping of E/V with baddly shaped input raises Error."""
         apex_method = getattr(self.apex_out, method_name)
         in_args = [60, 15, 100, 500, ev_input]
         with pytest.raises(ValueError) as verr:
             apex_method(*in_args)
 
         assert str(verr.value).find("must be (3, N) or (3,) ndarray") >= 0
+        return
+
+    def test_mapping_EV_bad_flag(self):
+        """Test _map_EV_to_height raises error for bad data type flag."""
+        with pytest.raises(ValueError) as verr:
+            self.apex_out._map_EV_to_height(60, 15, 100, 500, [1, 2, 3], "P")
+
+        assert str(verr.value).find("unknown electric field/drift flag") >= 0
         return
 
     @pytest.mark.parametrize("in_args,test_mapped",
@@ -896,7 +950,7 @@ class TestApexBasevectorMethods():
     """Test the Apex height base vector methods."""
     def setup(self):
         """Initialize all tests."""
-        self.apex_out = Apex(date=2000, refh=300)
+        self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.lat = 60
         self.lon = 15
         self.height = 100
@@ -1085,7 +1139,7 @@ class TestApexBasevectorMethods():
 
     def test_basevectors_apex_invalid_scalar(self):
         """Test warning and fill values for base vectors with bad inputs."""
-        self.apex_out = Apex(date=2000, refh=10000)
+        self.apex_out = apexpy.Apex(date=2000, refh=10000)
         invalid = np.full(shape=(3,), fill_value=np.nan)
 
         # Get the output and the warnings
@@ -1107,7 +1161,7 @@ class TestApexGetMethods():
     """Test the Apex `get` methods."""
     def setup(self):
         """Initialize all tests."""
-        self.apex_out = Apex(date=2000, refh=300)
+        self.apex_out = apexpy.Apex(date=2000, refh=300)
 
     def teardown(self):
         """Clean up after each test."""
@@ -1138,8 +1192,20 @@ class TestApexGetMethods():
     def test_get_with_invalid_lat(self, bad_lat):
         """Test get methods raise ValueError for invalid latitudes."""
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as verr:
             self.apex_out.get_apex(bad_lat)
+
+        assert str(verr.value).find("must be in [-90, 90]") > 0
+        return
+
+    @pytest.mark.parametrize("bad_lat", [(91), (-91)])
+    def test_get_with_invalid_lat(self, bad_lat):
+        """Test get methods raise ValueError for invalid latitudes."""
+
+        with pytest.raises(ValueError) as verr:
+            self.apex_out.get_babs(bad_lat, 15, 100)
+
+        assert str(verr.value).find("must be in [-90, 90]") > 0
         return
 
     @pytest.mark.parametrize("bound_lat", [(90), (-90)])
