@@ -199,11 +199,15 @@ class Apex(object):
                         cval = getattr(comp_obj, apex_attr)
 
                         if cval != aval:
+                            # Not equal, as the attribute values differ
                             bad_attr = True
                     else:
+                        # The comparison object is missing an attribute
                         bad_attr = True
                 else:
-                    bad_attr = True
+                    if hasattr(comp_obj, apex_attr):
+                        # The current object is missing an attribute
+                        bad_attr = True
 
                 if bad_attr:
                     return False
