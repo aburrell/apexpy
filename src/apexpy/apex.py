@@ -383,7 +383,6 @@ class Apex(object):
         # at the current height
         data1 = np.sum(data * v1[0], axis=0)
         data2 = np.sum(data * v2[0], axis=0)
-        print("BI", data, v1[0], np.sum(data * v1[0], axis=0), data1)
 
         # Map the data to the new height, removing any axes of length 1
         # after the calculation
