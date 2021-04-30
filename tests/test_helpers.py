@@ -204,7 +204,7 @@ class TestHelpers():
                                                                            4)),
         np.arange(np.datetime64("1601"), np.datetime64("2100"),
                   np.timedelta64(1, 'Y')).astype('datetime64[s]')])
-    def test_subsol_array(self, in_dates):
+    def test_subsol_datetime64_array(self, in_dates):
         """Verify subsolar point calculation using an array of np.datetime64.
 
         Notes
@@ -213,18 +213,21 @@ class TestHelpers():
         converting using single dt.datetime values
 
         """
-        sslat, sslon = helpers.subsol(in_dates)
+        # Get the datetime64 output
+        ss_out = helpers.subsol(in_dates)
 
-        # Test the shape of the output
-        assert sslat.shape == in_dates.shape
-        assert sslon.shape == in_dates.shape
-
-        # Test the values
-        flat_lat = sslat.flatten()
-        flat_lon = sslon.flatten()
-        for i, in_date in enumerate(in_dates.flatten()):
+        # Get the datetime scalar output for comparison
+        self.in_shape = in_dates.shape
+        true_out = [list(), list()]
+        for in_date in in_dates.flatten():
             dtime = datetime64_to_datetime(in_date)
-            true_sslat, true_sslon = helpers.subsol(dtime)
-            assert flat_lat[i] == true_sslat
-            assert flat_lon[i] == true_sslon
+            out = helpers.subsol(dtime)
+            true_out[0].append(out[0])
+            true_out[1].append(out[1])
+
+        # Evaluate the two outputs
+        for i, self.calc_val in enumerate(ss_out):
+            self.test_val = np.array(true_out[i]).reshape(self.in_shape)
+            self.eval_output()
+
         return
