@@ -103,7 +103,9 @@ class TestHelpers():
                                [-90, 0, 90]),
                               (np.linspace(-90, 90, 3), [-90, 0, 90]),
                               ([-90 - 1e-5, 0, 90, np.nan],
-                               [-90, 0, 90, np.nan])])
+                               [-90, 0, 90, np.nan]),
+                              ([[-90, 0], [0, 90]], [[-90, 0], [0, 90]]),
+                              ([[-90], [0], [90]], [[-90], [0], [90]])])
     def test_checklat_array(self, lat, test_lat):
         """Test good latitude with finite values."""
         self.calc_val = helpers.checklat(lat)
@@ -196,7 +198,13 @@ class TestHelpers():
         assert str(verr.value).startswith('input must be datetime')
         return
 
-    def test_subsol_array(self):
+    @pytest.mark.parametrize('in_dates', [
+        np.arange(np.datetime64("2000"), np.datetime64("2001"),
+                  np.timedelta64(1, 'M')).astype('datetime64[s]').reshape((3,
+                                                                           4)),
+        np.arange(np.datetime64("1601"), np.datetime64("2100"),
+                  np.timedelta64(1, 'Y')).astype('datetime64[s]')])
+    def test_subsol_datetime64_array(self, in_dates):
         """Verify subsolar point calculation using an array of np.datetime64.
 
         Notes
@@ -205,18 +213,21 @@ class TestHelpers():
         converting using single dt.datetime values
 
         """
-        in_dates = np.arange(np.datetime64("1601"), np.datetime64("2100"),
-                             np.timedelta64(100, 'D')).astype('datetime64[s]')
-        sslat, sslon = helpers.subsol(in_dates)
+        # Get the datetime64 output
+        ss_out = helpers.subsol(in_dates)
 
-        # Test the shape of the output
-        assert sslat.shape == in_dates.shape
-        assert sslon.shape == in_dates.shape
-
-        # Test the values
-        for i, in_date in enumerate(in_dates):
+        # Get the datetime scalar output for comparison
+        self.in_shape = in_dates.shape
+        true_out = [list(), list()]
+        for in_date in in_dates.flatten():
             dtime = datetime64_to_datetime(in_date)
-            true_sslat, true_sslon = helpers.subsol(dtime)
-            assert sslat[i] == true_sslat
-            assert sslon[i] == true_sslon
+            out = helpers.subsol(dtime)
+            true_out[0].append(out[0])
+            true_out[1].append(out[1])
+
+        # Evaluate the two outputs
+        for i, self.calc_val in enumerate(ss_out):
+            self.test_val = np.array(true_out[i]).reshape(self.in_shape)
+            self.eval_output()
+
         return

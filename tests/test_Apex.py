@@ -321,12 +321,14 @@ class TestApexMethod():
                                    fortran_func(*fortran_args)[fslice])
         return
 
+    @pytest.mark.parametrize("arr_shape", [(2, 2), (4,), (1, 4)])
     @pytest.mark.parametrize("apex_method,fortran_method,fslice",
                              [("_geo2qd", "apxg2q", slice(0, 2, 1)),
                               ("_geo2apex", "apxg2all", slice(2, 4, 1)),
                               ("_qd2geo", "apxq2g", slice(None)),
                               ("_basevec", "apxg2q", slice(2, 4, 1))])
-    def test_fortran_array_input(self, apex_method, fortran_method, fslice):
+    def test_fortran_array_input(self, arr_shape, apex_method, fortran_method,
+                                 fslice):
         """Tests Apex/fortran interface consistency for array input."""
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
@@ -335,8 +337,8 @@ class TestApexMethod():
         # Set up the input arrays
         ref_lat = np.array([0, 30, 60, 90])
         ref_alt = np.array([100, 200, 300, 400])
-        self.in_lat = ref_lat.reshape((2, 2))
-        self.in_alt = ref_alt.reshape((2, 2))
+        self.in_lat = ref_lat.reshape(arr_shape)
+        self.in_alt = ref_alt.reshape(arr_shape)
         apex_args = self.get_input_args(apex_method)
 
         # Get the Apex class results
@@ -361,9 +363,9 @@ class TestApexMethod():
         try:
             # This returned value is array of floats
             np.testing.assert_allclose(aret[0].astype(float),
-                                       flats.reshape((2, 2)).astype(float))
+                                       flats.reshape(arr_shape).astype(float))
             np.testing.assert_allclose(aret[1].astype(float),
-                                       flons.reshape((2, 2)).astype(float))
+                                       flons.reshape(arr_shape).astype(float))
         except ValueError:
             # This returned value is array of arrays
             alats = aret[0].reshape((4,))
@@ -386,16 +388,17 @@ class TestApexMethod():
         for aval, fval in zip(aret, fret):
             np.testing.assert_allclose(aval, fval)
 
-    def test_geo2apexall_array(self):
+    @pytest.mark.parametrize("arr_shape", [(2, 2), (4,), (1, 4)])
+    def test_geo2apexall_array(self, arr_shape):
         """Test Apex/fortran geo2apexall interface consistency for arrays."""
         # Set the input
         self.in_lat = np.array([0, 30, 60, 90])
         self.in_alt = np.array([100, 200, 300, 400])
 
         # Get the Apex class results
-        aret = self.apex_out._geo2apexall(self.in_lat.reshape((2, 2)),
+        aret = self.apex_out._geo2apexall(self.in_lat.reshape(arr_shape),
                                           self.in_lon,
-                                          self.in_alt.reshape((2, 2)))
+                                          self.in_alt.reshape(arr_shape))
 
         # For each lat/alt pair, get the Fortran results
         fret = list()
@@ -407,10 +410,10 @@ class TestApexMethod():
         for i, ret in enumerate(aret):
             try:
                 # This returned value is array of floats
+                fret_test = np.array([fret[0][i], fret[1][i], fret[2][i],
+                                      fret[3][i]]).reshape(arr_shape)
                 np.testing.assert_allclose(ret.astype(float),
-                                           np.array([[fret[0][i], fret[1][i]],
-                                                     [fret[2][i], fret[3][i]]],
-                                                    dtype=float))
+                                           fret_test.astype(float))
             except ValueError:
                 # This returned value is array of arrays
                 ret = ret.reshape((4,))
@@ -733,6 +736,8 @@ class TestApexMLTMethods():
     @pytest.mark.parametrize("mlon,test_mlt",
                              [([0, 180], [23.019261, 11.019261]),
                               (np.array([0, 180]), [23.019261, 11.019261]),
+                              (np.array([[0], [180]]),
+                               np.array([[23.019261], [11.019261]])),
                               ([[0, 180], [0, 180]], [[23.019261, 11.019261],
                                                       [23.019261, 11.019261]]),
                               (range(0, 361, 30),
@@ -750,6 +755,8 @@ class TestApexMLTMethods():
     @pytest.mark.parametrize("mlt,test_mlon",
                              [([0, 12], [14.705551, 194.705551]),
                               (np.array([0, 12]), [14.705551, 194.705551]),
+                              (np.array([[0], [12]]),
+                               np.array([[14.705551], [194.705551]])),
                               ([[0, 12], [0, 12]], [[14.705551, 194.705551],
                                                     [14.705551, 194.705551]]),
                               (range(0, 25, 2),
@@ -846,20 +853,22 @@ class TestApexMapMethods():
                                    rtol=1e-5)
         return
 
+    @pytest.mark.parametrize('arr_shape', [(2,), (2, 2), (1, 4)])
     @pytest.mark.parametrize('ivec', range(0, 4))
-    def test_map_to_height_array_location(self, ivec):
+    def test_map_to_height_array_location(self, arr_shape, ivec):
         """Test map_to_height with array input."""
         # Set the base input and output values
         in_args = [60, 15, 100, 100]
-        test_mapped = np.full(shape=(2, 3),
-                              fill_value=[60, 15.00000381, 0.0]).transpose()
+        test_mapped = [60, 15.00000381, 0.0]
 
         # Update inputs for one vectorized value
-        in_args[ivec] = [in_args[ivec], in_args[ivec]]
+        in_args[ivec] = np.full(shape=arr_shape, fill_value=in_args[ivec])
 
         # Calculate and test function
         mapped = self.apex_out.map_to_height(*in_args)
-        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        for i, test_val in enumerate(test_mapped):
+            assert mapped[i].shape == arr_shape
+            np.testing.assert_allclose(mapped[i], test_val, rtol=1e-5)
         return
 
     @pytest.mark.parametrize("method_name,in_args",
@@ -919,23 +928,33 @@ class TestApexMapMethods():
         np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
         return
 
+    @pytest.mark.parametrize('ev_flag, test_mapped',
+                             [('E', [0.71152183, 2.35624876, 0.57260784]),
+                              ('V', [0.81971957, 2.84512495, 0.69545001])])
+    @pytest.mark.parametrize('arr_shape', [(2,), (5,)])
     @pytest.mark.parametrize('ivec', range(0, 5))
-    def test_map_E_to_height_array_location(self, ivec):
-        """Test mapping of E-field to a specified height with array input."""
+    def test_map_EV_to_height_array_location(self, ev_flag, test_mapped,
+                                             arr_shape, ivec):
+        """Test mapping of E-field/drift to a specified height with arrays."""
         # Set the base input and output values
-        efield = np.array([[1, 2, 3]] * 2).transpose()
-        in_args = [60, 15, 100, 500, efield]
-        test_mapped = np.full(shape=(2, 3),
-                              fill_value=[0.71152183, 2.35624876,
-                                          0.57260784]).transpose()
+        eshape = list(arr_shape)
+        eshape.insert(0, 3)
+        edata = np.array([[1, 2, 3]] * np.product(arr_shape)).transpose()
+        in_args = [60, 15, 100, 500, edata.reshape(tuple(eshape))]
 
         # Update inputs for one vectorized value if this is a location input
         if ivec < 4:
-            in_args[ivec] = [in_args[ivec], in_args[ivec]]
+            in_args[ivec] = np.full(shape=arr_shape, fill_value=in_args[ivec])
 
-        # Get the mapped output and test the results
-        mapped = self.apex_out.map_E_to_height(*in_args)
-        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
+        # Get the mapped output
+        apex_method = getattr(self.apex_out,
+                              "map_{:s}_to_height".format(ev_flag))
+        mapped = apex_method(*in_args)
+
+        # Test the results
+        for i, test_val in enumerate(test_mapped):
+            assert mapped[i].shape == arr_shape
+            np.testing.assert_allclose(mapped[i], test_val, rtol=1e-5)
         return
 
     @pytest.mark.parametrize("in_args,test_mapped",
@@ -953,25 +972,6 @@ class TestApexMapMethods():
                                [0.84681866, 2.5925821,  0.34792655])])
     def test_map_V_to_height_scalar_location(self, in_args, test_mapped):
         """Test mapping of velocity to a specified height."""
-        mapped = self.apex_out.map_V_to_height(*in_args)
-        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
-        return
-
-    @pytest.mark.parametrize('ivec', range(0, 5))
-    def test_map_V_to_height_array_location(self, ivec):
-        """Test mapping of velocity to a specified height with array input."""
-        # Set the base input and output values
-        evel = np.array([[1, 2, 3]] * 2).transpose()
-        in_args = [60, 15, 100, 500, evel]
-        test_mapped = np.full(shape=(2, 3),
-                              fill_value=[0.81971957, 2.84512495,
-                                          0.69545001]).transpose()
-
-        # Update inputs for one vectorized value if this is a location input
-        if ivec < 4:
-            in_args[ivec] = [in_args[ivec], in_args[ivec]]
-
-        # Get the mapped output and test the results
         mapped = self.apex_out.map_V_to_height(*in_args)
         np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
         return
@@ -1090,13 +1090,14 @@ class TestApexBasevectorMethods():
                 assert vec.shape == (3,)
         return
 
+    @pytest.mark.parametrize('arr_shape', [(2,), (5,)])
     @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
     @pytest.mark.parametrize("ivec", range(3))
-    def test_basevectors_array(self, bv_coord, ivec):
+    def test_basevectors_array(self, arr_shape, bv_coord, ivec):
         """Test the output shape for array inputs."""
         # Define the input arguments
         in_args = [self.lat, self.lon, self.height]
-        in_args[ivec] = [in_args[ivec] for i in range(4)]
+        in_args[ivec] = np.full(shape=arr_shape, fill_value=in_args[ivec])
 
         # Get the basevectors
         base_method = getattr(self.apex_out,
@@ -1111,8 +1112,9 @@ class TestApexBasevectorMethods():
 
         # Evaluate the shape and the values
         for i, vec in enumerate(basevec):
-            idim = 2 if i < 2 else 3
-            assert vec.shape == (idim, 4)
+            test_shape = list(arr_shape)
+            test_shape.insert(0, 2 if i < 2 else 3)
+            assert vec.shape == tuple(test_shape)
             assert np.all(self.test_basevec[i][0] == vec[0])
             assert np.all(self.test_basevec[i][1] == vec[1])
         return
@@ -1198,8 +1200,13 @@ class TestApexGetMethods():
         """Clean up after each test."""
         del self.apex_out
 
-    @pytest.mark.parametrize("alat, aheight", [(10, 507.409702543805),
-                                               (60, 20313.026999999987)])
+    @pytest.mark.parametrize("alat, aheight",
+                             [(10, 507.409702543805),
+                              (60, 20313.026999999987),
+                              ([10, 60],
+                               [507.409702543805, 20313.026999999987]),
+                              ([[10], [60]],
+                               [[507.409702543805], [20313.026999999987]])])
     def test_get_apex(self, alat, aheight):
         """Test the apex height retrieval results."""
         alt = self.apex_out.get_apex(alat)
@@ -1208,6 +1215,11 @@ class TestApexGetMethods():
 
     @pytest.mark.parametrize("glat,glon,height,test_bmag",
                              [([80], [100], [300], 5.100682377815247e-05),
+                              ([80, 80], [100], [300],
+                               [5.100682377815247e-05, 5.100682377815247e-05]),
+                              ([[80], [80]], [100], [300],
+                               [[5.100682377815247e-05],
+                                [5.100682377815247e-05]]),
                               (range(50, 90, 8), range(0, 360, 80), [300] * 5,
                                np.array([4.18657154e-05, 5.11118114e-05,
                                          4.91969854e-05, 5.10519207e-05,
