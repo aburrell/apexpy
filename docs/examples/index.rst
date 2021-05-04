@@ -9,3 +9,4 @@ and support functions.
    ex_init.rst
    ex_cli.rst
    ex_apexh.rst
+   ex_gc.rst
