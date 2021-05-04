@@ -10,6 +10,7 @@ Changelog
 * Updated code style using codacy suggestions and reduced complexity
 * Added class representation strings to Apex
 * Improved input testing for Apex methods
+* Added more examples to the documentation
 
 1.1.0 (2021-03-05)
 ------------------
