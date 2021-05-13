@@ -23,29 +23,29 @@
   "creators": [
     {
       "orcid": "0000-0002-8043-0953", 
-      "name": "Christer van der Meeren"
+      "name": "van der Meeren, Christer"
     },
     {
       "orcid": "0000-0001-5028-4943",
-      "name": "Karl M. Laundal"
+      "name": "Laundal, Karl M."
     },
     {
       "orcid": "0000-0001-8875-9326", 
       "affiliation": "Naval Research Laboratory", 
-      "name": "Angeline G. Burrell"
+      "name": "Burrell, Angeline G."
     },
     {
       "orcid": "0000-0002-3487-3630",
-      "name": "Gregory Starr"
+      "name": "Starr, Gregory"
     },
     {
       "orcid": "0000-0002-4621-3453",
-      "name": "Ashton S. Reimer"
+      "name": "Reimer, Ashton S."
     },
     {
       "orcid": "0000-0001-7955-4441",
       "affiliation": "GFZ German Research Centre for Geosciences",
-      "name": "Achim Morschhauser"
+      "name": "Morschhauser, Achim"
     }
   ]
 }

@@ -24,21 +24,25 @@ After updating the IGRF coefficients file the ``apexsh.dat`` file needs to be
 rebuilt. This file is what makes apexpy performant. For more details, see
 Emmert et al. [2010] [1]_.
 
-Updating ``apexsh.dat`` is done by modifying and building the fortran source code
-in the ``apexpy/src/fortranapex`` directory. Working in that directory:
+Updating ``apexsh.dat`` is done by modifying and building the fortran source
+code in the ``apexpy/src/fortranapex`` directory. Working in that directory:
 
 1. Make sure a copy of the latest IGRF coefficient file is present in the
    selfsame directory.
 2. Modify the ``igrffilein`` in ``checkapexsh.f90`` to the name of the IGRF
    coefficient file (``igrf13coeff.txt``, for example).
-3. Modify ``checkapexsh.f90`` by adding the next 5 year epoch to the 
+3. Modify ``checkapexsh.f90`` by adding the next 5 year epoch to the
    ``epochgrid`` variable and updating the ``nepochgrid`` variable as
    necessary. For example, if the newest IGRF coefficients are good up to 2025
    and ``epochgrid`` only has up to the year 2020, then add 2025 to
    ``epochgrid`` and then increment ``nepochgrid`` by 1.
 4. Build the ``apextest`` binary by running the ``make`` command.
-5. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file
-4. Copy the new ``apexsh.dat`` file to the ``apexpy/src/apexpy`` directory.
+5. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file.
+6. Copy the new ``apexsh.dat`` file to the ``apexpy/src/apexpy`` directory.
+
+After updating the ``apexsh.dat`` file, some of the unit tests and the
+documentation examples in the README and ``apexpy/docs/examples`` directory
+will need to be updated as well.
 
 Updating tests and style standards
 -----------------------------------
