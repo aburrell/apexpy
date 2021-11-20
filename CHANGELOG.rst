@@ -11,6 +11,7 @@ Changelog
 * Added class representation strings to Apex
 * Improved input testing for Apex methods
 * Added more examples to the documentation
+* Fixed missing microseconds bug in helpers.subsol
 
 1.1.0 (2021-03-05)
 ------------------
