@@ -7,9 +7,9 @@ This package requires NumPy, which you can install alone or as a part of SciPy.
 `Some Python distributions <https://www.scipy.org/install.html>`_
 come with NumPy/SciPy pre-installed. For Python distributions without
 NumPy/SciPy, Windows/Mac users should install
-`pre-compiled binaries of NumPy/SciPy <https://www.scipy.org/scipylib/download.html#official-source-and-binary-releases>`_, and Linux users may have
+`pre-compiled binaries of NumPy/SciPy <https://scipy.org/download/#official-source-and-binary-releases>`_, and Linux users may have
 NumPy/SciPy available in
-`their repositories <https://www.scipy.org/scipylib/download.html#third-party-vendor-package-managers>`_.
+`their repositories <https://scipy.org/download/#third-party-vendor-package-managers>`_.
 
 When you have NumPy, you may use either PyPI or GitHub to install this package.
 
