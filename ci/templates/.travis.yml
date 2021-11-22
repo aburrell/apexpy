@@ -1,11 +1,11 @@
 language: python
+dist: xenial
+os: linux
 
 python:
 {% for env, config in tox_environments|dictsort %}{% if not config.cover %}
   - "{{ config.python[-3:] }}"
 {% endif %}{% endfor %}
-
-sudo: false
 
 addons:
   apt:
