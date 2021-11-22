@@ -60,7 +60,7 @@ in the full documentation.
 Documentation
 =============
 
-https://apexpy.readthedocs.org/
+https://apexpy.readthedocs.io/en/latest/
 
 References
 ==========
@@ -96,7 +96,7 @@ Badges
     :target: https://apexpy.readthedocs.io/en/latest/
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=main
+.. |travis| image:: https://api.travis-ci.org/aburrell/apexpy.svg?branch=main
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/aburrell/apexpy
 
@@ -144,5 +144,5 @@ Badges
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
 
-.. |doi| image:: https://www.zenodo.org/badge/46420037.svg
-   :target: https://www.zenodo.org/badge/latestdoi/46420037
+.. |doi| image:: https://www.zenodo.org/badge/doi/10.5281/zenodo.4585641.svg
+   :target: https://doi.org/10.5281/zenodo.1214206
