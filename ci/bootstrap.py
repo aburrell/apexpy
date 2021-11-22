@@ -31,7 +31,7 @@ if __name__ == "__main__":
                                "jinja2", "matrix"])
 
     activate = os.path.join(bin_path, "activate_this.py")
-    act_dict = {__file__: activate}
+    act_dict = {'__file__': activate}
 
     # tox requires activation with exec
     exec(compile(open(activate, "rb").read(), activate, "exec"), act_dict)
