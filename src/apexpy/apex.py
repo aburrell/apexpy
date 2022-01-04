@@ -1178,6 +1178,32 @@ class Apex(object):
 
         return apex_height
 
+    def get_height(self, lat, apex_height):
+        """Calculate the height given an apex latitude and apex height.
+
+        Parameters
+        ----------
+        lat : float
+            Apex latitude in degrees
+        apex_height : float
+            Maximum height of the apex field line above the surface of the
+            Earth in km
+
+        Returns
+        -------
+        height : float
+            Height above the surface of the Earth in km
+
+        """
+        # Check the latitude
+        lat = helpers.checklat(lat, name='alat')
+
+        # Calculate the height from the apex height
+        cos_lat_squared = np.cos(np.radians(lat)) ** 2
+        height = cos_lat_squared * (apex_height + self.RE) - self.RE
+
+        return height
+
     def set_epoch(self, year):
         """Updates the epoch for all subsequent conversions.
 
