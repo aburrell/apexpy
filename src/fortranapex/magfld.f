@@ -88,12 +88,12 @@ C          unused constants in all five subroutines.  See EOS Volume 84 Number 4
 C          November 18 2003, www.ngdc.noaa.gov/IAGA/vmod/igrf.html or local files
 C          $APXROOT/docs/igrf.2004.*
 C
-C          Sept. 2005 (Maute): update with IGRF10 from 
-C          http://www.ngdc.noaa.gov/IAGA/vmod/igrf.html use script 
-C          ~maute/apex.d/apex_update/igrf2f Note that the downloaded file the start 
-C          column of the year in the first line has to be before the start of each 
+C          Sept. 2005 (Maute): update with IGRF10 from
+C          http://www.ngdc.noaa.gov/IAGA/vmod/igrf.html use script
+C          ~maute/apex.d/apex_update/igrf2f Note that the downloaded file the start
+C          column of the year in the first line has to be before the start of each
 C          number in the same column
-C   
+C
 C          Jan. 2010 (Maute) update with IGRF11 (same instructions as Sep. 2005
 C          comment
 C
@@ -109,20 +109,21 @@ C
       REAL(4), ALLOCATABLE :: EPOCH(:),NMXE(:)
       COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
       DATA ICHG /-99999/
- 
+
 C          NEPO = Number of epochs
 C          NGH  = Single dimensioned array size of 2D version (GYR or HYR)
 C          NGHT = Single dimensioned array size of 2D version (GT  or HT)
 !!      PARAMETER (NEPO = 24, NGH = 225*NEPO, NGHT = 225)
       INTEGER NEPO,NGHT,NGH
-      REAL*8, ALLOCATABLE :: GYR(:,:,:),HYR(:,:,:) 
-      REAL*8, ALLOCATABLE :: GT(:,:),HT(:,:) 
-     
+      REAL*8, ALLOCATABLE :: GYR(:,:,:),HYR(:,:,:)
+      REAL*8, ALLOCATABLE :: GT(:,:),HT(:,:)
+
       CHARACTER(LEN=1000) :: FILENAME
 
       SAVE DATEL, GYR, HYR, GT, HT, NEPO, EPOCH, NGHT, NMXE
       DATA DATEL /-999./
 
+C      WRITE(*,*) 'END of variable declarations'
 C          Do not need to load new coefficients if date has not changed
       ICHG = 0
       IF (DATE .EQ. DATEL) GO TO 300
@@ -130,21 +131,28 @@ C          Do not need to load new coefficients if date has not changed
       ICHG = 1
 
 c          Load coefficients
+C      WRITE(*,*) 'READ IGRF'
       if (.not. allocated(GYR)) then
         call read_igrf(FILENAME,GYR,HYR,GT,HT,NEPO,NGHT,EPOCH,NMXE)
       endif
+C      WRITE(*,*) 'END READ IGRF'
       NGH=NGHT*NEPO
- 
+C      WRITE(*,*) 'LINE 140'
+
 C          Trap out of range date:
+C      WRITE(*,*) DATE, EPOCH(1), EPOCH(NEPO)
       IF (DATE .LT. EPOCH(1)) GO TO 9100
       IF (DATE .GT. EPOCH(NEPO)+5.) WRITE(0,9200) DATE, EPOCH(NEPO) + 5.
- 
+C      WRITE(*,*) 'LINE 145'
+
       DO 100 I=1,NEPO
       IF (DATE .LT. EPOCH(I)) GO TO 110
       IY = I
   100 CONTINUE
   110 CONTINUE
- 
+
+C      WRITE(*,*) 'LINE 151'
+
       NGH=NGHT*NEPO
       NMAX  = NMXE(IY)
       TIME  = DATE
@@ -160,6 +168,7 @@ C          Trap out of range date:
       F  = F0 / SQRT(2.0)
       NN = N+1
       MM = 1
+C      WRITE(*,*) 'LINE 168'
       IF (IY .LT. NEPO) GB(I) = (GYR(NN,MM,IY) +                             ! interpolate (m=0 terms)
      +                          (GYR(NN,MM,IY1)-GYR(NN,MM,IY))*TO5) * F0
       IF (IY .EQ. NEPO) GB(I) = (GYR(NN,MM,IY) + GT(NN,MM)    *T  ) * F0     ! extrapolate (m=0 terms)
@@ -170,6 +179,7 @@ C          Trap out of range date:
       NN = N+1
       MM = M+1
       I1 = I+1
+C      WRITE(*,*) 'LINE 179'
       IF (IY .LT. NEPO) THEN                                                ! interpolate (m>0 terms)
         GB(I)  = (GYR(NN,MM,IY) +
      +           (GYR(NN,MM,IY1)-GYR(NN,MM,IY))*TO5) * F
@@ -179,13 +189,14 @@ C          Trap out of range date:
         GB(I)  = (GYR(NN,MM,IY) +GT (NN,MM)    *T  ) * F
         GB(I1) = (HYR(NN,MM,IY) +HT (NN,MM)    *T  ) * F
       ENDIF
+C      WRITE(*,*) 'LINE 189'
       RNN = REAL(NN)
       GV(I)  = GB(I)  / RNN
       GV(I1) = GB(I1) / RNN
   200 I = I+2
   300 CONTINUE
       RETURN
- 
+
 C          Error trap diagnostics:
  9100 WRITE (0,'(''COFRM:  DATE'',F9.3,'' preceeds earliest available ('
      +',F6.1,'')'')') DATE, EPOCH(1)
@@ -193,7 +204,7 @@ C          Error trap diagnostics:
  9200 FORMAT('COFRM:  DATE',F9.3,' is after the last recommended for ext
      +rapolation (',F6.1,')')
       END
- 
+
       SUBROUTINE DYPOL (COLAT,ELON,VP)
 C          Computes parameters for dipole component of geomagnetic field.
 C          COFRM must be called before calling DYPOL!
@@ -212,10 +223,10 @@ C            ELON  = East longitude of geomagnetic dipole north pole (deg)
 C            VP    = Magnitude, in T.m, of dipole component of magnetic
 C                    potential at geomagnetic pole and geocentric radius
 C                    of 6371.2 km
- 
+
       PARAMETER (RTOD = 57.2957795130823, RE = 6371.2)
       COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
- 
+
 C          Compute geographic colatitude and longitude of the north pole of
 C          earth centered dipole
       GPL   = SQRT (GB(2)**2 + GB(3)**2 + GB(4)**2)
@@ -223,14 +234,14 @@ C          earth centered dipole
       STP   = SQRT (1. - CTP*CTP)
       COLAT = ACOS (CTP) * RTOD
       ELON  = ATAN2 (GB(4),GB(3)) * RTOD
- 
+
 C          Compute magnitude of magnetic potential at pole, radius Re.
       VP = .2*GPL*RE
 C          .2 = 2*(10**-4 T/gauss)*(1000 m/km) (2 comes through F0 in COFRM).
- 
+
       RETURN
       END
- 
+
       SUBROUTINE FELDG (IENTY,GLAT,GLON,ALT, BNRTH,BEAST,BDOWN,BABS)
 C          Compute the DGRF/IGRF field components at the point GLAT,GLON,ALT.
 C          COFRM must be called to establish coefficients for correct date
@@ -282,13 +293,13 @@ C
 C          May 1994 (A.D. Richmond): Added magnetic potential calculation
 C
 C          Oct 1995 (Barnes): Added ICHG
- 
+
       PARAMETER (DTOR = 0.01745329251994330, RE = 6371.2)
       COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
       DIMENSION G(255), H(255), XI(3)
       SAVE IENTYP, G
       DATA IENTYP/-10000/
- 
+
       IF (IENTY .EQ. 1) THEN
         IS   = 1
         RLAT = GLAT * DTOR
@@ -314,7 +325,7 @@ C          Oct 1995 (Barnes): Added ICHG
       IHMAX = NMAX*NMAX+1
       LAST  = IHMAX+NMAX+NMAX
       IMAX  = NMAX+NMAX-1
- 
+
       IF (IENTY .NE. IENTYP .OR. ICHG .EQ. 1) THEN
         IENTYP = IENTY
         ICHG = 0
@@ -326,7 +337,7 @@ C          Oct 1995 (Barnes): Added ICHG
    20     G(I) = GV(I)
         ENDIF
       ENDIF
- 
+
       DO 30 I=IHMAX,LAST
    30 H(I) = G(I)
 
@@ -362,7 +373,7 @@ C          Oct 1995 (Barnes): Added ICHG
       IH = IL
       IF (I .GE. K) GO TO 60
   100 CONTINUE
- 
+
       S = .5*H(1)+2.*(H(2)*XI(3)+H(3)*XI(1)+H(4)*XI(2))
       T = (RQ+RQ)*SQRT(RQ)
       BXXX = T*(H(3)-S*XXX)
@@ -379,16 +390,16 @@ C          Oct 1995 (Barnes): Added ICHG
         BEAST = BYYY
         BDOWN = BZZZ
       ENDIF
- 
+
 C          Magnetic potential computation makes use of the fact that the
 C          calculation of V is identical to that for r*Br, if coefficients
 C          in the latter calculation have been divided by (n+1) (coefficients
 C          GV).  Factor .1 converts km to m and gauss to tesla.
       IF (IENTY.EQ.3) BABS = (BXXX*XXX + BYYY*YYY + BZZZ*ZZZ)*RE*.1
- 
+
       RETURN
       END
- 
+
       SUBROUTINE GD2CART (GDLAT,GLON,ALT,X,Y,Z)
 C          Convert geodetic to cartesian coordinates by calling CONVRT
 C          940503 A. D. Richmond
@@ -399,7 +410,7 @@ C          940503 A. D. Richmond
       Y = RHO*SIN(ANG)
       RETURN
       END
- 
+
       SUBROUTINE CONVRT (I,GDLAT,ALT,X1,X2)
 C          Convert space point from geodetic to geocentric or vice versa.
 C
@@ -447,7 +458,7 @@ C          Mar 2004: (Barnes) Revise spheroid definition to WGS-1984 to conform
 C          with IGRF-9 release (EOS Volume 84 Number 46 November 18 2003).
 C
 C          REFERENCE: ASTRON. J. VOL. 66, p. 15-16, 1961
- 
+
 C          E2  = square of eccentricity of ellipse
 C          REP = earth's polar      radius (km)
 C          REQ = earth's equatorial radius (km)
@@ -468,11 +479,11 @@ C          REQ = earth's equatorial radius (km)
      +     A82 =                                   64.*E8 /2048. ,
      +     A83 =                                 -252.*E8 /2048. ,
      +     A84 =                                  320.*E8 /2048. )
- 
+
       IF (I .GE. 3) GO TO 300
- 
+
 C          Geodetic to geocentric
- 
+
 C          Compute RHO,Z
       SINLAT = SIN(GDLAT*DTOR)
       COSLAT = SQRT(1.-SINLAT*SINLAT)
@@ -482,14 +493,14 @@ C          Compute RHO,Z
       X1 = RHO
       X2 = Z
       IF (I .EQ. 1) RETURN
- 
+
 C          Compute GCLAT,RKM
       RKM   = SQRT(Z*Z + RHO*RHO)
       GCLAT = RTOD*ATAN2(Z,RHO)
       X1 = GCLAT
       X2 = RKM
       RETURN
- 
+
 C          Geocentric to geodetic
   300 IF (I .EQ. 3) THEN
          RHO = X1
@@ -504,7 +515,7 @@ C          Geocentric to geodetic
       ELSE
          RETURN
       ENDIF
- 
+
       RI = REQ/RKM
       A2 = RI*(A21+RI*(A22+RI* A23))
       A4 = RI*(A41+RI*(A42+RI*(A43+RI*A44)))

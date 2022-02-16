@@ -3,7 +3,7 @@
 # Ver. 1.0. 27/8-10 - Based on Makefile for Einar Stiansen.
 
 # If using Intel compilers, uncomment a line at the top of the igrf.f90 file
-FC 	= gfortran  # mpif90, ifort 
+FC 	= gfortran  # mpif90, ifort
 LD      = $(FC)
 LDFLAGS = #-ipo
 FFLAGS 	= -O3 -fPIC #-ipo -check bounds -check pointer -check uninit
@@ -24,24 +24,24 @@ OBJS	   = igrf.o checkapexsh.o apexsh.o makeapexsh.o apex.o magfld.o
 $(PROG)	    : $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(PROG) $(LIBS)
 
-apexsh.o      : apexsh.f90  
-	$(FC) -c $(FFLAGS) $<
+apexsh.o      : apexsh.f90
+	$(FC) -c -Wall $(FFLAGS) $<
 
-igrf.o      : igrf.f90  
-	$(FC) -c $(FFLAGS) $<
+igrf.o      : igrf.f90
+	$(FC) -c -Wall $(FFLAGS) $<
 
-checkapexsh.o        : checkapexsh.f90 
-	$(FC) -c $(FFLAGS) $<
+checkapexsh.o        : checkapexsh.f90
+	$(FC) -c -Wall $(FFLAGS) $<
 
 
-apex.o      : apex.f  
-	$(FC) -c $(FFLAGS) $<
+apex.o      : apex.f90
+	$(FC) -c -Wall $(FFLAGS) $<
 
-magfld.o      : magfld.f
-	$(FC) -c $(FFLAGS) $<
+magfld.o      : magfld.f90
+	$(FC) -c -Wall $(FFLAGS) $<
 
-makeapexsh.o      : makeapexsh.f90 apexsh.o  
-	$(FC) -c $(FFLAGS) $<
+makeapexsh.o      : makeapexsh.f90 apexsh.o
+	$(FC) -c -Wall $(FFLAGS) $<
 
 
 

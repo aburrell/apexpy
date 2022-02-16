@@ -190,7 +190,7 @@ subroutine loadapxsh(datafilenew,epochnew)
       read(23) epochgrid, coeff0
       close(23)
     endif
-    
+
     !LOAD COEFFICIENTS AND INTEPOLATE TO SELECTED EPOCH
     if ((epochnew .ne. epochlast) .or. (datafilenew .ne. datafilelast) .or.(loadflag)) then
       epoch = epochnew
@@ -316,7 +316,7 @@ subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f)
     real(8)                  :: theta, phi
     real(8)                  :: costheta, Jtemp, J, r
 
-    !INITIALIZE OUTPUT ARGUMENTS    
+    !INITIALIZE OUTPUT ARGUMENTS
     qlat = missing
     qlon = missing
     f1 = missing
@@ -330,8 +330,8 @@ subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f)
     endif
 
     !COPY INPUT FLAG
-    vecflag = vecflagin     
-    
+    vecflag = vecflagin
+
     !COMPUTE SPATIAL COEFFICIENTS AND THEIR VERTICAL GRADIENTS FOR THE SPECIFIED HEIGHT
     if (alt .ne. altlastq) then
       h = dble(alt)
@@ -380,7 +380,7 @@ subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f)
     qlatout = sngl(qlat / dtor)
 
     !BASE VECTOR CALCULATIONS
-    if (vecflag .ne. 0) then    
+    if (vecflag .ne. 0) then
 
       !COMPUTE HORIZONTAL GRADIENT KERNELS OF QUASI-DIPOLE CARTESIAN COORDINATES
       xqgrad(1) = dot_product(shgradphi, xqcoeff)
@@ -440,7 +440,7 @@ subroutine apxg2all(glat,glon,alt,hr,vecflagin, &
       stop
     endif
 
-    !INITIALIZE OUTPUT ARGUMENTS    
+    !INITIALIZE OUTPUT ARGUMENTS
     mlat = missing
     mlon = missing
     d1 = missing
@@ -465,7 +465,7 @@ subroutine apxg2all(glat,glon,alt,hr,vecflagin, &
     endif
 
     !MODIFIED APEX BASE VECTOR CALCULATIONS
-    if (vecflag .ne. 0) then    
+    if (vecflag .ne. 0) then
 
       !COMPUTE VERTICAL GRADIENTS OF QUASI-DIPOLE COORDINATES
       xqgrad(3) = dot_product(sh, dxqdrhocoeff)

@@ -1,5 +1,5 @@
 !*******************************************************************************
-!  
+!
 !  File Name: checkapexsh.f90
 !  Authors: John Emmert, Art Richmond
 !  Date: 11/13/2009
@@ -24,7 +24,8 @@ program checkapexsh
 
   implicit none
 
-  integer(4), parameter :: nepochgrid=26
+  ! integer(4), parameter :: nepochgrid=26
+  integer(4), parameter :: nepochgrid=3       ! For testing/debugging
   integer(4)            :: lmax=3, nmmax=6
   character(1000)       :: apexshfile='apexsh.dat'
   character(len=1000)   :: igrffilein='igrf13coeffs.txt'
@@ -40,14 +41,17 @@ program checkapexsh
   real(4), parameter    :: Re=6371.0088
 
   !GENERATE COEFFICIENT FILE
-  epochgrid = (/1900.0,1905.0,1910.0,1915.0,1920.0,1925.0,1930.0, &
-                1935.0,1940.0,1945.0,1950.0,1955.0,1960.0,1965.0, &
-                1970.0,1975.0,1980.0,1985.0,1990.0,1995.0,2000.0, &
-                2005.0,2010.0,2015.0,2020.0,2025.0/)
+  ! epochgrid = (/1900.0,1905.0,1910.0,1915.0,1920.0,1925.0,1930.0, &
+  !               1935.0,1940.0,1945.0,1950.0,1955.0,1960.0,1965.0, &
+  !               1970.0,1975.0,1980.0,1985.0,1990.0,1995.0,2000.0, &
+  !               2005.0,2010.0,2015.0,2020.0,2025.0/)
+  epochgrid = (/1995.0,2000.0,2005.0/)      ! For testing/debugging
+  ! print *, 'MAKEAPXSH'
   call makeapxsh(apexshfile, igrffilein, epochgrid, nepochgrid, lmax, nmmax, nmmax)
 
   !HEIGHT PROFILE OF QD COORDINATES
   epoch = 2005.0
+  ! print *, 'LOADAPXSH'
   call loadapxsh(apexshfile, epoch)
   glat = -30.0
   glon = 180.0
@@ -72,7 +76,7 @@ program checkapexsh
   print *
   print *, 'LONGITUDE PROFILE OF QUASI-DIPOLE COORDINATES AND BASE VECTORS'
   print '(a8,f6.1, a7,f5.1, a6,f5.1)', 'EPOCH=',epoch, ', GLAT=',glat, ', ALT=',alt
-  print '(8a9)', 'GLON', 'QLAT', 'QLON', 'F1(1)', 'F1(2)', 'F2(1)', 'F2(2)', 'F' 
+  print '(8a9)', 'GLON', 'QLAT', 'QLON', 'F1(1)', 'F1(2)', 'F2(1)', 'F2(2)', 'F'
   do ilon = -180, 180, 20
     glon = float(ilon)
     call apxg2q(glat,glon,alt,vecflag,qlat,qlon,f1,f2,f)
@@ -97,7 +101,7 @@ program checkapexsh
     print '(f9.1,3f9.2,9f9.4)', glat, qlat, mlat, mlon, d1, d2, d3
   enddo
 
-  !LATITUDE PROFILE OF QD TO GEODETIC CONVERSION  
+  !LATITUDE PROFILE OF QD TO GEODETIC CONVERSION
   epoch = 2002.0
   call loadapxsh(apexshfile, epoch)
   qlon = 90.0
@@ -123,7 +127,7 @@ end program checkapexsh
 !COMPUTING COEFFICIENTS FOR EPOCH 1995.0
 !COMPUTING COEFFICIENTS FOR EPOCH 2000.0
 !COMPUTING COEFFICIENTS FOR EPOCH 2005.0
-! 
+!
 ! HEIGHT PROFILE OF QUASI-DIPOLE COORDINATES
 !  EPOCH=2005.0, GLAT=-30.0, GLON= 180.0
 !      ALT     QLAT     QLON
@@ -147,7 +151,7 @@ end program checkapexsh
 !  36102.4   -33.54  -101.90
 !  57339.1   -33.29  -101.98
 ! 121049.2   -33.01  -102.07
-! 
+!
 ! LONGITUDE PROFILE OF QUASI-DIPOLE COORDINATES AND BASE VECTORS
 !  EPOCH=1998.3, GLAT= 15.0, ALT=400.0
 !     GLON     QLAT     QLON    F1(1)    F1(2)    F2(1)    F2(2)        F
@@ -170,7 +174,7 @@ end program checkapexsh
 !    140.0     7.13  -148.98   1.0277  -0.0038   0.0134   0.9980   1.0257
 !    160.0     8.48  -129.79   0.9835  -0.1394   0.0825   0.9729   0.9683
 !    180.0    11.79  -110.62   0.9435  -0.1748   0.1410   0.9806   0.9498
-! 
+!
 ! LATITUDE PROFILE OF MODIFIED APEX COORDINATES AND BASE VECTORS
 !  EPOCH=1998.3, GLON=-60.0, ALT=250.0, HR=110.0
 !     GLAT     QLAT     MLAT     MLON    D1(1)    D1(2)    D1(3)    D2(1)    D2(2)    D2(3)    D3(1)    D3(2)    D3(3)
@@ -193,7 +197,7 @@ end program checkapexsh
 !     70.0    77.40    77.54    31.59   0.9120   0.2329  -0.0543   0.4312  -0.8861  -0.1211  -0.0910   0.1038  -1.0831
 !     80.0    85.75    85.80    66.16   0.5051   0.6823  -0.0049   0.8681  -0.5844  -0.0748  -0.0681   0.0423  -1.1210
 !     90.0    82.74    82.82   170.63  -0.9750   0.4002   0.0307   0.2765   0.7999  -0.0143  -0.0381  -0.0069  -1.1215
-! 
+!
 ! LATITUDE PROFILE OF QUASI-DIPOLE TO GEODETIC CONVERSION
 !  EPOCH=2002.0, QLON= 90.0, ALT=1000.0
 !     QLAT     GLAT     GLON      ERROR

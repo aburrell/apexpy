@@ -31,7 +31,7 @@
 !    DATAFILE  Name of output data file that will contain the conversion
 !              coefficients
 !    IGRFFILE  Name of the input IGRF coefficients file
-!    EPOCHS    Array of ordered epochs (decimal years, yyyy.y) for which 
+!    EPOCHS    Array of ordered epochs (decimal years, yyyy.y) for which
 !              coefficients are to be computed.
 !    NEPOCHS   Number of elements in EPOCHS.
 !    L         Maximum order of vertical polynomial expansion.
@@ -51,7 +51,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
     implicit none
 
     COMMON /MAGCOF/ NMAXIGRF, GB
-    
+
     character(128), intent(in)  :: datafilein
     character(len=1000), intent(in) :: igrffilein
     real(4), intent(in)         :: epochgridin(0:30)
@@ -61,7 +61,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
     integer(4)                  :: nterm1, nlon, nlat, nalt
     integer(4)                  :: iepoch, iterm, ilon, ilat, ialt
     integer(4)                  :: l, ish, i, j, Rpt(0:2)
-    real(4)                     :: glon, glat, alt, lonspace, latspace, lat0
+    real(8)                     :: glon, glat, alt, lonspace, latspace, lat0
     real(8)                     :: rhospace
     real(8)                     :: norm1, norm2, cosmplat, sinmplat, cosmplon
     real(8)                     :: sinmplon
@@ -72,12 +72,12 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
     real(8), allocatable        :: coefftemp(:)
     real(8), allocatable        :: Dxq(:), Dyq(:), Dzq(:), Dxg(:), Dyg(:)
     real(8), allocatable        :: Dzg(:)
-    
+
     integer(4)                  :: NMAXIGRF
     real(4)                     :: GB(1:255)
-    real(4)                     :: A, ALAT, ALON, dum1, dum2, dum3, dum4, dum5
+    real(8)                     :: A, ALAT, ALON, dum1, dum2, dum3, dum4, dum5
 
-    external COFRM, APEX
+    external cofrm, apex
 
     !PARSE INPUT AND ALLOCATE ARRAYS
     nepoch = nepochin
@@ -131,7 +131,9 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
 
       !RETRIEVE IGRF, COMPUTE DIPOLE ROTATION PARAMETERS,
       !AND SET THE CORRESPONDING EXPANSION COEFFICIENTS
-      call COFRM(epochgrid(iepoch),igrffilein)
+      ! print *, 'COFRM'
+      call cofrm(epochgrid(iepoch),igrffilein)
+      ! print *, 'COFRM DONE'
       sinmplat = dble(GB(2) / sqrt(GB(2)*GB(2) + GB(3)*GB(3) + GB(4)*GB(4)))
       cosmplat = dsqrt(1 - sinmplat*sinmplat)
       sinmplon = dble(GB(4) / sqrt(GB(3)*GB(3) + GB(4)*GB(4)))
@@ -144,6 +146,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
       coeff0(Rpt,iepoch,5) = (/-norm2*cosmplat,                      0D0, norm1*sinmplat         /)
 
       !LOOP THROUGH GEODETIC LATITUDE AND LONGITUDE GRIDPOINTS
+      ! print *, 'Loop through lat/lon'
       do ilat = 0, nlat-1
         glat = latspace*real(ilat) + lat0
         thetag = (90D0 - dble(glat)) * dtor
@@ -152,44 +155,46 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
 
           !COMPUTE SPHERICAL HARMONICS OF CURRENT GEODETIC LONGITUDE AND
           !LATITUDE
+          ! print *, 'LINE 158'
           glon = lonspace*real(ilon) - 180E0
           phig = dble(glon) * dtor
           call shcalc(thetag,phig)
           shg = sh
-
+          ! print *, 'LINE 163'
           !COMPUTE REFERENCE (DIPOLE) MAGNETIC LATITUDE AND LONGITUDE OF
           !CURRENT LOCATION
           xq0 = dot_product(coeff0(Rpt,iepoch,0),shg(Rpt))
           yq0 = dot_product(coeff0(Rpt,iepoch,1),shg(Rpt))
           zq0 = dot_product(coeff0(Rpt,iepoch,2),shg(Rpt))
-
+          ! print *, 'LINE 169'
           !LOOP THROUGH ALTITUDE GRIDPOINTS
           do ialt = 1, nalt
-
             !COMPUTE QD LATITUDE AND LONGITUDE OF CURRENT LOCATION
             alt = sngl(altgrid(ialt))
-            call APEX(epochgrid(iepoch),igrffilein,glat,glon,alt,A,ALAT,ALON,dum1,dum2,dum3,dum4,dum5)
+            ! print *, 'APEX', ialt, alt, glat, glon
+            call apex(epochgrid(iepoch),igrffilein,glat,glon,alt,A,ALAT,ALON,dum1,dum2,dum3,dum4)
+            ! print *, 'END APEX'
             cosqlat = dsqrt( (Re + altgrid(ialt)) / (Re + Req*(dble(A)-1D0)) )
             if (cosqlat .gt. 1D0) cosqlat = 1D0
-            phiq = dble(ALON) * dtor        
+            phiq = dble(ALON) * dtor
             thetaq = dasin(cosqlat)
             if (ALAT .lt. 0) thetaq = pi - thetaq
-
+            ! print *, 'LINE 181'
             !COMPUTE RESIDUAL QD COORDINATES (FITTING DATA FOR GEODETIC TO QD
             !TRANSFORMATION)
             xq = cosqlat*dcos(phiq) - xq0
             yq = cosqlat*dsin(phiq) - yq0
             zq = dcos(thetaq)       - zq0
-
+            ! print *, 'LINE 187'
             !COMPUTE SPHERICAL HARMONICS OF CURRENT QD LATITUDE AND LONGITUDE
             call shcalc(thetaq,phiq)
-
+            ! print *, 'LINE 190'
             !COMPUTE RESIDUAL GD COORDINATES (FITTING DATA FOR QD TO GEODETIC
             !TRANSFORMATION)
             xg = latwgt*dcos(phig) - dot_product(coeff0(Rpt,iepoch,3),sh(Rpt))
             yg = latwgt*dsin(phig) - dot_product(coeff0(Rpt,iepoch,4),sh(Rpt))
             zg = dcos(thetag)      - dot_product(coeff0(Rpt,iepoch,5),sh(Rpt))
-
+            ! print *, 'LINE 196'
             !COMPUTE BASIS FUNCTIONS FOR GD-TO-QD AND QD-TO-GD TRANSFORMATIONS
             do l = 1, lmax
               do ish = 0, ntermsh-1
@@ -198,8 +203,8 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
                 Fq(iterm) = altfn(l,ialt)*sh(ish)
               enddo
             enddo
-
-            !UPDATE LEAST-SQUARES ARRAYS 
+            ! print *, 'LINE 205'
+            !UPDATE LEAST-SQUARES ARRAYS
             do i = 0, nterm1-1
               Dxq(i) = Dxq(i) + Fg(i)*latwgt*xq
               Dyq(i) = Dyq(i) + Fg(i)*latwgt*yq
@@ -212,11 +217,11 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
                 Gq(i,j) = Gq(i,j) + Fq(j)*latwgt*Fq(i)
               enddo
             enddo
-
+            ! print *, 'LINE 219'
           enddo
         enddo
       enddo
-      
+      ! print *, 'LINE 222'
       !COMPUTE LEAST-SQUARES SOLUTIONS USING CHOLESKY DECOMPOSITION
       call choldc(Gg,nterm1,nterm1,cfdiag)
       call cholsl(Gg,nterm1,nterm1,cfdiag,Dxq,coefftemp)
@@ -233,13 +238,13 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
       call cholsl(Gq,nterm1,nterm1,cfdiag,Dzg,coefftemp)
       coeff0(ntermsh:nterm-1,iepoch,5) = coefftemp
     enddo
-    
+
     !WRITE COEFFICIENTS TO OUTPUT FILE
     open(unit=iun, file=trim(datafilein), form='unformatted')
     write(iun) nepoch, nmax, mmax, lmax, nterm
     write(iun) epochgrid, coeff0
     close(iun)
-    
+
     return
 
 end subroutine makeapxsh
@@ -247,7 +252,7 @@ end subroutine makeapxsh
 !*******************************************************************************
 
 subroutine choldc(a,n,np,p)
-  
+
     integer(4), intent(in)      :: n, np
     real(8), intent(inout)      :: a(1:np,1:np)
     real(8), intent(out)        :: p(1:n)
@@ -274,7 +279,7 @@ end subroutine choldc
 !*******************************************************************************
 
 subroutine cholsl(a,n,np,p,b,x)
-  
+
     integer(4), intent(in)      :: n, np
     real(8), intent(in)         :: a(1:np,1:np), p(1:n), b(1:n)
     real(8), intent(out)        :: x(1:n)

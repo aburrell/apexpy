@@ -2,7 +2,7 @@
 ! use ifport
 
 module igrf
-      
+
   implicit none
 
 contains
@@ -27,10 +27,14 @@ contains
     integer,allocatable   :: nm(:,:)
 
     ! Get number of Gauss coefficients
-    !num_sh = NGHT-2*sqrt(real(NGHT))
-    !write(*,*) num_sh
+    ! NGHT is an uninitialize output variable, so num_sh=0
+    ! This doesn't appear to do anything because num_sh set to 0 later
+    ! num_sh = NGHT-2*sqrt(real(NGHT))
+    ! write(*,*) num_sh
+    ! print *, num_sh, NGHT
 
     ! Open IGRF file
+    ! print *, filename_in
     open(unit=100, file=filename_in,status='old',iostat=state)
     if (state /= 0) then
        stop "File open error"
@@ -72,9 +76,9 @@ contains
     ! Get the number of lines (coefficients)
     num_sh = 0
     do
-       read(unit=100,fmt=*,iostat=state) 
+       read(unit=100,fmt=*,iostat=state)
        if (state < 0) exit
-       num_sh = num_sh+1 
+       num_sh = num_sh+1
     enddo
     L_max = sqrt(num_sh+1.0d0)-1
     close(100)
