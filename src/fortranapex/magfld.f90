@@ -11,39 +11,47 @@ module magfldmodule
 
   implicit none
 
-  integer(4)       :: nmax
+  integer(4)       :: nmax1
   real(8)          :: ichg
   real(8)          :: gb(225), gv(225)
 
+end module magfldmodule
+
+module coeffmodule
   real(8), parameter       :: pi=3.14159265358979323846D0
   real(8), parameter       :: dtor=pi/180D0, rtod=180D0/pi, pid2=pi/2D0, twopi=2D0*pi
   real(8), parameter       :: Req=6378.1370D0, eps=1.D0/298.257223563D0
   real(8), parameter       :: Re=Req*(1-eps/3D0), ecc2=eps*(2-eps)
   ! real(4), parameter       :: missing=-9999E0
+end module coeffmodule
 
-end module magfldmodule
+module igrfparammodule
 
+  real(4)             :: datel
+  integer(4)                  :: nepo, nght
+  real(4), allocatable     :: epoch(:), nmxe(:)
+  real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
+  real(8), allocatable                     :: gt(:,:), ht(:,:)
+
+end module igrfparammodule
 
 subroutine cofrm(date,filename)
 
     use magfldmodule
     use igrf
+    use igrfparammodule
 
     implicit none
 
-    ! COMMON /MAGCOF/ NMAX, GB, GV, ICHG
+    ! COMMON /MAGCOF/ nmax1, GB, GV, ICHG
 
-    real(4)             :: date, datel
+    real(4)                     :: date
     real(4)                     :: f, f0, t, to5
-    real(4), allocatable     :: epoch(:), nmxe(:)
-    integer   :: i, i1, iy, iy1, m, n, mm, nn
-    integer(4)                  :: nepo, nght, ngh
-    real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
-    real(8), allocatable                     :: gt(:,:), ht(:,:)
+    integer   :: i, i1, iy, iy1, m, n, mm, nn, ngh
 
     character(len=1000)       :: filename
 
-    ! integer(4)                  :: NMAX
+    ! integer(4)                  :: nmax1
     ! real(4)                     :: GB(1:255), GV(1:225)
     ! real(4)                     :: ICHG
 
@@ -52,7 +60,6 @@ subroutine cofrm(date,filename)
     ! Commenting these out might break something...
     ! DATA datel /-999./
     ! DATA ichg /-99999/
-
     ichg = 0
     if (date .eq. datel) then
       return
@@ -75,12 +82,12 @@ subroutine cofrm(date,filename)
     endif
 
     iy = 1
-    do while (date .gt. epoch(iy+1))
+    do while (date .gt. epoch(iy))
       iy = iy + 1
     enddo
 
     ngh = nght*nepo
-    nmax = nmxe(iy)
+    nmax1 = nmxe(iy)
     ! time = date
     t = date-epoch(iy)
     to5 = t/5.
@@ -90,7 +97,7 @@ subroutine cofrm(date,filename)
     i = 2
     f0 = -1.0d-5
 
-    do n=1,nmax
+    do n=1,nmax1
       f0 = f0*real(n)/2.
       f = f0/sqrt(2.0)
       nn = n+1
@@ -115,10 +122,10 @@ subroutine cofrm(date,filename)
           gb(i) = (gyr(nn,mm,iy) + gt(nn,mm)*t) * f
           gb(i1) = (hyr(nn,mm,iy) + ht(nn,mm)*t) * f
         endif
+        gv(i) = gb(i)/real(nn)
+        gv(i1) = gb(i1)/real(nn)
+        i = i+2
       enddo
-      gv(i) = gb(i)/real(nn)
-      gv(i1) = gb(i1)/real(nn)
-      i = i+2
     enddo
 
     return
@@ -128,6 +135,7 @@ end subroutine cofrm
 subroutine dypol(colat, elon, vp)
 
   use magfldmodule
+  use coeffmodule
 
   implicit none
 
@@ -136,7 +144,7 @@ subroutine dypol(colat, elon, vp)
 
   ! real, parameter :: rtod = 57.2957795130823
   ! real, parameter :: re = 6371.2
-  ! COMMON /MAGCOF/ NMAX, GB(255), GV(225), ICHG
+  ! COMMON /MAGCOF/ nmax1, GB(255), GV(225), ICHG
 
   gpl = sqrt(gb(2)**2 + gb(3)**2 + gb(4)**2)
   ctp = gb(2)/gpl
@@ -154,6 +162,7 @@ end subroutine dypol
 subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
 
   use magfldmodule
+  use coeffmodule
 
   implicit none
 
@@ -165,7 +174,7 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
 
   ! real, parameter :: rtod = 57.2957795130823
   ! real, parameter :: re = 6371.2
-  ! COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
+  ! COMMON /MAGCOF/ nmax1,GB(255),GV(225),ICHG
   ! DIMENSION G(255), H(255), XI(3)
 
   real(8)            :: g(255), h(255), xi(3)
@@ -195,9 +204,9 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
   xi(1) = xxx*rq
   xi(2) = yyy*rq
   xi(3) = zzz*rq
-  ihmax = nmax*nmax+1
-  last = ihmax+nmax+nmax
-  imax = nmax+nmax-1
+  ihmax = nmax1*nmax1+1
+  last = ihmax+nmax1+nmax1
+  imax = nmax1+nmax1-1
   ! print *, 'LINE 155'
   if (ienty .ne. ientyp .or. ichg .eq. 1) then
     ientyp = ienty
@@ -287,6 +296,7 @@ end subroutine feldg
 subroutine gd2cart(gdlat, glon, alt, x, y, z)
 
   use magfldmodule
+  use coeffmodule
 
   implicit none
 
@@ -306,6 +316,7 @@ end subroutine gd2cart
 subroutine convrt(i, gdlat, alt, x1, x2)
 
   use magfldmodule
+  use coeffmodule
 
   implicit none
 
@@ -315,7 +326,7 @@ subroutine convrt(i, gdlat, alt, x1, x2)
   real(8)           :: gclat, rho, ri, rkm, s2cl, s4cl, s6cl, s8cl, scl, sgl, z
 
   ! A lot of these are the related to Req and esp - remove reduncancy
-  real, parameter :: e2 = eps**2, e4 = e2*e2, e6 = e4*e2, e8 = e4*e4,           &
+  real, parameter :: e2 = ecc2, e4 = e2*e2, e6 = e4*e2, e8 = e4*e4,           &
                      ome2req = (1.-e2)*Req,                                     &
                      a21 = (512.*e2 + 128.*e4 + 60.*e6 + 35.*e8)/1024.,         &
                      a22 = (e6 + e8)/32., a23 = (e6+e8)/32.,                    &

@@ -47,10 +47,11 @@
 subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 
     use apxshmodule
+    use magfldmodule
 
     implicit none
 
-    COMMON /MAGCOF/ NMAXIGRF, GB
+    ! COMMON /MAGCOF/ NMAXIGRF, GB
 
     character(128), intent(in)  :: datafilein
     character(len=1000), intent(in) :: igrffilein
@@ -73,8 +74,8 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
     real(8), allocatable        :: Dxq(:), Dyq(:), Dzq(:), Dxg(:), Dyg(:)
     real(8), allocatable        :: Dzg(:)
 
-    integer(4)                  :: NMAXIGRF
-    real(4)                     :: GB(1:255)
+    ! integer(4)                  :: NMAXIGRF
+    ! real(4)                     :: GB(1:255)
     real(8)                     :: A, ALAT, ALON, dum1, dum2, dum3, dum4, dum5
 
     external cofrm, apex
@@ -121,6 +122,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
         altfn(l,ialt) = altfn(l-1,ialt)*rho
       enddo
     enddo
+    ! print *, 'LINE 125', altfn
 
     !LOOP THROUGH EPOCHS, COMPUTE QD COORDINATE DATA AND EXPANSION COEFFICIENTS
     do iepoch = 0, nepoch-1
@@ -131,13 +133,12 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
 
       !RETRIEVE IGRF, COMPUTE DIPOLE ROTATION PARAMETERS,
       !AND SET THE CORRESPONDING EXPANSION COEFFICIENTS
-      ! print *, 'COFRM'
       call cofrm(epochgrid(iepoch),igrffilein)
-      ! print *, 'COFRM DONE'
-      sinmplat = dble(GB(2) / sqrt(GB(2)*GB(2) + GB(3)*GB(3) + GB(4)*GB(4)))
+      sinmplat = dble(gb(2) / sqrt(gb(2)*gb(2) + gb(3)*gb(3) + gb(4)*gb(4)))
       cosmplat = dsqrt(1 - sinmplat*sinmplat)
-      sinmplon = dble(GB(4) / sqrt(GB(3)*GB(3) + GB(4)*GB(4)))
-      cosmplon = dble(GB(3) / sqrt(GB(3)*GB(3) + GB(4)*GB(4)))
+      sinmplon = dble(gb(4) / sqrt(gb(3)*gb(3) + gb(4)*gb(4)))
+      cosmplon = dble(gb(3) / sqrt(gb(3)*gb(3) + gb(4)*gb(4)))
+      ! Everything going into these equations is fine, but initializng coeff0 might be a problem?
       coeff0(Rpt,iepoch,0) = (/ norm2*sinmplat*cosmplon, norm2*sinmplat*sinmplon, -norm1*cosmplat/)
       coeff0(Rpt,iepoch,1) = (/-norm2*sinmplon,          norm2*cosmplon,                      0D0/)
       coeff0(Rpt,iepoch,2) = (/ norm2*cosmplat*cosmplon, norm2*cosmplat*sinmplon,  norm1*sinmplat/)
@@ -151,6 +152,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
         glat = latspace*real(ilat) + lat0
         thetag = (90D0 - dble(glat)) * dtor
         latwgt = dsin(thetag)
+        ! print *, 'LINE 156'!, latwgt
         do ilon = 0, nlon-1
 
           !COMPUTE SPHERICAL HARMONICS OF CURRENT GEODETIC LONGITUDE AND
@@ -160,7 +162,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
           phig = dble(glon) * dtor
           call shcalc(thetag,phig)
           shg = sh
-          ! print *, 'LINE 163'
+          ! print *, shg
           !COMPUTE REFERENCE (DIPOLE) MAGNETIC LATITUDE AND LONGITUDE OF
           !CURRENT LOCATION
           xq0 = dot_product(coeff0(Rpt,iepoch,0),shg(Rpt))
@@ -171,9 +173,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
           do ialt = 1, nalt
             !COMPUTE QD LATITUDE AND LONGITUDE OF CURRENT LOCATION
             alt = sngl(altgrid(ialt))
-            ! print *, 'APEX', ialt, alt, glat, glon
-            call apex(epochgrid(iepoch),igrffilein,glat,glon,alt,A,ALAT,ALON,dum1,dum2,dum3,dum4)
-            ! print *, 'END APEX'
+            call apex(epochgrid(iepoch),igrffilein,glat,glon,alt,A,ALAT,ALON,dum1,dum2,dum3,dum4,dum5)
             cosqlat = dsqrt( (Re + altgrid(ialt)) / (Re + Req*(dble(A)-1D0)) )
             if (cosqlat .gt. 1D0) cosqlat = 1D0
             phiq = dble(ALON) * dtor
@@ -188,7 +188,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
             ! print *, 'LINE 187'
             !COMPUTE SPHERICAL HARMONICS OF CURRENT QD LATITUDE AND LONGITUDE
             call shcalc(thetaq,phiq)
-            ! print *, 'LINE 190'
+            ! print *, 'LINE 190', sh
             !COMPUTE RESIDUAL GD COORDINATES (FITTING DATA FOR QD TO GEODETIC
             !TRANSFORMATION)
             xg = latwgt*dcos(phig) - dot_product(coeff0(Rpt,iepoch,3),sh(Rpt))
@@ -203,7 +203,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
                 Fq(iterm) = altfn(l,ialt)*sh(ish)
               enddo
             enddo
-            ! print *, 'LINE 205'
+            ! print *, 'LINE 205', sh(0)
             !UPDATE LEAST-SQUARES ARRAYS
             do i = 0, nterm1-1
               Dxq(i) = Dxq(i) + Fg(i)*latwgt*xq
@@ -221,24 +221,37 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
           enddo
         enddo
       enddo
-      ! print *, 'LINE 222'
+      ! print *, 'LINE 222', Dxg, Dyg, Dzg
       !COMPUTE LEAST-SQUARES SOLUTIONS USING CHOLESKY DECOMPOSITION
       call choldc(Gg,nterm1,nterm1,cfdiag)
+      ! print *, Gg
       call cholsl(Gg,nterm1,nterm1,cfdiag,Dxq,coefftemp)
+      ! print *, Gg,nterm1,nterm1,cfdiag,Dxq
+      ! print *, 'LINE 232', coefftemp
       coeff0(ntermsh:nterm-1,iepoch,0) = coefftemp
       call cholsl(Gg,nterm1,nterm1,cfdiag,Dyq,coefftemp)
+      ! print *, 'LINE 235', coefftemp
       coeff0(ntermsh:nterm-1,iepoch,1) = coefftemp
       call cholsl(Gg,nterm1,nterm1,cfdiag,Dzq,coefftemp)
+      ! print *, 'LINE 238', coefftemp
       coeff0(ntermsh:nterm-1,iepoch,2) = coefftemp
+
       call choldc(Gq,nterm1,nterm1,cfdiag)
+      ! print *, cfdiag
       call cholsl(Gq,nterm1,nterm1,cfdiag,Dxg,coefftemp)
+      ! print *, Gq,nterm1,nterm1,cfdiag,Dxq
+      ! print *, 'LINE 243', coefftemp
       coeff0(ntermsh:nterm-1,iepoch,3) = coefftemp
       call cholsl(Gq,nterm1,nterm1,cfdiag,Dyg,coefftemp)
+      ! print *, 'LINE 246', coefftemp
       coeff0(ntermsh:nterm-1,iepoch,4) = coefftemp
       call cholsl(Gq,nterm1,nterm1,cfdiag,Dzg,coefftemp)
+      ! print *, 'LINE 249', coefftemp
       coeff0(ntermsh:nterm-1,iepoch,5) = coefftemp
     enddo
 
+    ! print *, 'Write output to file'
+    ! print *, coeff0
     !WRITE COEFFICIENTS TO OUTPUT FILE
     open(unit=iun, file=trim(datafilein), form='unformatted')
     write(iun) nepoch, nmax, mmax, lmax, nterm

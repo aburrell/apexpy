@@ -341,6 +341,7 @@ subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f)
         polynomq(l) = polynomq(l-1)*rho
         dpolynomq(l) = dble(l)*polynomq(l-1)
       enddo
+      ! print *, 'LINE 344', qcoeff0
       xqcoeff = 0
       yqcoeff = 0
       zqcoeff = 0
@@ -364,7 +365,10 @@ subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f)
     !COMPUTE SPHERICAL HARMONICS
     theta = (90D0 - dble(glat)) * dtor
     phi = glon * dtor
+    ! print *, 'LINE 367', glat, glon, theta, phi
     call shcalc(theta,phi)
+
+    ! print *, 'LINE 369', xqcoeff
 
     !COMPUTE AND RETURN QUASI-DIPOLE COORDINATES
     xq = dot_product(sh, xqcoeff)
@@ -647,9 +651,11 @@ subroutine shcalc(theta,phi)
     integer(4)               :: n, m, i, i1
     real(8)                  :: mphi, cosmphi, sinmphi
 
+    ! print *, 'LINE 652', theta, phi
     call alfbasis(nmax,mmax,theta,pbar,vbar,wbar)
     i = 0
     i1 = 0
+    ! print *, 'LINE 655', pbar
     do n = 0, nmax
       sh(i) = pbar(n,0)
       shgradtheta(i1) =  vbar(n,0)
@@ -676,7 +682,7 @@ subroutine shcalc(theta,phi)
         enddo
       endif
     enddo
-
+    ! print *, 'LINE 681', sh
 end subroutine shcalc
 
 !*******************************************************************************
@@ -760,6 +766,7 @@ subroutine alfbasis(nmax,mmax,theta,P,V,W)
     P(0,0) = p00
     x = dcos(theta)
     y = dsin(theta)
+    ! print *, 'LINE 766', x, y
     do m = 1, mmax
       W(m,m) = cm(m) * P(m-1,m-1)
       P(m,m) = y * W(m,m)

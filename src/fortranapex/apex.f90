@@ -56,14 +56,14 @@ module itra
   implicit none
   integer(4)               :: nstp
   real(8)                  :: sgn, ds
-  real(8)                  :: y(3)
+  real(8)                  :: y(3), yold(3), yp(3,4)
 end module itra
 ! COMMON /FLDCOMD/ BX, BY, BZ, BB
 ! COMMON /APXIN/   YAPX(3,3)
 ! COMMON /DIPOLE/  COLAT,ELON,VP,CTP,STP
 ! COMMON /ITRA/    NSTP, Y(3), YP(3), SGN, DS
 
-subroutine apex(date, igrffilein, dlat, dlon, alt, a, alon, bmag, xmag, ymag, zmag, v)
+subroutine apex(date, igrffilein, dlat, dlon, alt, a, alat, alon, bmag, xmag, ymag, zmag, v)
 
   use dipole
   use apexmodule
@@ -80,7 +80,6 @@ subroutine apex(date, igrffilein, dlat, dlon, alt, a, alon, bmag, xmag, ymag, zm
   real(8)      :: alat, bx, by, bz, x, y, z
   real(8)      :: clatp, polon, vpol
 
-  ! print *, 'LINE 9', alt, dlat, dlon
   call cofrm(date, igrffilein)
   call dypol(clatp, polon, vpol)
   colat = clatp
@@ -128,9 +127,9 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
   ! COMMON /ITRA/    NSTP, Y(3), YP(3), SGN, DS
   ! print *, 'LINE 41'
   call convrt(2, gdlat, alt, gclat, r)
-  singml = ctp*sin(gclat*dtor) + ctp*cos(gclat*dtor)*cos((glon-elon)*dtor)
-  cgml2 = amax1(0.21, 1.-singml*singml)
-  ds = 0.06*r/gcml2 - 370.
+  singml = ctp*sin(gclat*dtor) + stp*cos(gclat*dtor)*cos((glon-elon)*dtor)
+  cgml2 = amax1(0.25, 1.-singml*singml)
+  ds = 0.06*r/cgml2 - 370.
   ! print *, 'LINE 46'
   do j=1,3
     do i=1,3
@@ -139,24 +138,29 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
   enddo
   ! print *, 'LINE 52'
   call gd2cart(gdlat, glon, alt, y(1), y(2), y(3))
+  ! print *, gdlat, glon, alt, y
   nstp = 0
   ! print *, 'LINE 55'
   call feldg(1, gdlat, glon, alt, xmag, ymag, zmag, f)
+  ! print *, xmag, ymag, zmag, f
   ! print *, 'LINE 57'
   sgn = sign(1.D0, -zmag)
   ! print *, 'LINE 58'
-  call feldg(2, y(1)/Re, y(2)/Re, y(3)/Re, bx, by, bz, bb)
-  nstp = nstp+1
+  ! call feldg(2, y(1)/Re, y(2)/Re, y(3)/Re, bx, by, bz, bb)
+  ! print *, bx, by, bz, bb
+  ! nstp = nstp+1
   ! print *, 'LINE 61'
+  iapx = 1
   do while (iapx .EQ. 1)
     call feldg(2, y(1)/Re, y(2)/Re, y(3)/Re, bx, by, bz, bb)
+    ! print *, 'LINE 158', y
     nstp = nstp+1
-    call itrace(iapx)
     if (nstp .ge. maxs) exit
+    call itrace(iapx)
+    ! print *, 'LINE 162', y
   enddo
-  ! print *, 'LINE 68', nstp, maxs, alt, zmag, a, alt, alon
   if (nstp .lt. maxs) then
-    call fndapx(alt, zmag, a, alt, alon)
+    call fndapx(alt, zmag, a, alat, alon)
   else
     rho = sqrt(y(1)**2 + y(2)**2)
     call convrt(3, xlat, ht, rho, y(3))
@@ -182,7 +186,7 @@ subroutine itrace(iapx)
   integer(4), intent(out)  :: iapx
   real(8)                  :: d12, d2, d24, d6, rc, rp
   integer(4)               :: i, j
-  real(8)                  :: yold(3), yp(3,4)
+  ! real(8)                  :: yold(3), yp(3,4)
 
   ! COMMON /APXIN/   YAPX(3,3)
   ! COMMON /FLDCOMD/ BX, BY, BZ, BB
@@ -198,13 +202,18 @@ subroutine itrace(iapx)
   yp(2,4) = sgn*by/bb
   yp(3,4) = sgn*bz/Bb
 
+  d2 = ds/2.
+  d6 = ds/6.
+  d12 = ds/12.
+  d24 = ds/24.
+
   if (nstp .le. 7) then
     do i=1,3
       if (nstp .eq. 1) then
-        d2 = ds/2.
-        d6 = ds/6.
-        d12 = ds/12.
-        d24 = ds/24.
+        ! d2 = ds/2.
+        ! d6 = ds/6.
+        ! d12 = ds/12.
+        ! d24 = ds/24.
         yp(i,1) = yp(i,4)
         yold(i) = y(i)
         yapx(i,1) = y(i)
@@ -219,9 +228,9 @@ subroutine itrace(iapx)
 
       else if (nstp .eq. 4) then
         yp(i,2) = yp(i,4)
+        yapx(i,2) = y(i)
         yold(i) = y(i)
-        yapx(i,3) = y(i)
-        y(i) = yold(i) + d12*(23.*yp(i,3)-16.*yp(i,2)+5.*yp(i,1))
+        y(i) = yold(i) + d2*(3.*yp(i,2)-yp(i,1))
 
       else if (nstp .eq. 5) then
         y(i) = yold(i) + d12*(5.*yp(i,4)+8.*yp(i,2)-yp(i,1))
@@ -235,7 +244,7 @@ subroutine itrace(iapx)
       else if (nstp .eq. 7) then
         yapx(i,1) = yapx(i,2)
         yapx(i,2) = yapx(i,3)
-        y(i) = yold(i) + d24*(9.*yp(i,4)+19.*yp(i,3)-5.*yp(i,2)+yp(i,2))
+        y(i) = yold(i) + d24*(9.*yp(i,4)+19.*yp(i,3)-5.*yp(i,2)+yp(i,1))
         yapx(i,3) = y(i)
 
       endif
@@ -246,6 +255,7 @@ subroutine itrace(iapx)
       ! rp = rdus(YAPX(1,2), YAPX(2,2), YAPX(3,2))
       rc = sqrt(yapx(1,3)**2 + yapx(2,3)**2 + yapx(3,3)**2)
       rp = sqrt(yapx(1,2)**2 + yapx(2,2)**2 + yapx(3,2)**2)
+      ! print *, yapx
       if (rc .lt. rp) iapx=2
     endif
 
@@ -297,6 +307,7 @@ subroutine fndapx(alt, zmag, a, alat, alon)
     gdln = rtod*atan(yapx(2,i),yapx(1,i))
     call feldg(1, gdlt, gdln, ht, bn, be, bd(i), bmag)
   enddo
+  ! print *, bd, yapx
 
   nitr = 0
   do while (nitr .lt. 4)
@@ -310,17 +321,20 @@ subroutine fndapx(alt, zmag, a, alat, alon)
     call feldg(1, gdlt, gdln, hta, bna, bea, bda, ba)
     abdob = abs(bda/ba)
 
-    if (abdob .le. 2.e-6) then
-      write(0, '("APEX: Imprecise fit of apex: |Bdown/B| "(1PE7.1))') abdob
-      exit
-    else
+    if (abdob .gt. 2.e-6) then
       nitr = nitr + 1
       yapx(1,2) = y(1)
       yapx(2,2) = y(2)
       yapx(3,2) = y(3)
       bd(2) = bda
+    else
+      exit
     endif
   enddo
+
+  if (abdob .gt. 2.e-6) then
+    write(0, '("APEX: Imprecise fit of apex: |Bdown/B| "(1PE7.1))') abdob
+  endif
 
   a = (Req + amax1(alt, hta))/Req
   if (a .lt. 1.) then
@@ -354,7 +368,7 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
   implicit none
 
   real(8)        :: gdlat, gdlon, alt, bnorth, beast, bdown, a, alon
-  real(8)        :: ang, bhor, ca, cang, capang, cb, coffd, cottd, ctd, cte, ctg
+  real(8)        :: ang, bhor, ca, cang, capang, cb, cottd, ctd, cte, ctg
   real(8)        :: ha, r, sa, sang, sapabg, sb, std, ste, stfcpa, stg, sapang, stfspa
 
   ! real, parameter :: rtod = 57.2957795130823, re = 6371.0088, &
@@ -368,7 +382,7 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
     return
   endif
 
-  coffd = bdown*0.5/bhor
+  cottd = bdown*0.5/bhor
   std = 1./sqrt(1.+cottd*cottd)
   ctd = cottd*std
   sb = -beast/bhor
@@ -395,19 +409,20 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
 end subroutine dipapx
 
 
-! real(8) function fint(x1, x2, x3, y1, y2, y3, xfit)
-!
-!   implicit none
-!
-!   real(8), intent(in)  :: x1, x2, x3, y1, y2, y3, xfit
-!   real(8)              :: x12, x13, x23, xf1, xf2, xf3
-!
-!   x12 = x1-x2
-!   x13 = x1-x3
-!   x23 = x2-x3
-!   xf1 = xfit-x1
-!   xf2 = xfit-x2
-!   xf3 = xfit-x3
-!
-!   fint = (y1*x23*xf2*xf3 - y2*x13*xf1*xf3 + y3*x12*xf1*xf2)/(x12*x13*x23)
-! end function fint
+real(8) function fint(x1, x2, x3, y1, y2, y3, xfit)
+
+  implicit none
+
+  real(8), intent(in)  :: x1, x2, x3, y1, y2, y3, xfit
+  real(8)              :: x12, x13, x23, xf1, xf2, xf3
+
+  x12 = x1-x2
+  x13 = x1-x3
+  x23 = x2-x3
+  xf1 = xfit-x1
+  xf2 = xfit-x2
+  xf3 = xfit-x3
+
+  fint = (y1*x23*xf2*xf3 - y2*x13*xf1*xf3 + y3*x12*xf1*xf2)/(x12*x13*x23)
+  return
+end function fint
