@@ -5,16 +5,27 @@ module igrf
 
   implicit none
 
+  ! real(8),allocatable :: GYR(:,:,:),HYR(:,:,:)
+  ! real(8),allocatable :: GT(:,:),HT(:,:)
+  ! real(4),allocatable :: EPOCH(:),NMXE(:)
+
+  real(4)             :: datel
+  integer(4)                  :: nepo, nght
+  real(4), allocatable     :: epoch(:), nmxe(:)
+  real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
+  real(8), allocatable                     :: gt(:,:), ht(:,:)
+
 contains
 
-  subroutine read_igrf(filename_in,GYR,HYR,GT,HT,NEPO,NGHT,EPOCH,NMXE)
+  ! subroutine read_igrf(filename_in,GYR,HYR,GT,HT,NEPO,NGHT,EPOCH,NMXE)
+  subroutine read_igrf(filename_in)
 
     implicit none
 
-    real*8,allocatable,intent(inout) :: GYR(:,:,:),HYR(:,:,:)
-    real*8,allocatable,intent(inout) :: GT(:,:),HT(:,:)
-    real*4,allocatable,intent(inout) :: EPOCH(:),NMXE(:)
-    integer, intent(out) :: NEPO,NGHT
+    ! real*8,allocatable,intent(inout) :: GYR(:,:,:),HYR(:,:,:)
+    ! real*8,allocatable,intent(inout) :: GT(:,:),HT(:,:)
+    ! real*4,allocatable,intent(inout) :: EPOCH(:),NMXE(:)
+    ! integer, intent(out) :: NEPO,NGHT
     character(len=*),intent(in) :: filename_in
 
     character(len=10000) :: s
@@ -49,21 +60,21 @@ contains
     ! Read epochs
     num_epochs=count([(s(i:i+3),i=1,len_trim(s))].eq.'IGRF')
     num_epochs=count([(s(i:i+3),i=1,len_trim(s))].eq.'DGRF')+num_epochs
-    allocate(EPOCH(1:num_epochs))
-    allocate(NMXE(1:num_epochs))
+    allocate(epoch(1:num_epochs))
+    allocate(nmxe(1:num_epochs))
 
     ! Read epochs
     read(100,*,iostat=state) s
     do i=1,num_epochs
-       EPOCH(i) = 1900+(i-1)*5.0d0
+       epoch(i) = 1900+(i-1)*5.0d0
     enddo
 
     ! Number of coefficients
     do i=1,num_epochs
-       if (EPOCH(i) .ge. 2000.0d0) then
-          NMXE(i) = 13
-       elseif (EPOCH(i) .ge. 1900.0d0) then
-          NMXE(i) = 10
+       if (epoch(i) .ge. 2000.0d0) then
+          nmxe(i) = 13
+       elseif (epoch(i) .ge. 1900.0d0) then
+          nmxe(i) = 10
        else
           write(*,*) 'ERROR: Epoch unavailable!'
           exit
@@ -99,32 +110,32 @@ contains
     close(100)
 
     ! Assign the return values
-    NGHT = (sqrt(num_sh+1.0)+1)**2
-    NEPO = num_epochs
+    nght = (sqrt(num_sh+1.0)+1)**2
+    nepo = num_epochs
 
     ! Assign the Gauss coefficients
-    allocate(GYR(NGHT,NGHT,NEPO),GT(NGHT,NGHT))
-    allocate(HYR(NGHT,NGHT,NEPO),HT(NGHT,NGHT))
-    GYR=0.0d0
-    GT =0.0d0
-    HYR=0.0d0
-    HT =0.0d0
-    do e=1,NEPO+1
+    allocate(gyr(nght,nght,nepo),gt(nght,nght))
+    allocate(hyr(nght,nght,nepo),ht(nght,nght))
+    gyr=0.0d0
+    gt =0.0d0
+    hyr=0.0d0
+    ht =0.0d0
+    do e=1,nepo+1
        do l=1,L_max
-          if (e .le. NEPO) then
-             GYR(l+1,1,e) = g(l**2,e)
+          if (e .le. nepo) then
+             gyr(l+1,1,e) = g(l**2,e)
           else
-             GT(l+1,1)    = g(l**2,e)
+             gt(l+1,1)    = g(l**2,e)
           endif
           do m=1,l
              if (m .le. l) then
                 pos = 1 + m*(L_max+2) + l
-                if (e .le. NEPO) then
-                   GYR(l+1,m+1,e)=g(l**2+2*m-1,e)
-                   HYR(l+1,m+1,e)=g(l**2+2*m  ,e)
+                if (e .le. nepo) then
+                   gyr(l+1,m+1,e)=g(l**2+2*m-1,e)
+                   hyr(l+1,m+1,e)=g(l**2+2*m  ,e)
                 else
-                   GT(l+1,m+1)=g(l**2+2*m-1,e)
-                   HT(l+1,m+1)=g(l**2+2*m  ,e)
+                   gt(l+1,m+1)=g(l**2+2*m-1,e)
+                   ht(l+1,m+1)=g(l**2+2*m  ,e)
                 endif
              endif
           enddo

@@ -409,20 +409,20 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
 end subroutine dipapx
 
 
-real(8) function fint(x1, x2, x3, y1, y2, y3, xfit)
-
-  implicit none
-
-  real(8), intent(in)  :: x1, x2, x3, y1, y2, y3, xfit
-  real(8)              :: x12, x13, x23, xf1, xf2, xf3
-
-  x12 = x1-x2
-  x13 = x1-x3
-  x23 = x2-x3
-  xf1 = xfit-x1
-  xf2 = xfit-x2
-  xf3 = xfit-x3
-
-  fint = (y1*x23*xf2*xf3 - y2*x13*xf1*xf3 + y3*x12*xf1*xf2)/(x12*x13*x23)
-  return
-end function fint
+! real(8) function fint(x1, x2, x3, y1, y2, y3, xfit)
+!
+!   implicit none
+!
+!   real(8), intent(in)  :: x1, x2, x3, y1, y2, y3, xfit
+!   real(8)              :: x12, x13, x23, xf1, xf2, xf3
+!
+!   x12 = x1-x2
+!   x13 = x1-x3
+!   x23 = x2-x3
+!   xf1 = xfit-x1
+!   xf2 = xfit-x2
+!   xf3 = xfit-x3
+!
+!   fint = (y1*x23*xf2*xf3 - y2*x13*xf1*xf3 + y3*x12*xf1*xf2)/(x12*x13*x23)
+!   return
+! end function fint

@@ -25,21 +25,21 @@ module coeffmodule
   ! real(4), parameter       :: missing=-9999E0
 end module coeffmodule
 
-module igrfparammodule
-
-  real(4)             :: datel
-  integer(4)                  :: nepo, nght
-  real(4), allocatable     :: epoch(:), nmxe(:)
-  real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
-  real(8), allocatable                     :: gt(:,:), ht(:,:)
-
-end module igrfparammodule
+! module igrfparammodule
+!
+!   real(4)             :: datel
+!   integer(4)                  :: nepo, nght
+!   real(4), allocatable     :: epoch(:), nmxe(:)
+!   real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
+!   real(8), allocatable                     :: gt(:,:), ht(:,:)
+!
+! end module igrfparammodule
 
 subroutine cofrm(date,filename)
 
     use magfldmodule
     use igrf
-    use igrfparammodule
+    ! use igrfparammodule
 
     implicit none
 
@@ -69,7 +69,8 @@ subroutine cofrm(date,filename)
     endif
 
     if (.not. allocated(gyr)) then
-      call read_igrf(filename, gyr, hyr, gt, ht, nepo, nght, epoch, nmxe)
+      ! call read_igrf(filename, gyr, hyr, gt, ht, nepo, nght, epoch, nmxe)
+      call read_igrf(filename)
     endif
     ngh = nght*nepo
 
