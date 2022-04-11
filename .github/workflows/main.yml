@@ -28,9 +28,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install standard and test dependencies
-      run: |
-        pip install numpy coveralls pytest coverage flake8
-        python setup.py clean --all build_ext --force --inplace
+      run: pip install numpy coveralls pytest coverage flake8
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
