@@ -49,7 +49,7 @@ def test_set_epoch_file_error(igrf_file):
     return
 
 
-class TestApexInit():
+class TestApexInit(object):
     def setup(self):
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
@@ -217,7 +217,7 @@ class TestApexInit():
         return
 
 
-class TestApexMethod():
+class TestApexMethod(object):
     """Test the Apex methods."""
     def setup(self):
         """Initialize all tests."""
@@ -651,7 +651,7 @@ class TestApexMethod():
         return
 
 
-class TestApexMLTMethods():
+class TestApexMLTMethods(object):
     """Test the Apex Magnetic Local Time (MLT) methods."""
     def setup(self):
         """Initialize all tests."""
@@ -816,7 +816,7 @@ class TestApexMLTMethods():
         return
 
 
-class TestApexMapMethods():
+class TestApexMapMethods(object):
     """Test the Apex height mapping methods."""
     def setup(self):
         """Initialize all tests."""
@@ -977,7 +977,7 @@ class TestApexMapMethods():
         return
 
 
-class TestApexBasevectorMethods():
+class TestApexBasevectorMethods(object):
     """Test the Apex height base vector methods."""
     def setup(self):
         """Initialize all tests."""
@@ -1190,7 +1190,7 @@ class TestApexBasevectorMethods():
         return
 
 
-class TestApexGetMethods():
+class TestApexGetMethods(object):
     """Test the Apex `get` methods."""
     def setup(self):
         """Initialize all tests."""
@@ -1264,3 +1264,43 @@ class TestApexGetMethods():
         # Test the outputs
         np.testing.assert_allclose(excess_out, bound_out, rtol=0, atol=1e-8)
         return
+
+    @pytest.mark.parametrize("apex_height", [-100, 0, 300, 10000])
+    def test_get_height_at_equator(self, apex_height):
+        """Test that `get_height` returns apex height at equator.
+
+        Parameters
+        ----------
+        apex_height : float
+            Apex height
+
+        """
+
+        assert apex_height == self.apex_out.get_height(0.0, apex_height)
+        return
+
+    @pytest.mark.parametrize("lat, height", [
+        (-90, -6371.009), (-80, -6088.438503309167), (-70, -5274.8091854339655),
+        (-60, -4028.256749999999), (-50, -2499.1338178752017),
+        (-40, -871.8751821247979), (-30, 657.2477500000014),
+        (-20, 1903.8001854339655), (-10, 2717.4295033091657), (0, 3000.0),
+        (10, 2717.4295033091657), (20, 1903.8001854339655),
+        (30, 657.2477500000014), (40, -871.8751821247979),
+        (50, -2499.1338178752017), (60, -4028.256749999999),
+        (70, -5274.8091854339655), (80, -6088.438503309167)])
+    def test_get_height_along_fieldline(self, lat, height):
+        """Test that `get_height` returns expected height of field line.
+
+        Parameters
+        ----------
+        lat : float
+            Input latitude
+        height : float
+            Output field-line height for line with apex of 3000 km
+
+        """
+
+        assert height == self.apex_out.get_height(lat, 3000.0)
+        return
+
+    
