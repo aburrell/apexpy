@@ -28,7 +28,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
    - name: Install MacOS compiler
-     if: ${{ matrix.os }} == macos-latest
+     if: ${{ matrix.os == 'macos-latest' }}
      run: brew install --cask gfortran
 
     - name: Install standard and test dependencies, then apexpy
