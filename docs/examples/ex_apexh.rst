@@ -33,8 +33,8 @@ International Space Station (ISS) below.
    apex height=428.007 km, L=1.07
 
 
-Plot a Field Line
-=================
+Trace a Field Line
+==================
 
 It can be useful to trace a field line with a specified apex height across a
 range of known latitudes.  This can then be useful when plotting field lines at
