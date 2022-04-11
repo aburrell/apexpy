@@ -29,7 +29,7 @@ jobs:
 
     - name: Install MacOS compiler
       if: ${{ matrix.os == 'macos-latest' }}
-      run: :
+      run: |
 	brew install caskroom/cask/brew-cask
         brew install --cask gfortran
 
