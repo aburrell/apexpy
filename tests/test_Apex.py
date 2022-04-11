@@ -1300,7 +1300,9 @@ class TestApexGetMethods(object):
 
         """
 
-        assert height == self.apex_out.get_height(lat, 3000.0)
+        fheight = self.apex_out.get_height(lat, 3000.0)
+        assert abs(height - fheight) < 1.0e-7, \
+            "bad height calculation: {:.7f} != {:.7f}".format(height, fheight)
         return
 
     
