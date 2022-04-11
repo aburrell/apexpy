@@ -39,7 +39,7 @@ of numpy work without issue.
 The package has been tested with the following setups (others might work, too):
 
 * Windows (32/64 bit Python), Linux (64 bit), and Mac (64 bit)
-* Python 3.6, 3.7, 3.8, 3.9
+* Python 3.7, 3.8, 3.9, 3.10
 
 
 .. _installation-cmd:
