@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.1.1 (2021-06-05)
+1.1.1 (2022-XX-XX)
 ------------------
 * Removed Python 2 support
 * Updated community and package documentation
@@ -11,6 +11,7 @@ Changelog
 * Added class representation strings to Apex
 * Improved input testing for Apex methods
 * Added more examples to the documentation
+* Added function to calculate height along a field line
 
 1.1.0 (2021-03-05)
 ------------------
