@@ -29,12 +29,18 @@ jobs:
 
     - name: Install standard and test dependencies, then apexpy
       run: |
-        pip install numpy coveralls pytest-cov tox
+        pip install numpy coveralls pytest coverage flake8
         python setup.py clean --all build_ext --force --inplace
         python setup.py install
 
+    - name: Test PEP8 compliance
+      run: flake8 . --count --show-source --statistics
+
+    - name: Evaluate complexity
+      run: flake8 . --count --exit-zero --max-complexity=10 --statistics
+
     - name: Run unit and integration tests
-      run: tox -e ${{ matrix.python-version }}
+      run: coverage run --rcfile=setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       env:

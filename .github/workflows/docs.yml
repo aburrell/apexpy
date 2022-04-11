@@ -29,9 +29,15 @@ jobs:
 
     - name: Install standard and test dependencies, then apexpy
       run: |
-        pip install numpy coveralls pytest-cov tox
+        pip install -r docs/requirements.txt sphinx sphinx_rtd_theme
         python setup.py clean --all build_ext --force --inplace
         python setup.py install
 
-    - name: Run documentation tests
-      run: tox -e docs
+    - name: Check documentation build
+      run: sphinx-build -E -b html docs dist/docs
+
+    - name: Check documentation links
+      run: sphinx-build -b linkcheck docs dist/docs
+
+    - name: Load .zenodo.json to check for errors
+      run: python -c "import json; json.loads(open('.zenodo.json').read())"
