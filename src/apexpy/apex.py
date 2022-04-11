@@ -262,8 +262,8 @@ class Apex(object):
 
         # Convert the latitude
         salat = np.sign(alat) if alat != 0 else 1
-        qlat = salat * np.degrees(np.arccos(np.sqrt((self.RE + height) /
-                                                    (self.RE + h_apex))))
+        qlat = salat * np.degrees(np.arccos(np.sqrt((self.RE + height)
+                                                    / (self.RE + h_apex))))
 
         return qlat, qlon
 
@@ -311,8 +311,8 @@ class Apex(object):
 
         # Convert the latitude
         sqlat = np.sign(qlat) if qlat != 0 else 1
-        alat = sqlat * np.degrees(np.arccos(np.sqrt((self.RE + self.refh) /
-                                                    (self.RE + h_apex))))
+        alat = sqlat * np.degrees(np.arccos(np.sqrt((self.RE + self.refh)
+                                                    / (self.RE + h_apex))))
 
         return alat, alon
 

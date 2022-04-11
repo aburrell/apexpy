@@ -969,7 +969,7 @@ class TestApexMapMethods(object):
                               ([60, 30, 100, 500, [1, 2, 3]],
                                [0.76141245, 2.87884673, 0.73655941]),
                               ([70, 15, 100, 500, [1, 2, 3]],
-                               [0.84681866, 2.5925821,  0.34792655])])
+                               [0.84681866, 2.5925821, 0.34792655])])
     def test_map_V_to_height_scalar_location(self, in_args, test_mapped):
         """Test mapping of velocity to a specified height."""
         mapped = self.apex_out.map_V_to_height(*in_args)
