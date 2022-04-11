@@ -3,7 +3,7 @@
 # https://help.github.com/actions/language-and-framework-guides/
 # using-python-with-github-actions
 
-name: unittest with flake8
+name: pytest with flake8
 
 on: [push, pull_request]
 
@@ -29,8 +29,8 @@ jobs:
 
     - name: Install standard and test dependencies, then apexpy
       run: |
-        pip install -r requirements.txt
-        bash requirements.extra 0
+        pip install numpy coveralls pytest-cov tox
+	python setup.py clean --all build_ext --force --inplace
         python setup.py install
 
     - name: Run unit and integration tests
