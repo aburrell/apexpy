@@ -1,7 +1,7 @@
 graft docs
 graft src
-graft ci
 graft tests
+graft .github
 
 include AUTHORS.rst
 include CHANGELOG.rst
@@ -11,6 +11,6 @@ include README.rst
 include CODE_OF_CONDUCT.md
 include .zenodo.json
 
-include tox.ini .travis.yml appveyor.yml .codeclimate.yml pyproject.toml
+include .codeclimate.yml pyproject.toml
 
 global-exclude *.py[cod~] __pycache__ *.so *.dylib
