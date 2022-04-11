@@ -96,9 +96,9 @@ Badges
     :target: https://apexpy.readthedocs.io/en/latest/
     :alt: Documentation Status
 
-.. |ghactions| image:: https://github.com/aburrell/apexpy/workflows/main/badge.svg
+.. |ghactions| image:: https://github.com/aburrell/apexpy/actions/workflows/main.yml/badge.svg
     :alt: GitHub Actions Build Status
-    :target: https://github.com/aburrell/apexpy/actions
+    :target: https://github.com/aburrell/apexpy/actions/workflows/main.yml
 
 .. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=main
     :alt: Coverage Status
