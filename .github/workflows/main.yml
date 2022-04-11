@@ -29,9 +29,7 @@ jobs:
 
     - name: Install MacOS compiler
       if: ${{ matrix.os == 'macos-latest' }}
-      run: |
-        brew install homebrew/cask/brew-cask
-        brew install --cask gfortran
+      run: brew install gfortran
 
     - name: Install standard and test dependencies, then apexpy
       run: |
