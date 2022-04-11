@@ -85,9 +85,9 @@ Badges
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor|
-        | |coveralls| |requires|
-        | |codeclimate| |scrutinizer| |codacy|
+      - | |ghactions|
+        | |coveralls| |codeclimate|
+        | |scrutinizer| |codacy|
     * - package
       - | |version| |supported-versions|
         | |wheel| |supported-implementations|
@@ -96,17 +96,9 @@ Badges
     :target: https://apexpy.readthedocs.io/en/latest/
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=main
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/aburrell/apexpy
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/aburrell/apexpy?branch=main&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/aburrell/apexpy
-
-.. |requires| image:: https://requires.io/github/aburrell/apexpy/requirements.svg?branch=main
-     :alt: Requirements Status
-     :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=main
+.. |ghactions| image:: https://github.com/aburrell/apexpy/workflows/main/badge.svg
+    :alt: GitHub Actions Build Status
+    :target: https://github.com/aburrell/apexpy/actions
 
 .. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=main
     :alt: Coverage Status
