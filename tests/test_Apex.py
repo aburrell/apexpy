@@ -1304,5 +1304,3 @@ class TestApexGetMethods(object):
         assert abs(height - fheight) < 1.0e-7, \
             "bad height calculation: {:.7f} != {:.7f}".format(height, fheight)
         return
-
-    
