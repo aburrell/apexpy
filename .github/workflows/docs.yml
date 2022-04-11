@@ -3,7 +3,7 @@
 # https://help.github.com/actions/language-and-framework-guides/
 # using-python-with-github-actions
 
-name: unittest with flake8
+name: Documentation test
 
 on: [push, pull_request]
 
