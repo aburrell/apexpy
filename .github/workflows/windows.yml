@@ -3,7 +3,7 @@
 # https://help.github.com/actions/language-and-framework-guides/
 # using-python-with-github-actions
 
-name: pytest with flake8
+name: pytest on Windows
 
 on: [push, pull_request]
 
@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [windows-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     env:
@@ -22,30 +22,24 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+	install: >-
+	  git
+	  mingw-w64-x86_64-cmake
+	  mingw-w64-x86_64-gcc-fortran
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Install standard and test dependencies
-      run: pip install numpy coveralls pytest coverage flake8
+      run: pip install numpy coveralls pytest coverage
 
-    - name: Install on Linux
-      if: ${{ matrix.os == 'ubuntu-latest' }}
+    - name: Install on Windows
       run: python setup.py install
-
-    - name: Install on MacOS
-      if: ${{ matrix.os == 'macos-latest' }}
-      run: |
-          brew reinstall gcc
-          which gfortran
-          CFLAGS="-falign-functions=8 ${CFLAGS}" python setup.py install
-
-    - name: Test PEP8 compliance
-      run: flake8 . --count --show-source --statistics
-
-    - name: Evaluate complexity
-      run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
     - name: Run unit and integration tests
       run: coverage run --rcfile=setup.cfg -m pytest
