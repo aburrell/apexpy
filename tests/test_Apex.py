@@ -16,6 +16,7 @@ import datetime as dt
 import numpy as np
 import os
 import pytest
+import shutil
 import warnings
 
 import apexpy
@@ -27,7 +28,7 @@ def igrf_file(max_attempts=100):
 
     Parameters
     ----------
-    max_attemps : int
+    max_attempts : int
         Maximum rename attemps, needed for Windows (default=100)
 
     """
@@ -40,7 +41,7 @@ def igrf_file(max_attempts=100):
     # Move the coefficient file
     for retry in range(max_attempts):
         try:
-            os.rename(original_file, tmp_file)
+            shutil.move(original_file, tmp_file)
             break
         except Exception:
             pass
@@ -49,7 +50,7 @@ def igrf_file(max_attempts=100):
     # Move the coefficient file back
     for retry in range(max_attempts):
         try:
-            os.rename(tmp_file, original_file)
+            shutil.move(tmp_file, original_file)
             break
         except Exception:
             pass
