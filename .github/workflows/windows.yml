@@ -39,9 +39,9 @@ jobs:
     - name: Install on Windows
       run: |
         C:\Miniconda\condabin\activate.bat pythontest
-        python setup.py config_fc
-        python setup.py config --compiler=mingw32 --fcompiler=gfortran
-        python setup.py install
+        python -m numpy setup.py config_fc
+        python -m numpy setup.py config --compiler=mingw32 --fcompiler=gfortran
+        python -m numpy setup.py install
 
     - name: Run unit and integration tests
       run: coverage run --rcfile=setup.cfg -m pytest
