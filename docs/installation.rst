@@ -43,7 +43,10 @@ Installation Issues
 Because the base code is in Fortran, installation can be tricky and different
 problems can arise even if you already have a compiler installed (but please
 check that you do before trying these solutions).
-    
+
+ApexPy is not compatible with numpy version 1.19.X, older and newer versions
+of numpy work without issue.
+
 Many times, the following modification to ``pip`` [1]_ will solve the
 installation problem, but it requires that both libgfortran and gfortran are
 installed on your system.::
@@ -61,7 +64,7 @@ this case, try::
 
   pip install apexpy --no-build-isolation
 
-
+  
 Apple Silicon systems require certain compliation flags to deal with memory
 problems.  In this case, the following command has worked (after first
 installing both gfortran and numpy).
@@ -69,9 +72,13 @@ installing both gfortran and numpy).
 ::
    CFLAGS="-falign-functions=8 ${CFLAGS}" pip install --no-binary :apexpy: apexpy
 
-  
-ApexPy is not compatible with numpy version 1.19.X, older and newer versions
-of numpy work without issue.
+
+Windows systems are known to have issues with Fortran-based codes.  The Windows
+testing we do uses miniconda, so we recommend using the Anaconda environment.
+One problem that has been encountered is a lack of LAPACK/BLAS tools that
+causes numpy to not behave as expected.  This can be fixed by installing
+scipy before numpy and then installing apexpy.
+
 
 .. _installation-cmd:
 
