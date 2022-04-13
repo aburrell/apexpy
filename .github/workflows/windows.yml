@@ -32,9 +32,10 @@ jobs:
       run: |
         C:\Miniconda\condabin\conda.bat config --set always_yes yes
         C:\Miniconda\condabin\conda.bat update -q conda
-        C:\Miniconda\condabin\conda.bat create -q -p C:\pythontest python=${{ matrix.python-version }} pytest numpy libpython coveralls coverage
+        C:\Miniconda\condabin\conda.bat create -q -p C:\pythontest python=${{ matrix.python-version }} pytest numpy libpython
         C:\Miniconda\condabin\activate.bat C:\pythontest
         C:\Miniconda\condabin\conda.bat install -q -c msys2 m2w64-toolchain
+	C:\Miniconda\condabin\conda.bat install numpy pytest coveralls coverage
 
     - name: Install on Windows
       run: |
