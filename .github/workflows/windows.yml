@@ -22,14 +22,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
-    - uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        install: >-
-          git
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-gcc-fortran
-        run: which gfortran
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
@@ -37,10 +29,19 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install standard and test dependencies
-      run: pip install numpy coveralls pytest coverage
+      run: |
+        C:\Miniconda\condabin\conda.bat config --set always_yes yes
+        C:\Miniconda\condabin\conda.bat update -q conda
+        C:\Miniconda\condabin\conda.bat create -q -p C:\pythontest python=${{ matrix.python-version }} pytest numpy libpython coveralls coverage
+	del C:\pythontest\Lib\site-packages\README
+	C:\Miniconda\condabin\activate.bat C:\pythontest
+	C:\Miniconda\condabin\conda.bat install -q -c msys2 m2w64-toolchain
 
     - name: Install on Windows
-      run: python setup.py install
+      run: |
+        python setup.py config_fc
+	python setup.py config --compiler=mingw32 --fcompiler=gfortran
+        python setup.py install
 
     - name: Run unit and integration tests
       run: coverage run --rcfile=setup.cfg -m pytest
