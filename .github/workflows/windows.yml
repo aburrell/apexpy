@@ -33,14 +33,14 @@ jobs:
         C:\Miniconda\condabin\conda.bat config --set always_yes yes
         C:\Miniconda\condabin\conda.bat update -q conda
         C:\Miniconda\condabin\conda.bat create -q -p C:\pythontest python=${{ matrix.python-version }} pytest numpy libpython coveralls coverage
-	del C:\pythontest\Lib\site-packages\README
-	C:\Miniconda\condabin\activate.bat C:\pythontest
-	C:\Miniconda\condabin\conda.bat install -q -c msys2 m2w64-toolchain
+        del C:\pythontest\Lib\site-packages\README
+        C:\Miniconda\condabin\activate.bat C:\pythontest
+        C:\Miniconda\condabin\conda.bat install -q -c msys2 m2w64-toolchain
 
     - name: Install on Windows
       run: |
         python setup.py config_fc
-	python setup.py config --compiler=mingw32 --fcompiler=gfortran
+        python setup.py config --compiler=mingw32 --fcompiler=gfortran
         python setup.py install
 
     - name: Run unit and integration tests
