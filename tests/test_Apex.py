@@ -22,8 +22,15 @@ import apexpy
 
 
 @pytest.fixture()
-def igrf_file():
-    """A fixture for handling the coefficient file."""
+def igrf_file(max_attempts=100):
+    """A fixture for handling the coefficient file.
+
+    Parameters
+    ----------
+    max_attemps : int
+        Maximum rename attemps, needed for Windows (default=100)
+
+    """
     # Ensure the coefficient file exists
     original_file = os.path.join(os.path.dirname(apexpy.helpers.__file__),
                                  'igrf13coeffs.txt')
@@ -31,11 +38,21 @@ def igrf_file():
     assert os.path.isfile(original_file)
 
     # Move the coefficient file
-    os.rename(original_file, tmp_file)
+    for retry in range(max_attempts):
+        try:
+            os.rename(original_file, tmp_file)
+            break
+        except Exception:
+            pass
     yield original_file
 
     # Move the coefficient file back
-    os.rename(tmp_file, original_file)
+    for retry in range(max_attempts):
+        try:
+            os.rename(tmp_file, original_file)
+            break
+        except Exception:
+            pass
     return
 
 
