@@ -40,7 +40,7 @@ jobs:
 
     - name: Run unit and integration tests
       shell: bash -l {0}
-      run: pytest
+      run: pytest -cov
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
