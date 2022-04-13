@@ -29,6 +29,7 @@ jobs:
           git
           mingw-w64-x86_64-cmake
           mingw-w64-x86_64-gcc-fortran
+        run: which gfortran
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
