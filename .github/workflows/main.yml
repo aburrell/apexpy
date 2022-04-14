@@ -32,7 +32,7 @@ jobs:
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: python setup.py clean --all build_ext --force --inplace
+      run: python setup.py install
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
