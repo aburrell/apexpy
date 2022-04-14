@@ -32,7 +32,7 @@ jobs:
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: python setup.py install
+      run: python setup.py clean --all build_ext --force --inplace
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
@@ -48,9 +48,12 @@ jobs:
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
     - name: Run unit and integration tests
-      run: pytest --cov=src
+      run: python -m pytest --cov --cov-report=term-missing -vv --doctest-glob='*.rst'
 
     - name: Publish results to coveralls upon success
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: coveralls --rcfile=setup.cfg --service=github
+      run: |
+           coverage combine
+           coverage report
+           coveralls --rcfile=setup.cfg --service=github --merge=extension-coveralls.json []
