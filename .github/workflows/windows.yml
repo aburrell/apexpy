@@ -33,15 +33,11 @@ jobs:
 
     - name: Install on Windows
       shell: bash -l {0}
-      run: |
-           which python
-           python setup.py config --compiler=mingw32 --fcompiler=gfortran develop
+      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran install
 
     - name: Run unit and integration tests
       shell: bash -l {0}
-      run: |
-           which coverage
-           coverage run --rcfile=setup.cfg -m pytest
+      run: coverage run --rcfile=setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
