@@ -19,6 +19,9 @@ else:
                            'fortranapex/checkapexsh.f90',
                            'fortranapex/fortranapex.pyf'])]
 
-setup_kwargs = {'ext_modules': extensions, 'packages': find_packages()}
+setup_kwargs = {'py_modules': [path.splitext(path.basename(pp))[0]
+                               for pp in glob('*.py')],
+                'ext_modules': extensions,
+                'packages': find_packages()}
 
 setup(**setup_kwargs)
