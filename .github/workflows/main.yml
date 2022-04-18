@@ -48,7 +48,9 @@ jobs:
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
     - name: Run unit and integration tests
-      run: pytest --cov=apexpy
+      run: |
+           ls /home/runner/work/apexpy/apexpy/apexpy
+           pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
       env:
