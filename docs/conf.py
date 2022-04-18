@@ -23,7 +23,7 @@ copyright = ', '.join([year, author])
 
 # Get version number from __init__.py
 regex = r"(?<=__version__..\s)\S+"
-with open('../src/apexpy/__init__.py', 'r') as fin:
+with open('../apexpy/__init__.py', 'r') as fin:
     text = fin.read()
 match = re.findall(regex, text)
 version = release = match[0].strip("'")
