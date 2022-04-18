@@ -17,7 +17,7 @@ else:
                            'fortranapex/igrf.f90',
                            'fortranapex/apexsh.f90',
                            'fortranapex/checkapexsh.f90',
-                           'fortranapex/fortranapex.pyf'])]
+                           'apexpy/fortranapex.pyf'])]
 
 setup_kwargs = {'ext_modules': extensions, 'packages': find_packages()}
 
