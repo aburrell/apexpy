@@ -48,12 +48,10 @@ jobs:
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
     - name: Run unit and integration tests
-      run: python -m pytest --cov --cov-report=term-missing --doctest-glob='*.rst' --debug=trace
+      run: python -m pytest --cov=src --cov-report=term-missing --cov-append
 
     - name: Publish results to coveralls upon success
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-           coverage combine
-           coverage report
-           coveralls --rcfile=setup.cfg --service=github --merge=extension-coveralls.json []
+           coveralls --rcfile=setup.cfg --service=github
