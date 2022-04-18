@@ -12,16 +12,13 @@ else:
     from numpy.distutils.core import setup, Extension
     extensions = [
         Extension(name='apexpy.fortranapex',
-                  sources=['src/fortranapex/magfld.f', 'src/fortranapex/apex.f',
-                           'src/fortranapex/makeapexsh.f90',
-                           'src/fortranapex/igrf.f90',
-                           'src/fortranapex/apexsh.f90',
-                           'src/fortranapex/checkapexsh.f90',
-                           'src/fortranapex/fortranapex.pyf'])]
+                  sources=['fortranapex/magfld.f', 'fortranapex/apex.f',
+                           'fortranapex/makeapexsh.f90',
+                           'fortranapex/igrf.f90',
+                           'fortranapex/apexsh.f90',
+                           'fortranapex/checkapexsh.f90',
+                           'fortranapex/fortranapex.pyf'])]
 
-setup_kwargs = {'py_modules': [path.splitext(path.basename(pp))[0]
-                               for pp in glob('src/*.py')],
-                'ext_modules': extensions,
-                'packages': find_packages(where='src')}
+setup_kwargs = {'ext_modules': extensions, 'packages': find_packages()}
 
 setup(**setup_kwargs)
