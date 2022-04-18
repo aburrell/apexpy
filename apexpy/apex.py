@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Classes that make up the core of apexpy.
-"""
+"""Classes that make up the core of apexpy."""
 
 import datetime as dt
 import numpy as np
