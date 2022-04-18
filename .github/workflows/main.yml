@@ -49,7 +49,7 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-           ls /home/runner/work/apexpy/apexpy/apexpy
+           python -m apexpy
            pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
