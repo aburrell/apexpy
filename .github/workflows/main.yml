@@ -29,13 +29,13 @@ jobs:
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: python setup.py install
+      run: python setup.py develop
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
-          CFLAGS="-falign-functions=8 ${CFLAGS}" python setup.py install
+          CFLAGS="-falign-functions=8 ${CFLAGS}" python setup.py develop
 
     - name: Test PEP8 compliance
       run: flake8 . --count --show-source --statistics
