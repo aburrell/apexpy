@@ -48,7 +48,7 @@ jobs:
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
     - name: Run unit and integration tests
-      run: python -m pytest --cov=src --cov-report=term-missing --cov-append
+      run: coverage run -m pytest --debug=trace
 
     - name: Publish results to coveralls upon success
       env:
