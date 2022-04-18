@@ -48,12 +48,12 @@ jobs:
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
     - name: Run unit and integration tests
-      run: |
-           python -m apexpy
-           pytest --cov=apexpy
+      run: coverage run --rcfile=setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+           coverage combine
+           coverage report -m
            coveralls --rcfile=setup.cfg --service=github
