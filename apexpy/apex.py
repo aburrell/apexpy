@@ -13,10 +13,11 @@ from apexpy import helpers
 # Below try..catch required for autodoc to work on readthedocs
 try:
     from apexpy import fortranapex as fa
-except ImportError:
+except ImportError as ierr:
     warnings.warn("".join(["fortranapex module could not be imported, so ",
                            "apexpy probably won't work.  Make sure you have ",
-                           "a gfortran compiler."]))
+                           "a gfortran compiler. Failed with error: ",
+                           str(ierr)]))
 
 # Make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to NaN where*',
