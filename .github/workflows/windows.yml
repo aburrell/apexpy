@@ -33,7 +33,7 @@ jobs:
 
     - name: Install on Windows
       shell: bash -l {0}
-      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran install
+      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran develop
 
     - name: Run unit and integration tests
       shell: bash -l {0}
