@@ -15,9 +15,6 @@ jobs:
         os: [windows-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
 
-    env:
-       FC: gfortran
-
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -36,14 +33,17 @@ jobs:
 
     - name: Install on Windows
       shell: bash -l {0}
-      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran install
+      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran develop
 
     - name: Run unit and integration tests
       shell: bash -l {0}
-      run: pytest --cov=apexpy
+      run: coverage run --rcfile=setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: coveralls --rcfile=setup.cfg --service=github
+      run: |
+           coverage combine
+           coverage report -m
+           coveralls --rcfile=setup.cfg --service=github
