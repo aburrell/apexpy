@@ -39,7 +39,7 @@ jobs:
       shell: bash -l {0}
       run: |
            cd .. \
-           coverage run --rcfile=apexpy\setup.cfg -m pytest --cov=apexpy\apexpy
+           pytest --cov=apexpy\apexpy
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
