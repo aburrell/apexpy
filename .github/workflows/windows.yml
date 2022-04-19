@@ -33,11 +33,13 @@ jobs:
 
     - name: Install on Windows
       shell: bash -l {0}
-      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran develop
+      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran install
 
     - name: Run unit and integration tests
       shell: bash -l {0}
-      run: coverage run --rcfile=setup.cfg -m pytest
+      run: |
+           cd .. \
+           coverage run --rcfile=apexpy\setup.cfg -m pytest --cov=apexpy\apexpy
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
@@ -46,4 +48,4 @@ jobs:
       run: |
            coverage combine
            coverage report -m
-           coveralls --rcfile=setup.cfg --service=github
+           coveralls --rcfile=apexpy\setup.cfg --service=github
