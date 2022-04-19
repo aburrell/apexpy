@@ -39,7 +39,7 @@ jobs:
       shell: bash -l {0}
       run: |
            cd ..
-           cmd
+           dir
            pytest --cov=apexpy\apexpy
 
     - name: Publish results to coveralls upon success
