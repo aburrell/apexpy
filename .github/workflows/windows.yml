@@ -29,7 +29,7 @@ jobs:
 
     - name: Install standard and test dependencies
       shell: bash -l {0}
-      run: conda install -q -c msys2 m2w64-toolchain coveralls numpy pytest pytest-cov scipy
+      run: conda install -q -c msys2 m2w64-toolchain coveralls numpy pytest pytest-cov scipy pyqt5-tools
 
     - name: Install on Windows
       shell: bash -l {0}
