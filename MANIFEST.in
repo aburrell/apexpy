@@ -1,6 +1,5 @@
 graft docs
-graft src
-graft tests
+graft fortranapex
 graft .github
 
 include AUTHORS.rst
