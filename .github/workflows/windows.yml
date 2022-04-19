@@ -38,7 +38,8 @@ jobs:
     - name: Run unit and integration tests
       shell: bash -l {0}
       run: |
-           cd .. \
+           cd ..
+           cmd
            pytest --cov=apexpy\apexpy
 
     - name: Publish results to coveralls upon success
