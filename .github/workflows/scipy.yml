@@ -32,8 +32,8 @@ jobs:
     - name: Install standard and test dependencies
       run: |
            choco install rtools --no-progress
-	   echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
-	   gfortran --version
+           echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
+           gfortran --version
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
 
     - name: Install on Windows
