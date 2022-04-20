@@ -7,9 +7,6 @@ name: pytest on Windows Scipy style
 
 on: [push, pull_request]
 
-concurrency:
-  cancel-in-progress: true
-
 jobs:
   build:
     strategy:
