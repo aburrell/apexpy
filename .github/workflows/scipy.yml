@@ -1,0 +1,57 @@
+# This workflow will install Python dependencies, run tests and lint with a
+# variety of Python versions. For more information see:
+# https://help.github.com/actions/language-and-framework-guides/
+# using-python-with-github-actions
+
+name: pytest on Windows Scipy style
+
+on: [push, pull_request]
+
+concurrency:
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        python-version: ["3.7"]
+
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: 'x64'
+
+    - name: Install standard and test dependencies
+      run: |
+           choco install rtools --no-progress
+	   echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
+	   gfortran --version
+           pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
+
+    - name: Install on Windows
+      run: python setup.py config --fcompiler=gfortran develop
+
+    - name: build-path
+      run: |
+           echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
+
+    - name: Run unit and integration tests
+      run: |
+           dir apexpy
+           python -m pytest --cov=apexpy
+
+    - name: Publish results to coveralls upon success
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+           coverage combine
+           coverage report -m
+           coveralls --rcfile=setup.cfg --service=github
