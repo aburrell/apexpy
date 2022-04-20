@@ -34,16 +34,16 @@ jobs:
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
 
     - name: Install on Windows
-      run: python setup.py config --fcompiler=gfortran develop
+      run: python setup.py config --fcompiler=gfortran install
 
     - name: build-path
       run: |
-           echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
+           echo "installed_path=$PWD:$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
 
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           python -m pytest --cov=apexpy
+           python -msS pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
       env:
