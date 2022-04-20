@@ -43,7 +43,7 @@ jobs:
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           python -s -m pytest --cov=apexpy
+           python -S -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
       env:
