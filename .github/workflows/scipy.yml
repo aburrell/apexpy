@@ -38,7 +38,7 @@ jobs:
 
     - name: build-path
       run: |
-           echo "installed_path=$PWD:$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
+           echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
 
     - name: Run unit and integration tests
       run: |
