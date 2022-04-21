@@ -34,7 +34,7 @@ jobs:
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
 
     - name: Install on Windows
-      run: python setup.py config --fcompiler=gfortran install
+      run: python setup.py config --fcompiler=gfortran develop
 
     - name: build-path
       run: |
@@ -43,8 +43,7 @@ jobs:
     - name: Run unit and integration tests
       run: |
            dir ${{ installed_path }}
-           cd ..
-           python -s -m pytest --cov=apexpy/apexpy
+           coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
       env:
