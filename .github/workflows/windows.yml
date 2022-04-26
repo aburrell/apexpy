@@ -39,9 +39,9 @@ jobs:
       shell: bash -l {0}
       run: |
            cd ..
-	   ren apexpy proj_dir
-	   cd proj_dir
-	   dir apexpy
+           ren apexpy proj_dir
+           cd proj_dir
+           dir apexpy
            python -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
