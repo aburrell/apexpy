@@ -39,7 +39,7 @@ jobs:
       shell: bash -l {0}
       run: |
            cd ..
-	   pwd
+           pwd
            rename apexpy proj_dir
            cd proj_dir
            dir apexpy
