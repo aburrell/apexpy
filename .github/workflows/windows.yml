@@ -39,7 +39,8 @@ jobs:
       shell: bash -l {0}
       run: |
            cd ..
-           ren apexpy proj_dir
+	   pwd
+           rename apexpy proj_dir
            cd proj_dir
            dir apexpy
            python -m pytest --cov=apexpy
