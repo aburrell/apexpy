@@ -41,7 +41,7 @@ jobs:
            cd ..
            pwd
            dir .
-           move apexpy proj_dir
+           mv -f apexpy proj_dir
            dir .
            cd proj_dir
            dir apexpy
