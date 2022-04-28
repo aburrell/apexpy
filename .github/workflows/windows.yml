@@ -40,9 +40,9 @@ jobs:
       run: |
            cd ..
            pwd
-	   mkdir proj_dir
+           mkdir proj_dir
            mv -t apexpy proj_dir
-	   rmdir apexpy
+           rmdir apexpy
            cd proj_dir
            dir apexpy
            python -m pytest --cov=apexpy
