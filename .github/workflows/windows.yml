@@ -42,7 +42,6 @@ jobs:
            pwd
            mkdir proj_dir
            mv -t apexpy proj_dir
-           rmdir apexpy
            cd proj_dir
            dir apexpy
            python -m pytest --cov=apexpy
