@@ -40,7 +40,7 @@ jobs:
       run: |
            cd ..
            pwd
-           mv apexpy proj_dir
+           mv -t apexpy proj_dir
            cd proj_dir
            dir apexpy
            python -m pytest --cov=apexpy
