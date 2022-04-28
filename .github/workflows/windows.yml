@@ -40,8 +40,8 @@ jobs:
       run: |
            cd ..
            pwd
-           mkdir proj_dir
-           mv -t apexpy proj_dir
+           dir .
+           move apexpy proj_dir
            dir .
            cd proj_dir
            dir apexpy
