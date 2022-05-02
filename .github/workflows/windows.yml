@@ -41,7 +41,7 @@ jobs:
            cd ..
            pwd
            dir .
-           for i in {1..20}; do; mv -f apexpy proj_dir; if [ -d "proj_dir" ]; then break; fi; done
+           bash bash_test
            dir .
            cd proj_dir
            dir apexpy
