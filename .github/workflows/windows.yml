@@ -33,7 +33,7 @@ jobs:
 
     - name: Install on Windows
       shell: bash -l {0}
-      run: python setup.py config --compiler=mingw32 --fcompiler=gfortran install
+      run: python setup.py config --compiler=mingw32 --fcompiler=gnu95 install
 
     - name: Run unit and integration tests
       shell: bash -l {0}
@@ -41,7 +41,7 @@ jobs:
            cd ..
            pwd
            dir .
-           mv -f apexpy proj_dir
+           for i in {1..20}; do; mv -f apexpy proj_dir; if [ -d "proj_dir" ]; then break; fi; done
            dir .
            cd proj_dir
            dir apexpy
