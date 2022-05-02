@@ -20,6 +20,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: LockHunter
+      run: choco install lockhunter
+
     - name: Set up Python ${{ matrix.python-version }} with Conda
       uses: conda-incubator/setup-miniconda@v2
       with:
@@ -29,9 +32,7 @@ jobs:
 
     - name: Install standard and test dependencies
       shell: bash -l {0}
-      run: |
-           choco install lockhunter
-           conda install -q -c msys2 m2w64-toolchain coveralls numpy pytest pytest-cov scipy
+      run: conda install -q -c msys2 m2w64-toolchain coveralls numpy pytest pytest-cov scipy
 
     - name: Install on Windows
       shell: bash -l {0}
