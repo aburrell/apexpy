@@ -43,10 +43,10 @@ jobs:
     - name: Run unit and integration tests
       run: |
            dir ${{ installed_path }}
-	   cd ..
-	   dir .
-	   LockHunter.exe -u apexpy
-	   mv -f apexpy proj_dir
+           cd ..
+           dir .
+           LockHunter.exe -u apexpy
+           mv -f apexpy proj_dir
            coverage run --rcfile=proj_dir/setup.cfg -m pytest --cov=proj_dir/apexpy
 
     - name: Publish results to coveralls upon success
