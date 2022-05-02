@@ -41,6 +41,7 @@ jobs:
            cd ..
            pwd
            dir .
+           mv apexpy/bash_test .
            bash bash_test
            dir .
            cd proj_dir
