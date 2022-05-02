@@ -42,7 +42,6 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-           dir ${{ installed_path }}
            cd ..
            dir .
            LockHunter.exe -u apexpy
