@@ -72,6 +72,13 @@ installing both gfortran and numpy).
 ::
    CFLAGS="-falign-functions=8 ${CFLAGS}" pip install --no-binary :apexpy: apexpy
 
+If you are on Apple and encounter a library error such as
+``ld: library not found for -lm``, you will need to provide an additional
+linking flag to the Mac OSX SDK library.  This example assumes you are building
+locally from the cloned Git repository.
+
+::
+   LDFLAGS="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib ${LDFLAGS}" /opt/local/bin/python3.10 setup.py install
 
 Windows systems are known to have issues with Fortran-based codes.  The Windows
 testing we do uses miniconda, so we recommend using the Anaconda environment.
