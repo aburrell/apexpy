@@ -34,17 +34,16 @@ jobs:
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
 
     - name: Install on Windows
-      run: python setup.py install
+      run: python setup.py develop
 
     - name: Extend python path
       run: |
-           echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
+           echo "installed_path=$PWD\apexpy" >> $env:GITHUB_ENV
            echo "PYTHONPATH=${env:installed_path}" >> $env:GITHUB_ENV
 
     - name: Run unit and integration tests
       run: |
-           cd ../..
-           coverage run --rcfile=apexpy/apexpy/setup.cfg -m pytest --cov=apexpy/apexpy/apexpy
+           coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
       env:

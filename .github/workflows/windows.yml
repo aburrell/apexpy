@@ -18,7 +18,7 @@ jobs:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: LockHunter
       run: choco install lockhunter --ignore-checksums
@@ -42,11 +42,8 @@ jobs:
       shell: bash -l {0}
       run: |
            cd ..
-           pwd
-           dir .
-           LockHunter.exe /unlock /d/a/apexpy/apexpy
-           mv -f apexpy proj_dir
-           dir .
+           mkdir proj_dir
+           mv -f apexpy/* proj_dir/.
            cd proj_dir
            dir apexpy
            python -m pytest --cov=apexpy
