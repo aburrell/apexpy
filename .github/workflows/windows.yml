@@ -43,7 +43,7 @@ jobs:
       run: |
            mkdir proj_dir
            mv -f apexpy/* proj_dir/.
-           python -m pytest --cov=proj_dir
+           python -m pytest --cov=proj_dir --cov-config=setup.cfg
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
