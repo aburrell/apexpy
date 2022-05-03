@@ -43,7 +43,7 @@ jobs:
     - name: Run unit and integration tests
       run: |
            cd ..
-	   cd ..
+           cd ..
            dir .
            coverage run --rcfile=apexpy\apexpy\setup.cfg -m pytest --cov=apexpy\apexpy\apexpy
 
