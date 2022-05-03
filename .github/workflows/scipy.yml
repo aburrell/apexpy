@@ -44,7 +44,7 @@ jobs:
     - name: Run unit and integration tests
       run: |
            mkdir proj_dir
-           mv -f apexpy/* proj_dir/.
+           mv -Force apexpy/* proj_dir/.
            coverage run --rcfile=setup.cfg -m pytest --cov=proj_dir
 
     - name: Publish results to coveralls upon success
