@@ -28,7 +28,7 @@ jobs:
 
     - name: Install standard and test dependencies
       run: |
-           choco install rtools lockhunter --no-progress
+           choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
@@ -43,10 +43,9 @@ jobs:
     - name: Run unit and integration tests
       run: |
            cd ..
+	   cd ..
            dir .
-           LockHunter.exe -u apexpy
-           mv -f apexpy proj_dir
-           coverage run --rcfile=proj_dir/setup.cfg -m pytest --cov=proj_dir/apexpy
+           coverage run --rcfile=apexpy\apexpy\setup.cfg -m pytest --cov=apexpy\apexpy\apexpy
 
     - name: Publish results to coveralls upon success
       env:
