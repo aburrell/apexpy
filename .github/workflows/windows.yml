@@ -44,9 +44,7 @@ jobs:
            cd ..
            mkdir proj_dir
            mv -f apexpy/* proj_dir/.
-           cd proj_dir
-           dir apexpy
-           python -m pytest --cov=apexpy
+           python -m pytest --cov=proj_dir/apexpy
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
