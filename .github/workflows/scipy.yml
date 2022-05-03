@@ -34,7 +34,7 @@ jobs:
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
 
     - name: Install on Windows
-      run: python setup.py develop
+      run: python setup.py install
 
     - name: Extend python path
       run: |
@@ -43,8 +43,9 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-           dir apexpy
-           coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
+           mkdir proj_dir
+	   mv -f apexpy/* proj_dir/.
+           coverage run --rcfile=setup.cfg -m pytest --cov=proj_dir
 
     - name: Publish results to coveralls upon success
       env:
