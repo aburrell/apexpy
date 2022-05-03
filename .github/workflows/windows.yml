@@ -44,7 +44,7 @@ jobs:
            cd ..
            pwd
            dir .
-           LockHunter.exe /unlock apexpy
+           LockHunter.exe /unlock D:\a\apexpy\apexpy
            mv -f apexpy proj_dir
            dir .
            cd proj_dir
