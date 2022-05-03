@@ -41,10 +41,9 @@ jobs:
     - name: Run unit and integration tests
       shell: bash -l {0}
       run: |
-           cd ..
            mkdir proj_dir
            mv -f apexpy/* proj_dir/.
-           python -m pytest --cov=proj_dir/apexpy
+           python -m pytest --cov=proj_dir
 
     - name: Publish results to coveralls upon success
       shell: bash -l {0}
