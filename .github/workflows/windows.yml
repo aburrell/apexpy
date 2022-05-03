@@ -36,13 +36,11 @@ jobs:
 
     - name: Install on Windows
       shell: bash -l {0}
-      run: python setup.py config --compiler=mingw32 --fcompiler=gnu95 install
+      run: python setup.py config --compiler=mingw32 --fcompiler=gnu95 develop
 
     - name: Run unit and integration tests
       shell: bash -l {0}
       run: |
-           mkdir proj_dir
-           mv -f apexpy/* proj_dir/.
            coverage run -m pytest --cov=proj_dir --cov-config=setup.cfg 
 
     - name: Publish results to coveralls upon success
