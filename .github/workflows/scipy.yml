@@ -36,12 +36,15 @@ jobs:
     - name: Install on Windows
       run: python setup.py install
 
-    - name: build-path
+    - name: Extend python path
       run: |
            echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
+           echo "PYTHONPATH=${env:installed_path}" >> $env:GITHUB_ENV
 
     - name: Run unit and integration tests
-      run: coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
+      run: |
+           cd ../..
+           coverage run --rcfile=apexpy/apexpy/setup.cfg -m pytest --cov=apexpy/apexpy/apexpy
 
     - name: Publish results to coveralls upon success
       env:
