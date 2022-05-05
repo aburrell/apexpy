@@ -61,12 +61,12 @@ install:
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
   - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% pytest numpy libpython scipy'
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
-  - '%MINICONDA_HOME%\Scripts\conda install -q -c msys2 m2w64-toolchain'
+  - '%MINICONDA_HOME%\Scripts\conda install -q -c msys2 m2w64-toolchain build'
   - python -m pip install --upgrade pip
   - '%INSTALL_EXTRA_DEPS%'
   - python setup.py config_fc
   - python setup.py config --compiler=mingw32 --fcompiler=gnu95
-  - python setup.py build
+  - python -m build
   - python -m pip install -e .
 
 test_script:
