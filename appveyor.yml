@@ -59,14 +59,15 @@ install:
             throw "There are newer queued builds for this pull request, failing early." }
   - '%MINICONDA_HOME%\Scripts\conda config --set always_yes yes'
   - '%MINICONDA_HOME%\Scripts\conda update -q conda'
-  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% pytest numpy libpython'
+  - '%MINICONDA_HOME%\Scripts\conda create -q -p C:\pythontest python=%PYTHON_VERSION% pytest numpy libpython scipy'
   - '%MINICONDA_HOME%\Scripts\activate C:\pythontest'
   - '%MINICONDA_HOME%\Scripts\conda install -q -c msys2 m2w64-toolchain'
   - python -m pip install --upgrade pip
   - '%INSTALL_EXTRA_DEPS%'
   - python setup.py config_fc
-  - python setup.py config --compiler=mingw32 --fcompiler=gfortran
-  - python setup.py install
+  - python setup.py config --compiler=mingw32 --fcompiler=gnu95
+  - pwd
+  - python -m pip install C:\pythontest\apexpy
 
 test_script:
   - '%TESTSCRIPT%'
