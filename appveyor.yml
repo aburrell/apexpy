@@ -66,8 +66,8 @@ install:
   - '%INSTALL_EXTRA_DEPS%'
   - python setup.py config_fc
   - python setup.py config --compiler=mingw32 --fcompiler=gnu95
-  - pwd
-  - python -m pip install C:\projects\apexpy
+  - python setup.py build
+  - python -m pip install . -e
 
 test_script:
   - '%TESTSCRIPT%'
