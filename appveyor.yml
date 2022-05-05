@@ -67,7 +67,7 @@ install:
   - python -m pip install --upgrade pip
   - '%INSTALL_EXTRA_DEPS%'
   - python setup.py config_fc
-  - python setup.py config --compiler=mingw32 --fcompiler=gnu95
+  - python setup.py config --compiler=mingw32
   - python setup.py install
 
 test_script:
