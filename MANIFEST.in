@@ -2,7 +2,10 @@ graft docs
 graft fortranapex
 graft .github
 
-recursive-include *.rst
+recursive-include apexpy *.rst
+
+include *.rst
+include *.md
 include LICENSE
 include .zenodo.json
 include pyproject.toml
