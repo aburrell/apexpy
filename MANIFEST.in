@@ -2,7 +2,7 @@ graft docs
 graft fortranapex
 graft .github
 
-recursive-include apexpy *.rst
+recursive-include apexpy *.txt
 
 include *.rst
 include *.md
