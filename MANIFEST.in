@@ -2,14 +2,10 @@ graft docs
 graft fortranapex
 graft .github
 
-include AUTHORS.rst
-include CHANGELOG.rst
-include CONTRIBUTING.rst
+recursive-include *.rst
 include LICENSE
-include README.rst
-include CODE_OF_CONDUCT.md
 include .zenodo.json
-
-include .codeclimate.yml pyproject.toml
+include pyproject.toml
+include .codeclimate.yml *.yml
 
 global-exclude *.py[cod~] __pycache__ *.so *.dylib
