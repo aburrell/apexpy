@@ -69,6 +69,7 @@ install:
   - python setup.py config --compiler=mingw32 --fcompiler=gnu95
   - python -m build
   - python -m pip install -e .
+  - dir apexpy
 
 test_script:
   - '%TESTSCRIPT%'
