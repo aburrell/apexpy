@@ -42,11 +42,13 @@ jobs:
            $apexpy_path = "${env:installed_path}\apexpy"
            $libs_path = "${apexpy_path}\.libs"
            mkdir ${libs_path}
-           cp $apexpy_path/*.dll $libs_path
+           cp $apexpy_path/*.pyd $libs_path
+	   dumpbin /dependents $apexpy_path/*.pyd
 
     - name: Run unit and integration tests
       run: |
            dir apexpy
+	   dir $libs_path
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
