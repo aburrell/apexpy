@@ -2,7 +2,7 @@
 # variety of Python versions. For more information see:
 # https://help.github.com/actions/language-and-framework-guides/
 # using-python-with-github-actions
-name: pytest on Windows Scipy style
+name: pytest on Windows
 on: [push, pull_request]
 jobs:
   build:

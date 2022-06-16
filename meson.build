@@ -21,8 +21,6 @@ fc = meson.get_compiler('fortran')
 # Adding at project level causes many spurious -lgfortran flags.
 add_languages('fortran', native: false)
 
-cython = find_program('cython')
-pythran = find_program('pythran')
 copier = find_program(['cp', 'apexpy/_copyfiles.py'])
 
 # https://mesonbuild.com/Python-module.html
