@@ -42,8 +42,7 @@ jobs:
            $apexpy_path = "${env:installed_path}\apexpy"
            $libs_path = "${apexpy_path}\.libs"
            mkdir ${libs_path}
-           $ob_path = (pkg-config --variable libdir openblas) -replace "lib", "bin"
-           cp $ob_path/*.dll $libs_path
+           cp $apexpy_path/*.dll $libs_path
 
     - name: Run unit and integration tests
       run: |
