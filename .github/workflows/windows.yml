@@ -28,12 +28,12 @@ jobs:
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
-	   pip install meson ninja
+           pip install meson ninja
 
     - name: meson-configure
       run: |
            git submodule update --init --recursive
-	   meson build --prefix=$PWD\build
+           meson build --prefix=$PWD\build
 
     - name: meson-build
       run: ninja -j 2 -C build
@@ -41,19 +41,19 @@ jobs:
     - name: meson-install
       run: |
            cd build
-	   meson install
+           meson install
 
     - name: Extend python path
       run: |
            echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
            echo "PYTHONPATH=${env:installed_path}" >> $env:GITHUB_ENV
-	   $apexpy_path = "${env:installed_path}\apexpy"
-	   $libs_path = "${apexpy_path}\.libs"
-	   mkdir ${libs_path}
-	   $ob_path = (pkg-config --variable libdir openblas) -replace "lib", "bin"
-	   cp $ob_path/*.dll $libs_path
-	   # Write _distributor_init.py to apexpy dir to load .libs DLLs.
-	   & python tools\openblas_support.py --write-init $apexpy_path
+           $apexpy_path = "${env:installed_path}\apexpy"
+           $libs_path = "${apexpy_path}\.libs"
+           mkdir ${libs_path}
+           $ob_path = (pkg-config --variable libdir openblas) -replace "lib", "bin"
+           cp $ob_path/*.dll $libs_path
+           # Write _distributor_init.py to apexpy dir to load .libs DLLs.
+           & python tools\openblas_support.py --write-init $apexpy_path
 
     - name: Run unit and integration tests
       run: |
