@@ -43,7 +43,6 @@ jobs:
            $libs_path = "${apexpy_path}\.libs"
            mkdir ${libs_path}
            cp $apexpy_path/*.pyd $libs_path
-           dumpbin /dependents $apexpy_path/*.pyd
 
     - name: Run unit and integration tests
       run: |
