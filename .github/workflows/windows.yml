@@ -1,0 +1,69 @@
+# This workflow will install Python dependencies, run tests and lint with a
+# variety of Python versions. For more information see:
+# https://help.github.com/actions/language-and-framework-guides/
+# using-python-with-github-actions
+name: pytest on Windows Scipy style
+on: [push, pull_request]
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        python-version: ["3.7"]
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: 'x64'
+
+    - name: Install standard and test dependencies
+      run: |
+           choco install rtools --no-progress
+           echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
+           gfortran --version
+           pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
+	   pip install meson ninja
+
+    - name: meson-configure
+      run: |
+           git submodule update --init --recursive
+	   meson build --prefix=$PWD\build
+
+    - name: meson-build
+      run: ninja -j 2 -C build
+
+    - name: meson-install
+      run: |
+           cd build
+	   meson install
+
+    - name: Extend python path
+      run: |
+           echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
+           echo "PYTHONPATH=${env:installed_path}" >> $env:GITHUB_ENV
+	   $apexpy_path = "${env:installed_path}\apexpy"
+	   $libs_path = "${apexpy_path}\.libs"
+	   mkdir ${libs_path}
+	   $ob_path = (pkg-config --variable libdir openblas) -replace "lib", "bin"
+	   cp $ob_path/*.dll $libs_path
+	   # Write _distributor_init.py to apexpy dir to load .libs DLLs.
+	   & python tools\openblas_support.py --write-init $apexpy_path
+
+    - name: Run unit and integration tests
+      run: |
+           dir apexpy
+           coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
+
+    - name: Publish results to coveralls upon success
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+           coverage combine
+           coverage report -m
+           coveralls --rcfile=setup.cfg --service=github
