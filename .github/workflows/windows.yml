@@ -45,7 +45,7 @@ jobs:
       run: |
            dir apexpy
            echo "PYTHON: $PYTHONPATH"
-	   echo "CUR DIR: $PWD"
+           echo "CUR DIR: $PWD"
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
