@@ -40,14 +40,11 @@ jobs:
            echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
            echo "PYTHONPATH=${env:installed_path}" >> $env:GITHUB_ENV
            $apexpy_path = "${env:installed_path}\apexpy"
-           $libs_path = "${env:apexpy_path}\.libs"
-           mkdir ${env:libs_path}
-           cp ${env:apexpy_path}\*.pyd ${env:libs_path}\.
 
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           dir ${env:libs_path}
+           dir $env:PYTHONPATH
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
