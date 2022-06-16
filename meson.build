@@ -12,8 +12,6 @@ project(
     'c_args=-Wno-unused-function -Wno-conversion -Wno-misleading-indentation -Wno-incompatible-pointer-types',
     'fortran_args=-Wno-conversion',
     'fortran_std=legacy',
-    'blas=openblas',
-    'lapack=openblas'
   ],
 )
 
