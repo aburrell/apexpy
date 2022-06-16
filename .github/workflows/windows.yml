@@ -44,7 +44,8 @@ jobs:
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           dir $env:PYTHONPATH
+           echo "PYTHON: $PYTHONPATH"
+	   echo "CUR DIR: $PWD"
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
