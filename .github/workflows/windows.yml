@@ -36,12 +36,12 @@ jobs:
            python -m pip install -e .
 
     - name: Soft link installed directory to main site packages
-      run: ln -s apexpy $pythonLocation\lib\python${{ matrix.python-version }}\site-packages\.
+      run: ln -s apexpy ${{ pythonLocation }}\lib\python${{ matrix.python-version }}\site-packages\.
 
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           dir $pythonLocation\lib\python${{ matrix.python-version }}\site-packages
+           dir ${{ pythonLocation }}\lib\python${{ matrix.python-version }}\site-packages
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
