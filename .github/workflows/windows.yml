@@ -35,19 +35,13 @@ jobs:
            python -m build
            python -m pip install -e .
 
-    - name: Extend python path
-      run: |
-           echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
-           echo "PYTHONPATH=${env:installed_path}" >> $env:GITHUB_ENV
-           $apexpy_path = "${env:installed_path}\apexpy"
+    - name: Soft link installed directory to main site packages
+      run: ln -s apexpy $pythonLocation\lib\python${{ matrix.python-version }}\site-packages\.
 
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           echo "PYTHON LOC: $env.pythonLocation"
-           echo "CUR DIR: $PWD"
-           echo $env:GITHUB_ENV
-           echo $env.apexpy_path
+           dir $pythonLocation\lib\python${{ matrix.python-version }}\site-packages
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
