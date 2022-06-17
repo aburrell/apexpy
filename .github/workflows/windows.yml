@@ -32,9 +32,9 @@ jobs:
 
     - name: meson install
       run: |
-           meson compile -C builddir
-           meson setup builddir
-           cd builddir
+      	   meson build --prefix=$PWD\build
+           meson compile -C build
+           cd build
            meson install
 
     - name: Extend python path
