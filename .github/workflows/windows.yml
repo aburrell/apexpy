@@ -46,8 +46,8 @@ jobs:
            dir apexpy
            echo "PYTHON LOC: $env.pythonLocation"
            echo "CUR DIR: $PWD"
-	   echo $env:GITHUB_ENV
-	   echo $env.apexpy_path
+           echo $env:GITHUB_ENV
+           echo $env.apexpy_path
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
