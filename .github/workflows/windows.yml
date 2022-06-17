@@ -39,7 +39,7 @@ jobs:
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           dir C:\hostedtoolcache\windows\Python\lib\python${{ matrix.python-version }}\site-packages
+           dir c:\hostedtoolcache\windows\python\3.7.9\x64\lib\site-packages
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
