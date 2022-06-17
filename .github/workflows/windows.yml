@@ -32,7 +32,7 @@ jobs:
 
     - name: meson install
       run: |
-      	   meson build --prefix=$PWD\build
+           meson build --prefix=$PWD\build
            meson compile -C build
            cd build
            meson install
