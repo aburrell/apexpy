@@ -33,15 +33,13 @@ jobs:
       run: |
            python setup.py config --fcompiler=gnu95
            python -m build
-           python -m pip install -e .
-
-    - name: Soft link installed directory to main site packages
-      run: ln -s apexpy ${{ pythonLocation }}\lib\python${{ matrix.python-version }}\site-packages\.
+           python -m pip install -e .  # Install locally
+           python setup.py install  # Install at the package level
 
     - name: Run unit and integration tests
       run: |
            dir apexpy
-           dir ${{ pythonLocation }}\lib\python${{ matrix.python-version }}\site-packages
+           dir C:\hostedtoolcache\windows\Python\lib\python${{ matrix.python-version }}\site-packages
            coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
 
     - name: Publish results to coveralls upon success
