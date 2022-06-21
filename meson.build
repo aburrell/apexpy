@@ -62,17 +62,20 @@ if is_windows
   # For mingw-w64, link statically against the UCRT.
   gcc_link_args = ['-lucrt', '-static']
   if is_mingw
-    add_global_link_arguments(gcc_link_args, language: ['c', 'cpp'])
+    add_global_link_arguments(gcc_link_args, language: ['c'])
+
     # Force gcc to float64 long doubles for compatibility with MSVC
     # builds, for C only.
     add_global_arguments('-mlong-double-64', language: 'c')
+
     # Make fprintf("%zd") work (see https://github.com/rgommers/scipy/issues/118)
-    add_global_arguments('-D__USE_MINGW_ANSI_STDIO=1', language: ['c', 'cpp'])
+    add_global_arguments('-D__USE_MINGW_ANSI_STDIO=1', language: ['c'])
+
     # Manual add of MS_WIN64 macro when not using MSVC.
     # https://bugs.python.org/issue28267
-    bitness = run_command('_build_utils/gcc_build_bitness.py').stdout().strip()
+    bitness = run_command('apexpy/_gcc_build_bitness.py').stdout().strip()
     if bitness == '64'
-      add_global_arguments('-DMS_WIN64', language: ['c', 'cpp', 'fortran'])
+      add_global_arguments('-DMS_WIN64', language: ['c', 'fortran'])
     endif
     # Silence warnings emitted by PyOS_snprintf for (%zd), see
     # https://github.com/rgommers/scipy/issues/118.
