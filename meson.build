@@ -29,7 +29,7 @@ if m_dep.found()
 endif
 
 # Add more link arguments
-add_project_link_arguments('-llapack -lblas -lpthread -lgfortran -lboost_system -lboost_filesystem -lquadmath')
+add_project_link_arguments('-llapack -lblas -lpthread -lgfortran -lboost_system -lboost_filesystem -lquadmath', language: 'c')
 
 # Adding at project level causes many spurious -lgfortran flags.
 add_languages('fortran', native: false)
