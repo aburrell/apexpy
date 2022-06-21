@@ -1,4 +1,4 @@
-project( 'apexpy', 'fortran', 'c',
+project( 'apexpy', 'fortran', 'c', 'cpp',
   # Note that the git commit hash cannot be added dynamically here
   version: '1.1.0',
   license: 'MIT',
@@ -15,6 +15,7 @@ project( 'apexpy', 'fortran', 'c',
 
 fc = meson.get_compiler('fortran')
 cc = meson.get_compiler('c')
+cc = meson.get_compiler('cpp')
 
 # This argument is called -Wno-unused-but-set-variable by GCC, however Clang
 # doesn't recognize that.
@@ -73,20 +74,20 @@ if is_windows
   # For mingw-w64, link statically against the UCRT.
   gcc_link_args = ['-lucrt', '-static']
   if is_mingw
-    add_global_link_arguments(gcc_link_args, language: ['c'])
+    add_global_link_arguments(gcc_link_args, language: ['c', 'cpp'])
 
     # Force gcc to float64 long doubles for compatibility with MSVC
     # builds, for C only.
     add_global_arguments('-mlong-double-64', language: 'c')
 
     # Make fprintf("%zd") work (see https://github.com/rgommers/scipy/issues/118)
-    add_global_arguments('-D__USE_MINGW_ANSI_STDIO=1', language: ['c'])
+    add_global_arguments('-D__USE_MINGW_ANSI_STDIO=1', language: ['c', 'cpp'])
 
     # Manual add of MS_WIN64 macro when not using MSVC.
     # https://bugs.python.org/issue28267
     bitness = run_command('apexpy/_gcc_build_bitness.py').stdout().strip()
     if bitness == '64'
-      add_global_arguments('-DMS_WIN64', language: ['c', 'fortran'])
+      add_global_arguments('-DMS_WIN64', language: ['c', 'cpp', 'fortran'])
     endif
 
     # Silence warnings emitted by PyOS_snprintf for (%zd), see
