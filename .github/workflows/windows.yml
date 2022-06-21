@@ -30,6 +30,9 @@ jobs:
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
            pip install meson ninja
 
+    - name: show gfortran
+      run: gfortran --version
+
     - name: meson build
       run: |
            git submodule update --init --recursive

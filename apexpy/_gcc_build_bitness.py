@@ -8,6 +8,7 @@ From SciPy v1.10.0.dev0
 import re
 from subprocess import run, PIPE
 
+
 def main():
     res = run(['gcc', '-v'], check=True, text=True,
               stdout=PIPE, stderr=PIPE)
