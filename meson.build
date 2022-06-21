@@ -31,6 +31,7 @@ endif
 
 # Add more link arguments
 add_project_link_arguments('-lquadmath', language: ['c', 'fortran'])
+add_project_link_arguments('-lpython', language: ['c', 'fortran'])
 
 # Adding at project level causes many spurious -lgfortran flags.
 add_languages('fortran', native: false)
