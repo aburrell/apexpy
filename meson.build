@@ -29,7 +29,7 @@ if m_dep.found()
 endif
 
 # Add more link arguments
-add_project_link_arguments('-lquadmath', language: 'c')
+add_project_link_arguments('-lquadmath', language: ['c', 'fortran'])
 
 # Adding at project level causes many spurious -lgfortran flags.
 add_languages('fortran', native: false)
@@ -77,6 +77,7 @@ if is_windows
     if bitness == '64'
       add_global_arguments('-DMS_WIN64', language: ['c', 'fortran'])
     endif
+
     # Silence warnings emitted by PyOS_snprintf for (%zd), see
     # https://github.com/rgommers/scipy/issues/118.
     # Use as c_args for extensions containing Cython code
@@ -84,6 +85,7 @@ if is_windows
   endif
   if meson.get_compiler('fortran').get_id() == 'gcc'
     add_global_link_arguments(gcc_link_args, language: ['fortran'])
+
     # Flag needed to work around BLAS and LAPACK Gfortran dependence on
     # undocumented C feature when passing single character string
     # arguments.

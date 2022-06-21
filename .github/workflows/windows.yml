@@ -30,12 +30,15 @@ jobs:
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
            pip install meson ninja
 
-    - name: meson compile
-      run: |
-           meson build --prefix=$PWD\build
-           meson compile -C build
-
     - name: meson build
+      run: |
+           git submodule update --init --recursive
+           meson build --prefix=$PWD\build
+
+    - name: meson compile
+      run: ninja -j 2 -C build
+
+    - name: meson install
       run: |
            cd build
            meson install
