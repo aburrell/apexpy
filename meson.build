@@ -8,7 +8,7 @@ project( 'apexpy', 'fortran', 'c',
     # TODO: the below -Wno flags are all needed to silence warnings in
     # f2py-generated code. This should be fixed in f2py itself.
     'c_args=-Wno-unused-function -Wno-conversion -Wno-misleading-indentation -Wno-incompatible-pointer-types',
-    'fortran_args=-Wno-conversion',
+    'fortran_args=-Wno-conversion',  # silence "conversion from REAL(8) to INTEGER(4)"
     'fortran_std=legacy',
   ],
 )
@@ -52,6 +52,17 @@ incdir_f2py = run_command(py3,
 ).stdout().strip()
 
 inc_dirs = include_directories(incdir_numpy, incdir_f2py)
+fortranobject_c = incdir_f2py / 'fortranobject.c'
+
+# Don't use the deprecated NumPy C API. Define this to a fixed version instead of
+# NPY_API_VERSION in order not to break compilation for released SciPy versions
+# when NumPy introduces a new deprecation. Use in a meson.build file::
+#
+#   py3.extension_module('_name',
+#     'source_fname',
+#     numpy_nodepr_api)
+#
+numpy_nodepr_api = '-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION'
 
 # Platform detection to set more flags for Windows systems
 is_windows = host_machine.system() == 'windows'
@@ -101,5 +112,6 @@ py3.extension_module('apexpy.fortranapex',
   'fortranapex/igrf.f90', 'fortranapex/apexsh.f90',
   'fortranapex/checkapexsh.f90', 'fortranapex/fortranapexmodule.c',
   include_directories: inc_dirs,
+  c_args: numpy_nodepr_api,
   dependencies : py3_dep,
   install : true)
