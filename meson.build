@@ -31,7 +31,6 @@ endif
 
 # Add more link arguments
 add_project_link_arguments('-lquadmath', language: ['c', 'fortran'])
-add_project_link_arguments('-lpython', language: ['c', 'fortran'])
 
 # Adding at project level causes many spurious -lgfortran flags.
 add_languages('fortran', native: false)
@@ -53,8 +52,12 @@ incdir_f2py = run_command(py3,
   check : true
 ).stdout().strip()
 
-inc_dirs = include_directories(incdir_numpy, incdir_f2py)
-fortranobject_c = incdir_f2py / 'fortranobject.c'
+incdir_python = runcommand(py3,
+  ['-c', 'import os; os.chdir(".."); import sys; print(os.path.join(sys.prefix, "Headers"))'],
+  check : true
+).stdout().strip()
+
+inc_dirs = include_directories([incdir_numpy, incdir_f2py, incdir_python])
 
 # Don't use the deprecated NumPy C API. Define this to a fixed version instead of
 # NPY_API_VERSION in order not to break compilation for released SciPy versions
