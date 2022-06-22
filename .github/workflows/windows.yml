@@ -29,7 +29,7 @@ jobs:
            gfortran --version
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
            pip install meson ninja python-dev-tools
-	   dir "\*Python.h" /s
+           dir "\*Python.h" /s
 
     - name: meson build
       run: |
