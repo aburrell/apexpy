@@ -1,6 +1,7 @@
 [build-system]
 build-backend = 'mesonpy'
-requires = ["meson-python>=0.5.0", "wheel", "Cython", "numpy", "setuptools"]
+requires = ["meson-python>=0.5.0", "wheel", "Cython", "numpy", "setuptools",
+            "python-dev-tools"]
 
 [project]
 name = "apexpy"
