@@ -52,6 +52,7 @@ incdir_f2py = run_command(py3,
   check : true
 ).stdout().strip()
 
+inc_dirs = include_directories(incdir_numpy, incdir_f2py)
 
 # Don't use the deprecated NumPy C API. Define this to a fixed version instead of
 # NPY_API_VERSION in order not to break compilation for released SciPy versions
@@ -100,8 +101,6 @@ if is_windows
       ['-c', 'import os; os.chdir(".."); import sys; print(os.path.join(sys.prefix, "include"))'],
       check : true).stdout().strip()
     inc_dirs = include_directories(incdir_numpy, incdir_f2py, incdir_py)
-  else
-    inc_dirs = include_directories(incdir_numpy, incdir_f2py)
   endif
 
   if meson.get_compiler('fortran').get_id() == 'gcc'
