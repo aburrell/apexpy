@@ -52,11 +52,6 @@ incdir_f2py = run_command(py3,
   check : true
 ).stdout().strip()
 
-incdir_python = run_command(py3,
-  ['-c', 'import os; os.chdir(".."); import sys; print(os.path.join(sys.prefix, "Headers"))'],
-  check : true
-).stdout().strip()
-
 inc_dirs = include_directories([incdir_numpy, incdir_f2py, incdir_python])
 
 # Don't use the deprecated NumPy C API. Define this to a fixed version instead of
