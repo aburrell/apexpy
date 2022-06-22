@@ -99,9 +99,9 @@ if is_windows
     incdir_py = run_command(py3,
       ['-c', 'import os; os.chdir(".."); import sys; print(os.path.join(sys.prefix, "include"))'],
       check : true).stdout().strip()
-    inc_dirs = include_directories([incdir_numpy, incdir_f2py, incdir_py])
+    inc_dirs = include_directories(incdir_numpy, incdir_f2py, incdir_py)
   else
-    inc_dirs = include_directories([incdir_numpy, incdir_f2py])
+    inc_dirs = include_directories(incdir_numpy, incdir_f2py)
   endif
 
   if meson.get_compiler('fortran').get_id() == 'gcc'
