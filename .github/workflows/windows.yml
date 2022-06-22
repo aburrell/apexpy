@@ -29,7 +29,7 @@ jobs:
            gfortran --version
            choco install mingw
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
-           pip install meson ninja
+           pip install meson ninja python-dev-tools
 
     - name: meson build
       run: |
