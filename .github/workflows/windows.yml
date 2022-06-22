@@ -28,12 +28,9 @@ jobs:
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
-           pip install meson ninja python-dev-tools
+           pip install meson ninja
            cd ${{ env.pythonLocation }}
-           dir
            dir include
-           dir DDLs
-           dir Lib
 
     - name: meson build
       run: |
