@@ -52,7 +52,7 @@ incdir_f2py = run_command(py3,
   check : true
 ).stdout().strip()
 
-incdir_python = runcommand(py3,
+incdir_python = run_command(py3,
   ['-c', 'import os; os.chdir(".."); import sys; print(os.path.join(sys.prefix, "Headers"))'],
   check : true
 ).stdout().strip()
