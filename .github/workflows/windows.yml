@@ -30,7 +30,7 @@ jobs:
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
            pip install meson ninja python-dev-tools
            cd ${{ env.pythonLocation }}
-           dir "/*Python.h" \s
+           dir
 
     - name: meson build
       run: |
