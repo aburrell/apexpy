@@ -52,7 +52,6 @@ incdir_f2py = run_command(py3,
   check : true
 ).stdout().strip()
 
-inc_dirs = include_directories([incdir_numpy, incdir_f2py])
 
 # Don't use the deprecated NumPy C API. Define this to a fixed version instead of
 # NPY_API_VERSION in order not to break compilation for released SciPy versions
@@ -93,7 +92,20 @@ if is_windows
     # https://github.com/rgommers/scipy/issues/118.
     # Use as c_args for extensions containing Cython code
     cython_c_args += ['-Wno-format-extra-args', '-Wno-format']
+
+    # Windows may need the directory for Python.h added.  This location
+    # does not have the same name for all installs.  This is the one
+    # for Windows on GitHub actions
+    incdir_py = run_command(py3,
+      ['-c', 'import os; os.chdir(".."); import sys;
+       print(os.path.join(sys.prefix, "include"))'],
+      check : true
+    ).stdout().strip()
+    inc_dirs = include_directories([incdir_numpy, incdir_f2py, incdir_py])
+  else
+    inc_dirs = include_directories([incdir_numpy, incdir_f2py])
   endif
+
   if meson.get_compiler('fortran').get_id() == 'gcc'
     add_global_link_arguments(gcc_link_args, language: ['fortran'])
 
