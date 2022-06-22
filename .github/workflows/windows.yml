@@ -31,6 +31,9 @@ jobs:
            pip install meson ninja python-dev-tools
            cd ${{ env.pythonLocation }}
            dir
+	   dir include
+	   dir DDLs
+	   dir Lib
 
     - name: meson build
       run: |
