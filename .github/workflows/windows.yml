@@ -27,9 +27,9 @@ jobs:
            choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
-           choco install mingw
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
            pip install meson ninja python-dev-tools
+	   dir "\*Python.h" /s
 
     - name: meson build
       run: |
