@@ -33,7 +33,7 @@ jobs:
       run: |
            conda install -q -c msys2 m2w64-toolchain numpy pytest pytest-cov pytest-xdist coveralls scipy
            conda install anaconda pip
-	   pip install meson>=0.60
+           pip install meson>=0.60
 
     #- name: Install standard and test dependencies
     #  shell: bash -l {0}
