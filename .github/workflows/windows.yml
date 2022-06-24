@@ -24,11 +24,12 @@ jobs:
 
     - name: Install standard and test dependencies
       run: |
+           choco install ninja mingw
            choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
            pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
-           pip install meson ninja
+           pip install meson
 
     - name: meson build
       run: |
