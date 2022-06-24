@@ -30,7 +30,7 @@ jobs:
 
     - name: Install standard and test dependencies
       shell: bash -l {0}
-      run: conda install -q -c msys2 m2w64-toolchain numpy pytest pytest-cov pytest-xdist coveralls scipy meson
+      run: conda install -q -c msys2 m2w64-toolchain numpy pytest pytest-cov pytest-xdist coveralls scipy meson>=0.60
 
     #- name: Install standard and test dependencies
     #  shell: bash -l {0}
