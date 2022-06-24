@@ -71,7 +71,7 @@ is_mingw = is_windows and cc.get_id() == 'gcc'
 cython_c_args = []
 if is_windows
   # Get the python dependency, https://github.com/mesonbuild/meson/issues/4117
-  python_ext_dep = python.dependency()
+  python_ext_dep = py3.dependency()
 
   # For mingw-w64, link statically against the UCRT.
   gcc_link_args = ['-lucrt', '-static']
@@ -118,7 +118,7 @@ if is_windows
       language: ['fortran'])
   endif
 else
-  python_ext_dep = python.dependency().partial_dependency(compile_args: true)
+  python_ext_dep = py3.dependency().partial_dependency(compile_args: true)
 endif
 
 # Check the python headers
