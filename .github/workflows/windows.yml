@@ -34,7 +34,7 @@ jobs:
     - name: meson build
       run: |
            git submodule update --init --recursive
-           meson build --prefix=$PWD\build --backend=vs
+           meson build --prefix=$PWD\build
 
     - name: meson compile
       run: ninja -j 2 -C build
