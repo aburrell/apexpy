@@ -16,35 +16,50 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+    #- name: Set up Python ${{ matrix.python-version }}
+    #  uses: actions/setup-python@v4
+    #  with:
+    #    python-version: ${{ matrix.python-version }}
+    #    architecture: 'x64'
+    - name: Set up Python ${{ matrix.python-version }} with Conda
+    - uses: conda-incubator/setup-miniconda@v2
       with:
+        activate-environment: test
         python-version: ${{ matrix.python-version }}
-        architecture: 'x64'
+        auto-activate-base: false
 
     - name: Install standard and test dependencies
-      run: |
-           choco install ninja mingw
-           choco install rtools --no-progress
-           echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
-           gfortran --version
-           pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
-           pip install meson
+      shell: bash -l {0}
+      run: conda install -q -c msys2 m2w64-toolchain numpy pytest pytest-cov pytest-xdist coveralls scipy
+
+    #- name: Install standard and test dependencies
+    #  shell: bash -l {0}
+    #  run: |
+    #       choco install ninja mingw
+    #       #choco install rtools --no-progress
+    #       #echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
+    #       gfortran --version
+    #       pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
+    #       pip install meson
 
     - name: meson build
+      shell: bash -l {0}
       run: |
            git submodule update --init --recursive
            meson build --prefix=$PWD\build
 
     - name: meson compile
+      shell: bash -l {0}
       run: ninja -j 2 -C build
 
     - name: meson install
+      shell: bash -l {0}
       run: |
            cd build
            meson install
 
     - name: Extend python path
+      shell: bash -l {0}
       run: |
            echo "installed_path=$PWD\build\Lib\site-packages" >> $env:GITHUB_ENV
            echo "PYTHONPATH=${env:installed_path}" >> $env:GITHUB_ENV
@@ -57,6 +72,7 @@ jobs:
            & python tools\openblas_support.py --write-init $apexpy_path
 
     - name: Run unit and integration tests
+      shell: bash -l {0}
       run: |
            dir apexpy
            dir c:\hostedtoolcache\windows\python\3.7.9\x64\lib\site-packages
@@ -66,6 +82,7 @@ jobs:
     - name: Publish results to coveralls upon success
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash -l {0}
       run: |
            coverage combine
            coverage report -m
