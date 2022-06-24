@@ -70,6 +70,9 @@ is_mingw = is_windows and cc.get_id() == 'gcc'
 
 cython_c_args = []
 if is_windows
+  # Get the python dependency, https://github.com/mesonbuild/meson/issues/4117
+  python_ext_dep = python.dependency()
+
   # For mingw-w64, link statically against the UCRT.
   gcc_link_args = ['-lucrt', '-static']
   if is_mingw
@@ -114,7 +117,12 @@ if is_windows
     add_global_arguments('-fno-optimize-sibling-calls',
       language: ['fortran'])
   endif
+else
+  python_ext_dep = python.dependency().partial_dependency(compile_args: true)
 endif
+
+# Check the python headers
+cc.check_header('Python.h', dependencies: [python_ext_dep], required: true)
 
 py3.extension_module('apexpy.fortranapex',
   'fortranapex/magfld.f', 'fortranapex/apex.f', 'fortranapex/makeapexsh.f90',
