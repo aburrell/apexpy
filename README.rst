@@ -60,7 +60,7 @@ in the full documentation.
 Documentation
 =============
 
-https://apexpy.readthedocs.org/
+https://apexpy.readthedocs.org/latest/
 
 References
 ==========
@@ -100,7 +100,7 @@ Badges
     :alt: GitHub Actions Build Status
     :target: https://github.com/aburrell/apexpy/actions/workflows/main.yml
 
-.. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=main
+.. |coveralls| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_98.svg
     :alt: Coverage Status
     :target: https://coveralls.io/github/aburrell/apexpy?branch=main
 
@@ -114,7 +114,7 @@ Badges
 
 .. |version| image:: https://img.shields.io/pypi/v/apexpy.svg?style=flat
     :alt: PyPI Package latest release
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy/
 
 .. |downloads| image:: https://img.shields.io/pypi/dm/apexpy.svg?style=flat
     :alt: PyPI Package monthly downloads
@@ -132,7 +132,7 @@ Badges
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/apexpy
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/aburrell/apexpy/main.svg?style=flat
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/quality/g/aburrell/apexpy/main.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
 

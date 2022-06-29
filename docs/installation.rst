@@ -4,7 +4,7 @@ Installation
 ============
 
 This package requires NumPy, which you can install alone or as a part of SciPy.
-`Some Python distributions <https://www.scipy.org/install.html>`_
+`Some Python distributions <https://www.scipy.org/install/>`_
 come with NumPy/SciPy pre-installed. For Python distributions without
 NumPy/SciPy, Windows/Mac users should install
 `NumPy/SciPy <https://scipy.github.io/devdocs/getting_started.html>`_.
