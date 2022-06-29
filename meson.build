@@ -64,20 +64,6 @@ incdir_f2py = run_command(py3,
 
 inc_dirs = include_directories(incdir_numpy, incdir_f2py)
 
-# Unlike distutils, meson doesn't yet include some of the f2py stuff
-fortranobject_c = incdir_f2py / 'fortranobject.c'
-
-fortranobject_lib = static_library('_fortranobject',
-  fortranobject_c,
-  c_args: numpy_nodepr_api,
-  dependencies: py3_dep,
-  include_directories: [incdir_numpy, incdir_f2py],
-)
-fortranobject_dep = declare_dependency(
-  link_with: fortranobject_lib,
-  include_directories: [incdir_numpy, incdir_f2py],
-)
-
 # Don't use the deprecated NumPy C API. Define this to a fixed version instead of
 # NPY_API_VERSION in order not to break compilation for released SciPy versions
 # when NumPy introduces a new deprecation. Use in a meson.build file::
@@ -142,6 +128,20 @@ endif
 
 # Check the python headers
 cc.check_header('Python.h', dependencies: [py3_dep], required: true)
+
+# Unlike distutils, meson doesn't yet include some of the f2py stuff
+fortranobject_c = incdir_f2py / 'fortranobject.c'
+
+fortranobject_lib = static_library('_fortranobject',
+  fortranobject_c,
+  c_args: numpy_nodepr_api,
+  dependencies: py3_dep,
+  include_directories: [incdir_numpy, incdir_f2py],
+)
+fortranobject_dep = declare_dependency(
+  link_with: fortranobject_lib,
+  include_directories: [incdir_numpy, incdir_f2py],
+)
 
 py3.extension_module('fortranapex',
   'fortranapex/magfld.f', 'fortranapex/apex.f', 'fortranapex/makeapexsh.f90',
