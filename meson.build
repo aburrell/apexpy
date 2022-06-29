@@ -71,11 +71,11 @@ fortranobject_lib = static_library('_fortranobject',
   fortranobject_c,
   c_args: numpy_nodepr_api,
   dependencies: py3_dep,
-  include_directories: [inc_np, inc_f2py],
+  include_directories: [incdir_numpy, incdir_f2py],
 )
 fortranobject_dep = declare_dependency(
   link_with: fortranobject_lib,
-  include_directories: [inc_np, inc_f2py],
+  include_directories: [incdir_numpy, incdir_f2py],
 )
 
 # Don't use the deprecated NumPy C API. Define this to a fixed version instead of
