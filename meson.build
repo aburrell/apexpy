@@ -17,6 +17,16 @@ fc = meson.get_compiler('fortran')
 cc = meson.get_compiler('c')
 cc = meson.get_compiler('cpp')
 
+# Don't use the deprecated NumPy C API. Define this to a fixed version instead
+# of NPY_API_VERSION in order not to break compilation for released versions
+# when NumPy introduces a new deprecation. Use in a meson.build file::
+#
+#   py3.extension_module('_name',
+#     'source_fname',
+#     numpy_nodepr_api)
+#
+numpy_nodepr_api = '-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION'
+
 # This argument is called -Wno-unused-but-set-variable by GCC, however Clang
 # doesn't recognize that.
 if cc.has_argument('-Wno-unused-but-set-variable')
