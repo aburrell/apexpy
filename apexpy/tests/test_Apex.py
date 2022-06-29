@@ -39,7 +39,7 @@ def igrf_file(max_attempts=100):
     assert os.path.isfile(original_file)
 
     # Move the coefficient file
-    for retry in range(max_attempts):
+    for _ in range(max_attempts):
         try:
             shutil.move(original_file, tmp_file)
             break
@@ -48,7 +48,7 @@ def igrf_file(max_attempts=100):
     yield original_file
 
     # Move the coefficient file back
-    for retry in range(max_attempts):
+    for _ in range(max_attempts):
         try:
             shutil.move(tmp_file, original_file)
             break
