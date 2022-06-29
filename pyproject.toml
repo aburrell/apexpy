@@ -7,7 +7,6 @@ requires = ["meson-python>=0.5.0", "wheel", "Cython", "numpy", "setuptools",
 name = "apexpy"
 license = {file = "LICENSE"}
 description = "A Python wrapper for Apex coordinates"
-author = "Crister van der Meeren, et al."
 maintainers = [
     {name = "Angeline G. Burrell", email = "angeline.burrell@nrl.navy.mil"},
 ]
