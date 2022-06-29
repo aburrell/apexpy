@@ -60,7 +60,7 @@ in the full documentation.
 Documentation
 =============
 
-https://apexpy.readthedocs.org/latest/
+https://apexpy.readthedocs.io/en/latest
 
 References
 ==========
