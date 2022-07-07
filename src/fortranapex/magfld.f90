@@ -169,7 +169,8 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
 
   integer(4)         :: ienty, ientyp, ih, ihm, ihmax, il, ilm, imax
   integer(4)         :: is, k, last, m, mk, i
-  real(8)            :: glat, glon, alt, bnrth, beast, bdown, babs
+  real(8), intent(in)    :: glat, glon, alt
+  real(8), intent(out)   :: bnrth, beast, bdown, babs
   real(8)            :: brho, bxxx, byyy, bzzz, cp, sp, ct, st, f
   real(8)            :: rlat, rlon, rq, s, t, x, xxx, y, yyy, z, zzz
 
