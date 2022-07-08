@@ -115,7 +115,7 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
 
   real(8)               :: gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f
   real(8)               :: bnrth, beast, bdown, babs
-  real(8)               :: cgml2, gclat, gcml2, ht, r, rho
+  real(8)               :: cgml2, gclat, ht, r, rho
   real(8)               :: singml, xlat, xlon
   integer(4)            :: i, j, iapx
   integer(4), parameter :: maxs = 200
@@ -369,7 +369,7 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
 
   real(8)        :: gdlat, gdlon, alt, bnorth, beast, bdown, a, alon
   real(8)        :: ang, bhor, ca, cang, capang, cb, cottd, ctd, cte, ctg
-  real(8)        :: ha, r, sa, sang, sapabg, sb, std, ste, stfcpa, stg, sapang, stfspa
+  real(8)        :: ha, r, sa, sang, sb, std, ste, stfcpa, stg, sapang, stfspa
 
   ! real, parameter :: rtod = 57.2957795130823, re = 6371.0088, &
   !                    dtor = .01745329251994330, req = 6378.137
