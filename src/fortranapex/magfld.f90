@@ -88,7 +88,7 @@ subroutine cofrm(date,filename)
     enddo
 
     ngh = nght*nepo
-    nmax1 = nmxe(iy)
+    nmax1 = int(nmxe(iy))
     ! time = date
     t = date-epoch(iy)
     to5 = t/5.
