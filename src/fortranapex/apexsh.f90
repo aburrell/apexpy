@@ -312,7 +312,7 @@ subroutine apxg2q(glat,glon,alt,vecflagin,qlatout,qlonout,f1,f2,f)
     real(4), intent(out)        :: qlatout, qlonout
     real(4), intent(out)        :: f1(1:2), f2(1:2), f
 
-    integer(4)               :: i, l, iterm, itermsh
+    integer(4)               :: l, iterm, itermsh
     real(8)                  :: theta, phi
     real(8)                  :: costheta, Jtemp, J, r
 
@@ -521,7 +521,7 @@ subroutine apxq2g(qlat0,qlon0,alt,prec,glatout,glonout,error)
 
     integer(4)               :: l, iterm, itermsh, vecflagin, niter
     real(4)                  :: qlatout, qlonout, errorlast
-    real(4)                  :: mlon, f1(1:2), f2(1:2), f
+    real(4)                  :: f1(1:2), f2(1:2), f
     real(8)                  :: theta, phi
     real(8)                  :: sinqlon0, cosqlon0, sinqlat0, cosqlat0, cotqlat0, zfact
     real(8)                  :: glat, glon
