@@ -29,8 +29,7 @@ contains
     character(len=*),intent(in) :: filename_in
 
     character(len=10000) :: s
-    character(len=100)     :: junk
-    integer   :: state, i, offset, pos,o
+    integer   :: state, i, offset, pos
     integer   :: num_sh, L_max
     integer   :: num_epochs
     integer   :: l,m,e
@@ -66,7 +65,7 @@ contains
     ! Read epochs
     read(100,*,iostat=state) s
     do i=1,num_epochs
-       epoch(i) = 1900+(i-1)*5.0d0
+       epoch(i) = 1900.0+real(i-1)*5.0d0
     enddo
 
     ! Number of coefficients
@@ -91,7 +90,7 @@ contains
        if (state < 0) exit
        num_sh = num_sh+1
     enddo
-    L_max = sqrt(num_sh+1.0d0)-1
+    L_max = int(sqrt(num_sh+1.0d0))-1
     close(100)
 
     ! Restore file position, must re-open after reaching EOF
@@ -110,7 +109,7 @@ contains
     close(100)
 
     ! Assign the return values
-    nght = (sqrt(num_sh+1.0)+1)**2
+    nght = (int(sqrt(num_sh+1.0))+1)**2
     nepo = num_epochs
 
     ! Assign the Gauss coefficients
