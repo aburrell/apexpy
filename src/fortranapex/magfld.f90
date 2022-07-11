@@ -123,14 +123,14 @@ module coeffmodule
   real(8), parameter       :: dtor=pi / 180D0, rtod=180D0 / pi, pid2=pi / 2D0, twopi=2D0 * pi
   real(8), parameter       :: Req=6378.1370D0, eps=1.D0 / 298.257223563D0
   real(8), parameter       :: Re=Req * (1 - eps / 3D0), ecc2=eps * (2 - eps)
-  ! real(4), parameter       :: missing=-9999E0
+  ! real(8), parameter       :: missing=-9999E0
 end module coeffmodule
 
 ! module igrfparammodule
 !
-! real(4)             :: datel
+! real(8)             :: datel
 ! integer(4)                  :: nepo, nght
-! real(4), allocatable     :: epoch(:), nmxe(:)
+! real(8), allocatable     :: epoch(:), nmxe(:)
 ! real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
 ! real(8), allocatable                     :: gt(:,:), ht(:,:)
 !
@@ -248,8 +248,8 @@ subroutine cofrm(date, filename)
 
     ! COMMON /MAGCOF/ nmax1, GB, GV, ICHG
 
-    real(4)                     :: date
-    real(4)                     :: f, f0, t, to5
+    real(8)                     :: date
+    real(8)                     :: f, f0, t, to5
     integer   :: i, i1, iy, iy1, m, n, mm, nn, ngh
 
     character(len=1000)       :: filename
@@ -440,6 +440,8 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
   real(8)            :: rlat, rlon, rq, s, t, x, xxx, y, yyy, z, zzz
   real(8)            :: g(255), h(255), xi(3)
 
+  ientyp = -10000
+
   if (ienty == 1) then
     is = 1
     rlat = glat * dtor
@@ -465,7 +467,7 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
   ihmax = nmax1 * nmax1 + 1
   last = ihmax + nmax1 + nmax1
   imax = nmax1 + nmax1 - 1
-  ! print *, 'LINE 155'
+
   if (ienty /= ientyp .or. ichg == 1) then
     ientyp = ienty
     ichg = 0
@@ -633,7 +635,7 @@ subroutine convrt(i, gdlat, alt, x1, x2)
   real(8)           :: gclat, rho, ri, rkm, s2cl, s4cl, s6cl, s8cl, scl, sgl, z
 
   ! A lot of these are the related to Req and esp - remove reduncancy
-  real, parameter :: e2 = ecc2, e4 = e2 * e2, e6 = e4 * e2, e8 = e4 * e4,           &
+  real(8), parameter :: e2 = ecc2, e4 = e2 * e2, e6 = e4 * e2, e8 = e4 * e4,           &
                      ome2req = (1.- e2) * Req,                                     &
                      a21 = (512.* e2 + 128.* e4 + 60.* e6 + 35.* e8) / 1024.,         &
                      a22 = (e6 + e8) / 32., a23 = (e6 + e8) / 32.,                    &

@@ -141,7 +141,7 @@ module apxshmodule
     real(8), allocatable     :: sh(:), shgradtheta(:), shgradphi(:)
     real(8), allocatable     :: polynomq(:), dpolynomq(:), polynomg(:)
     real(8), allocatable     :: pbar(:,:), vbar(:,:), wbar(:,:)
-    real(4), allocatable     :: epochgrid(:)
+    real(8), allocatable     :: epochgrid(:)
 
     real(8)                  :: h, Reph, rho
     real(8)                  :: xq, yq, zq
@@ -154,7 +154,7 @@ module apxshmodule
     real(8), parameter       :: dtor=pi / 180D0, pid2=pi / 2D0, twopi=2D0 * pi
     real(8), parameter       :: Req=6378.1370D0, eps=1.D0 / 298.257223563D0
     real(8), parameter       :: Re=Req * (1 - eps / 3D0), ecc2=eps * (2 - eps)
-    real(4), parameter       :: missing=- 9999E0
+    real(8), parameter       :: missing=- 9999E0
 
 ! Req = Equatorial radius of Earth in km (WGS84 value)
 ! eps = flatness of ellipsoidal Earth (WGS84 value)
@@ -162,8 +162,8 @@ module apxshmodule
 ! ecc2 = squared eccentricity of ellipsoidal Earth
 
     character(1000)          :: datafile
-    real(4)                  :: epoch
-    real(4)                  :: altlastq, altlastg
+    real(8)                  :: epoch
+    real(8)                  :: altlastq, altlastg
     logical                  :: loadflag = .true.
 
 end module apxshmodule
@@ -177,7 +177,7 @@ subroutine loadapxsh(datafilenew, epochnew)
     implicit none
 
     character(1000)             :: datafilenew, datafilelast=''
-    real(4)                     :: epochnew, epochlast=- 999.0
+    real(8)                     :: epochnew, epochlast=- 999.0
     real(8)                     :: we0, we1
     integer(4)                  :: iepoch0, iepoch1, iterm, icoord
 
@@ -307,10 +307,10 @@ subroutine apxg2q(glat, glon, alt, vecflagin, qlatout, qlonout, f1, f2, f)
 
     implicit none
 
-    real(4), intent(in)         :: glat, glon, alt
+    real(8), intent(in)         :: glat, glon, alt
     integer(4), intent(in)      :: vecflagin
-    real(4), intent(out)        :: qlatout, qlonout
-    real(4), intent(out)        :: f1(1:2), f2(1:2), f
+    real(8), intent(out)        :: qlatout, qlonout
+    real(8), intent(out)        :: f1(1:2), f2(1:2), f
 
     integer(4)               :: l, iterm, itermsh
     real(8)                  :: theta, phi
@@ -429,12 +429,12 @@ subroutine apxg2all(glat, glon, alt, hr, vecflagin, &
 
     implicit none
 
-    real(4), intent(in)         :: glat, glon, alt, hr
+    real(8), intent(in)         :: glat, glon, alt, hr
     integer(4), intent(in)      :: vecflagin
-    real(4), intent(out)        :: qlatout, qlonout, mlat, mlon
-    real(4), intent(out)        :: f1(1:2), f2(1:2), f
-    real(4), intent(out)        :: d1(1:3), d2(1:3), d3(1:3), d
-    real(4), intent(out)        :: e1(1:3), e2(1:3), e3(1:3)
+    real(8), intent(out)        :: qlatout, qlonout, mlat, mlon
+    real(8), intent(out)        :: f1(1:2), f2(1:2), f
+    real(8), intent(out)        :: d1(1:3), d2(1:3), d3(1:3), d
+    real(8), intent(out)        :: e1(1:3), e2(1:3), e3(1:3)
 
     integer(4)               :: i
     real(8)                  :: cosmlat, Rrat, denom
@@ -516,12 +516,12 @@ subroutine apxq2g(qlat0, qlon0, alt, prec, glatout, glonout, error)
 
     implicit none
 
-    real(4), intent(in)         :: qlat0, qlon0, alt, prec
-    real(4), intent(out)        :: glatout, glonout, error
+    real(8), intent(in)         :: qlat0, qlon0, alt, prec
+    real(8), intent(out)        :: glatout, glonout, error
 
     integer(4)               :: l, iterm, itermsh, vecflagin, niter
-    real(4)                  :: qlatout, qlonout, errorlast
-    real(4)                  :: f1(1:2), f2(1:2), f
+    real(8)                  :: qlatout, qlonout, errorlast
+    real(8)                  :: f1(1:2), f2(1:2), f
     real(8)                  :: theta, phi
     real(8)                  :: sinqlon0, cosqlon0, sinqlat0, cosqlat0, cotqlat0, zfact
     real(8)                  :: glat, glon

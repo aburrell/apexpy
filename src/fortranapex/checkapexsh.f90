@@ -29,16 +29,16 @@ program checkapexsh
   integer(4)            :: lmax=3, nmmax=6
   character(1000)       :: apexshfile='apexsh.dat'
   character(len=1000)   :: igrffilein='igrf13coeffs.txt'
-  real(4)               :: epochgrid(0:nepochgrid - 1)
-  real(4)               :: epoch
-  real(4)               :: glat, glon, alt, hr, prec, error
+  real(8)               :: epochgrid(0:nepochgrid - 1)
+  real(8)               :: epoch
+  real(8)               :: glat, glon, alt, hr, prec, error
   integer(4)            :: vecflag
-  real(4)               :: qlat, qlon, mlat, mlon, rho
-  real(4)               :: f1(1:2), f2(1:2), f
-  real(4)               :: d1(1:3), d2(1:3), d3(1:3), d
-  real(4)               :: e1(1:3), e2(1:3), e3(1:3)
+  real(8)               :: qlat, qlon, mlat, mlon, rho
+  real(8)               :: f1(1:2), f2(1:2), f
+  real(8)               :: d1(1:3), d2(1:3), d3(1:3), d
+  real(8)               :: e1(1:3), e2(1:3), e3(1:3)
   integer(4)            :: irho, ilat, ilon
-  real(4), parameter    :: Re=6371.0088
+  real(8), parameter    :: Re=6371.0088
 
   ! GENERATE COEFFICIENT FILE
   epochgrid = (/ 1900.0, 1905.0, 1910.0, 1915.0, 1920.0, 1925.0, 1930.0, &

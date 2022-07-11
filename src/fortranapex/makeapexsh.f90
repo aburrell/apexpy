@@ -55,7 +55,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
 
     character(128), intent(in)  :: datafilein
     character(len=1000), intent(in) :: igrffilein
-    real(4), intent(in)         :: epochgridin(0:30)
+    real(8), intent(in)         :: epochgridin(0:30)
     integer(4), intent(in)      :: nmaxin, mmaxin, lmaxin, nepochin
 
     integer(4), parameter       :: sampfact=4, iun=12
@@ -75,7 +75,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
     real(8), allocatable        :: Dzg(:)
 
     ! integer(4)                  :: NMAXIGRF
-    ! real(4)                     :: GB(1:255)
+    ! real(8)                     :: GB(1:255)
     real(8)                     :: A, ALAT, ALON, dum1, dum2, dum3, dum4, dum5
 
     external cofrm, apex

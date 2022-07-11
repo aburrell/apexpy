@@ -7,11 +7,11 @@ module igrf
 
   ! real(8),allocatable :: GYR(:,:,:),HYR(:,:,:)
   ! real(8),allocatable :: GT(:,:),HT(:,:)
-  ! real(4),allocatable :: EPOCH(:),NMXE(:)
+  ! real(8),allocatable :: EPOCH(:),NMXE(:)
 
-  real(4)             :: datel
+  real(8)             :: datel
   integer(4)                  :: nepo, nght
-  real(4), allocatable     :: epoch(:), nmxe(:)
+  real(8), allocatable     :: epoch(:), nmxe(:)
   real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
   real(8), allocatable                     :: gt(:,:), ht(:,:)
 
@@ -29,12 +29,13 @@ contains
     character(len=*), intent(in) :: filename_in
 
     character(len=10000) :: s
-    integer   :: state, i, offset, pos
-    integer   :: num_sh, L_max
-    integer   :: num_epochs
-    integer   :: l, m, e
+    integer(8)   :: offset
+    integer(4)   :: state, i, pos
+    integer(4)   :: num_sh, L_max
+    integer(4)   :: num_epochs
+    integer(4)   :: l, m, e
     real(8), allocatable    :: g(:,:)
-    integer, allocatable   :: nm(:,:)
+    integer(4), allocatable   :: nm(:,:)
 
     ! Get number of Gauss coefficients
     ! NGHT is an uninitialize output variable, so num_sh=0
