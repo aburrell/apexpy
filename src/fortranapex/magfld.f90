@@ -7,6 +7,107 @@
 !
 !***********************************************
 
+    ! Define the International Geomagnetic Reference Field (IGRF) as a
+    ! scalar potential field using a truncated series expansion with
+    ! Schmidt semi-normalized associated Legendre functions of degree n and
+    ! order m.  The polynomial coefficients are a function of time and are
+    ! interpolated between five year epochs or extrapolated at a constant
+    ! rate after the last epoch.
+    !
+    ! INPUTS:
+    !   DATE = yyyy.fraction (UT)
+    !   FILENAME = filename for IGRF coefficient file
+    ! OUTPUTS (in comnon block MAGCOF):
+    !   NMAX = Maximum order of spherical harmonic coefficients used
+    !   GB   = Coefficients for magnetic field calculation
+    !   GV   = Coefficients for magnetic potential calculation
+    !   ICHG = Flag indicating when GB,GV have been changed in COFRM
+    !
+    ! It is fatal to supply a DATE before the first epoch.  A warning is
+    ! issued to Fortran unit 0 (stderr) if DATE is later than the
+    ! recommended limit, five years after the last epoch.
+    !
+    ! HISTORY (blame):
+    ! Apr 1983:  Written by Vincent B. Wickwar (Utah State Univ.) including
+    ! secular variation acceleration rate set to zero in case the IGRF
+    ! definition includes such second time derivitives.  The maximum degree
+    ! (n) defined was 10.
+    !
+    ! Jun 1986:  Updated coefficients adding Definitive Geomagnetic Reference
+    ! Field (DGRF) for 1980 and IGRF for 1985 (EOS Volume 7 Number 24).  The
+    ! designation DGRF means coefficients will not change in the future
+    ! whereas IGRF coefficients are interim pending incorporation of new
+    ! magnetometer data.  Common block MAG was replaced by MAGCOF, thus
+    ! removing variables not used in subroutine FELDG.  (Roy Barnes)
+    !
+    ! Apr 1992 (Barnes):  Added DGRF 1985 and IGRF 1990 as given in EOS
+    ! Volume 73 Number 16 April 21 1992.  Other changes were made so future
+    ! updates should:  (1) Increment NDGY; (2) Append to EPOCH the next IGRF
+    ! year; (3) Append the next DGRF coefficients to G1DIM and H1DIM; and (4)
+    ! replace the IGRF initial values (G0, GT) and rates of change indices
+    ! (H0, HT).
+    !
+    ! Apr 1994 (Art Richmond): Computation of GV added, for finding magnetic
+    ! potential.
+    !
+    ! Aug 1995 (Barnes):  Added DGRF for 1990 and IGRF for 1995, which were
+    ! obtained by anonymous ftp to geomag.gsfc.nasa.gov (cd pub, mget table*)
+    ! as per instructions from Bob Langel (langel@geomag.gsfc.nasa.gov) with
+    ! problems reported to baldwin@geomag.gsfc.nasa.gov.
+    !
+    ! Oct 1995 (Barnes):  Correct error in IGRF-95 G 7 6 and H 8 7 (see email
+    ! in folder).  Also found bug whereby coefficients were not being updated
+    ! in FELDG when IENTY did not change so ICHG was added to flag date
+    ! changes.  Also, a vestigial switch (IS) was removed from COFRM; it was
+    ! always zero and involved 3 branch if statements in the main polynomial
+    ! construction loop now numbered 200.
+    !
+    ! Feb 1999 (Barnes):  Explicitly initialize GV(1) in COFRM to avoid the
+    ! possibility of compiler or loader options initializing memory to
+    ! something else (e.g., indefinite).  Also simplify the algebra in COFRM
+    ! with no effect on results.
+    !
+    ! Mar 1999 (Barnes):  Removed three branch if's from FELDG and changed
+    ! statement labels to ascending order.
+    !
+    ! Jun 1999 (Barnes):  Corrected RTOD definition in GD2CART.
+    !
+    ! May 2000 (Barnes):  Replace IGRF 1995, add IGRF 2000, and extend the
+    ! earlier DGRF's back to 1900.  The coefficients came from an NGDC web
+    ! page.  Related documentation is in $APXROOT/docs/igrf.2000.*  where
+    ! $APXROOT, defined by 'source envapex', is traditionally ~bozo/apex).
+    !
+    ! Mar 2004 (Barnes):  Replace 1995 and 2000 coefficients; now both are
+    ! DGRF.  Coefficients for 2000 are degree 13 with precision increased to
+    ! tenths nT and accommodating this instigated changes:  (1) degree (NMAX)
+    ! is now a function of epoch (NMXE) to curtail irrelevant looping over
+    ! unused high order terms (n > 10 in epochs before 2000) when calculating
+    ! GB; (2) expand coefficients data statement layout for G1D and H1D,
+    ! formerly G1DIM and H1DIM; (3) omit secular variation acceleration terms
+    ! which were always zero; (4) increase array dimensions in common block
+    ! MAGCOF and associated arrays G and H in FELDG; (5) change earth's shape
+    ! in CONVRT from the IAU-1966 to the WGS-1984 spheroid; (6) eliminate
+    ! reference to 'definitive' in variables in COFRM which were not always
+    ! definitive; (7) change G to GB in COFRM s.t. arrays GB and GV in common
+    ! block MAGCOF are consistently named in all subroutines; (8) remove
+    ! unused constants in all five subroutines.  See EOS Volume 84 Number 46
+    ! November 18 2003, www.ngdc.noaa.gov/IAGA/vmod/igrf.html or local files
+    ! $APXROOT/docs/igrf.2004.*
+    !
+    ! Sept. 2005 (Maute): update with IGRF10 from
+    ! http://www.ngdc.noaa.gov/IAGA/vmod/igrf.html use script
+    ! ~maute/apex.d/apex_update/igrf2f Note that the downloaded file the start
+    ! column of the year in the first line has to be before the start of each
+    ! number in the same column
+    !
+    ! Jan. 2010 (Maute) update with IGRF11 (same instructions as Sep. 2005
+    ! comment
+    !
+    ! May 2020 (Achim Morschhauser): Update with routine to read
+    ! IGRF coefficients file directly.
+
+
+
 module magfldmodule
 
   implicit none
@@ -37,6 +138,108 @@ end module coeffmodule
 
 subroutine cofrm(date,filename)
 
+  ! Define the International Geomagnetic Reference Field (IGRF) as a
+  ! scalar potential field using a truncated series expansion with
+  ! Schmidt semi-normalized associated Legendre functions of degree n and
+  ! order m.  The polynomial coefficients are a function of time and are
+  ! interpolated between five year epochs or extrapolated at a constant
+  ! rate after the last epoch.
+  !
+  ! INPUTS:
+  !   DATE = yyyy.fraction (UT)
+  !   FILENAME = filename for IGRF coefficient file
+  ! OUTPUTS (in comnon block MAGCOF):
+  !   NMAX = Maximum order of spherical harmonic coefficients used
+  !   GB   = Coefficients for magnetic field calculation
+  !   GV   = Coefficients for magnetic potential calculation
+  !   ICHG = Flag indicating when GB,GV have been changed in COFRM
+  !
+  ! It is fatal to supply a DATE before the first epoch.  A warning is
+  ! issued to Fortran unit 0 (stderr) if DATE is later than the
+  ! recommended limit, five years after the last epoch.
+  !
+  ! HISTORY (blame):
+  ! Apr 1983:  Written by Vincent B. Wickwar (Utah State Univ.) including
+  ! secular variation acceleration rate set to zero in case the IGRF
+  ! definition includes such second time derivitives.  The maximum degree
+  ! (n) defined was 10.
+  !
+  ! Jun 1986:  Updated coefficients adding Definitive Geomagnetic Reference
+  ! Field (DGRF) for 1980 and IGRF for 1985 (EOS Volume 7 Number 24).  The
+  ! designation DGRF means coefficients will not change in the future
+  ! whereas IGRF coefficients are interim pending incorporation of new
+  ! magnetometer data.  Common block MAG was replaced by MAGCOF, thus
+  ! removing variables not used in subroutine FELDG.  (Roy Barnes)
+  !
+  ! Apr 1992 (Barnes):  Added DGRF 1985 and IGRF 1990 as given in EOS
+  ! Volume 73 Number 16 April 21 1992.  Other changes were made so future
+  ! updates should:  (1) Increment NDGY; (2) Append to EPOCH the next IGRF
+  ! year; (3) Append the next DGRF coefficients to G1DIM and H1DIM; and (4)
+  ! replace the IGRF initial values (G0, GT) and rates of change indices
+  ! (H0, HT).
+  !
+  ! Apr 1994 (Art Richmond): Computation of GV added, for finding magnetic
+  ! potential.
+  !
+  ! Aug 1995 (Barnes):  Added DGRF for 1990 and IGRF for 1995, which were
+  ! obtained by anonymous ftp to geomag.gsfc.nasa.gov (cd pub, mget table*)
+  ! as per instructions from Bob Langel (langel@geomag.gsfc.nasa.gov) with
+  ! problems reported to baldwin@geomag.gsfc.nasa.gov.
+  !
+  ! Oct 1995 (Barnes):  Correct error in IGRF-95 G 7 6 and H 8 7 (see email
+  ! in folder).  Also found bug whereby coefficients were not being updated
+  ! in FELDG when IENTY did not change so ICHG was added to flag date
+  ! changes.  Also, a vestigial switch (IS) was removed from COFRM; it was
+  ! always zero and involved 3 branch if statements in the main polynomial
+  ! construction loop now numbered 200.
+  !
+  ! Feb 1999 (Barnes):  Explicitly initialize GV(1) in COFRM to avoid the
+  ! possibility of compiler or loader options initializing memory to
+  ! something else (e.g., indefinite).  Also simplify the algebra in COFRM
+  ! with no effect on results.
+  !
+  ! Mar 1999 (Barnes):  Removed three branch if's from FELDG and changed
+  ! statement labels to ascending order.
+  !
+  ! Jun 1999 (Barnes):  Corrected RTOD definition in GD2CART.
+  !
+  ! May 2000 (Barnes):  Replace IGRF 1995, add IGRF 2000, and extend the
+  ! earlier DGRF's back to 1900.  The coefficients came from an NGDC web
+  ! page.  Related documentation is in $APXROOT/docs/igrf.2000.*  where
+  ! $APXROOT, defined by 'source envapex', is traditionally ~bozo/apex).
+  !
+  ! Mar 2004 (Barnes):  Replace 1995 and 2000 coefficients; now both are
+  ! DGRF.  Coefficients for 2000 are degree 13 with precision increased to
+  ! tenths nT and accommodating this instigated changes:  (1) degree (NMAX)
+  ! is now a function of epoch (NMXE) to curtail irrelevant looping over
+  ! unused high order terms (n > 10 in epochs before 2000) when calculating
+  ! GB; (2) expand coefficients data statement layout for G1D and H1D,
+  ! formerly G1DIM and H1DIM; (3) omit secular variation acceleration terms
+  ! which were always zero; (4) increase array dimensions in common block
+  ! MAGCOF and associated arrays G and H in FELDG; (5) change earth's shape
+  ! in CONVRT from the IAU-1966 to the WGS-1984 spheroid; (6) eliminate
+  ! reference to 'definitive' in variables in COFRM which were not always
+  ! definitive; (7) change G to GB in COFRM s.t. arrays GB and GV in common
+  ! block MAGCOF are consistently named in all subroutines; (8) remove
+  ! unused constants in all five subroutines.  See EOS Volume 84 Number 46
+  ! November 18 2003, www.ngdc.noaa.gov/IAGA/vmod/igrf.html or local files
+  ! $APXROOT/docs/igrf.2004.*
+  !
+  ! Sept. 2005 (Maute): update with IGRF10 from
+  ! http://www.ngdc.noaa.gov/IAGA/vmod/igrf.html use script
+  ! ~maute/apex.d/apex_update/igrf2f Note that the downloaded file the start
+  ! column of the year in the first line has to be before the start of each
+  ! number in the same column
+  !
+  ! Jan. 2010 (Maute) update with IGRF11 (same instructions as Sep. 2005
+  ! comment
+  !
+  ! May 2020 (Achim Morschhauser): Update with routine to read
+  ! IGRF coefficients file directly.
+  !
+  ! Jul 2022 (Lamarche): Revise to fortran 90 standards
+
+
     use magfldmodule
     use igrf
     ! use igrfparammodule
@@ -51,15 +254,7 @@ subroutine cofrm(date,filename)
 
     character(len=1000)       :: filename
 
-    ! integer(4)                  :: nmax1
-    ! real(4)                     :: GB(1:255), GV(1:225)
-    ! real(4)                     :: ICHG
-
-    ! igrf parameters are saved so they only need to be loaded once
-    ! SAVE DATEL, GYR, HYR, GT, HT, NEPO, EPOCH, NGHT, NMXE
-    ! Commenting these out might break something...
-    ! DATA datel /-999./
-    ! DATA ichg /-99999/
+    ! Do not need to load new coefficients if date has not changed
     ichg = 0
     if (date .eq. datel) then
       return
@@ -69,7 +264,6 @@ subroutine cofrm(date,filename)
     endif
 
     if (.not. allocated(gyr)) then
-      ! call read_igrf(filename, gyr, hyr, gt, ht, nepo, nght, epoch, nmxe)
       call read_igrf(filename)
     endif
     ngh = nght*nepo
@@ -103,10 +297,10 @@ subroutine cofrm(date,filename)
       f = f0/sqrt(2.0)
       nn = n+1
       mm =1
-      if (iy .lt. nepo) then
+      if (iy .lt. nepo) then  ! interoplate (m=0 terms)
         gb(i) = (gyr(nn,mm,iy) + (gyr(nn,mm,iy1) - gyr(nn,mm,iy))*to5) * f0
       endif
-      if (iy .eq. nepo) then
+      if (iy .eq. nepo) then  ! extrapolate (m=0 terms)
         gb(i) = (gyr(nn,mm,iy) + gt(nn,mm)*t) * f0
       endif
       gv(i) = gb(i)/real(nn)
@@ -116,10 +310,10 @@ subroutine cofrm(date,filename)
         nn = n+1
         mm = m+1
         i1 = i+1
-        if (iy .lt. nepo) then
+        if (iy .lt. nepo) then  ! interpolate (m>0 terms)
           gb(i) = (gyr(nn,mm,iy) + (gyr(nn,mm,iy1) - gyr(nn,mm,iy))*to5) * f
           gb(i1) = (hyr(nn,mm,iy) + (hyr(nn,mm,iy1) - hyr(nn,mm,iy))*to5) * f
-        else
+        else                    ! extrapolate (m>0 terms)
           gb(i) = (gyr(nn,mm,iy) + gt(nn,mm)*t) * f
           gb(i1) = (hyr(nn,mm,iy) + ht(nn,mm)*t) * f
         endif
@@ -135,6 +329,25 @@ end subroutine cofrm
 
 subroutine dypol(colat, elon, vp)
 
+          ! Computes parameters for dipole component of geomagnetic field.
+          ! COFRM must be called before calling DYPOL!
+          ! 940504 A. D. Richmond
+          !
+          ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
+          !   NMAX = Maximum order of spherical harmonic coefficients used
+          !   GB   = Coefficients for magnetic field calculation
+          !   GV   = Coefficients for magnetic potential calculation
+          !   ICHG = Flag indicating when GB,GV have been changed
+          !
+          ! RETURNS:
+          !   COLAT = Geocentric colatitude of geomagnetic dipole north pole
+          !           (deg)
+          !   ELON  = East longitude of geomagnetic dipole north pole (deg)
+          !   VP    = Magnitude, in T.m, of dipole component of magnetic
+          !           potential at geomagnetic pole and geocentric radius
+          !           of 6371.2 km
+
+
   use magfldmodule
   use coeffmodule
 
@@ -143,10 +356,7 @@ subroutine dypol(colat, elon, vp)
   real(8)       :: colat, elon, vp
   real(8)       :: ctp, gpl, stp
 
-  ! real, parameter :: rtod = 57.2957795130823
-  ! real, parameter :: re = 6371.2
-  ! COMMON /MAGCOF/ nmax1, GB(255), GV(225), ICHG
-
+  ! Compute geographic colatitude and logitude of the north pole of earth centered dipole
   gpl = sqrt(gb(2)**2 + gb(3)**2 + gb(4)**2)
   ctp = gb(2)/gpl
   stp = sqrt(1 - ctp*ctp)
@@ -155,12 +365,67 @@ subroutine dypol(colat, elon, vp)
 
   ! Compute magnitude of magnetic potential at pole, radius Re
   vp = 0.2*gpl*Re
+  ! .2 = 2*(10**-4 T/gauss)*(1000 m/km) (2 comes through F0 in COFRM).
 
   return
 end subroutine dypol
 
 
 subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
+
+          ! Compute the DGRF/IGRF field components at the point GLAT,GLON,ALT.
+          ! COFRM must be called to establish coefficients for correct date
+          ! prior to calling FELDG.
+          !
+          ! IENTY is an input flag controlling the meaning and direction of the
+          !       remaining formal arguments:
+          ! IENTY = 1
+          !   INPUTS:
+          !     GLAT = Latitude of point (deg)
+          !     GLON = Longitude (east=+) of point (deg)
+          !     ALT  = Ht of point (km)
+          !   RETURNS:
+          !     BNRTH  north component of field vector (Gauss)
+          !     BEAST  east component of field vector  (Gauss)
+          !     BDOWN  downward component of field vector (Gauss)
+          !     BABS   magnitude of field vector (Gauss)
+          !
+          ! IENTY = 2
+          !   INPUTS:
+          !     GLAT = X coordinate (in units of earth radii 6371.2 km )
+          !     GLON = Y coordinate (in units of earth radii 6371.2 km )
+          !     ALT  = Z coordinate (in units of earth radii 6371.2 km )
+          !   RETURNS:
+          !     BNRTH = X component of field vector (Gauss)
+          !     BEAST = Y component of field vector (Gauss)
+          !     BDOWN = Z component of field vector (Gauss)
+          !     BABS  = Magnitude of field vector (Gauss)
+          ! IENTY = 3
+          !   INPUTS:
+          !     GLAT = X coordinate (in units of earth radii 6371.2 km )
+          !     GLON = Y coordinate (in units of earth radii 6371.2 km )
+          !     ALT  = Z coordinate (in units of earth radii 6371.2 km )
+          !   RETURNS:
+          !     BNRTH = Dummy variable
+          !     BEAST = Dummy variable
+          !     BDOWN = Dummy variable
+          !     BABS  = Magnetic potential (T.m)
+          !
+          ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
+          !   NMAX = Maximum order of spherical harmonic coefficients used
+          !   GB   = Coefficients for magnetic field calculation
+          !   GV   = Coefficients for magnetic potential calculation
+          !   ICHG = Flag indicating when GB,GV have been changed
+          !
+          ! HISTORY:
+          ! Apr 1983: written by Vincent B. Wickwar (Utah State Univ.).
+          !
+          ! May 1994 (A.D. Richmond): Added magnetic potential calculation
+          !
+          ! Oct 1995 (Barnes): Added ICHG
+          !
+          ! Jul 2022 (Lamarche): Revise to fortran 90 standards
+
 
   use magfldmodule
   use coeffmodule
@@ -173,17 +438,8 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
   real(8), intent(out)   :: bnrth, beast, bdown, babs
   real(8)            :: brho, bxxx, byyy, bzzz, cp, sp, ct, st, f
   real(8)            :: rlat, rlon, rq, s, t, x, xxx, y, yyy, z, zzz
-
-  ! real, parameter :: rtod = 57.2957795130823
-  ! real, parameter :: re = 6371.2
-  ! COMMON /MAGCOF/ nmax1,GB(255),GV(225),ICHG
-  ! DIMENSION G(255), H(255), XI(3)
-
   real(8)            :: g(255), h(255), xi(3)
-  ! Not sure what's going on with these two
-  ! SAVE IENTYP, g
-  ! DATA IENTYP/-10000/
-  ! print *, 'LINE 129'
+
   if (ienty .eq. 1) then
     is = 1
     rlat = glat*dtor
@@ -223,55 +479,43 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
       enddo
     endif
   endif
-  ! print *, 'LINE 169'
+
   do i=ihmax,last
     h(i) = g(i)
   enddo
-  ! print *, 'LINE 173'
+
   mk = 3
   if (imax .eq. 1) mk=1
-  ! print *, 'LINE 176'
+
   do k=1,mk,2
     i = imax
     ih = ihmax
-    ! print *, 'i=', i, 'k=', k
     do while (i .ge. k)
       il = ih-i
       f = 2./FLOAT(i-k+2)
       x = xi(1)*f
       y = xi(2)*f
       z = xi(3)*(f+f)
-      ! print *, 'LINE 187'
+
       i = i-2
-      ! IF (I .LT. 1) GO TO 90
-      ! IF (I .EQ. 1) GO TO 80
-      ! print *, 'LINE 191'
       if (i .gt. 1) then
         do m=3,i,2
           ihm = ih+m
           ilm = il+m
-          ! print *, 'm=', m, 'ihm=', ihm, 'ilm=', ilm
-          ! print *, 'LINE 197'
           h(ilm+1) = g(ilm+1)+ z*h(ihm+1) + x*(h(ihm+3)-h(ihm-1)) - y*(h(ihm+2)+h(ihm-2))
-          ! print *, 'LINE 199'
           h(ilm)   = g(ilm)  + z*h(ihm)   + x*(h(ihm+2)-h(ihm-2)) + y*(h(ihm+3)+h(ihm-1))
-          ! print *, 'LINE 201'
         enddo
         h(il+2) = g(il+2) + z*h(ih+2) + x*h(ih+4) - y*(h(ih+3)+h(ih))
         h(il+1) = g(il+1) + z*h(ih+1) + y*h(ih+4) + x*(h(ih+3)-h(ih))
-
       elseif (i .eq. 1) then
         h(il+2) = g(il+2) + z*h(ih+2) + x*h(ih+4) - y*(h(ih+3)+h(ih))
         h(il+1) = g(il+1) + z*h(ih+1) + y*h(ih+4) + x*(h(ih+3)-h(ih))
-
       endif
-      ! print *, 'LINE 207'
       h(il) = g(il) + z*h(ih) + 2.*(x*h(ih+1)+y*h(ih+2))
       ih = il
     enddo
-    ! IF (I .GE. K) GO TO 60
   enddo
-  ! print *, 'LINE 213'
+
   s = .5*h(1)+2.*(h(2)*xi(3)+h(3)*xi(1)+h(4)*xi(2))
   t = (rq+rq)*sqrt(rq)
   bxxx = t*(h(3)-s*xxx)
@@ -288,14 +532,21 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
     beast = byyy
     bdown = bzzz
   endif
-  ! print *, 'LINE 230'
+
+          ! Magnetic potential computation makes use of the fact that the
+          ! calculation of V is identical to that for r*Br, if coefficients
+          ! in the latter calculation have been divided by (n+1) (coefficients
+          ! GV).  Factor .1 converts km to m and gauss to tesla.
   if (ienty .eq. 3) babs = (bxxx*xxx + byyy*yyy + bzzz*zzz)*Re*.1
-  ! print *, 'LINE 232'
+
   return
 end subroutine feldg
 
 
 subroutine gd2cart(gdlat, glon, alt, x, y, z)
+
+          ! Convert geodetic to cartesian coordinates by calling CONVRT
+          ! 940503 A. D. Richmond
 
   use magfldmodule
   use coeffmodule
@@ -316,6 +567,60 @@ end subroutine gd2cart
 
 
 subroutine convrt(i, gdlat, alt, x1, x2)
+
+          ! Convert space point from geodetic to geocentric or vice versa.
+          !
+          ! I is an input flag controlling the meaning and direction of the
+          !   remaining formal arguments:
+          !
+          ! I = 1  (convert from geodetic to cylindrical geocentric)
+          !   INPUTS:
+          !     GDLAT = Geodetic latitude (deg)
+          !     ALT   = Altitude above reference ellipsoid (km)
+          !   RETURNS:
+          !     X1    = Distance from Earth's rotation axis (km)
+          !     X2    = Distance above (north of) Earth's equatorial plane (km)
+          !
+          ! I = 2  (convert from geodetic to spherical geocentric)
+          !   INPUTS:
+          !     GDLAT = Geodetic latitude (deg)
+          !     ALT   = Altitude above reference ellipsoid (km)
+          !   RETURNS:
+          !     X1    = Geocentric latitude (deg)
+          !     X2    = Geocentric distance (km)
+          !
+          ! I = 3  (convert from cylindrical geocentric to geodetic)
+          !   INPUTS:
+          !     X1    = Distance from Earth's rotation axis (km)
+          !     X2    = Distance from Earth's equatorial plane (km)
+          !   RETURNS:
+          !     GDLAT = Geodetic latitude (deg)
+          !     ALT   = Altitude above reference ellipsoid (km)
+          !
+          ! I = 4  (convert from spherical geocentric to geodetic)
+          !   INPUTS:
+          !     X1    = Geocentric latitude (deg)
+          !     X2    = Geocentric distance (km)
+          !   RETURNS:
+          !     GDLAT = Geodetic latitude (deg)
+          !     ALT   = Altitude above reference ellipsoid (km)
+          !
+          !
+          ! HISTORY:
+          ! 940503 (A. D. Richmond):  Based on a routine originally written
+          ! by V. B. Wickwar.
+          !
+          ! Mar 2004: (Barnes) Revise spheroid definition to WGS-1984 to conform
+          ! with IGRF-9 release (EOS Volume 84 Number 46 November 18 2003).
+          !
+          ! Jul 2022 (Lamarche): Revise to fortran 90 standards
+          !
+          ! REFERENCE: ASTRON. J. VOL. 66, p. 15-16, 1961
+          !
+          ! E2  = square of eccentricity of ellipse
+          ! REP = earth's polar      radius (km)
+          ! REQ = earth's equatorial radius (km)
+
 
   use magfldmodule
   use coeffmodule
@@ -340,6 +645,8 @@ subroutine convrt(i, gdlat, alt, x1, x2)
                      a83 = -252.*e8/2048., a84 = 320.*e8 /2048.
 
   if (i .lt. 3) then
+    ! Geodetic to Geocentric
+    ! Compute rho, z
     sinlat = sin(gdlat*dtor)
     coslat = sqrt(1.-sinlat*sinlat)
     d = sqrt(1.-e2*sinlat*sinlat)
@@ -349,6 +656,7 @@ subroutine convrt(i, gdlat, alt, x1, x2)
     x2 = z
     if (i .eq. 1) return
 
+    ! Compute gclat, rkm
     rkm = sqrt(z*z + rho*rho)
     gclat = rtod*atan2(z,rho)
     x1 = gclat
@@ -357,6 +665,7 @@ subroutine convrt(i, gdlat, alt, x1, x2)
   endif
 
   if (i .eq. 3) then
+    ! Geocentric to geodetic
     rho = x1
     z = x2
     rkm = sqrt(z*z+rho*rho)
