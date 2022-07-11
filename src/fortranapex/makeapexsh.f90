@@ -47,16 +47,16 @@
 subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 
     use apxshmodule
-    use magfldmodule
+    use magcof
 
     implicit none
 
     ! COMMON /MAGCOF/ NMAXIGRF, GB
 
-    character(128), intent(in)  :: datafilein
+    character(128), intent(in)      :: datafilein
     character(len=1000), intent(in) :: igrffilein
-    real(8), intent(in)         :: epochgridin(0:30)
-    integer(4), intent(in)      :: nmaxin, mmaxin, lmaxin, nepochin
+    real(8), intent(in)             :: epochgridin(0:30)
+    integer(4), intent(in)          :: nmaxin, mmaxin, lmaxin, nepochin
 
     integer(4), parameter       :: sampfact=4, iun=12
     integer(4)                  :: nterm1, nlon, nlat, nalt
@@ -73,10 +73,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
     real(8), allocatable        :: coefftemp(:)
     real(8), allocatable        :: Dxq(:), Dyq(:), Dzq(:), Dxg(:), Dyg(:)
     real(8), allocatable        :: Dzg(:)
-
-    ! integer(4)                  :: NMAXIGRF
-    ! real(8)                     :: GB(1:255)
-    real(8)                     :: A, ALAT, ALON, dum1, dum2, dum3, dum4, dum5
+    real(8)                     :: a, alat, alon, dum1, dum2, dum3, dum4, dum5
 
     external cofrm, apex
 
@@ -122,7 +119,6 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
         altfn(l, ialt) = altfn(l - 1, ialt) * rho
       end do
     end do
-    ! print *, 'LINE 125', altfn
 
     ! LOOP THROUGH EPOCHS, COMPUTE QD COORDINATE DATA AND EXPANSION COEFFICIENTS
     do iepoch = 0, nepoch - 1
@@ -147,7 +143,6 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
       coeff0(Rpt, iepoch, 5) = (/- norm2 * cosmplat,                      0D0, norm1 * sinmplat         /)
 
       ! LOOP THROUGH GEODETIC LATITUDE AND LONGITUDE GRIDPOINTS
-      ! print *, 'Loop through lat/lon'
       do ilat = 0, nlat - 1
         glat = latspace * real(ilat) + lat0
         thetag = (90D0 - dble(glat)) * dtor
@@ -157,44 +152,37 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
 
           ! COMPUTE SPHERICAL HARMONICS OF CURRENT GEODETIC LONGITUDE AND
           ! LATITUDE
-          ! print *, 'LINE 158'
           glon = lonspace * real(ilon) - 180E0
           phig = dble(glon) * dtor
           call shcalc(thetag, phig)
           shg = sh
-          ! print *, shg
           ! COMPUTE REFERENCE (DIPOLE) MAGNETIC LATITUDE AND LONGITUDE OF
           ! CURRENT LOCATION
           xq0 = dot_product(coeff0(Rpt, iepoch, 0), shg(Rpt))
           yq0 = dot_product(coeff0(Rpt, iepoch, 1), shg(Rpt))
           zq0 = dot_product(coeff0(Rpt, iepoch, 2), shg(Rpt))
-          ! print *, 'LINE 169'
           ! LOOP THROUGH ALTITUDE GRIDPOINTS
           do ialt = 1, nalt
             ! COMPUTE QD LATITUDE AND LONGITUDE OF CURRENT LOCATION
             alt = sngl(altgrid(ialt))
-            call apex(epochgrid(iepoch), igrffilein, glat, glon, alt, A, ALAT, ALON, dum1, dum2, dum3, dum4, dum5)
-            cosqlat = dsqrt( (Re + altgrid(ialt)) / (Re + Req * (dble(A) - 1D0)) )
+            call apex(epochgrid(iepoch), igrffilein, glat, glon, alt, a, alat, alon, dum1, dum2, dum3, dum4, dum5)
+            cosqlat = dsqrt( (Re + altgrid(ialt)) / (Re + Req * (dble(a) - 1D0)) )
             if (cosqlat > 1D0) cosqlat = 1D0
-            phiq = dble(ALON) * dtor
+            phiq = dble(alon) * dtor
             thetaq = dasin(cosqlat)
-            if (ALAT < 0) thetaq = pi - thetaq
-            ! print *, 'LINE 181'
+            if (alat < 0) thetaq = pi - thetaq
             ! COMPUTE RESIDUAL QD COORDINATES (FITTING DATA FOR GEODETIC TO QD
             ! TRANSFORMATION)
             xq = cosqlat * dcos(phiq) - xq0
             yq = cosqlat * dsin(phiq) - yq0
             zq = dcos(thetaq)       - zq0
-            ! print *, 'LINE 187'
             ! COMPUTE SPHERICAL HARMONICS OF CURRENT QD LATITUDE AND LONGITUDE
             call shcalc(thetaq, phiq)
-            ! print *, 'LINE 190', sh
             ! COMPUTE RESIDUAL GD COORDINATES (FITTING DATA FOR QD TO GEODETIC
             ! TRANSFORMATION)
             xg = latwgt * dcos(phig) - dot_product(coeff0(Rpt, iepoch, 3), sh(Rpt))
             yg = latwgt * dsin(phig) - dot_product(coeff0(Rpt, iepoch, 4), sh(Rpt))
             zg = dcos(thetag)      - dot_product(coeff0(Rpt, iepoch, 5), sh(Rpt))
-            ! print *, 'LINE 196'
             ! COMPUTE BASIS FUNCTIONS FOR GD-TO-QD AND QD-TO-GD TRANSFORMATIONS
             do l = 1, lmax
               do ish = 0, ntermsh - 1
@@ -203,7 +191,6 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
                 Fq(iterm) = altfn(l, ialt) * sh(ish)
               end do
             end do
-            ! print *, 'LINE 205', sh(0)
             ! UPDATE LEAST-SQUARES ARRAYS
             do i = 0, nterm1 - 1
               Dxq(i) = Dxq(i) + Fg(i) * latwgt * xq
@@ -217,41 +204,28 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
                 Gq(i, j) = Gq(i, j) + Fq(j) * latwgt * Fq(i)
               end do
             end do
-            ! print *, 'LINE 219'
           end do
         end do
       end do
-      ! print *, 'LINE 222', Dxg, Dyg, Dzg
       ! COMPUTE LEAST-SQUARES SOLUTIONS USING CHOLESKY DECOMPOSITION
       call choldc(Gg, nterm1, nterm1, cfdiag)
-      ! print *, Gg
       call cholsl(Gg, nterm1, nterm1, cfdiag, Dxq, coefftemp)
-      ! print *, Gg,nterm1,nterm1,cfdiag,Dxq
-      ! print *, 'LINE 232', coefftemp
+
       coeff0(ntermsh:nterm - 1, iepoch, 0) = coefftemp
       call cholsl(Gg, nterm1, nterm1, cfdiag, Dyq, coefftemp)
-      ! print *, 'LINE 235', coefftemp
       coeff0(ntermsh:nterm - 1, iepoch, 1) = coefftemp
       call cholsl(Gg, nterm1, nterm1, cfdiag, Dzq, coefftemp)
-      ! print *, 'LINE 238', coefftemp
       coeff0(ntermsh:nterm - 1, iepoch, 2) = coefftemp
 
       call choldc(Gq, nterm1, nterm1, cfdiag)
-      ! print *, cfdiag
       call cholsl(Gq, nterm1, nterm1, cfdiag, Dxg, coefftemp)
-      ! print *, Gq,nterm1,nterm1,cfdiag,Dxq
-      ! print *, 'LINE 243', coefftemp
       coeff0(ntermsh:nterm - 1, iepoch, 3) = coefftemp
       call cholsl(Gq, nterm1, nterm1, cfdiag, Dyg, coefftemp)
-      ! print *, 'LINE 246', coefftemp
       coeff0(ntermsh:nterm - 1, iepoch, 4) = coefftemp
       call cholsl(Gq, nterm1, nterm1, cfdiag, Dzg, coefftemp)
-      ! print *, 'LINE 249', coefftemp
       coeff0(ntermsh:nterm - 1, iepoch, 5) = coefftemp
     end do
 
-    ! print *, 'Write output to file'
-    ! print *, coeff0
     ! WRITE COEFFICIENTS TO OUTPUT FILE
     open(unit=iun, file=trim(datafilein), form='unformatted')
     write(iun) nepoch, nmax, mmax, lmax, nterm

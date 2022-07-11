@@ -1,7 +1,7 @@
 ! apex.f90
 
 module apexmodule
-
+  ! Can this be combined with coeffmolule in magfld.f90??
   implicit none
 
   real(8), parameter       :: pi=3.14159265358979323846D0
@@ -14,21 +14,21 @@ contains
 
   real(8) function fint(x1, x2, x3, y1, y2, y3, xfit)
 
-          ! Second degree interpolation used by FNDAPX
-          ! INPUTS:
-          ! X1   = point 1 ordinate value
-          ! X2   = point 2 ordinate value
-          ! X3   = point 3 ordinate value
-          ! Y1   = point 1 abscissa value
-          ! Y2   = point 2 abscissa value
-          ! Y3   = point 3 abscissa value
-          ! XFIT = ordinate value to fit
-          ! RETURNS:
-          ! YFIT = abscissa value corresponding to XFIT
-          !
-          ! MODIFICATIONS:
-          ! Apr 2004: Change from subroutine to function, rename variables and
-          ! add intermediates which are otherwise calculated twice
+    ! Second degree interpolation used by FNDAPX
+    ! INPUTS:
+    ! X1   = point 1 ordinate value
+    ! X2   = point 2 ordinate value
+    ! X3   = point 3 ordinate value
+    ! Y1   = point 1 abscissa value
+    ! Y2   = point 2 abscissa value
+    ! Y3   = point 3 abscissa value
+    ! XFIT = ordinate value to fit
+    ! RETURNS:
+    ! YFIT = abscissa value corresponding to XFIT
+    !
+    ! MODIFICATIONS:
+    ! Apr 2004: Change from subroutine to function, rename variables and
+    ! add intermediates which are otherwise calculated twice
 
 
     real(8), intent(in)  :: x1, x2, x3, y1, y2, y3, xfit
@@ -46,6 +46,7 @@ contains
 
 end module apexmodule
 
+! Can these be consolidated??
 module dipole
   implicit none
   real(8)                  :: colat, elon, vp, ctp, stp
@@ -182,12 +183,12 @@ subroutine apex(date, igrffilein, dlat, dlon, alt, a, alat, alon, bmag, xmag, ym
   implicit none
 
 
-  real(8), intent(in)      :: date
+  real(8), intent(in)               :: date
   character(len=1000), intent(in)   :: igrffilein
-  real(8), intent(in)      :: dlat, dlon, alt
-  real(8)      :: a, alon, bmag, xmag, ymag, zmag, v
-  real(8)      :: alat, bx, by, bz, x, y, z
-  real(8)      :: clatp, polon, vpol
+  real(8), intent(in)               :: dlat, dlon, alt
+  real(8), intent(out)              :: a, alat, alon, bmag, xmag, ymag, zmag, v
+  real(8)                           :: bx, by, bz, x, y, z
+  real(8)                           :: clatp, polon, vpol
 
   call cofrm(date, igrffilein)
   call dypol(clatp, polon, vpol)
@@ -303,7 +304,8 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
 
   implicit none
 
-  real(8)               :: gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f
+  real(8), intent(in)   :: gdlat, glon, alt
+  real(8), intent(out)  :: a, alat, alon, xmag, ymag, zmag, f
   real(8)               :: bnrth, beast, bdown, babs
   real(8)               :: cgml2, gclat, ht, r, rho
   real(8)               :: singml, xlat, xlon
@@ -546,12 +548,13 @@ subroutine fndapx(alt, zmag, a, alat, alon)
 
   implicit none
 
-  real(8)       :: alt, zmag, a, alat, alon
-  real(8)       :: abdob, ang, ba, bda, bea, bna, hta, rho
-  real(8)       :: r, rasq, sang, cang, ste, cte, stfcpa, stfspa, xlon
-  real(8)       :: gdlt, gdln, ht, bn, be, bmag
-  integer(4)    :: i, nitr
-  real(8)       :: bd(3), y(3)
+  real(8), intent(in)   :: alt, zmag
+  real(8), intent(out)  :: a, alat, alon
+  real(8)               :: abdob, ang, ba, bda, bea, bna, hta, rho
+  real(8)               :: r, rasq, sang, cang, ste, cte, stfcpa, stfspa, xlon
+  real(8)               :: gdlt, gdln, ht, bn, be, bmag
+  integer(4)            :: i, nitr
+  real(8)               :: bd(3), y(3)
 
   ! Get geodetic height and vertical (downward) compontent of the magnetic field at least three points found by ITRACE
   do i = 1, 3
@@ -568,16 +571,16 @@ subroutine fndapx(alt, zmag, a, alat, alon)
     y(2) = fint(bd(1), bd(2), bd(3), yapx(2, 1), yapx(2, 2), yapx(2, 3), 0.D0)
     y(3) = fint(bd(1), bd(2), bd(3), yapx(3, 1), yapx(3, 2), yapx(3, 3), 0.D0)
 
-          ! Insure negligible Bdown or
-          !
-          ! |Bdown/Btot| < 2.E-6
-          !
-          ! For instance, Bdown must be less than 0.1 nT at low altitudes where
-          ! Btot ~ 50000 nT.  This ratio can be exceeded when interpolation is
-          ! not accurate; i.e., when the middle of the three points interpolated
-          ! is too far from the dip equator.  The three points were initially
-          ! defined with equal spacing by ITRACE, so replacing point 2 with the
-          ! most recently fit location will reduce the interpolation span.
+    ! Insure negligible Bdown or
+    !
+    ! |Bdown/Btot| < 2.E-6
+    !
+    ! For instance, Bdown must be less than 0.1 nT at low altitudes where
+    ! Btot ~ 50000 nT.  This ratio can be exceeded when interpolation is
+    ! not accurate; i.e., when the middle of the three points interpolated
+    ! is too far from the dip equator.  The three points were initially
+    ! defined with equal spacing by ITRACE, so replacing point 2 with the
+    ! most recently fit location will reduce the interpolation span.
 
     rho = sqrt(y(1) ** 2 + y(2) ** 2)
     gdln = rtod * atan2(y(2), y(1))
@@ -608,8 +611,8 @@ subroutine fndapx(alt, zmag, a, alat, alon)
 
   a = (Req + amax1(alt, hta)) / Req
   if (a < 1.) then
-    ! write(0, '("APEX: A cannot be less than 1; A, REQ, HTA "(1P3))') a, Req, hta
-    write(0, *) "APEX: A cannot be less than 1; A, REQ, HTA ", a, Req, hta
+    write(0, '("APEX: A cannot be less than 1; A, REQ, HTA "(1P3))') a, Req, hta
+    ! write(0, *) "APEX: A cannot be less than 1; A, REQ, HTA ", a, Req, hta
     call exit(1)
   end if
   rasq = acos(sqrt(1./ a)) * rtod
@@ -708,9 +711,10 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
 
   implicit none
 
-  real(8)        :: gdlat, gdlon, alt, bnorth, beast, bdown, a, alon
-  real(8)        :: ang, bhor, ca, cang, capang, cb, cottd, ctd, cte, ctg
-  real(8)        :: ha, r, sa, sang, sb, std, ste, stfcpa, stg, sapang, stfspa
+  real(8), intent(in)   :: gdlat, gdlon, alt, bnorth, beast, bdown
+  real(8), intent(out)  :: a, alon
+  real(8)               :: ang, bhor, ca, cang, capang, cb, cottd, ctd, cte, ctg
+  real(8)               :: ha, r, sa, sang, sb, std, ste, stfcpa, stg, sapang, stfspa
 
 
   bhor = sqrt(bnorth * bnorth + beast * beast)
@@ -745,22 +749,3 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
 
   return
 end subroutine dipapx
-
-
-! real(8) function fint(x1, x2, x3, y1, y2, y3, xfit)
-!
-! implicit none
-!
-! real(8), intent(in)  :: x1, x2, x3, y1, y2, y3, xfit
-! real(8)              :: x12, x13, x23, xf1, xf2, xf3
-!
-! x12 = x1-x2
-! x13 = x1-x3
-! x23 = x2-x3
-! xf1 = xfit-x1
-! xf2 = xfit-x2
-! xf3 = xfit-x3
-!
-! fint = (y1*x23*xf2*xf3 - y2*x13*xf1*xf3 + y3*x12*xf1*xf2)/(x12*x13*x23)
-! return
-! end function fint

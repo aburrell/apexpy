@@ -7,108 +7,8 @@
 !
 ! ***********************************************
 
-    ! Define the International Geomagnetic Reference Field (IGRF) as a
-    ! scalar potential field using a truncated series expansion with
-    ! Schmidt semi-normalized associated Legendre functions of degree n and
-    ! order m.  The polynomial coefficients are a function of time and are
-    ! interpolated between five year epochs or extrapolated at a constant
-    ! rate after the last epoch.
-    !
-    ! INPUTS:
-    ! DATE = yyyy.fraction (UT)
-    ! FILENAME = filename for IGRF coefficient file
-    ! OUTPUTS (in comnon block MAGCOF):
-    ! NMAX = Maximum order of spherical harmonic coefficients used
-    ! GB   = Coefficients for magnetic field calculation
-    ! GV   = Coefficients for magnetic potential calculation
-    ! ICHG = Flag indicating when GB,GV have been changed in COFRM
-    !
-    ! It is fatal to supply a DATE before the first epoch.  A warning is
-    ! issued to Fortran unit 0 (stderr) if DATE is later than the
-    ! recommended limit, five years after the last epoch.
-    !
-    ! HISTORY (blame):
-    ! Apr 1983:  Written by Vincent B. Wickwar (Utah State Univ.) including
-    ! secular variation acceleration rate set to zero in case the IGRF
-    ! definition includes such second time derivitives.  The maximum degree
-    ! (n) defined was 10.
-    !
-    ! Jun 1986:  Updated coefficients adding Definitive Geomagnetic Reference
-    ! Field (DGRF) for 1980 and IGRF for 1985 (EOS Volume 7 Number 24).  The
-    ! designation DGRF means coefficients will not change in the future
-    ! whereas IGRF coefficients are interim pending incorporation of new
-    ! magnetometer data.  Common block MAG was replaced by MAGCOF, thus
-    ! removing variables not used in subroutine FELDG.  (Roy Barnes)
-    !
-    ! Apr 1992 (Barnes):  Added DGRF 1985 and IGRF 1990 as given in EOS
-    ! Volume 73 Number 16 April 21 1992.  Other changes were made so future
-    ! updates should:  (1) Increment NDGY; (2) Append to EPOCH the next IGRF
-    ! year; (3) Append the next DGRF coefficients to G1DIM and H1DIM; and (4)
-    ! replace the IGRF initial values (G0, GT) and rates of change indices
-    ! (H0, HT).
-    !
-    ! Apr 1994 (Art Richmond): Computation of GV added, for finding magnetic
-    ! potential.
-    !
-    ! Aug 1995 (Barnes):  Added DGRF for 1990 and IGRF for 1995, which were
-    ! obtained by anonymous ftp to geomag.gsfc.nasa.gov (cd pub, mget table*)
-    ! as per instructions from Bob Langel (langel@geomag.gsfc.nasa.gov) with
-    ! problems reported to baldwin@geomag.gsfc.nasa.gov.
-    !
-    ! Oct 1995 (Barnes):  Correct error in IGRF-95 G 7 6 and H 8 7 (see email
-    ! in folder).  Also found bug whereby coefficients were not being updated
-    ! in FELDG when IENTY did not change so ICHG was added to flag date
-    ! changes.  Also, a vestigial switch (IS) was removed from COFRM; it was
-    ! always zero and involved 3 branch if statements in the main polynomial
-    ! construction loop now numbered 200.
-    !
-    ! Feb 1999 (Barnes):  Explicitly initialize GV(1) in COFRM to avoid the
-    ! possibility of compiler or loader options initializing memory to
-    ! something else (e.g., indefinite).  Also simplify the algebra in COFRM
-    ! with no effect on results.
-    !
-    ! Mar 1999 (Barnes):  Removed three branch if's from FELDG and changed
-    ! statement labels to ascending order.
-    !
-    ! Jun 1999 (Barnes):  Corrected RTOD definition in GD2CART.
-    !
-    ! May 2000 (Barnes):  Replace IGRF 1995, add IGRF 2000, and extend the
-    ! earlier DGRF's back to 1900.  The coefficients came from an NGDC web
-    ! page.  Related documentation is in $APXROOT/docs/igrf.2000.*  where
-    ! $APXROOT, defined by 'source envapex', is traditionally ~bozo/apex).
-    !
-    ! Mar 2004 (Barnes):  Replace 1995 and 2000 coefficients; now both are
-    ! DGRF.  Coefficients for 2000 are degree 13 with precision increased to
-    ! tenths nT and accommodating this instigated changes:  (1) degree (NMAX)
-    ! is now a function of epoch (NMXE) to curtail irrelevant looping over
-    ! unused high order terms (n > 10 in epochs before 2000) when calculating
-    ! GB; (2) expand coefficients data statement layout for G1D and H1D,
-    ! formerly G1DIM and H1DIM; (3) omit secular variation acceleration terms
-    ! which were always zero; (4) increase array dimensions in common block
-    ! MAGCOF and associated arrays G and H in FELDG; (5) change earth's shape
-    ! in CONVRT from the IAU-1966 to the WGS-1984 spheroid; (6) eliminate
-    ! reference to 'definitive' in variables in COFRM which were not always
-    ! definitive; (7) change G to GB in COFRM s.t. arrays GB and GV in common
-    ! block MAGCOF are consistently named in all subroutines; (8) remove
-    ! unused constants in all five subroutines.  See EOS Volume 84 Number 46
-    ! November 18 2003, www.ngdc.noaa.gov/IAGA/vmod/igrf.html or local files
-    ! $APXROOT/docs/igrf.2004.*
-    !
-    ! Sept. 2005 (Maute): update with IGRF10 from
-    ! http://www.ngdc.noaa.gov/IAGA/vmod/igrf.html use script
-    ! ~maute/apex.d/apex_update/igrf2f Note that the downloaded file the start
-    ! column of the year in the first line has to be before the start of each
-    ! number in the same column
-    !
-    ! Jan. 2010 (Maute) update with IGRF11 (same instructions as Sep. 2005
-    ! comment
-    !
-    ! May 2020 (Achim Morschhauser): Update with routine to read
-    ! IGRF coefficients file directly.
 
-
-
-module magfldmodule
+module magcof
 
   implicit none
 
@@ -116,25 +16,16 @@ module magfldmodule
   real(8)          :: ichg
   real(8)          :: gb(225), gv(225)
 
-end module magfldmodule
+end module magcof
 
 module coeffmodule
+  ! Can this be combined with apexmodule in apex.f90???
   real(8), parameter       :: pi=3.14159265358979323846D0
   real(8), parameter       :: dtor=pi / 180D0, rtod=180D0 / pi, pid2=pi / 2D0, twopi=2D0 * pi
   real(8), parameter       :: Req=6378.1370D0, eps=1.D0 / 298.257223563D0
   real(8), parameter       :: Re=Req * (1 - eps / 3D0), ecc2=eps * (2 - eps)
-  ! real(8), parameter       :: missing=-9999E0
 end module coeffmodule
 
-! module igrfparammodule
-!
-! real(8)             :: datel
-! integer(4)                  :: nepo, nght
-! real(8), allocatable     :: epoch(:), nmxe(:)
-! real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
-! real(8), allocatable                     :: gt(:,:), ht(:,:)
-!
-! end module igrfparammodule
 
 subroutine cofrm(date, filename)
 
@@ -240,19 +131,16 @@ subroutine cofrm(date, filename)
   ! Jul 2022 (Lamarche): Revise to fortran 90 standards
 
 
-    use magfldmodule
+    use magcof
     use igrf
-    ! use igrfparammodule
 
     implicit none
 
-    ! COMMON /MAGCOF/ nmax1, GB, GV, ICHG
+    real(8), intent(in)              :: date
+    character(len=1000), intent(in)  :: filename
+    real(8)                          :: f, f0, t, to5
+    integer                          :: i, i1, iy, iy1, m, n, mm, nn, ngh
 
-    real(8)                     :: date
-    real(8)                     :: f, f0, t, to5
-    integer   :: i, i1, iy, iy1, m, n, mm, nn, ngh
-
-    character(len=1000)       :: filename
 
     ! Do not need to load new coefficients if date has not changed
     ichg = 0
@@ -329,32 +217,32 @@ end subroutine cofrm
 
 subroutine dypol(colat, elon, vp)
 
-          ! Computes parameters for dipole component of geomagnetic field.
-          ! COFRM must be called before calling DYPOL!
-          ! 940504 A. D. Richmond
-          !
-          ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
-          ! NMAX = Maximum order of spherical harmonic coefficients used
-          ! GB   = Coefficients for magnetic field calculation
-          ! GV   = Coefficients for magnetic potential calculation
-          ! ICHG = Flag indicating when GB,GV have been changed
-          !
-          ! RETURNS:
-          ! COLAT = Geocentric colatitude of geomagnetic dipole north pole
-          ! (deg)
-          ! ELON  = East longitude of geomagnetic dipole north pole (deg)
-          ! VP    = Magnitude, in T.m, of dipole component of magnetic
-          ! potential at geomagnetic pole and geocentric radius
-          ! of 6371.2 km
+  ! Computes parameters for dipole component of geomagnetic field.
+  ! COFRM must be called before calling DYPOL!
+  ! 940504 A. D. Richmond
+  !
+  ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
+  ! NMAX = Maximum order of spherical harmonic coefficients used
+  ! GB   = Coefficients for magnetic field calculation
+  ! GV   = Coefficients for magnetic potential calculation
+  ! ICHG = Flag indicating when GB,GV have been changed
+  !
+  ! RETURNS:
+  ! COLAT = Geocentric colatitude of geomagnetic dipole north pole
+  ! (deg)
+  ! ELON  = East longitude of geomagnetic dipole north pole (deg)
+  ! VP    = Magnitude, in T.m, of dipole component of magnetic
+  ! potential at geomagnetic pole and geocentric radius
+  ! of 6371.2 km
 
 
-  use magfldmodule
+  use magcof
   use coeffmodule
 
   implicit none
 
-  real(8)       :: colat, elon, vp
-  real(8)       :: ctp, gpl, stp
+  real(8), intent(out)      :: colat, elon, vp
+  real(8)                   :: ctp, gpl, stp
 
   ! Compute geographic colatitude and logitude of the north pole of earth centered dipole
   gpl = sqrt(gb(2) ** 2 + gb(3) ** 2 + gb(4) ** 2)
@@ -373,72 +261,73 @@ end subroutine dypol
 
 subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
 
-          ! Compute the DGRF/IGRF field components at the point GLAT,GLON,ALT.
-          ! COFRM must be called to establish coefficients for correct date
-          ! prior to calling FELDG.
-          !
-          ! IENTY is an input flag controlling the meaning and direction of the
-          ! remaining formal arguments:
-          ! IENTY = 1
-          ! INPUTS:
-          ! GLAT = Latitude of point (deg)
-          ! GLON = Longitude (east=+) of point (deg)
-          ! ALT  = Ht of point (km)
-          ! RETURNS:
-          ! BNRTH  north component of field vector (Gauss)
-          ! BEAST  east component of field vector  (Gauss)
-          ! BDOWN  downward component of field vector (Gauss)
-          ! BABS   magnitude of field vector (Gauss)
-          !
-          ! IENTY = 2
-          ! INPUTS:
-          ! GLAT = X coordinate (in units of earth radii 6371.2 km )
-          ! GLON = Y coordinate (in units of earth radii 6371.2 km )
-          ! ALT  = Z coordinate (in units of earth radii 6371.2 km )
-          ! RETURNS:
-          ! BNRTH = X component of field vector (Gauss)
-          ! BEAST = Y component of field vector (Gauss)
-          ! BDOWN = Z component of field vector (Gauss)
-          ! BABS  = Magnitude of field vector (Gauss)
-          ! IENTY = 3
-          ! INPUTS:
-          ! GLAT = X coordinate (in units of earth radii 6371.2 km )
-          ! GLON = Y coordinate (in units of earth radii 6371.2 km )
-          ! ALT  = Z coordinate (in units of earth radii 6371.2 km )
-          ! RETURNS:
-          ! BNRTH = Dummy variable
-          ! BEAST = Dummy variable
-          ! BDOWN = Dummy variable
-          ! BABS  = Magnetic potential (T.m)
-          !
-          ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
-          ! NMAX = Maximum order of spherical harmonic coefficients used
-          ! GB   = Coefficients for magnetic field calculation
-          ! GV   = Coefficients for magnetic potential calculation
-          ! ICHG = Flag indicating when GB,GV have been changed
-          !
-          ! HISTORY:
-          ! Apr 1983: written by Vincent B. Wickwar (Utah State Univ.).
-          !
-          ! May 1994 (A.D. Richmond): Added magnetic potential calculation
-          !
-          ! Oct 1995 (Barnes): Added ICHG
-          !
-          ! Jul 2022 (Lamarche): Revise to fortran 90 standards
+  ! Compute the DGRF/IGRF field components at the point GLAT,GLON,ALT.
+  ! COFRM must be called to establish coefficients for correct date
+  ! prior to calling FELDG.
+  !
+  ! IENTY is an input flag controlling the meaning and direction of the
+  ! remaining formal arguments:
+  ! IENTY = 1
+  ! INPUTS:
+  ! GLAT = Latitude of point (deg)
+  ! GLON = Longitude (east=+) of point (deg)
+  ! ALT  = Ht of point (km)
+  ! RETURNS:
+  ! BNRTH  north component of field vector (Gauss)
+  ! BEAST  east component of field vector  (Gauss)
+  ! BDOWN  downward component of field vector (Gauss)
+  ! BABS   magnitude of field vector (Gauss)
+  !
+  ! IENTY = 2
+  ! INPUTS:
+  ! GLAT = X coordinate (in units of earth radii 6371.2 km )
+  ! GLON = Y coordinate (in units of earth radii 6371.2 km )
+  ! ALT  = Z coordinate (in units of earth radii 6371.2 km )
+  ! RETURNS:
+  ! BNRTH = X component of field vector (Gauss)
+  ! BEAST = Y component of field vector (Gauss)
+  ! BDOWN = Z component of field vector (Gauss)
+  ! BABS  = Magnitude of field vector (Gauss)
+  ! IENTY = 3
+  ! INPUTS:
+  ! GLAT = X coordinate (in units of earth radii 6371.2 km )
+  ! GLON = Y coordinate (in units of earth radii 6371.2 km )
+  ! ALT  = Z coordinate (in units of earth radii 6371.2 km )
+  ! RETURNS:
+  ! BNRTH = Dummy variable
+  ! BEAST = Dummy variable
+  ! BDOWN = Dummy variable
+  ! BABS  = Magnetic potential (T.m)
+  !
+  ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
+  ! NMAX = Maximum order of spherical harmonic coefficients used
+  ! GB   = Coefficients for magnetic field calculation
+  ! GV   = Coefficients for magnetic potential calculation
+  ! ICHG = Flag indicating when GB,GV have been changed
+  !
+  ! HISTORY:
+  ! Apr 1983: written by Vincent B. Wickwar (Utah State Univ.).
+  !
+  ! May 1994 (A.D. Richmond): Added magnetic potential calculation
+  !
+  ! Oct 1995 (Barnes): Added ICHG
+  !
+  ! Jul 2022 (Lamarche): Revise to fortran 90 standards
 
 
-  use magfldmodule
+  use magcof
   use coeffmodule
 
   implicit none
 
-  integer(4)         :: ienty, ientyp, ih, ihm, ihmax, il, ilm, imax
-  integer(4)         :: is, k, last, m, mk, i
+  integer(4), intent(in) :: ienty
   real(8), intent(in)    :: glat, glon, alt
   real(8), intent(out)   :: bnrth, beast, bdown, babs
-  real(8)            :: brho, bxxx, byyy, bzzz, cp, sp, ct, st, f
-  real(8)            :: rlat, rlon, rq, s, t, x, xxx, y, yyy, z, zzz
-  real(8)            :: g(255), h(255), xi(3)
+  integer(4)             :: ientyp, ih, ihm, ihmax, il, ilm, imax
+  integer(4)             :: is, k, last, m, mk, i
+  real(8)                :: brho, bxxx, byyy, bzzz, cp, sp, ct, st, f
+  real(8)                :: rlat, rlon, rq, s, t, x, xxx, y, yyy, z, zzz
+  real(8)                :: g(255), h(255), xi(3)
 
   ientyp = -10000
 
@@ -468,6 +357,8 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
   last = ihmax + nmax1 + nmax1
   imax = nmax1 + nmax1 - 1
 
+  ! ientyp is not saved between calls, so this will always be run
+  ! This may be incorrect?
   if (ienty /= ientyp .or. ichg == 1) then
     ientyp = ienty
     ichg = 0
@@ -535,10 +426,10 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
     bdown = bzzz
   end if
 
-          ! Magnetic potential computation makes use of the fact that the
-          ! calculation of V is identical to that for r*Br, if coefficients
-          ! in the latter calculation have been divided by (n+1) (coefficients
-          ! GV).  Factor .1 converts km to m and gauss to tesla.
+  ! Magnetic potential computation makes use of the fact that the
+  ! calculation of V is identical to that for r*Br, if coefficients
+  ! in the latter calculation have been divided by (n+1) (coefficients
+  ! GV).  Factor .1 converts km to m and gauss to tesla.
   if (ienty == 3) babs = (bxxx * xxx + byyy * yyy + bzzz * zzz) * Re *.1
 
   return
@@ -547,16 +438,17 @@ end subroutine feldg
 
 subroutine gd2cart(gdlat, glon, alt, x, y, z)
 
-          ! Convert geodetic to cartesian coordinates by calling CONVRT
-          ! 940503 A. D. Richmond
+  ! Convert geodetic to cartesian coordinates by calling CONVRT
+  ! 940503 A. D. Richmond
 
-  use magfldmodule
+  use magcof
   use coeffmodule
 
   implicit none
 
-  real(8)           :: gdlat, glon, alt, x, y, z
-  real(8)           :: ang, rho
+  real(8), intent(in)     :: gdlat, glon, alt
+  real(8), intent(out)    :: x, y, z
+  real(8)                 :: ang, rho
   ! real, parameter :: dtor = 0.01745329251994330
 
   call convrt(1, gdlat, alt, rho, z)
@@ -570,69 +462,70 @@ end subroutine gd2cart
 
 subroutine convrt(i, gdlat, alt, x1, x2)
 
-          ! Convert space point from geodetic to geocentric or vice versa.
-          !
-          ! I is an input flag controlling the meaning and direction of the
-          ! remaining formal arguments:
-          !
-          ! I = 1  (convert from geodetic to cylindrical geocentric)
-          ! INPUTS:
-          ! GDLAT = Geodetic latitude (deg)
-          ! ALT   = Altitude above reference ellipsoid (km)
-          ! RETURNS:
-          ! X1    = Distance from Earth's rotation axis (km)
-          ! X2    = Distance above (north of) Earth's equatorial plane (km)
-          !
-          ! I = 2  (convert from geodetic to spherical geocentric)
-          ! INPUTS:
-          ! GDLAT = Geodetic latitude (deg)
-          ! ALT   = Altitude above reference ellipsoid (km)
-          ! RETURNS:
-          ! X1    = Geocentric latitude (deg)
-          ! X2    = Geocentric distance (km)
-          !
-          ! I = 3  (convert from cylindrical geocentric to geodetic)
-          ! INPUTS:
-          ! X1    = Distance from Earth's rotation axis (km)
-          ! X2    = Distance from Earth's equatorial plane (km)
-          ! RETURNS:
-          ! GDLAT = Geodetic latitude (deg)
-          ! ALT   = Altitude above reference ellipsoid (km)
-          !
-          ! I = 4  (convert from spherical geocentric to geodetic)
-          ! INPUTS:
-          ! X1    = Geocentric latitude (deg)
-          ! X2    = Geocentric distance (km)
-          ! RETURNS:
-          ! GDLAT = Geodetic latitude (deg)
-          ! ALT   = Altitude above reference ellipsoid (km)
-          !
-          !
-          ! HISTORY:
-          ! 940503 (A. D. Richmond):  Based on a routine originally written
-          ! by V. B. Wickwar.
-          !
-          ! Mar 2004: (Barnes) Revise spheroid definition to WGS-1984 to conform
-          ! with IGRF-9 release (EOS Volume 84 Number 46 November 18 2003).
-          !
-          ! Jul 2022 (Lamarche): Revise to fortran 90 standards
-          !
-          ! REFERENCE: ASTRON. J. VOL. 66, p. 15-16, 1961
-          !
-          ! E2  = square of eccentricity of ellipse
-          ! REP = earth's polar      radius (km)
-          ! REQ = earth's equatorial radius (km)
+  ! Convert space point from geodetic to geocentric or vice versa.
+  !
+  ! I is an input flag controlling the meaning and direction of the
+  ! remaining formal arguments:
+  !
+  ! I = 1  (convert from geodetic to cylindrical geocentric)
+  ! INPUTS:
+  ! GDLAT = Geodetic latitude (deg)
+  ! ALT   = Altitude above reference ellipsoid (km)
+  ! RETURNS:
+  ! X1    = Distance from Earth's rotation axis (km)
+  ! X2    = Distance above (north of) Earth's equatorial plane (km)
+  !
+  ! I = 2  (convert from geodetic to spherical geocentric)
+  ! INPUTS:
+  ! GDLAT = Geodetic latitude (deg)
+  ! ALT   = Altitude above reference ellipsoid (km)
+  ! RETURNS:
+  ! X1    = Geocentric latitude (deg)
+  ! X2    = Geocentric distance (km)
+  !
+  ! I = 3  (convert from cylindrical geocentric to geodetic)
+  ! INPUTS:
+  ! X1    = Distance from Earth's rotation axis (km)
+  ! X2    = Distance from Earth's equatorial plane (km)
+  ! RETURNS:
+  ! GDLAT = Geodetic latitude (deg)
+  ! ALT   = Altitude above reference ellipsoid (km)
+  !
+  ! I = 4  (convert from spherical geocentric to geodetic)
+  ! INPUTS:
+  ! X1    = Geocentric latitude (deg)
+  ! X2    = Geocentric distance (km)
+  ! RETURNS:
+  ! GDLAT = Geodetic latitude (deg)
+  ! ALT   = Altitude above reference ellipsoid (km)
+  !
+  !
+  ! HISTORY:
+  ! 940503 (A. D. Richmond):  Based on a routine originally written
+  ! by V. B. Wickwar.
+  !
+  ! Mar 2004: (Barnes) Revise spheroid definition to WGS-1984 to conform
+  ! with IGRF-9 release (EOS Volume 84 Number 46 November 18 2003).
+  !
+  ! Jul 2022 (Lamarche): Revise to fortran 90 standards
+  !
+  ! REFERENCE: ASTRON. J. VOL. 66, p. 15-16, 1961
+  !
+  ! E2  = square of eccentricity of ellipse
+  ! REP = earth's polar      radius (km)
+  ! REQ = earth's equatorial radius (km)
 
 
-  use magfldmodule
+  use magcof
   use coeffmodule
 
   implicit none
 
-  integer(4)        :: i
-  real(8)           :: gdlat, alt, x1, x2
-  real(8)           :: a2, a4, a6, a8, c2cl, c4cl, ccl, coslat, sinlat, d, dltcl
-  real(8)           :: gclat, rho, ri, rkm, s2cl, s4cl, s6cl, s8cl, scl, sgl, z
+  integer(4), intent(in) :: i
+  real(8)                :: gdlat, alt, x1, x2
+  ! real(8), intent(inout)   :: x1, x2
+  real(8)                :: a2, a4, a6, a8, c2cl, c4cl, ccl, coslat, sinlat, d, dltcl
+  real(8)                :: gclat, rho, ri, rkm, s2cl, s4cl, s6cl, s8cl, scl, sgl, z
 
   ! A lot of these are the related to Req and esp - remove reduncancy
   real(8), parameter :: e2 = ecc2, e4 = e2 * e2, e6 = e4 * e2, e8 = e4 * e4,           &

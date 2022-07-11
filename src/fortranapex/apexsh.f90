@@ -150,16 +150,16 @@ module apxshmodule
     real(8)                  :: xqgrad(1:3), yqgrad(1:3), zqgrad(1:3)
     real(8)                  :: qlatgrad(1:3), qlongrad(1:3)
 
+    ! Req = Equatorial radius of Earth in km (WGS84 value)
+    ! eps = flatness of ellipsoidal Earth (WGS84 value)
+    ! Re = Mean radius of Earth in km
+    ! ecc2 = squared eccentricity of ellipsoidal Earth
+
     real(8), parameter       :: pi=3.14159265358979323846D0
     real(8), parameter       :: dtor=pi / 180D0, pid2=pi / 2D0, twopi=2D0 * pi
     real(8), parameter       :: Req=6378.1370D0, eps=1.D0 / 298.257223563D0
     real(8), parameter       :: Re=Req * (1 - eps / 3D0), ecc2=eps * (2 - eps)
     real(8), parameter       :: missing=- 9999E0
-
-! Req = Equatorial radius of Earth in km (WGS84 value)
-! eps = flatness of ellipsoidal Earth (WGS84 value)
-! Re = Mean radius of Earth in km
-! ecc2 = squared eccentricity of ellipsoidal Earth
 
     character(1000)          :: datafile
     real(8)                  :: epoch
@@ -222,6 +222,7 @@ subroutine loadapxsh(datafilenew, epochnew)
 
     ! UPDATE LOAD VARIABLES
     loadflag = .false.
+    ! LL: datafilelast and epochlast are NOT saved in apexshmodule, so I think these are reloaded every time
     datafilelast = datafilenew
     epochlast = epochnew
 
@@ -341,7 +342,7 @@ subroutine apxg2q(glat, glon, alt, vecflagin, qlatout, qlonout, f1, f2, f)
         polynomq(l) = polynomq(l - 1) * rho
         dpolynomq(l) = dble(l) * polynomq(l - 1)
       end do
-      ! print *, 'LINE 344', qcoeff0
+
       xqcoeff = 0
       yqcoeff = 0
       zqcoeff = 0
@@ -365,10 +366,7 @@ subroutine apxg2q(glat, glon, alt, vecflagin, qlatout, qlonout, f1, f2, f)
     ! COMPUTE SPHERICAL HARMONICS
     theta = (90D0 - dble(glat)) * dtor
     phi = glon * dtor
-    ! print *, 'LINE 367', glat, glon, theta, phi
     call shcalc(theta, phi)
-
-    ! print *, 'LINE 369', xqcoeff
 
     ! COMPUTE AND RETURN QUASI-DIPOLE COORDINATES
     xq = dot_product(sh, xqcoeff)
@@ -436,8 +434,8 @@ subroutine apxg2all(glat, glon, alt, hr, vecflagin, &
     real(8), intent(out)        :: d1(1:3), d2(1:3), d3(1:3), d
     real(8), intent(out)        :: e1(1:3), e2(1:3), e3(1:3)
 
-    integer(4)               :: i
-    real(8)                  :: cosmlat, Rrat, denom
+    integer(4)                  :: i
+    real(8)                     :: cosmlat, Rrat, denom
 
     if (loadflag) then
       print *, 'No coordinates loaded. Call LOADAPXSH first.'
@@ -651,11 +649,11 @@ subroutine shcalc(theta, phi)
     integer(4)               :: n, m, i, i1
     real(8)                  :: mphi, cosmphi, sinmphi
 
-    ! print *, 'LINE 652', theta, phi
+
     call alfbasis(nmax, mmax, theta, pbar, vbar, wbar)
     i = 0
     i1 = 0
-    ! print *, 'LINE 655', pbar
+
     do n = 0, nmax
       sh(i) = pbar(n, 0)
       shgradtheta(i1) =  vbar(n, 0)
@@ -674,15 +672,15 @@ subroutine shcalc(theta, phi)
       end do
       if (vecflag /= 0) then
         do n = m, nmax
-          shgradtheta(i1)   =  vbar(n, m) * cosmphi
+          shgradtheta(i1)     =  vbar(n, m) * cosmphi
           shgradtheta(i1 + 1) =  vbar(n, m) * sinmphi
-          shgradphi(i1)     = - wbar(n, m) * sinmphi
+          shgradphi(i1)       = - wbar(n, m) * sinmphi
           shgradphi(i1 + 1)   =  wbar(n, m) * cosmphi
           i1 = i1 + 2
         end do
       end if
     end do
-    ! print *, 'LINE 681', sh
+
 end subroutine shcalc
 
 ! *******************************************************************************
@@ -766,7 +764,7 @@ subroutine alfbasis(nmax, mmax, theta, P, V, W)
     P(0, 0) = p00
     x = dcos(theta)
     y = dsin(theta)
-    ! print *, 'LINE 766', x, y
+
     do m = 1, mmax
       W(m, m) = cm(m) * P(m - 1, m - 1)
       P(m, m) = y * W(m, m)

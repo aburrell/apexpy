@@ -5,15 +5,11 @@ module igrf
 
   implicit none
 
-  ! real(8),allocatable :: GYR(:,:,:),HYR(:,:,:)
-  ! real(8),allocatable :: GT(:,:),HT(:,:)
-  ! real(8),allocatable :: EPOCH(:),NMXE(:)
-
-  real(8)             :: datel
-  integer(4)                  :: nepo, nght
+  real(8)                  :: datel
+  integer(4)               :: nepo, nght
   real(8), allocatable     :: epoch(:), nmxe(:)
-  real(8), allocatable                     :: gyr(:,:,:), hyr(:,:,:)
-  real(8), allocatable                     :: gt(:,:), ht(:,:)
+  real(8), allocatable     :: gyr(:,:,:), hyr(:,:,:)
+  real(8), allocatable     :: gt(:,:), ht(:,:)
 
 contains
 
@@ -22,20 +18,15 @@ contains
 
     implicit none
 
-    ! real*8,allocatable,intent(inout) :: GYR(:,:,:),HYR(:,:,:)
-    ! real*8,allocatable,intent(inout) :: GT(:,:),HT(:,:)
-    ! real*4,allocatable,intent(inout) :: EPOCH(:),NMXE(:)
-    ! integer, intent(out) :: NEPO,NGHT
     character(len=*), intent(in) :: filename_in
-
-    character(len=10000) :: s
-    integer(8)   :: offset
-    integer(4)   :: state, i, pos
-    integer(4)   :: num_sh, L_max
-    integer(4)   :: num_epochs
-    integer(4)   :: l, m, e
-    real(8), allocatable    :: g(:,:)
-    integer(4), allocatable   :: nm(:,:)
+    character(len=10000)         :: s
+    integer(8)                   :: offset
+    integer(4)                   :: state, i, pos
+    integer(4)                   :: num_sh, L_max
+    integer(4)                   :: num_epochs
+    integer(4)                   :: l, m, e
+    real(8), allocatable         :: g(:,:)
+    integer(4), allocatable      :: nm(:,:)
 
     ! Get number of Gauss coefficients
     ! NGHT is an uninitialize output variable, so num_sh=0
