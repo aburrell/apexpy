@@ -139,7 +139,7 @@ subroutine cofrm(date, filename)
     real(8), intent(in)              :: date
     character(len=1000), intent(in)  :: filename
     real(8)                          :: f, f0, t, to5
-    integer                          :: i, i1, iy, iy1, m, n, mm, nn, ngh
+    integer(4)                       :: i, i1, iy, iy1, m, n, mm, nn, ngh
 
 
     ! Do not need to load new coefficients if date has not changed

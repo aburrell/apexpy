@@ -605,6 +605,8 @@ subroutine apxq2g(qlat0, qlon0, alt, prec, glatout, glonout, error)
           errorlast = error
           error = sngl(acos(coserror) / dtor)
           niter = niter + 1
+          ! LL: These errors don't routinely convere below 1e-5
+          ! write(*,*) error, prec
         end do
       ! NEAR QD POLES
       else if (error > prec) then

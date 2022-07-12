@@ -104,7 +104,7 @@ program checkapexsh
   call loadapxsh(apexshfile, epoch)
   qlon = 90.0
   alt = 1000.0
-  prec = 1E-4
+  prec = 1E-6
   print *
   print *, 'LATITUDE PROFILE OF QUASI-DIPOLE TO GEODETIC CONVERSION'
   print '(a8,f6.1, a7,f5.1, a6,f6.1)', 'EPOCH=', epoch, ', QLON=', qlon, ', ALT=', alt
