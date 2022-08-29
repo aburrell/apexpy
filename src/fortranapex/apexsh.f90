@@ -14,7 +14,7 @@
 ! coordinates with smooth base vectors, J. Geophys. Res., 115,
 ! Axxxxx, doi:10.1029/2010JA015326, 2010.
 !
-! *******************************************************************************
+! ******************************************************************************
 !
 ! LOADAPXSH
 ! Loads spherical harmonic coefficients (created by MAKEAPXSH) for coordinate
@@ -28,7 +28,7 @@
 ! EPOCH     Date for which coordinates are desired (decimal years, yyyy.y,
 ! single precision)
 !
-! *******************************************************************************
+! ******************************************************************************
 !
 ! APXG2Q
 ! Converts geodetic to Quasi-Dipole coordinates
@@ -54,7 +54,7 @@
 ! east direction, and F2 points in the QD north direction.
 ! F         F = |F1 x F2|, as described in Richmond (1995)
 !
-! *******************************************************************************
+! ******************************************************************************
 !
 ! APXG2ALL
 ! Converts geodetic to Quasi-Dipole and Modified Apex coordinates
@@ -98,7 +98,7 @@
 ! east and downward/equatorward directions. E3 points along the
 ! magnetic field.
 !
-! *******************************************************************************
+! ******************************************************************************
 !
 ! APXQ2G
 ! Converts Quasi-Dipole to geodetic coordinates
@@ -124,7 +124,7 @@
 ! coordinates and the qlat and qlon produced by feeding the output
 ! glat and glon into APG2ALL.
 !
-! *******************************************************************************
+! ******************************************************************************
 
 module apxshmodule
 
@@ -136,7 +136,8 @@ module apxshmodule
     real(8), allocatable     :: coeff0(:,:,:)
     real(8), allocatable     :: qcoeff0(:,:), gcoeff0(:,:)
     real(8), allocatable     :: xqcoeff(:), yqcoeff(:), zqcoeff(:)
-    real(8), allocatable     :: dxqdrhocoeff(:), dyqdrhocoeff(:), dzqdrhocoeff(:)
+    real(8), allocatable     :: dxqdrhocoeff(:), dyqdrhocoeff(:)
+    real(8), allocatable     :: dzqdrhocoeff(:)
     real(8), allocatable     :: xgcoeff(:), ygcoeff(:), zgcoeff(:)
     real(8), allocatable     :: sh(:), shgradtheta(:), shgradphi(:)
     real(8), allocatable     :: polynomq(:), dpolynomq(:), polynomg(:)
@@ -168,7 +169,7 @@ module apxshmodule
 
 end module apxshmodule
 
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine loadapxsh(datafilenew, epochnew)
 
@@ -222,7 +223,8 @@ subroutine loadapxsh(datafilenew, epochnew)
 
     ! UPDATE LOAD VARIABLES
     loadflag = .false.
-    ! LL: datafilelast and epochlast are NOT saved in apexshmodule, so I think these are reloaded every time
+    ! LL: datafilelast and epochlast are NOT saved in apexshmodule,
+    ! so I think these are reloaded every time
     datafilelast = datafilenew
     epochlast = epochnew
 
@@ -230,7 +232,7 @@ subroutine loadapxsh(datafilenew, epochnew)
 
 end subroutine loadapxsh
 
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine allocatearrays
 
@@ -300,7 +302,7 @@ subroutine allocatearrays
 
 end subroutine allocatearrays
 
-! ***************************************************************************************************
+! ******************************************************************************
 
 subroutine apxg2q(glat, glon, alt, vecflagin, qlatout, qlonout, f1, f2, f)
 
@@ -333,7 +335,8 @@ subroutine apxg2q(glat, glon, alt, vecflagin, qlatout, qlonout, f1, f2, f)
     ! COPY INPUT FLAG
     vecflag = vecflagin
 
-    ! COMPUTE SPATIAL COEFFICIENTS AND THEIR VERTICAL GRADIENTS FOR THE SPECIFIED HEIGHT
+    ! COMPUTE SPATIAL COEFFICIENTS AND THEIR VERTICAL GRADIENTS FOR THE
+    ! SPECIFIED HEIGHT
     if (alt /= altlastq) then
       h = dble(alt)
       Reph = Re + h
@@ -383,34 +386,35 @@ subroutine apxg2q(glat, glon, alt, vecflagin, qlatout, qlonout, f1, f2, f)
 
     ! BASE VECTOR CALCULATIONS
     if (vecflag /= 0) then
+       
+       ! COMPUTE HORIZONTAL GRADIENT KERNELS OF QUASI-DIPOLE CARTESIAN
+       ! COORDINATES
+       xqgrad(1) = dot_product(shgradphi, xqcoeff)
+       yqgrad(1) = dot_product(shgradphi, yqcoeff)
+       zqgrad(1) = dot_product(shgradphi, zqcoeff)
+       xqgrad(2) = - dot_product(shgradtheta, xqcoeff)
+       yqgrad(2) = - dot_product(shgradtheta, yqcoeff)
+       zqgrad(2) = - dot_product(shgradtheta, zqcoeff)
 
-      ! COMPUTE HORIZONTAL GRADIENT KERNELS OF QUASI-DIPOLE CARTESIAN COORDINATES
-      xqgrad(1) = dot_product(shgradphi, xqcoeff)
-      yqgrad(1) = dot_product(shgradphi, yqcoeff)
-      zqgrad(1) = dot_product(shgradphi, zqcoeff)
-      xqgrad(2) = - dot_product(shgradtheta, xqcoeff)
-      yqgrad(2) = - dot_product(shgradtheta, yqcoeff)
-      zqgrad(2) = - dot_product(shgradtheta, zqcoeff)
+       ! COMPUTE ADJUSTMENTS TO GRADIENTS FOR ELLIPSOIDAL EARTH
+       costheta = dcos(theta)
+       Jtemp = 1D0 - ecc2 * costheta * costheta
+       r = Req / dsqrt(Jtemp)
+       J = (h + (1 - ecc2) * r / Jtemp) / Reph
+       r = (h + r) / Reph
 
-      ! COMPUTE ADJUSTMENTS TO GRADIENTS FOR ELLIPSOIDAL EARTH
-      costheta = dcos(theta)
-      Jtemp = 1D0 - ecc2 * costheta * costheta
-      r = Req / dsqrt(Jtemp)
-      J = (h + (1 - ecc2) * r / Jtemp) / Reph
-      r = (h + r) / Reph
+       ! COMPUTE HORIZONTAL GEODETIC GRADIENTS OF QD LATITUDE AND LONGITUDE
+       qlatgrad(1) = (- ( cosqlon * xqgrad(1) + sinqlon * yqgrad(1)) * sinqlat + cosqlat * zqgrad(1)) / r
+       qlatgrad(2) = (- ( cosqlon * xqgrad(2) + sinqlon * yqgrad(2)) * sinqlat + cosqlat * zqgrad(2)) / J
+       qlongrad(1) =   (- sinqlon * xqgrad(1) + cosqlon * yqgrad(1)) / r
+       qlongrad(2) =   (- sinqlon * xqgrad(2) + cosqlon * yqgrad(2)) / J
 
-      ! COMPUTE HORIZONTAL GEODETIC GRADIENTS OF QD LATITUDE AND LONGITUDE
-      qlatgrad(1) = (- ( cosqlon * xqgrad(1) + sinqlon * yqgrad(1)) * sinqlat + cosqlat * zqgrad(1)) / r
-      qlatgrad(2) = (- ( cosqlon * xqgrad(2) + sinqlon * yqgrad(2)) * sinqlat + cosqlat * zqgrad(2)) / J
-      qlongrad(1) =   (- sinqlon * xqgrad(1) + cosqlon * yqgrad(1)) / r
-      qlongrad(2) =   (- sinqlon * xqgrad(2) + cosqlon * yqgrad(2)) / J
-
-      ! RETURN QUASI-DIPOLE BASE VECTORS
-      f1(1) = sngl( qlatgrad(2))
-      f1(2) = sngl(- qlatgrad(1))
-      f2(1) = sngl(- qlongrad(2))
-      f2(2) = sngl(qlongrad(1))
-      f = f1(1) * f2(2) - f1(2) * f2(1)
+       ! RETURN QUASI-DIPOLE BASE VECTORS
+       f1(1) = sngl( qlatgrad(2))
+       f1(2) = sngl(- qlatgrad(1))
+       f2(1) = sngl(- qlongrad(2))
+       f2(2) = sngl(qlongrad(1))
+       f = f1(1) * f2(2) - f1(2) * f2(1)
 
     end if
 
@@ -506,7 +510,7 @@ subroutine apxg2all(glat, glon, alt, hr, vecflagin, &
 
 end subroutine apxg2all
 
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine apxq2g(qlat0, qlon0, alt, prec, glatout, glonout, error)
 
@@ -521,7 +525,8 @@ subroutine apxq2g(qlat0, qlon0, alt, prec, glatout, glonout, error)
     real(8)                  :: qlatout, qlonout, errorlast
     real(8)                  :: f1(1:2), f2(1:2), f
     real(8)                  :: theta, phi
-    real(8)                  :: sinqlon0, cosqlon0, sinqlat0, cosqlat0, cotqlat0, zfact
+    real(8)                  :: sinqlon0, cosqlon0, sinqlat0, cosqlat0
+    real(8)                  :: cotqlat0, zfact
     real(8)                  :: glat, glon
     real(8)                  :: xg, yg, zg, cosglat
     real(8)                  :: xggrad(1:2), yggrad(1:2), zggrad(1:2)
@@ -638,7 +643,7 @@ subroutine apxq2g(qlat0, qlon0, alt, prec, glatout, glonout, error)
 
 end subroutine apxq2g
 
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine shcalc(theta, phi)
 
@@ -685,7 +690,7 @@ subroutine shcalc(theta, phi)
 
 end subroutine shcalc
 
-! *******************************************************************************
+! ******************************************************************************
 
 module alfbasismodule
 
@@ -703,7 +708,7 @@ module alfbasismodule
 
 end module alfbasismodule
 
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine alfbasisinit(nmax0in, mmax0in)
 
@@ -791,4 +796,4 @@ subroutine alfbasis(nmax, mmax, theta, P, V, W)
 
 end subroutine alfbasis
 
-! *******************************************************************************
+! ******************************************************************************
