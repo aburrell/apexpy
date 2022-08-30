@@ -40,7 +40,7 @@ subroutine cofrm(date, filename)
   ! DATE = yyyy.fraction (UT)
   ! FILENAME = filename for IGRF coefficient file
   ! OUTPUTS (in comnon block MAGCOF):
-  ! NMAX = Maximum order of spherical harmonic coefficients used
+  ! NMAX1 = Maximum order of spherical harmonic coefficients used
   ! GB   = Coefficients for magnetic field calculation
   ! GV   = Coefficients for magnetic potential calculation
   ! ICHG = Flag indicating when GB,GV have been changed in COFRM
@@ -151,11 +151,13 @@ subroutine cofrm(date, filename)
       ichg = 1
     end if
 
+    ! Read in the IGRF file, if it has not already been loaded
     if (.not. allocated(gyr)) then
       call read_igrf(filename)
     end if
     ngh = nght * nepo
 
+    ! Test the desired output epoch
     if (date < epoch(1)) then
       write(0, '("COFRM:  DATE "(F9.3)" preceeds earliest available "(F6.1))') date, epoch(1)
       call exit(1)
@@ -164,6 +166,7 @@ subroutine cofrm(date, filename)
       call exit(1)
     end if
 
+    ! Set the date and time
     iy = 1
     do while (date > epoch(iy))
       iy = iy + 1
@@ -185,6 +188,7 @@ subroutine cofrm(date, filename)
       f = f0 / sqrt(2.0)
       nn = n + 1
       mm = 1
+
       if (iy < nepo) then  ! interoplate (m=0 terms)
         gb(i) = (gyr(nn, mm, iy) + (gyr(nn, mm, iy1) - gyr(nn, mm, iy)) * to5) * f0
       end if
