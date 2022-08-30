@@ -535,7 +535,7 @@ class TestApexMethod():
         user_out = user_method(self.in_lat, self.in_lon, self.in_alt)
 
         # Evaluate the user output
-        np.testing.assert_allclose(user_out, out_comp)
+        np.testing.assert_allclose(user_out, out_comp, rtol=1e-5, atol=1e-5)
 
         for out_val in user_out:
             assert np.asarray(out_val).shape == (), "output is not a scalar"
@@ -840,9 +840,18 @@ class TestApexMapMethods():
                                [-13.76642894744873, 164.24259948730469,
                                 0.00056820799363777041])])
     def test_map_to_height(self, in_args, test_mapped):
-        """Test the map_to_height function."""
+        """Test the map_to_height function.
+
+        Parameters
+        ----------
+        in_args : list
+            List of input arguments
+        test_mapped : list
+            List of expected outputs
+
+        """
         mapped = self.apex_out.map_to_height(*in_args)
-        np.testing.assert_allclose(mapped, test_mapped, atol=1e-6)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5, atol=1e-5)
         return
 
     def test_map_to_height_same_height(self):
@@ -850,13 +859,22 @@ class TestApexMapMethods():
         mapped = self.apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
                                              precision=1e-10)
         np.testing.assert_allclose(mapped, (60.0, 15.000003814697266, 0.0),
-                                   rtol=1e-5)
+                                   rtol=1e-5, atol=1e-5)
         return
 
     @pytest.mark.parametrize('arr_shape', [(2,), (2, 2), (1, 4)])
     @pytest.mark.parametrize('ivec', range(0, 4))
     def test_map_to_height_array_location(self, arr_shape, ivec):
-        """Test map_to_height with array input."""
+        """Test map_to_height with array input.
+
+        Parameters
+        ----------
+        arr_shape : tuple
+            Expected array shape
+        ivec : int
+            Input argument index for vectorized input
+
+        """
         # Set the base input and output values
         in_args = [60, 15, 100, 100]
         test_mapped = [60, 15.00000381, 0.0]
@@ -868,7 +886,8 @@ class TestApexMapMethods():
         mapped = self.apex_out.map_to_height(*in_args)
         for i, test_val in enumerate(test_mapped):
             assert mapped[i].shape == arr_shape
-            np.testing.assert_allclose(mapped[i], test_val, rtol=1e-5)
+            np.testing.assert_allclose(mapped[i], test_val, rtol=1e-5,
+                                       atol=1e-5)
         return
 
     @pytest.mark.parametrize("method_name,in_args",
