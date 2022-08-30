@@ -1,4 +1,4 @@
-! *******************************************************************************
+! ******************************************************************************
 !
 ! File Name: makeapexsh.f90
 ! Authors: John Emmert, Art Richmond
@@ -11,16 +11,16 @@
 ! Emmert, J. T., A. D. Richmond, and D. P. Drob, A computationally
 ! compact representation of Magnetic-Apex and Quasi-Dipole
 ! coordinates with smooth base vectors, J. Geophys. Res., 115,
-! Axxxxx, doi:10.1029/2010JA015326, 2010.
+! A08322, doi:10.1029/2010JA015326, 2010.
 !
-! *******************************************************************************
+! ******************************************************************************
 !
 ! HISTORY (blame):
 !
 ! 25 Feb 2021: Modified by Ashton Reimer to pass IGRF coefficients file to the
 ! COFRM and APEX subroutine calls.
 !
-! *******************************************************************************
+! ******************************************************************************
 !
 ! MAKEAPXSH
 ! Computes and saves harmonic coefficients for coordinate conversions.
@@ -42,7 +42,7 @@
 ! DEPENDENCIES
 ! apex.f, magfld.f, apexsh.f90
 !
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 
@@ -127,14 +127,16 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
       Dxq = 0; Dyq = 0; Dzq = 0
       Dxg = 0; Dyg = 0; Dzg = 0
 
-      ! RETRIEVE IGRF, COMPUTE DIPOLE ROTATION PARAMETERS,
-      ! AND SET THE CORRESPONDING EXPANSION COEFFICIENTS
+      ! Retrieve IGRF
       call cofrm(epochgrid(iepoch), igrffilein)
+
+      ! Compute the dipole rotation parameters
       sinmplat = dble(gb(2) / sqrt(gb(2) * gb(2) + gb(3) * gb(3) + gb(4) * gb(4)))
       cosmplat = dsqrt(1 - sinmplat * sinmplat)
       sinmplon = dble(gb(4) / sqrt(gb(3) * gb(3) + gb(4) * gb(4)))
       cosmplon = dble(gb(3) / sqrt(gb(3) * gb(3) + gb(4) * gb(4)))
-      ! Everything going into these equations is fine, but initializng coeff0 might be a problem?
+
+      ! Set the expansion coeficients
       coeff0(Rpt, iepoch, 0) = (/ norm2 * sinmplat * cosmplon, norm2 * sinmplat * sinmplon, - norm1 * cosmplat /)
       coeff0(Rpt, iepoch, 1) = (/- norm2 * sinmplon,          norm2 * cosmplon,                      0D0 /)
       coeff0(Rpt, iepoch, 2) = (/ norm2 * cosmplat * cosmplon, norm2 * cosmplat * sinmplon,  norm1 * sinmplat /)
@@ -236,7 +238,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
 
 end subroutine makeapxsh
 
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine choldc(a, n, np, p)
 
@@ -263,7 +265,7 @@ subroutine choldc(a, n, np, p)
 
 end subroutine choldc
 
-! *******************************************************************************
+! ******************************************************************************
 
 subroutine cholsl(a, n, np, p, b, x)
 
@@ -291,4 +293,4 @@ subroutine cholsl(a, n, np, p, b, x)
 
 end subroutine cholsl
 
-! *******************************************************************************
+! ******************************************************************************
