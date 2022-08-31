@@ -2,6 +2,14 @@
 ! use ifport
 
 module igrf
+  ! Read in relevant data from IGRF coefficient file.
+  !
+  ! INPUTS:
+  ! filename_in = Filename for IGRF coefficient files
+  !
+  ! RETURNS:
+  ! None (all output saved as module variables)
+
 
   implicit none
 
@@ -13,7 +21,6 @@ module igrf
 
 contains
 
-  ! subroutine read_igrf(filename_in,GYR,HYR,GT,HT,NEPO,NGHT,EPOCH,NMXE)
   subroutine read_igrf(filename_in)
 
     implicit none
@@ -28,15 +35,7 @@ contains
     real(8), allocatable         :: g(:,:)
     integer(4), allocatable      :: nm(:,:)
 
-    ! Get number of Gauss coefficients
-    ! NGHT is an uninitialize output variable, so num_sh=0
-    ! This doesn't appear to do anything because num_sh set to 0 later
-    ! num_sh = NGHT-2*sqrt(real(NGHT))
-    ! write(*,*) num_sh
-    ! print *, num_sh, NGHT
-
     ! Open IGRF file
-    ! print *, filename_in
     open(unit=100, file=filename_in, status='old', iostat=state)
     if (state /= 0) then
        stop "File open error"

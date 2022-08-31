@@ -18,29 +18,29 @@
 ! HISTORY (blame):
 !
 ! 25 Feb 2021: Modified by Ashton Reimer to pass IGRF coefficients file to the
-! COFRM and APEX subroutine calls.
+! cofrm and apex subroutine calls.
 !
 ! ******************************************************************************
 !
-! MAKEAPXSH
+! makeapxsh
 ! Computes and saves harmonic coefficients for coordinate conversions.
 !
-! CALL MAKEAPXSH (DATAFILE, IGRFFILE, EPOCHS, NEPOCHS, L, M, N)
+! call makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmaxin, nmaxin)
 !
-! INPUT ARGUMENTS
-! DATAFILE  Name of output data file that will contain the conversion
+! INPUT:
+! datafilein  = Name of output data file that will contain the conversion
 ! coefficients
-! IGRFFILE  Name of the input IGRF coefficients file
-! EPOCHS    Array of ordered epochs (decimal years, yyyy.y) for which
+! igrffilein  = Name of the input IGRF coefficients file
+! epochgridin = Array of ordered epochs (decimal years, yyyy.y) for which
 ! coefficients are to be computed.
-! NEPOCHS   Number of elements in EPOCHS.
-! L         Maximum order of vertical polynomial expansion.
-! M         Maximum order of spherical harmonic expansion.
-! N         Maximum degree of spherical harmonic expansion. N must be equal
+! nepochin    = Number of elements in EPOCHS.
+! lmaxin      = Maximum order of vertical polynomial expansion.
+! mmaxin      = Maximum order of spherical harmonic expansion.
+! nmaxin      = Maximum degree of spherical harmonic expansion. N must be equal
 ! or greater than M.
 !
 ! DEPENDENCIES
-! apex.f, magfld.f, apexsh.f90
+! apex.f90, magfld.f90, apexsh.f90
 !
 ! ******************************************************************************
 
@@ -50,8 +50,6 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
     use magcof
 
     implicit none
-
-    ! COMMON /MAGCOF/ NMAXIGRF, GB
 
     character(128), intent(in)      :: datafilein
     character(len=1000), intent(in) :: igrffilein

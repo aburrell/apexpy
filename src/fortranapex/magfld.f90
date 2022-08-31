@@ -37,16 +37,16 @@ subroutine cofrm(date, filename)
   ! rate after the last epoch.
   !
   ! INPUTS:
-  ! DATE = yyyy.fraction (UT)
-  ! FILENAME = filename for IGRF coefficient file
-  ! OUTPUTS (in comnon block MAGCOF):
-  ! NMAX1 = Maximum order of spherical harmonic coefficients used
-  ! GB   = Coefficients for magnetic field calculation
-  ! GV   = Coefficients for magnetic potential calculation
-  ! ICHG = Flag indicating when GB,GV have been changed in COFRM
+  ! date = yyyy.fraction (UT)
+  ! fielname = filename for IGRF coefficient file
+  ! OUTPUTS (variables in imported module magcof):
+  ! nmax1 = Maximum order of spherical harmonic coefficients used
+  ! gb   = Coefficients for magnetic field calculation
+  ! gv   = Coefficients for magnetic potential calculation
+  ! ichg = Flag indicating when gb,gv have been changed in cofrm
   !
-  ! It is fatal to supply a DATE before the first epoch.  A warning is
-  ! issued to Fortran unit 0 (stderr) if DATE is later than the
+  ! It is fatal to supply a date before the first epoch.  A warning is
+  ! issued to Fortran unit 0 (stderr) if date is later than the
   ! recommended limit, five years after the last epoch.
   !
   ! HISTORY (blame):
@@ -222,22 +222,26 @@ end subroutine cofrm
 subroutine dypol(colat, elon, vp)
 
   ! Computes parameters for dipole component of geomagnetic field.
-  ! COFRM must be called before calling DYPOL!
+  ! cofrm must be called before calling dypol!
   ! 940504 A. D. Richmond
   !
-  ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
-  ! NMAX = Maximum order of spherical harmonic coefficients used
-  ! GB   = Coefficients for magnetic field calculation
-  ! GV   = Coefficients for magnetic potential calculation
-  ! ICHG = Flag indicating when GB,GV have been changed
+  ! INPUTS (variables in imported module magcof):
+  ! nmax1 = Maximum order of spherical harmonic coefficients used
+  ! gb   = Coefficients for magnetic field calculation
+  ! gv   = Coefficients for magnetic potential calculation
+  ! ichg = Flag indicating when gb,gv have been changed
   !
   ! RETURNS:
-  ! COLAT = Geocentric colatitude of geomagnetic dipole north pole
+  ! colat = Geocentric colatitude of geomagnetic dipole north pole
   ! (deg)
-  ! ELON  = East longitude of geomagnetic dipole north pole (deg)
-  ! VP    = Magnitude, in T.m, of dipole component of magnetic
+  ! elon  = East longitude of geomagnetic dipole north pole (deg)
+  ! vp    = Magnitude, in T.m, of dipole component of magnetic
   ! potential at geomagnetic pole and geocentric radius
   ! of 6371.2 km
+  !
+  ! IMPORTS:
+  !   magcof
+  !   coeffmodule
 
 
   use magcof
@@ -257,7 +261,7 @@ subroutine dypol(colat, elon, vp)
 
   ! Compute magnitude of magnetic potential at pole, radius Re
   vp = 0.2 * gpl * Re
-  ! .2 = 2*(10**-4 T/gauss)*(1000 m/km) (2 comes through F0 in COFRM).
+  ! .2 = 2*(10**-4 T/gauss)*(1000 m/km) (2 comes through f0 in cofrm).
 
   return
 end subroutine dypol
@@ -265,49 +269,50 @@ end subroutine dypol
 
 subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
 
-  ! Compute the DGRF/IGRF field components at the point GLAT,GLON,ALT.
-  ! COFRM must be called to establish coefficients for correct date
-  ! prior to calling FELDG.
+  ! Compute the DGRF/IGRF field components at the point glat,glon,alt.
+  ! cofrm must be called to establish coefficients for correct date
+  ! prior to calling feldg.
   !
-  ! IENTY is an input flag controlling the meaning and direction of the
+  ! ienty is an input flag controlling the meaning and direction of the
   ! remaining formal arguments:
-  ! IENTY = 1
+  ! ienty = 1
   ! INPUTS:
-  ! GLAT = Latitude of point (deg)
-  ! GLON = Longitude (east=+) of point (deg)
-  ! ALT  = Ht of point (km)
+  ! glat = Latitude of point (deg)
+  ! glon = Longitude (east=+) of point (deg)
+  ! alt  = Ht of point (km)
   ! RETURNS:
-  ! BNRTH  north component of field vector (Gauss)
-  ! BEAST  east component of field vector  (Gauss)
-  ! BDOWN  downward component of field vector (Gauss)
-  ! BABS   magnitude of field vector (Gauss)
+  ! bnrth = north component of field vector (Gauss)
+  ! beast = east component of field vector  (Gauss)
+  ! bdown = downward component of field vector (Gauss)
+  ! babs  = magnitude of field vector (Gauss)
   !
-  ! IENTY = 2
+  ! ienty = 2
   ! INPUTS:
-  ! GLAT = X coordinate (in units of earth radii 6371.2 km )
-  ! GLON = Y coordinate (in units of earth radii 6371.2 km )
-  ! ALT  = Z coordinate (in units of earth radii 6371.2 km )
+  ! glat = X coordinate (in units of earth radii 6371.2 km )
+  ! glon = Y coordinate (in units of earth radii 6371.2 km )
+  ! alt  = Z coordinate (in units of earth radii 6371.2 km )
   ! RETURNS:
-  ! BNRTH = X component of field vector (Gauss)
-  ! BEAST = Y component of field vector (Gauss)
-  ! BDOWN = Z component of field vector (Gauss)
-  ! BABS  = Magnitude of field vector (Gauss)
-  ! IENTY = 3
-  ! INPUTS:
-  ! GLAT = X coordinate (in units of earth radii 6371.2 km )
-  ! GLON = Y coordinate (in units of earth radii 6371.2 km )
-  ! ALT  = Z coordinate (in units of earth radii 6371.2 km )
-  ! RETURNS:
-  ! BNRTH = Dummy variable
-  ! BEAST = Dummy variable
-  ! BDOWN = Dummy variable
-  ! BABS  = Magnetic potential (T.m)
+  ! bnrth = X component of field vector (Gauss)
+  ! beast = Y component of field vector (Gauss)
+  ! bdown = Z component of field vector (Gauss)
+  ! babs  = Magnitude of field vector (Gauss)
   !
-  ! INPUT from COFRM through COMMON /MAGCOF/ NMAX,GB(255),GV(225),ICHG
-  ! NMAX = Maximum order of spherical harmonic coefficients used
-  ! GB   = Coefficients for magnetic field calculation
-  ! GV   = Coefficients for magnetic potential calculation
-  ! ICHG = Flag indicating when GB,GV have been changed
+  ! ienty = 3
+  ! INPUTS:
+  ! glat = X coordinate (in units of earth radii 6371.2 km )
+  ! glon = Y coordinate (in units of earth radii 6371.2 km )
+  ! alt  = Z coordinate (in units of earth radii 6371.2 km )
+  ! RETURNS:
+  ! bnrth = Dummy variable
+  ! beast = Dummy variable
+  ! bdown = Dummy variable
+  ! babs  = Magnetic potential (T.m)
+  !
+  ! INPUTS (variables in imported module magcof):
+  ! nmax1 = Maximum order of spherical harmonic coefficients used
+  ! gb    = Coefficients for magnetic field calculation
+  ! gv    = Coefficients for magnetic potential calculation
+  ! ichg  = Flag indicating when GB,GV have been changed
   !
   ! HISTORY:
   ! Apr 1983: written by Vincent B. Wickwar (Utah State Univ.).
@@ -453,7 +458,6 @@ subroutine gd2cart(gdlat, glon, alt, x, y, z)
   real(8), intent(in)     :: gdlat, glon, alt
   real(8), intent(out)    :: x, y, z
   real(8)                 :: ang, rho
-  ! real, parameter :: dtor = 0.01745329251994330
 
   call convrt(1, gdlat, alt, rho, z)
   ang = glon * dtor
@@ -468,40 +472,40 @@ subroutine convrt(i, gdlat, alt, x1, x2)
 
   ! Convert space point from geodetic to geocentric or vice versa.
   !
-  ! I is an input flag controlling the meaning and direction of the
+  ! i is an input flag controlling the meaning and direction of the
   ! remaining formal arguments:
   !
-  ! I = 1  (convert from geodetic to cylindrical geocentric)
+  ! i = 1  (convert from geodetic to cylindrical geocentric)
   ! INPUTS:
-  ! GDLAT = Geodetic latitude (deg)
-  ! ALT   = Altitude above reference ellipsoid (km)
+  ! gdlat = Geodetic latitude (deg)
+  ! alt   = Altitude above reference ellipsoid (km)
   ! RETURNS:
-  ! X1    = Distance from Earth's rotation axis (km)
-  ! X2    = Distance above (north of) Earth's equatorial plane (km)
+  ! x1    = Distance from Earth's rotation axis (km)
+  ! x2    = Distance above (north of) Earth's equatorial plane (km)
   !
-  ! I = 2  (convert from geodetic to spherical geocentric)
+  ! i = 2  (convert from geodetic to spherical geocentric)
   ! INPUTS:
-  ! GDLAT = Geodetic latitude (deg)
-  ! ALT   = Altitude above reference ellipsoid (km)
+  ! gdlat = Geodetic latitude (deg)
+  ! alt   = Altitude above reference ellipsoid (km)
   ! RETURNS:
-  ! X1    = Geocentric latitude (deg)
-  ! X2    = Geocentric distance (km)
+  ! x1    = Geocentric latitude (deg)
+  ! x2    = Geocentric distance (km)
   !
-  ! I = 3  (convert from cylindrical geocentric to geodetic)
+  ! i = 3  (convert from cylindrical geocentric to geodetic)
   ! INPUTS:
-  ! X1    = Distance from Earth's rotation axis (km)
-  ! X2    = Distance from Earth's equatorial plane (km)
+  ! x1    = Distance from Earth's rotation axis (km)
+  ! x2    = Distance from Earth's equatorial plane (km)
   ! RETURNS:
-  ! GDLAT = Geodetic latitude (deg)
-  ! ALT   = Altitude above reference ellipsoid (km)
+  ! gdlat = Geodetic latitude (deg)
+  ! alt   = Altitude above reference ellipsoid (km)
   !
-  ! I = 4  (convert from spherical geocentric to geodetic)
+  ! i = 4  (convert from spherical geocentric to geodetic)
   ! INPUTS:
-  ! X1    = Geocentric latitude (deg)
-  ! X2    = Geocentric distance (km)
+  ! x1    = Geocentric latitude (deg)
+  ! x2    = Geocentric distance (km)
   ! RETURNS:
-  ! GDLAT = Geodetic latitude (deg)
-  ! ALT   = Altitude above reference ellipsoid (km)
+  ! gdlat = Geodetic latitude (deg)
+  ! alt   = Altitude above reference ellipsoid (km)
   !
   !
   ! HISTORY:
@@ -514,10 +518,6 @@ subroutine convrt(i, gdlat, alt, x1, x2)
   ! Jul 2022 (Lamarche): Revise to fortran 90 standards
   !
   ! REFERENCE: ASTRON. J. VOL. 66, p. 15-16, 1961
-  !
-  ! E2  = square of eccentricity of ellipse
-  ! REP = earth's polar      radius (km)
-  ! REQ = earth's equatorial radius (km)
 
 
   use magcof
@@ -527,7 +527,6 @@ subroutine convrt(i, gdlat, alt, x1, x2)
 
   integer(4), intent(in) :: i
   real(8)                :: gdlat, alt, x1, x2
-  ! real(8), intent(inout)   :: x1, x2
   real(8)                :: a2, a4, a6, a8, c2cl, c4cl, ccl, coslat, sinlat, d, dltcl
   real(8)                :: gclat, rho, ri, rkm, s2cl, s4cl, s6cl, s8cl, scl, sgl, z
 

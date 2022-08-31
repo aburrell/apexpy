@@ -16,15 +16,15 @@ contains
 
     ! Second degree interpolation used by FNDAPX
     ! INPUTS:
-    ! X1   = point 1 ordinate value
-    ! X2   = point 2 ordinate value
-    ! X3   = point 3 ordinate value
-    ! Y1   = point 1 abscissa value
-    ! Y2   = point 2 abscissa value
-    ! Y3   = point 3 abscissa value
-    ! XFIT = ordinate value to fit
+    ! x1   = point 1 ordinate value
+    ! x2   = point 2 ordinate value
+    ! x3   = point 3 ordinate value
+    ! y1   = point 1 abscissa value
+    ! y2   = point 2 abscissa value
+    ! y3   = point 3 abscissa value
+    ! xfit = ordinate value to fit
     ! RETURNS:
-    ! YFIT = abscissa value corresponding to XFIT
+    ! yfit = abscissa value corresponding to xfit
     !
     ! MODIFICATIONS:
     ! Apr 2004: Change from subroutine to function, rename variables and
@@ -46,7 +46,7 @@ contains
 
 end module apexmodule
 
-! Can these be consolidated??
+! These modules replaced a series of COMMON blocks in the original code
 module dipole
   implicit none
   real(8)                  :: colat, elon, vp, ctp, stp
@@ -77,32 +77,34 @@ subroutine apex(date, igrffilein, dlat, dlon, alt, a, alat, alon, bmag, xmag, ym
   ! scalar magnetic potential.
   !
   ! INPUTS:
-  ! DATE = Year and fraction (1990.0 = 1990 January 1, 0 UT)
-  ! DLAT = Geodetic latitude in degrees
-  ! DLON = Geodetic longitude in degrees
-  ! ALT = Altitude in km
+  ! date = Year and fraction (1990.0 = 1990 January 1, 0 UT)
+  ! igrffilein = Filename for IGRF coefficient files
+  ! dlat = Geodetic latitude in degrees
+  ! dlon = Geodetic longitude in degrees
+  ! alt = Altitude in km
   !
   ! RETURNS:
-  ! A    = (Apex height + REQ)/REQ, where REQ = equatorial Earth radius.
+  ! a    = (Apex height + REQ)/REQ, where REQ = equatorial Earth radius.
   ! A is analogous to the L value in invariant coordinates.
-  ! ALAT = Apex latitude in degrees (negative in S. magnetic hemisphere)
-  ! ALON = Apex longitude (geomagnetic longitude of apex) in degrees
-  ! BMAG = geomagnetic field magnitude (nT)
-  ! XMAG = geomagnetic field component (nT): north
-  ! YMAG = geomagnetic field component (nT): east
-  ! ZMAG = geomagnetic field component (nT): downward
-  ! V    = geomagnetic potential (T-m)
+  ! alat = Apex latitude in degrees (negative in S. magnetic hemisphere)
+  ! alon = Apex longitude (geomagnetic longitude of apex) in degrees
+  ! bmag = geomagnetic field magnitude (nT)
+  ! xmag = geomagnetic field component (nT): north
+  ! ymag = geomagnetic field component (nT): east
+  ! zmag = geomagnetic field component (nT): downward
+  ! v    = geomagnetic potential (T-m)
   !
-  ! COMMON BLOCKS:
-  ! COMMON /DIPOLE/ COLAT,ELON,VP,CTP,STP
+  ! IMPORTS:
+  !   dipole
+  !   apexmodule
   !
-  ! DIPOLE has IGRF variables obtained from routines in magfld.f:
-  ! COLAT = Geocentric colatitude of geomagnetic dipole north pole (deg)
-  ! ELON  = East longitude of geomagnetic dipole north pole (deg)
-  ! VP    = Magnitude (T-m) of dipole component of magnetic potential at
+  ! dipole has IGRF variables obtained from routines in magfld.f90:
+  ! colat = Geocentric colatitude of geomagnetic dipole north pole (deg)
+  ! elon  = East longitude of geomagnetic dipole north pole (deg)
+  ! vp    = Magnitude (T-m) of dipole component of magnetic potential at
   ! geomagnetic pole and geocentric radius of 6371.0088 km
-  ! CTP   = cosine of COLAT
-  ! STP   = sine   of COLAT
+  ! ctp   = cosine of colat
+  ! stp   = sine   of colat
   !
   ! ------------------------------------------------------------------------------
   ! HISTORY:
@@ -213,19 +215,19 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
 ! Transform geographic coordinates to Apex coordinates.
 !
 ! INPUTS:
-! GDLAT = Latitude  (degrees, positive northward)
-! GLON  = Longitude (degrees, positive eastward)
-! ALT   = Height of starting point (km above mean sea level)
+! gdlat = Latitude  (degrees, positive northward)
+! glon  = Longitude (degrees, positive eastward)
+! alt   = Height of starting point (km above mean sea level)
 !
 ! OUTPUTS:
-! A     = (Apex height + REQ)/REQ, where REQ = equatorial Earth radius.
+! a     = (Apex height + REQ)/REQ, where REQ = equatorial Earth radius.
 ! A is analogous to the L value in invariant coordinates.
-! ALAT  = Apex Lat. (deg)
-! ALON  = Apex Lon. (deg)
-! XMAG  = Geomagnetic field component (gauss): north
-! YMAG  = Geomagnetic field component (gauss): east
-! ZMAG  = Geomagnetic field component (gauss): down
-! F     = Geomagnetic field magnitude (gauss)
+! alat  = Apex Lat. (deg)
+! alon  = Apex Lon. (deg)
+! xmag  = Geomagnetic field component (gauss): north
+! ymag  = Geomagnetic field component (gauss): east
+! zmag  = Geomagnetic field component (gauss): down
+! f     = Geomagnetic field magnitude (gauss)
 !
 ! Trace the geomagnetic field line from the given location to find the
 ! apex of the field line.  Before starting iterations to trace along
@@ -240,49 +242,49 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
 ! (YAPX); however, if reaching the iteration limit, apex coordinates
 ! are calculated by DIPAPX which assumes a simplified dipole field.
 !
-! COMMON BLOCKS:
-! COMMON /APXIN/   YAPX(3,3)
-! COMMON /DIPOLE/  COLAT,ELON,VP,CTP,STP
-! COMMON /FLDCOMD/ BX, BY, BZ, BB
-! COMMON /ITRA/    NSTP, Y(3), YOLD(3), SGN, DS
+! IMPORTS:
+!   apxin
+!   dipole
+!   fldcomd
+!   itra
 !
-! APXIN has step locations determined in ITRACE:
-! YAPX  = Matrix of cartesian coordinates (loaded columnwise) of the
-! three points about the apex.  Set in subroutine ITRACE.
+! apxin has step locations determined in itrace:
+! yapx  = Matrix of cartesian coordinates (loaded columnwise) of the
+! three points about the apex.  Set in subroutine itrace.
 !
-! DIPOLE has IGRF variables obtained from routines in magfld.f:
-! COLAT = Geocentric colatitude of geomagnetic dipole north pole (deg)
-! ELON  = East longitude of geomagnetic dipole north pole (deg)
-! VP    = Magnitude (T-m) of dipole component of magnetic potential at
+! dipole has IGRF variables obtained from routines in magfld.f:
+! colat = Geocentric colatitude of geomagnetic dipole north pole (deg)
+! elon  = East longitude of geomagnetic dipole north pole (deg)
+! vp    = Magnitude (T-m) of dipole component of magnetic potential at
 ! geomagnetic pole and geocentric radius of 6371.0088 km
-! CTP   = cosine of COLAT
-! STP   = sine   of COLAT
+! ctp   = cosine of colat
+! stp   = sine   of colat
 !
-! FLDCOMD has geomagnetic field at current trace point:
-! BX    = X component (Gauss)
-! BY    = Y component (Gauss)
-! BZ    = Z component (Gauss)
-! BB    = Magnitude   (Gauss)
+! fldcomd has geomagnetic field at current trace point:
+! bx    = X component (Gauss)
+! by    = Y component (Gauss)
+! bz    = Z component (Gauss)
+! bb    = Magnitude   (Gauss)
 !
-! ITRA has field line tracing variables determined in LINAPX:
-! NSTP  = Step count.
-! Y     = Array containing current tracing point cartesian coordinates.
-! YOLD  = Array containing previous tracing point cartesian coordinates.
-! SGN   = Determines direction of trace.
-! DS    = Step size (arc length in km).
+! itra has field line tracing variables determined in linapx:
+! nstp  = Step count.
+! y     = Array containing current tracing point cartesian coordinates.
+! yold  = Array containing previous tracing point cartesian coordinates.
+! sgn   = Determines direction of trace.
+! ds    = Step size (arc length in km).
 !
 ! REFERENCES:
 ! Stassinopoulos E. G. , Mead Gilbert D., X-841-72-17 (1971) GSFC,
 ! Greenbelt, Maryland
 !
 ! EXTERNALS:
-! GD2CART = Convert geodetic to geocentric cartesian coordinates (in magfld.f)
-! CONVRT  = Convert geodetic to geocentric cylindrical or geocentric spherical
-! and back (in magfld.f).
-! FELDG   = Obtain IGRF magnetic field components (in magfld.f).
-! ITRACE  = Follow a geomagnetic field line
-! DIPAPX  = Compute apex coordinates assuming a geomagnetic dipole field
-! FNDAPX  = Compute apex coordinates from the last three traced field line points
+! gd2cart = Convert geodetic to geocentric cartesian coordinates (in magfld.f90)
+! convrt  = Convert geodetic to geocentric cylindrical or geocentric spherical
+! and back (in magfld.f90).
+! feldg   = Obtain IGRF magnetic field components (in magfld.f90).
+! itrace  = Follow a geomagnetic field line
+! dipapx  = Compute apex coordinates assuming a geomagnetic dipole field
+! fndapx  = Compute apex coordinates from the last three traced field line points
 !
 ! ------------------------------------------------------------------------------
 ! HISTORY:
@@ -363,34 +365,34 @@ subroutine itrace(iapx)
 ! Follow a geomagnetic field line until passing its apex
 !
 ! INPUTS:
-! (all are in common blocks)
+! (all are in imported modules)
 ! OUTPUTS:
-! IAPX = 2 (when apex passed) or 1 (not)
+! iapx = 2 (when apex passed) or 1 (not)
 !
 ! This uses the 4-point Adams formula after initialization.
 ! First 7 iterations advance point by 3 steps.
 !
-! COMMON BLOCKS:
-! COMMON /APXIN/   YAPX(3,3)
-! COMMON /FLDCOMD/ BX, BY, BZ, BB
-! COMMON /ITRA/    NSTP, Y(3), YOLD(3), SGN, DS
+! IMPORTS:
+!   apxin
+!   fldcomd
+!   itra
 !
-! APXIN has step locations determined in ITRACE:
-! YAPX  = Matrix of cartesian coordinates (loaded columnwise) of the
-! three points about the apex.  Set in subroutine ITRACE.
+! apxin has step locations determined in itrace:
+! yapx  = Matrix of cartesian coordinates (loaded columnwise) of the
+! three points about the apex.  Set in subroutine itrace.
 !
-! FLDCOMD has geomagnetic field at current trace point:
-! BX    = X component (Gauss)
-! BY    = Y component (Gauss)
-! BZ    = Z component (Gauss)
-! BB    = Magnitude   (Gauss)
+! fldcomd has geomagnetic field at current trace point:
+! bx    = X component (Gauss)
+! by    = Y component (Gauss)
+! bz    = Z component (Gauss)
+! bb    = Magnitude   (Gauss)
 !
-! ITRA has field line tracing variables determined in LINAPX:
-! NSTP  = Step count.
-! Y     = Array containing current tracing point cartesian coordinates.
-! YOLD  = Array containing previous tracing point cartesian coordinates.
-! SGN   = Determines direction of trace.
-! DS    = Step size (arc length in km).
+! itra has field line tracing variables determined in linapx:
+! nstp  = Step count.
+! y     = Array containing current tracing point cartesian coordinates.
+! yold  = Array containing previous tracing point cartesian coordinates.
+! sgn   = Determines direction of trace.
+! ds    = Step size (arc length in km).
 !
 ! REFERENCES:
 ! Stassinopoulos E. G. , Mead Gilbert D., X-841-72-17 (1971) GSFC,
@@ -432,10 +434,6 @@ subroutine itrace(iapx)
   if (nstp .le. 7) then
     do i = 1, 3
       if (nstp == 1) then
-        ! d2 = ds/2.
-        ! d6 = ds/6.
-        ! d12 = ds/12.
-        ! d24 = ds/24.
         yp(i, 1) = yp(i, 4)
         yold(i) = y(i)
         yapx(i, 1) = y(i)
@@ -504,33 +502,33 @@ subroutine fndapx(alt, zmag, a, alat, alon)
 ! Find apex coordinates once tracing (in subroutine ITRACE) has
 ! signalled that the apex has been passed.
 ! INPUTS:
-! ALT  = Altitude of starting point
-! ZMAG = Downward component of geomagnetic field at starting point
+! alt  = Altitude of starting point
+! zmag = Downward component of geomagnetic field at starting point
 ! OUTPUT
-! A    = Apex radius, defined as (Apex height + Req)/Req, where
+! a    = Apex radius, defined as (Apex height + Req)/Req, where
 ! Req = equatorial Earth radius.
 ! A is analogous to the L value in invariant coordinates.
-! ALAT = Apex Lat. (deg)
-! ALON = Apex Lon. (deg)
+! alat = Apex Lat. (deg)
+! alon = Apex Lon. (deg)
 !
-! COMMON BLOCKS:
-! COMMON /APXIN/  YAPX(3,3)
-! COMMON /DIPOLE/ COLAT,ELON,VP,CTP,STP
+! IMPORTS:
+!   apxin
+!   dipole
 !
-! APXIN has step locations determined in ITRACE:
-! YAPX  = Matrix of cartesian coordinates (loaded columnwise) of the
-! three points about the apex.  Set in subroutine ITRACE.
+! apxin has step locations determined in itrace:
+! yapx  = Matrix of cartesian coordinates (loaded columnwise) of the
+! three points about the apex.  Set in subroutine itrace.
 !
-! DIPOLE has IGRF variables obtained from routines in magfld.f:
-! COLAT = Geocentric colatitude of geomagnetic dipole north pole (deg)
-! ELON  = East longitude of geomagnetic dipole north pole (deg)
-! VP    = Magnitude (T-m) of dipole component of magnetic potential at
+! dipole has IGRF variables obtained from routines in magfld.f90:
+! colat = Geocentric colatitude of geomagnetic dipole north pole (deg)
+! elon  = East longitude of geomagnetic dipole north pole (deg)
+! vp    = Magnitude (T-m) of dipole component of magnetic potential at
 ! geomagnetic pole and geocentric radius of 6371.0088 km
-! CTP   = cosine of COLAT
-! STP   = sine   of COLAT
+! ctp   = cosine of colat
+! stp   = sine   of colat
 !
 ! EXTERNALS:
-! FINT = Second degree interpolation routine
+! fint = Second degree interpolation routine
 ! ------------------------------------------------------------------------------
 ! HISTORY:
 ! Oct 1973: Initial version completed on the 23rd by Clark, W., NOAA
@@ -618,20 +616,20 @@ subroutine fndapx(alt, zmag, a, alat, alon)
   rasq = acos(sqrt(1./ a)) * rtod
   alat = sign(rasq, zmag)
 
-  ! ALON is the dipole longitude of the apex and is defined using
+  ! alon is the dipole longitude of the apex and is defined using
   ! spherical coordinates where
-  ! GP   = geographic pole.
-  ! GM   = geomagnetic pole (colatitude COLAT, east longitude ELON).
-  ! XLON = longitude of apex.
-  ! TE   = colatitude of apex.
-  ! ANG  = longitude angle from GM to apex.
-  ! TP   = colatitude of GM.
-  ! TF   = arc length between GM and apex.
-  ! PA   = ALON be geomagnetic longitude, i.e., Pi minus angle measured
-  ! counterclockwise from arc GM-apex to arc GM-GP.
+  ! gp   = geographic pole.
+  ! gm   = geomagnetic pole (colatitude colat, east longitude elon).
+  ! xlon = longitude of apex.
+  ! te   = colatitude of apex.
+  ! ang  = longitude angle from gm to apex.
+  ! tp   = colatitude of gm.
+  ! tf   = arc length between gm and apex.
+  ! pa   = alon be geomagnetic longitude, i.e., pi minus angle measured
+  ! counterclockwise from arc gm-apex to arc gm-gp.
   ! then, spherical-trigonometry formulas for the functions of the angles
-  ! are as shown below.  Notation uses C=cos, S=sin and STFCPA = sin(TF) * cos(PA),
-  ! STFSPA = sin(TF) * sin(PA)
+  ! are as shown below.  Notation uses c=cos, s=sin and stfcpa = sin(tf) * cos(pa),
+  ! stfspa = sin(tf) * sin(pa)
 
   xlon = atan2(y(2), y(1))
   ang = xlon - elon * dtor
@@ -650,54 +648,54 @@ end subroutine fndapx
 
 subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
 
-! Compute A, ALON from local magnetic field using dipole and spherical
+! Compute a, alon from local magnetic field using dipole and spherical
 ! approximation.
 !
 ! INPUTS:
-! GDLAT  = geodetic latitude, degrees
-! GDLON  = geodetic longitude, degrees
-! ALT    = altitude, km
-! BNORTH = geodetic northward magnetic field component (any units)
-! BEAST  = eastward magnetic field component
-! BDOWN  = geodetic downward magnetic field component
+! gdlat  = geodetic latitude, degrees
+! gdlon  = geodetic longitude, degrees
+! alt    = altitude, km
+! bnorth = geodetic northward magnetic field component (any units)
+! beast  = eastward magnetic field component
+! bdown  = geodetic downward magnetic field component
 ! OUTPUTS:
-! A      = apex radius, 1 + h_A/R_eq
-! ALON   = apex longitude, degrees
+! a      = apex radius, 1 + h_A/R_eq
+! alon   = apex longitude, degrees
 !
 ! Use spherical coordinates and define:
-! GP    = geographic pole.
-! GM    = geomagnetic pole (colatitude COLAT, east longitude ELON).
-! G     = point at GDLAT,GDLON.
-! E     = point on sphere below apex of dipolar field line passing
-! through G.
-! TD    = dipole colatitude of point G, found by applying dipole
+! gp    = geographic pole.
+! gm    = geomagnetic pole (colatitude colat, east longitude elon).
+! g     = point at gdlat,gdlon.
+! e     = point on sphere below apex of dipolar field line passing
+! through g.
+! td    = dipole colatitude of point g, found by applying dipole
 ! formula for dip angle to actual dip angle.
-! B     = Pi plus local declination angle.  B is in the direction
-! from G to E.
-! TG    = colatitude of G.
-! ANG   = longitude angle from GM to G.
-! TE    = colatitude of E.
-! TP    = colatitude of GM.
-! A     = longitude angle from G to E.
-! APANG = A + ANG
-! PA    = geomagnetic longitude, i.e., Pi minus angle measured
-! counterclockwise from arc GM-E to arc GM-GP.
-! TF    = arc length between GM and E.
-! Then, using notation C=cos, S=sin, COT=cot, spherical-trigonometry
+! b     = pi plus local declination angle.  b is in the direction
+! from g to e.
+! tg    = colatitude of tg.
+! ang   = longitude angle from gm to g.
+! te    = colatitude of e.
+! tp    = colatitude of gm.
+! a     = longitude angle from g to e.
+! apang = a + ang
+! pa    = geomagnetic longitude, i.e., Pi minus angle measured
+! counterclockwise from arc gm-e to arc gm-gp.
+! tf    = arc length between gm and e.
+! Then, using notation c=cos, s=sin, cot=cot, spherical-trigonometry
 ! formulas for the functions of the angles are as shown below.  Note:
-! STFCPA = sin(TF) * cos(PA)
-! STFSPA = sin(TF) * sin(PA)
+! stfcpa = sin(tf) * cos(pa)
+! stfcpa = sin(tf) * sin(pa)
 !
-! COMMON BLOCKS:
-! COMMON /DIPOLE/ COLAT,ELON,VP,CTP,STP
+! IMPORTS:
+!   dipole
 !
-! DIPOLE has IGRF variables obtained from routines in magfld.f:
-! COLAT = Geocentric colatitude of geomagnetic dipole north pole (deg)
-! ELON  = East longitude of geomagnetic dipole north pole (deg)
-! VP    = Magnitude (T-m) of dipole component of magnetic potential at
+! dipole has IGRF variables obtained from routines in magfld.f90:
+! colat = Geocentric colatitude of geomagnetic dipole north pole (deg)
+! elon  = East longitude of geomagnetic dipole north pole (deg)
+! vp    = Magnitude (T-m) of dipole component of magnetic potential at
 ! geomagnetic pole and geocentric radius of 6371.0088 km
-! CTP   = cosine of COLAT
-! STP   = sine   of COLAT
+! ctp   = cosine of colat
+! stp   = sine   of colat
 ! ------------------------------------------------------------------------------
 ! HISTORY:
 ! May 1994:  Completed on the 1st by A. D. Richmond
