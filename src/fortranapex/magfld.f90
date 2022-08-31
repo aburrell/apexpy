@@ -240,8 +240,8 @@ subroutine dypol(colat, elon, vp)
   ! of 6371.2 km
   !
   ! IMPORTS:
-  !   magcof
-  !   coeffmodule
+  ! magcof
+  ! coeffmodule
 
 
   use magcof
@@ -338,7 +338,7 @@ subroutine feldg(ienty, glat, glon, alt, bnrth, beast, bdown, babs)
   real(8)                :: rlat, rlon, rq, s, t, x, xxx, y, yyy, z, zzz
   real(8)                :: g(255), h(255), xi(3)
 
-  ientyp = -10000
+  ientyp = - 10000
 
   if (ienty == 1) then
     is = 1

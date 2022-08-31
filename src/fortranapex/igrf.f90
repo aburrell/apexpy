@@ -48,8 +48,8 @@ contains
     end do
 
     ! Read epochs
-    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]=='IGRF')
-    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]=='DGRF') + num_epochs
+    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'IGRF')
+    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'DGRF') + num_epochs
     allocate(epoch(1:num_epochs))
     allocate(nmxe(1:num_epochs))
 

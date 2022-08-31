@@ -95,8 +95,8 @@ subroutine apex(date, igrffilein, dlat, dlon, alt, a, alat, alon, bmag, xmag, ym
   ! v    = geomagnetic potential (T-m)
   !
   ! IMPORTS:
-  !   dipole
-  !   apexmodule
+  ! dipole
+  ! apexmodule
   !
   ! dipole has IGRF variables obtained from routines in magfld.f90:
   ! colat = Geocentric colatitude of geomagnetic dipole north pole (deg)
@@ -243,10 +243,10 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
 ! are calculated by DIPAPX which assumes a simplified dipole field.
 !
 ! IMPORTS:
-!   apxin
-!   dipole
-!   fldcomd
-!   itra
+! apxin
+! dipole
+! fldcomd
+! itra
 !
 ! apxin has step locations determined in itrace:
 ! yapx  = Matrix of cartesian coordinates (loaded columnwise) of the
@@ -317,7 +317,9 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
   ! Set step size based on the goemagnetic dipole latitude of the starting point
   call convrt(2, gdlat, alt, gclat, r)
   singml = ctp * sin(gclat * dtor) + stp * cos(gclat * dtor) * cos((glon - elon) * dtor)
-  ! May 1999: avoid possible divide by zero (when SINGML = 1.): the old version limited DS to its value at 60 deg GM latitude with: DS = .06*R/(1.-SINGML*SINGML) - 370. IF (DS .GT. 1186.) DS = 1186.
+  ! May 1999: avoid possible divide by zero (when SINGML = 1.): the old version
+  ! limited DS to its value at 60 deg GM latitude with:
+  ! DS = .06*R/(1.-SINGML*SINGML) - 370. IF (DS .GT. 1186.) DS = 1186.
   cgml2 = amax1(0.25, 1.- singml * singml)
   ds = 0.06 * r / cgml2 - 370.
 
@@ -373,9 +375,9 @@ subroutine itrace(iapx)
 ! First 7 iterations advance point by 3 steps.
 !
 ! IMPORTS:
-!   apxin
-!   fldcomd
-!   itra
+! apxin
+! fldcomd
+! itra
 !
 ! apxin has step locations determined in itrace:
 ! yapx  = Matrix of cartesian coordinates (loaded columnwise) of the
@@ -512,8 +514,8 @@ subroutine fndapx(alt, zmag, a, alat, alon)
 ! alon = Apex Lon. (deg)
 !
 ! IMPORTS:
-!   apxin
-!   dipole
+! apxin
+! dipole
 !
 ! apxin has step locations determined in itrace:
 ! yapx  = Matrix of cartesian coordinates (loaded columnwise) of the
@@ -687,7 +689,7 @@ subroutine dipapx(gdlat, gdlon, alt, bnorth, beast, bdown, a, alon)
 ! stfcpa = sin(tf) * sin(pa)
 !
 ! IMPORTS:
-!   dipole
+! dipole
 !
 ! dipole has IGRF variables obtained from routines in magfld.f90:
 ! colat = Geocentric colatitude of geomagnetic dipole north pole (deg)
