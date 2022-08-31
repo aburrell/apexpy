@@ -1,14 +1,10 @@
 ! apex.f90
 
 module apexmodule
-  ! Can this be combined with coeffmolule in magfld.f90??
-  implicit none
 
-  real(8), parameter       :: pi=3.14159265358979323846D0
-  real(8), parameter       :: dtor=pi / 180D0, rtod=180D0 / pi, pid2=pi / 2D0, twopi=2D0 * pi
-  real(8), parameter       :: Req=6378.1370D0, eps=1.D0 / 298.257223563D0
-  real(8), parameter       :: Re=Req * (1 - eps / 3D0), ecc2=eps * (2 - eps)
-  real(8), parameter       :: missing=- 9999E0
+  use coeffmodule
+
+  implicit none
 
 contains
 

@@ -4,6 +4,7 @@
 python module fortranapex ! in 
     interface  ! in :fortranapex
         module apxshmodule ! in :fortranapex:apexsh.f90
+            use coeffmodule
             integer(kind=4) :: nterm
             integer(kind=4) :: nmax
             integer(kind=4) :: mmax
@@ -50,15 +51,6 @@ python module fortranapex ! in
             real(kind=8) dimension(3) :: zqgrad
             real(kind=8) dimension(3) :: qlatgrad
             real(kind=8) dimension(3) :: qlongrad
-            real(kind=8), parameter,optional :: pi=3.14159265358979323846d0
-            real(kind=8), parameter,optional,depend(pi) :: dtor=pi/180d0
-            real(kind=8), parameter,optional,depend(pi) :: pid2=pi/2d0
-            real(kind=8), parameter,optional,depend(pi) :: twopi=2d0*pi
-            real(kind=8), parameter,optional :: req=6378.1370d0
-            real(kind=8), parameter,optional :: eps=1.d0/298.257223563d0
-            real(kind=8), parameter,optional,depend(req,eps) :: re=req*(1-eps/3d0)
-            real(kind=8), parameter,optional,depend(eps) :: ecc2=-8
-            real(kind=8), parameter,optional :: missing=-9999.0
             character(len=1000) :: datafile
             real(kind=8) :: epoch
             real(kind=8) :: altlastq
@@ -162,16 +154,7 @@ python module fortranapex ! in
             end subroutine read_igrf
         end module igrf
         module apexmodule ! in :fortranapex:apex.f90
-            real(kind=8), parameter,optional :: pi=3.14159265358979323846d0
-            real(kind=8), parameter,optional,depend(pi) :: dtor=pi/180d0
-            real(kind=8), parameter,optional,depend(pi) :: rtod=180d0/pi
-            real(kind=8), parameter,optional,depend(pi) :: pid2=pi/2d0
-            real(kind=8), parameter,optional,depend(pi) :: twopi=2d0*pi
-            real(kind=8), parameter,optional :: req=6378.1370d0
-            real(kind=8), parameter,optional :: eps=1.d0/298.257223563d0
-            real(kind=8), parameter,optional,depend(req,eps) :: re=req*(1-eps/3d0)
-            real(kind=8), parameter,optional,depend(eps) :: ecc2=-8
-            real(kind=8), parameter,optional :: missing=-9999.0
+            use coeffmodule
             function fint(x1,x2,x3,y1,y2,y3,xfit) ! in :fortranapex:apex.f90:apexmodule
                 real(kind=8) intent(in) :: x1
                 real(kind=8) intent(in) :: x2
@@ -282,9 +265,11 @@ python module fortranapex ! in
             real(kind=8), parameter,optional,depend(pi) :: pid2=pi/2d0
             real(kind=8), parameter,optional,depend(pi) :: twopi=2d0*pi
             real(kind=8), parameter,optional :: req=6378.1370d0
+            real(kind=8), parameter,optional :: rep=6356.7520d0
             real(kind=8), parameter,optional :: eps=1.d0/298.257223563d0
             real(kind=8), parameter,optional,depend(req,eps) :: re=req*(1-eps/3d0)
-            real(kind=8), parameter,optional,depend(eps) :: ecc2=-8
+            real(kind=8), parameter,optional,depend(eps) :: ecc2=eps*(2d0-eps)
+            real(kind=8), parameter,optional :: missing=-9999.0
         end module coeffmodule
         subroutine cofrm(date,filename) ! in :fortranapex:magfld.f90
             use magcof

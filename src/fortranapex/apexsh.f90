@@ -125,6 +125,8 @@
 
 module apxshmodule
 
+    use coeffmodule
+
     implicit none
 
     integer(4)               :: nterm, nmax, mmax, lmax, nepoch, ntermsh
@@ -147,18 +149,6 @@ module apxshmodule
     real(8)                  :: sinqlat, cosqlat, cosqlon, sinqlon
     real(8)                  :: xqgrad(1:3), yqgrad(1:3), zqgrad(1:3)
     real(8)                  :: qlatgrad(1:3), qlongrad(1:3)
-
-    ! Req = Equatorial radius of Earth in km (WGS84 value)
-    ! eps = flatness of ellipsoidal Earth (WGS84 value)
-    ! Re = Mean radius of Earth in km
-    ! ecc2 = squared eccentricity of ellipsoidal Earth
-
-    real(8), parameter       :: pi=3.14159265358979323846D0
-    real(8), parameter       :: dtor=pi / 180D0, pid2=pi / 2D0, twopi=2D0 * pi
-    real(8), parameter       :: Req=6378.1370D0, eps=1D0 / 298.257223563D0
-    real(8), parameter       :: Re=Req * (1D0 - eps / 3D0)
-    real(8), parameter       :: ecc2=eps * (2D0 - eps)
-    real(8), parameter       :: missing=- 9999E0
 
     character(1000)          :: datafile
     real(8)                  :: epoch

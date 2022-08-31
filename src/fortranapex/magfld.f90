@@ -19,11 +19,17 @@ module magcof
 end module magcof
 
 module coeffmodule
-  ! Can this be combined with apexmodule in apex.f90???
+  ! Req = Equatorial radius of Earth in km (WGS84 value)
+  ! eps = flatness of ellipsoidal Earth (WGS84 value)
+  ! Re = Mean radius of Earth in km
+  ! ecc2 = squared eccentricity of ellipsoidal Earth
   real(8), parameter       :: pi=3.14159265358979323846D0
   real(8), parameter       :: dtor=pi / 180D0, rtod=180D0 / pi, pid2=pi / 2D0, twopi=2D0 * pi
-  real(8), parameter       :: Req=6378.1370D0, eps=1.D0 / 298.257223563D0
-  real(8), parameter       :: Re=Req * (1 - eps / 3D0), ecc2=eps * (2 - eps)
+  real(8), parameter       :: Req=6378.1370D0, Rep = 6356.7520D0
+  real(8), parameter       :: eps=1.D0 / 298.257223563D0, Re=Req * (1 - eps / 3D0)
+  ! real(8), parameter       :: ecc2 = 1D0 - (Rep / Req)
+  real(8), parameter       :: ecc2 = eps * (2D0 - eps)
+  real(8), parameter       :: missing=- 9999E0
 end module coeffmodule
 
 
