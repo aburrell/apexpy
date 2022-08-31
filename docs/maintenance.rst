@@ -44,6 +44,34 @@ After updating the ``apexsh.dat`` file, some of the unit tests and the
 documentation examples in the README and ``apexpy/docs/examples`` directory
 will need to be updated as well.
 
+Modifying Fortran Source
+------------------------
+When modifying the fortran source code, it can be helpful to run a preliminary
+validation of the fortran output independent of the python wrapper.
+
+1. Remove any existing binaries by running the ``make clean`` command.
+2. Build the ``apextest`` binary by running the ``make`` command.
+3. Execute the ``apextext`` binary.
+4. Confirm the output printed to the screen matches the test output shown in
+   the comment blot at the bottom of ``checkapexsh.f90``.
+
+The output may not match the test output exactly due to floating point errors
+and improvements in the precision of the calculation.
+
+After updating the fortran source code, the signature file must be recreated so
+the python wrapper works correctly.  It is also a good idea to update
+``apexsh.dat`` following the instructions above.  Use `f2py <https://numpy.org/doc/stable/f2py/>`_
+to create a new signature file from the ``apexpy/src/fortranapex`` directory.
+::
+
+  f2py -m fortranapex apexsh.f90 igrf.f90 apex.f90 magfld.f90 makeapexsh.f90 -h fortranapex.pyf --overwrite-signature
+
+
+This will create the file ``fortranapex.pyf``.  Then reinstall the package with
+``pip`` from the root directory.  If the modifications involved adding or
+removing fortran source files, modify the list of extension sources in
+``setup.py``.
+
 Updating tests and style standards
 -----------------------------------
 
