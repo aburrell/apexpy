@@ -50,7 +50,7 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: MacOS",
 ]
-dynamic = ['version', 'entry-points']
+dynamic = ['version']
 
 [project.optional-dependencies]
 test = [
