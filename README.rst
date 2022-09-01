@@ -60,7 +60,7 @@ in the full documentation.
 Documentation
 =============
 
-https://apexpy.readthedocs.org/
+https://apexpy.readthedocs.io/en/latest
 
 References
 ==========
@@ -85,9 +85,9 @@ Badges
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor|
-        | |coveralls| |requires|
-        | |codeclimate| |scrutinizer| |codacy|
+      - | |ghactions|
+        | |coveralls| |codeclimate|
+        | |scrutinizer| |codacy|
     * - package
       - | |version| |supported-versions|
         | |wheel| |supported-implementations|
@@ -96,19 +96,11 @@ Badges
     :target: https://apexpy.readthedocs.io/en/latest/
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=main
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/aburrell/apexpy
+.. |ghactions| image:: https://github.com/aburrell/apexpy/actions/workflows/main.yml/badge.svg
+    :alt: GitHub Actions Build Status
+    :target: https://github.com/aburrell/apexpy/actions/workflows/main.yml
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/aburrell/apexpy?branch=main&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/aburrell/apexpy
-
-.. |requires| image:: https://requires.io/github/aburrell/apexpy/requirements.svg?branch=main
-     :alt: Requirements Status
-     :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=main
-
-.. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=main
+.. |coveralls| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_98.svg
     :alt: Coverage Status
     :target: https://coveralls.io/github/aburrell/apexpy?branch=main
 
@@ -122,7 +114,7 @@ Badges
 
 .. |version| image:: https://img.shields.io/pypi/v/apexpy.svg?style=flat
     :alt: PyPI Package latest release
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy/
 
 .. |downloads| image:: https://img.shields.io/pypi/dm/apexpy.svg?style=flat
     :alt: PyPI Package monthly downloads
@@ -140,7 +132,7 @@ Badges
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/apexpy
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/aburrell/apexpy/main.svg?style=flat
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/quality/g/aburrell/apexpy/main.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
 

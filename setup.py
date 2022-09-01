@@ -1,7 +1,6 @@
 
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-from __future__ import absolute_import
 
 from glob import glob
 from os import path, environ
@@ -14,17 +13,17 @@ else:
     from numpy.distutils.core import setup, Extension
     extensions = [
         Extension(name='apexpy.fortranapex',
-                  sources=['src/fortranapex/igrf.f90',
-                           'src/fortranapex/magfld.f90',
-                           'src/fortranapex/apex.f90',
-                           'src/fortranapex/makeapexsh.f90',
-                           'src/fortranapex/apexsh.f90',
-                           'src/fortranapex/checkapexsh.f90',
-                           'src/fortranapex/fortranapex.pyf'])]
+                  sources=['fortranapex/igrf.f90',
+                           'fortranapex/magfld.f90',
+                           'fortranapex/apex.f90',
+                           'fortranapex/makeapexsh.f90',
+                           'fortranapex/apexsh.f90',
+                           'fortranapex/checkapexsh.f90',
+                           'fortranapex/fortranapex.pyf'])]
 
 setup_kwargs = {'py_modules': [path.splitext(path.basename(pp))[0]
-                               for pp in glob('src/*.py')],
+                               for pp in glob('*.py')],
                 'ext_modules': extensions,
-                'packages': find_packages(where='src')}
+                'packages': find_packages()}
 
 setup(**setup_kwargs)
