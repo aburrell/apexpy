@@ -144,9 +144,10 @@ fortranobject_dep = declare_dependency(
 )
 
 py3.extension_module('fortranapex',
-  'fortranapex/magfld.f', 'fortranapex/apex.f', 'fortranapex/makeapexsh.f90',
-  'fortranapex/igrf.f90', 'fortranapex/apexsh.f90',
-  'fortranapex/checkapexsh.f90', 'fortranapex/fortranapexmodule.c',
+  'fortranapex/magfld.f90', 'fortranapex/apex.f90',
+  'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
+  'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
+  'fortranapex/fortranapexmodule.c',
   include_directories: inc_dirs,
   c_args: numpy_nodepr_api,
   dependencies : [py3_dep, fortranobject_dep],
