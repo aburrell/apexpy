@@ -173,6 +173,18 @@ subroutine apex(date, igrffilein, dlat, dlon, alt, a, alat, alon, bmag, xmag, ym
   ! potential and implicit in the derived magnetic field coefficients.  The
   ! reference radius has not changed in IGRF releases.
   !
+  ! UPDATE - September 2022 (L. Lamarche)
+  ! Considering the new epsilon value of 1/298.257223563, the two eccentricity
+  ! equations discussed above are now identical down to 6 significant figures,
+  ! which is more precise than the coefficient calcualtions.  Consequently,
+  ! the following formulation will be used for all ecentricity calculations
+  ! throughout this code:
+  !
+  ! e**2 = epsilon*(2 - epsilon)
+  !
+  ! This and other constants are defined in coeffmodule contained in magfld.f90,
+  ! to be used throughout the code.
+  !
   ! ------------------------------------------------------------------------------
 
   use dipole
