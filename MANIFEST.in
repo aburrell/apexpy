@@ -11,4 +11,4 @@ include .zenodo.json
 include pyproject.toml
 include .codeclimate.yml *.yml
 
-global-exclude *.py[cod~] __pycache__ *.so *.dylib
+global-exclude *.py[cod~] __pycache__ *.dylib
