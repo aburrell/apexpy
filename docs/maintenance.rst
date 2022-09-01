@@ -37,8 +37,10 @@ code in the ``apexpy/src/fortranapex`` directory. Working in that directory:
    and ``epochgrid`` only has up to the year 2020, then add 2025 to
    ``epochgrid`` and then increment ``nepochgrid`` by 1.
 4. Build the ``apextest`` binary by running the ``make`` command.
-5. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file.
-6. Copy the new ``apexsh.dat`` file to the ``apexpy/src/apexpy`` directory.
+5. Copy the IGRF coefficient file (``cp ../apexpy/igrf13coeff.txt``) into the
+   current directory.
+6. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file.
+7. Copy the new ``apexsh.dat`` file to the ``apexpy/src/apexpy`` directory.
 
 After updating the ``apexsh.dat`` file, some of the unit tests and the
 documentation examples in the README and ``apexpy/docs/examples`` directory
@@ -51,8 +53,10 @@ validation of the fortran output independent of the python wrapper.
 
 1. Remove any existing binaries by running the ``make clean`` command.
 2. Build the ``apextest`` binary by running the ``make`` command.
-3. Execute the ``apextext`` binary.
-4. Confirm the output printed to the screen matches the test output shown in
+3. Copy the IGRF coefficient file (``cp ../apexpy/igrf13coeff.txt``) into the
+   current directory.
+4. Execute the ``apextext`` binary.
+5. Confirm the output printed to the screen matches the test output shown in
    the comment blot at the bottom of ``checkapexsh.f90``.
 
 The output may not match the test output exactly due to floating point errors
