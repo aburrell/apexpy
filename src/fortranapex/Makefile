@@ -6,7 +6,7 @@
 FC 	= gfortran  # mpif90, ifort
 LD      = $(FC)
 LDFLAGS = #-ipo
-FFLAGS 	= -O3 -fPIC #-ipo -check bounds -check pointer -check uninit
+FFLAGS 	= -Wall -O3 -fPIC #-ipo -check bounds -check pointer -check uninit
 SFLAGS  = -static #-libgfortran -static-libgcc (AGB, static should work?)
 STATIC  = 0
 
@@ -25,23 +25,23 @@ $(PROG)	    : $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(PROG) $(LIBS)
 
 apexsh.o      : apexsh.f90
-	$(FC) -c -Wall $(FFLAGS) $<
+	$(FC) -c $(FFLAGS) $<
 
 igrf.o      : igrf.f90
-	$(FC) -c -Wall $(FFLAGS) $<
+	$(FC) -c $(FFLAGS) $<
 
 checkapexsh.o        : checkapexsh.f90
-	$(FC) -c -Wall $(FFLAGS) $<
+	$(FC) -c $(FFLAGS) $<
 
 
 apex.o      : apex.f90
-	$(FC) -c -Wall $(FFLAGS) $<
+	$(FC) -c $(FFLAGS) $<
 
 magfld.o      : magfld.f90
-	$(FC) -c -Wall $(FFLAGS) $<
+	$(FC) -c $(FFLAGS) $<
 
 makeapexsh.o      : makeapexsh.f90 apexsh.o
-	$(FC) -c -Wall $(FFLAGS) $<
+	$(FC) -c $(FFLAGS) $<
 
 
 
