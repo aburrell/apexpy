@@ -2,6 +2,10 @@
 Changelog
 =========
 
+2.0.0
+-----------------
+* Update Fortran source code to Fortran 90 standards
+
 1.1.1 (2021-06-05)
 ------------------
 * Removed Python 2 support

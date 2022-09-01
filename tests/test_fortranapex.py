@@ -63,8 +63,19 @@ class TestFortranApex():
         del self.e2, self.e3, self.precision, self.glat, self.glon, self.error
         del self.out, self.test_out
 
-    def run_test_evaluation(self, rtol=1e-6, atol=1e-6):
-        """Run the evaluation of the test results."""
+    def run_test_evaluation(self, rtol=1e-5, atol=1e-5):
+        """Run the evaluation of the test results.
+
+        Parameters
+        ----------
+        rtol : float
+            Relative tolerance, default value based on old code's precision
+            (default=1e-5)
+        atol : float
+            Absolute tolerance, default value based on old code's precision
+            (default=1e-5)
+
+        """
 
         assert self.out is not None, "No results to test"
         assert self.test_out is not None, "No 'truth' results provided"
