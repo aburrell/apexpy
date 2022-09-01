@@ -2,7 +2,7 @@ project( 'apexpy', 'fortran', 'c', 'cpp',
   # Note that the git commit hash cannot be added dynamically here
   version: '1.1.0',
   license: 'MIT',
-  meson_version: '>= 0.60',
+  meson_version: '>= 0.63.0',
   default_options: [
     'buildtype=debugoptimized',
     # TODO: the below -Wno flags are all needed to silence warnings in
@@ -147,7 +147,7 @@ py3.extension_module('fortranapex',
   'fortranapex/magfld.f90', 'fortranapex/apex.f90',
   'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
   'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
-  'fortranapex/fortranapexmodule.c', fortranobject_c,
+  'fortranapex/fortranapexmodule.c',
   include_directories: inc_dirs,
   c_args: numpy_nodepr_api,
   dependencies : [py3_dep, fortranobject_dep],
