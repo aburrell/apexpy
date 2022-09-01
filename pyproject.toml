@@ -17,6 +17,18 @@ dependencies = [
     "numpy>=1.19.5",
 ]
 readme = "README.rst"
+keywords = [
+	 "apex",
+	 "modified apex",
+	 "quasi-dipole",
+	 "quasi dipole",
+	 "coordinates",
+	 "magnetic coordinates",
+	 "mlt",
+	 "magnetic local time",
+	 "conversion",
+	 "converting",
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
@@ -38,7 +50,7 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: MacOS",
 ]
-dynamic = ['version']
+dynamic = ['version', 'entry-points']
 
 [project.optional-dependencies]
 test = [
