@@ -29,7 +29,7 @@ jobs:
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: python setup.py develop
+      run: pip install -e .
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
