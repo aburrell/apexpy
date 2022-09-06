@@ -72,10 +72,11 @@ inc_dirs = include_directories(incdir_numpy, incdir_f2py)
 #     'source_fname',
 #     numpy_nodepr_api)
 #
-numpy_nodepr_api = '-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION'
+c_flags = ['-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION']
 
 # Platform detection to set more flags for Windows systems
 is_windows = host_machine.system() == 'windows'
+is_mac = host_machine.system() == 'darwin'
 is_mingw = is_windows and cc.get_id() == 'gcc'
 
 cython_c_args = []
@@ -124,6 +125,8 @@ if is_windows
     add_global_arguments('-fno-optimize-sibling-calls',
       language: ['fortran'])
   endif
+elif is_mac
+  c_flags += ['-FALIGN_FUNCTIONS=8']
 endif
 
 # Check the python headers
@@ -134,26 +137,28 @@ fortranobject_c = incdir_f2py / 'fortranobject.c'
 
 fortranobject_lib = static_library('_fortranobject',
   fortranobject_c,
-  c_args: numpy_nodepr_api,
+  c_args: c_flags,
   dependencies: py3_dep,
-  include_directories: [incdir_numpy, incdir_f2py],
-)
+  include_directories: [incdir_numpy, incdir_f2py])
+
 fortranobject_dep = declare_dependency(
   link_with: fortranobject_lib,
-  include_directories: [incdir_numpy, incdir_f2py],
-)
+  include_directories: [incdir_numpy, incdir_f2py])
 
+# Declare the fortran extension module
 py3.extension_module('fortranapex',
   'fortranapex/magfld.f90', 'fortranapex/apex.f90',
   'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
   'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
-  'fortranapex/fortranapexmodule.c',
+  'fortranapex/fortranapexmodule.c', fortranobject_c,
+  c_args: c_flags,
   include_directories: inc_dirs,
-  c_args: numpy_nodepr_api,
+  link_with: fortranobject_lib,
   dependencies : [py3_dep, fortranobject_dep],
   subdir: 'apexpy',
   install : true)
 
+# Declare the sources
 py3.install_sources(
   'apexpy/apex.py',
   'apexpy/apexsh.dat',
