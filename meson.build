@@ -1,4 +1,4 @@
-project( 'apexpy', 'fortran', 'c', 'cpp',
+project( 'apexpy', 'c',
   # Note that the git commit hash cannot be added dynamically here
   version: '1.1.0',
   license: 'MIT',
@@ -13,9 +13,12 @@ project( 'apexpy', 'fortran', 'c', 'cpp',
   ],
 )
 
+# Adding at project level causes many spurious -lgfortran flags.
+add_languages('fortran', native: false)
+
+
 fc = meson.get_compiler('fortran')
 cc = meson.get_compiler('c')
-cc = meson.get_compiler('cpp')
 
 # Don't use the deprecated NumPy C API. Define this to a fixed version instead
 # of NPY_API_VERSION in order not to break compilation for released versions
@@ -42,15 +45,14 @@ endif
 # Add more link arguments
 add_project_link_arguments('-lquadmath', language: ['c', 'fortran'])
 
-# Adding at project level causes many spurious -lgfortran flags.
-add_languages('fortran', native: false)
-
 copier = find_program(['cp', 'apexpy/_copyfiles.py'])
 
 # https://mesonbuild.com/Python-module.html
 py_mod = import('python')
 py3 = py_mod.find_installation()
 py3_dep = py3.dependency()
+message(py3.full_path())
+message(py3.get_install_dir())
 
 incdir_numpy = run_command(py3,
   ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
@@ -84,20 +86,20 @@ if is_windows
   # For mingw-w64, link statically against the UCRT.
   gcc_link_args = ['-lucrt', '-static']
   if is_mingw
-    add_global_link_arguments(gcc_link_args, language: ['c', 'cpp'])
+    add_global_link_arguments(gcc_link_args, language: ['c'])
 
     # Force gcc to float64 long doubles for compatibility with MSVC
     # builds, for C only.
     add_global_arguments('-mlong-double-64', language: 'c')
 
     # Make fprintf("%zd") work (see https://github.com/rgommers/scipy/issues/118)
-    add_global_arguments('-D__USE_MINGW_ANSI_STDIO=1', language: ['c', 'cpp'])
+    add_global_arguments('-D__USE_MINGW_ANSI_STDIO=1', language: ['c'])
 
     # Manual add of MS_WIN64 macro when not using MSVC.
     # https://bugs.python.org/issue28267
     bitness = run_command('apexpy/_gcc_build_bitness.py').stdout().strip()
     if bitness == '64'
-      add_global_arguments('-DMS_WIN64', language: ['c', 'cpp', 'fortran'])
+      add_global_arguments('-DMS_WIN64', language: ['c', 'fortran'])
     endif
 
     # Silence warnings emitted by PyOS_snprintf for (%zd), see
@@ -145,12 +147,23 @@ fortranobject_dep = declare_dependency(
   link_with: fortranobject_lib,
   include_directories: [incdir_numpy, incdir_f2py])
 
+# Make a custom target, output should not contain a path segment.
+fortranapex_source = custom_target(
+  'fortranapexmodule.c',
+   input : ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
+            'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
+	    'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90'],
+   output : ['fortranapexmodule.c',
+   	     'fortranapex-f2pywrappers.f90'],
+   command : [py3, '-m', 'numpy.f2py', '@INPUT@', '-m', 'fortranapex',
+              '--lower'])
+
 # Declare the fortran extension module
 py3.extension_module('fortranapex',
-  'fortranapex/magfld.f90', 'fortranapex/apex.f90',
-  'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
-  'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
-  'fortranapex/fortranapexmodule.c', fortranobject_c,
+  ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
+   'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
+   'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
+   fortranobject_c, fortranapex_source],
   c_args: c_flags,
   include_directories: inc_dirs,
   link_with: fortranobject_lib,
