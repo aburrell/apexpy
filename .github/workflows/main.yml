@@ -29,13 +29,13 @@ jobs:
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: pip install -e .
+      run: pip install .
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
-          pip install -e .
+          pip install .
 
     - name: Test PEP8 compliance
       run: flake8 . --count --show-source --statistics

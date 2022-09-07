@@ -32,7 +32,7 @@ jobs:
            pip install meson
 
     - name: meson install
-      run: pip install -e .
+      run: pip install .
 
     - name: Extend python path
       run: |
