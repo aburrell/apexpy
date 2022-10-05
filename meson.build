@@ -148,13 +148,15 @@ fortranobject_dep = declare_dependency(
   include_directories: [incdir_numpy, incdir_f2py])
 
 # Make a custom target, output should not contain a path segment.
+# The name 'fortranapex-f2pywrappers2.f90' is used because an empty
+# 'fortranapex-f2pywrappers.f' is also created, making the F90 wrapper the
+# second wrapper.  F2PY controls these names, so it may change at some point.
 fortranapex_source = custom_target(
   'fortranapexmodule.c',
    input : ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
             'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
 	    'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90'],
-   output : ['fortranapexmodule.c',
-   	     'fortranapex-f2pywrappers.f90'],
+   output : ['fortranapexmodule.c', 'fortranapex-f2pywrappers2.f90'],
    command : [py3, '-m', 'numpy.f2py', '@INPUT@', '-m', 'fortranapex',
               '--lower'])
 
@@ -163,7 +165,7 @@ py3.extension_module('fortranapex',
   ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
    'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
    'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
-   fortranobject_c, fortranapex_source],
+   fortranapex_source, fortranobject_c],
   c_args: c_flags,
   include_directories: inc_dirs,
   link_with: fortranobject_lib,
