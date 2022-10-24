@@ -30,7 +30,7 @@ jobs:
     - name: Install standard and test dependencies, then apexpy
       run: |
         pip install build
-	python -m build .
+        python -m build .
         pip install -r docs/requirements.txt
         pip install .
 
