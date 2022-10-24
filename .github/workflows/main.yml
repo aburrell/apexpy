@@ -25,16 +25,19 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install standard and test dependencies
-      run: pip install coveralls flake8 numpy pytest pytest-cov
+      run: pip install build coveralls flake8 numpy pytest pytest-cov
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: pip install .
+      run: |
+          python -m build .
+          pip install .
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
+          python -m build .
           pip install .
 
     - name: Test PEP8 compliance

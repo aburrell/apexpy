@@ -28,11 +28,13 @@ jobs:
            choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
-           pip install coveralls numpy pytest pytest-cov pytest-xdist scipy
+           pip install build coverage coveralls numpy pytest pytest-xdist scipy
            pip install meson
 
     - name: meson install
-      run: pip install .
+      run: |
+          python -m build .
+          pip install .
 
     - name: Extend python path
       run: |
@@ -47,11 +49,7 @@ jobs:
            & python tools\openblas_support.py --write-init $apexpy_path
 
     - name: Run unit and integration tests
-      run: |
-           dir apexpy
-           dir c:\hostedtoolcache\windows\python\3.7.9\x64\lib\site-packages
-           dumpbin /dependents apexpy\fortranapex.cp37-win_amd64.pyd
-           coverage run --rcfile=setup.cfg -m pytest --cov=apexpy
+      run: coverage run --rcfile=setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       env:
