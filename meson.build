@@ -45,8 +45,6 @@ endif
 # Add more link arguments
 add_project_link_arguments('-lquadmath', language: ['c', 'fortran'])
 
-copier = find_program(['cp', 'apexpy/_copyfiles.py'])
-
 # https://mesonbuild.com/Python-module.html
 py_mod = import('python')
 py3 = py_mod.find_installation()
@@ -174,14 +172,12 @@ py3.extension_module('fortranapex',
   install : true)
 
 # Declare the sources
-py3.install_sources(
-  'apexpy/apex.py',
-  'apexpy/apexsh.dat',
-  'apexpy/_copyfiles.py',
-  'apexpy/_gcc_build_bitness.py',
-  'apexpy/helpers.py',
-  'apexpy/igrf13coeffs.txt',
+py3.install_sources([
   'apexpy/__init__.py',
   'apexpy/__main__.py',
+  'apexpy/apex.py',
+  'apexpy/apexsh.dat',
+  'apexpy/helpers.py',
+  'apexpy/igrf13coeffs.txt'],
   pure: false,
   subdir: 'apexpy')
