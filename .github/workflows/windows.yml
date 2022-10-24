@@ -28,10 +28,9 @@ jobs:
            choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
-           pip install build coverage coveralls numpy pytest pytest-xdist scipy
-           pip install meson
+           pip install build coverage coveralls numpy pytest scipy
 
-    - name: meson install
+    - name: Install on Windows
       run: |
           python -m build .
           pip install .

@@ -29,7 +29,7 @@ jobs:
 
     - name: Install standard and test dependencies, then apexpy
       run: |
-        pip install -r docs/requirements.txt sphinx_rtd_theme
+        pip install -r docs/requirements.txt sphinx_rtd_theme build
         python -m build .
         pip install .
 
