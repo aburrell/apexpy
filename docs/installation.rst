@@ -100,22 +100,17 @@ a virtual environment. After clonining the fork (see :ref:`contributing`),
 you may install by::
 
   cd apexpy
-  python setup.py develop --user
-
-
-or with ``pip``::
-
-  cd apexpy
+  python -m build .
   pip install -e .
 
 
+The ``-e`` flag uses pip to peform what used to be ``python setup.py develop``.
+
 Another benefit of installing apexpy from the command line is specifying the
-fortran compiler you would like to use.  By default, apexpy uses
-`numpy`'s `f2py`, but you can change this using the global `--compiler` flag
-when running the `python setup.py install` command.
-However, if using an Intel compiler, you will need to
-uncomment a line at the top of ``src/fortranapex/igrf.f90`` to ensure all
-necessary libraries are imported.
+compilers you would like to use.  These can be changed by altering the ``CC``
+and ``FC`` environment variables on your computer.  If using an Intel compiler,
+you will need to uncomment a line at the top of ``src/fortranapex/igrf.f90`` to
+ensure all necessary libraries are imported.
 
 .. [1] pip is included with Python 2 from v2.7.9 and Python 3 from v3.4.
        If you don't have pip,
