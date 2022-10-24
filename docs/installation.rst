@@ -75,7 +75,10 @@ installing both gfortran and numpy).
 If you are on Apple and encounter a library error such as
 ``ld: library not found for -lm``, you will need to provide an additional
 linking flag to the Mac OSX SDK library.  This example assumes you are building
-locally from the cloned Git repository.
+locally from the cloned Git repository.  Issues on Mac OS have also been
+encountered when using clang for ``CC`` alongside gfortran.  This resulted in a
+seemly successful installation with apexpy reporting that fortranapex cannot be
+imported.
 
 ::
    LDFLAGS="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib ${LDFLAGS}" /opt/local/bin/python3.10 setup.py install
