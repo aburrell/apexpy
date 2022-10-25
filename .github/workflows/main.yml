@@ -55,6 +55,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+           cd ..
+	   ls -a
            coverage combine
            coverage report -m
-           coveralls --rcfile=setup.cfg --service=github
+           coveralls --rcfile=apexpy/setup.cfg --service=github
