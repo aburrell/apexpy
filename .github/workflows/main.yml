@@ -47,7 +47,9 @@ jobs:
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
     - name: Run unit and integration tests
-      run: coverage run --rcfile=setup.cfg -m pytest
+      run: |
+           cd ..
+           coverage run --rcfile=apexpy/setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       env:
