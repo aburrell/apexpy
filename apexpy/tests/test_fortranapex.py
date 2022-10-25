@@ -21,7 +21,7 @@ from apexpy import fortranapex as fa
 
 
 class TestFortranApex():
-    def setup(self):
+    def setup_method(self):
         """Initialize each test."""
         fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__),
                                   'apexsh.dat'), 2000)
@@ -55,7 +55,7 @@ class TestFortranApex():
         self.out = None
         self.test_out = None
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean environment after each test."""
         del self.lat, self.lon, self.height, self.refh, self.vecflg
         del self.qlat, self.qlon, self.mlat, self.mlon, self.f1, self.f2

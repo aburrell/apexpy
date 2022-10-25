@@ -68,13 +68,13 @@ def test_set_epoch_file_error(igrf_file):
 
 
 class TestApexInit(object):
-    def setup(self):
+    def setup_method(self):
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
 
-    def teardown(self):
+    def teardown_method(self):
         del self.apex_out, self.test_date, self.test_refh, self.bad_file
 
     def eval_date(self):
@@ -237,14 +237,14 @@ class TestApexInit(object):
 
 class TestApexMethod(object):
     """Test the Apex methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_lat = 60
         self.in_lon = 15
         self.in_alt = 100
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.in_lat, self.in_lon, self.in_alt
 
@@ -671,12 +671,12 @@ class TestApexMethod(object):
 
 class TestApexMLTMethods(object):
     """Test the Apex Magnetic Local Time (MLT) methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_time = dt.datetime(2000, 2, 3, 4, 5, 6)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.in_time
 
@@ -836,11 +836,11 @@ class TestApexMLTMethods(object):
 
 class TestApexMapMethods(object):
     """Test the Apex height mapping methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out
 
@@ -1016,7 +1016,7 @@ class TestApexMapMethods(object):
 
 class TestApexBasevectorMethods(object):
     """Test the Apex height base vector methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.lat = 60
@@ -1024,7 +1024,7 @@ class TestApexBasevectorMethods(object):
         self.height = 100
         self.test_basevec = None
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.test_basevec, self.lat, self.lon, self.height
 
@@ -1229,11 +1229,11 @@ class TestApexBasevectorMethods(object):
 
 class TestApexGetMethods(object):
     """Test the Apex `get` methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out
 
