@@ -32,8 +32,10 @@ jobs:
 
     - name: Install on Windows
       run: |
-          python -m build .
-          pip install .
+          meson setup build --prefix=$PWD\build
+          ninja -j 2 -C build
+          cd build
+          meson install
 
     - name: Extend python path
       run: |
