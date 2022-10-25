@@ -50,13 +50,10 @@ jobs:
       run: |
            cd ..
            coverage run --rcfile=apexpy/setup.cfg -m pytest
+	   coverage combine
+	   mv .coverage* apexpy/.
 
     - name: Publish results to coveralls upon success
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-           cd ..
-           ls -a
-           coverage combine
-           coverage report -m
-           coveralls --rcfile=apexpy/setup.cfg --service=github
+      run: coveralls --rcfile=setup.cfg --service=github
