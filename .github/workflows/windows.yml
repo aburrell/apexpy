@@ -32,19 +32,24 @@ jobs:
 
     - name: Install on Windows
       run: |
-           python -m build .
-           pip install .
+          meson setup build --prefix=$PWD\build
+          ninja -j 2 -C build
+          cd build
+          meson install
+
+    - name: Move tests into install directory
+      run: mv apexpy\tests $PWD\build\Lib\site-packages\apexpy\apexpy\.
 
     - name: Run unit and integration tests
       run: |
-           cd ..
+           cd build\Lib\site-packages\apexpy
            coverage run --rcfile=setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-           cd ..
+           cd build\Lib\site-packages\apexpy
            coverage combine
            coverage report -m
            coveralls --rcfile=setup.cfg --service=github
