@@ -50,8 +50,8 @@ jobs:
       run: |
            cd ..
            coverage run --rcfile=apexpy/setup.cfg -m pytest
-	   coverage combine
-	   mv .coverage* apexpy/.
+           coverage combine
+           mv .coverage* apexpy/.
 
     - name: Publish results to coveralls upon success
       env:
