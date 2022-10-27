@@ -32,10 +32,10 @@ jobs:
 
     - name: Install on Windows
       run: |
-          meson setup build --prefix=${{ env.Python3_ROOT_DIR }}\build
+          meson setup build --prefix=$PWD\build
           ninja -j 2 -C build
-          cd ${{ env.Python3_ROOT_DIR }}\build
-          meson install
+	  cd build
+          DESTDIR=${{ env.Python3_ROOT_DIR }} meson install
 
     - name: Run unit and integration tests
       run: |
