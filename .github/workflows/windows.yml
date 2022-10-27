@@ -32,7 +32,7 @@ jobs:
 
     - name: Install on Windows
       run: |
-          meson setup build --prefix=$PWD\build
+          meson setup build
           ninja -j 2 -C build
           cd build
           meson install
@@ -42,14 +42,14 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-           cd build\Lib\site-packages\apexpy
-           coverage run --rcfile=setup.cfg -m pytest
+           cd ..
+           coverage run --rcfile=apexpy\setup.cfg -m pytest
 
     - name: Publish results to coveralls upon success
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-           cd build\Lib\site-packages\apexpy
+           cd ..
            coverage combine
            coverage report -m
-           coveralls --rcfile=setup.cfg --service=github
+           coveralls --rcfile=apexpy\setup.cfg --service=github
