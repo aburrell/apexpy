@@ -32,7 +32,7 @@ jobs:
 
     - name: Install on Windows
       run: |
-          meson setup build --prefix=$PWD\build
+          meson setup build
           ninja -j 2 -C build
           cd build
           meson install --destdir=${{ env.Python3_ROOT_DIR }} 
