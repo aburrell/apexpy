@@ -37,9 +37,6 @@ jobs:
           cd build
           meson install
 
-    - name: Move tests into install directory
-      run: mv apexpy\tests $PWD\build\Lib\site-packages\apexpy\apexpy\.
-
     - name: Run unit and integration tests
       run: |
            cd ..
