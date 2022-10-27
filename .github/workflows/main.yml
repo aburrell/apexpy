@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
@@ -23,9 +23,20 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        architecture: 'x64'
 
-    - name: Install standard and test dependencies
+    - name: Install standard and test dependencies on Mac/Linux
+      if: ${{ matrix.os != 'windows-latest' }}
       run: pip install build coverage coveralls flake8 numpy pytest
+
+    - name: Install standard and test dependencies on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+           choco install ninja mingw
+           choco install rtools --no-progress
+           echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
+           gfortran --version
+           pip install build coverage coveralls meson-python numpy pytest scipy
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -40,18 +51,34 @@ jobs:
           python -m build .
           pip install .
 
+    - name: Install on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+          meson setup build
+          ninja -j 2 -C build
+          cd build
+          meson install --destdir=${{ env.Python3_ROOT_DIR }} 
+
     - name: Test PEP8 compliance
       run: flake8 . --count --show-source --statistics
 
     - name: Evaluate complexity
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
-    - name: Run unit and integration tests
+    - name: Run unit and integration tests on Mac/Linux
+      if: ${{ matrix.os != 'windows-latest' }}
       run: |
            cd ..
            coverage run --rcfile=apexpy/setup.cfg -m pytest
 
-    - name: Publish results to coveralls upon success
+    - name: Run unit and integration tests on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+           cd ..
+           coverage run --rcfile=apexpy\setup.cfg -m pytest
+
+    - name: Publish results to coveralls upon success on Mac/Linux
+      if: ${{ matrix.os != 'windows-latest' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -59,3 +86,13 @@ jobs:
            coverage combine
            coverage report -m
            coveralls --rcfile=apexpy/setup.cfg --service=github
+
+    - name: Publish results to coveralls upon success on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+           cd ..
+           coverage combine
+           coverage report -m
+           coveralls --rcfile=apexpy\setup.cfg --service=github
