@@ -15,7 +15,8 @@ The code behind this package is written in Fortran.  Because of this, you
 **MUST** have a fortran compiler installed on your system before you attempt
 the next step.  `Gfortran <https://gcc.gnu.org/wiki/GFortran>`_ is a free
 compiler that can be installed, if one is not already available on your system.
-
+If you are installling this or MinGW in Windows, make sure you install it
+**after** installing the Windows Microsoft C++ Build tools.
 
 .. _installation-tested:
 
@@ -111,6 +112,15 @@ compilers you would like to use.  These can be changed by altering the ``CC``
 and ``FC`` environment variables on your computer.  If using an Intel compiler,
 you will need to uncomment a line at the top of ``src/fortranapex/igrf.f90`` to
 ensure all necessary libraries are imported.
+
+If the above command doesn't work for you (as may be the case for Windows), you
+can try::
+
+  cd apexpy
+  meson setup build
+  ninja -j 2 -C build
+  cd build
+  meson install
 
 .. [1] pip is included with Python 2 from v2.7.9 and Python 3 from v3.4.
        If you don't have pip,
