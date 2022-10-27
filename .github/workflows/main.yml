@@ -36,7 +36,7 @@ jobs:
            choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
-           pip install build coverage coveralls meson-python numpy pytest scipy
+           pip install coverage coveralls flake8 meson-python numpy pytest scipy
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
