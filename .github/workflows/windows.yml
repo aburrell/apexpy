@@ -32,13 +32,14 @@ jobs:
 
     - name: Install on Windows
       run: |
-          meson setup build
+          meson setup build --prefix=$Python3_ROOT_DIR\build
           ninja -j 2 -C build
-          cd build
+          cd $Python3_ROOT_DIR\build
           meson install
 
     - name: Run unit and integration tests
       run: |
+           dir $Python3_ROOT_DIR
            cd ..
            coverage run --rcfile=apexpy\setup.cfg -m pytest
 
