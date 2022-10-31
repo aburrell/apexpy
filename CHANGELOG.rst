@@ -13,6 +13,7 @@ Changelog
 * Improved input testing for Apex methods
 * Added more examples to the documentation
 * Added function to calculate height along a field line
+* Changed installation to use meson
 
 1.1.0 (2021-03-05)
 ------------------
