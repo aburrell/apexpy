@@ -2,7 +2,7 @@ graft docs
 graft fortranapex
 graft .github
 
-recursive-include apexpy *.txt
+recursive-include apexpy *.txt meson.build
 
 include *.rst
 include *.md
@@ -10,5 +10,3 @@ include LICENSE
 include .zenodo.json
 include pyproject.toml
 include .codeclimate.yml *.yml
-
-global-exclude *.py[cod~] __pycache__ *.so *.dylib

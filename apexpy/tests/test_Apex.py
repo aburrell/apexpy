@@ -68,13 +68,13 @@ def test_set_epoch_file_error(igrf_file):
 
 
 class TestApexInit(object):
-    def setup(self):
+    def setup_method(self):
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
 
-    def teardown(self):
+    def teardown_method(self):
         del self.apex_out, self.test_date, self.test_refh, self.bad_file
 
     def eval_date(self):
@@ -237,14 +237,14 @@ class TestApexInit(object):
 
 class TestApexMethod(object):
     """Test the Apex methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_lat = 60
         self.in_lon = 15
         self.in_alt = 100
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.in_lat, self.in_lon, self.in_alt
 
@@ -553,7 +553,7 @@ class TestApexMethod(object):
         user_out = user_method(self.in_lat, self.in_lon, self.in_alt)
 
         # Evaluate the user output
-        np.testing.assert_allclose(user_out, out_comp)
+        np.testing.assert_allclose(user_out, out_comp, rtol=1e-5, atol=1e-5)
 
         for out_val in user_out:
             assert np.asarray(out_val).shape == (), "output is not a scalar"
@@ -671,12 +671,12 @@ class TestApexMethod(object):
 
 class TestApexMLTMethods(object):
     """Test the Apex Magnetic Local Time (MLT) methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_time = dt.datetime(2000, 2, 3, 4, 5, 6)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.in_time
 
@@ -836,11 +836,11 @@ class TestApexMLTMethods(object):
 
 class TestApexMapMethods(object):
     """Test the Apex height mapping methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out
 
@@ -858,9 +858,18 @@ class TestApexMapMethods(object):
                                [-13.76642894744873, 164.24259948730469,
                                 0.00056820799363777041])])
     def test_map_to_height(self, in_args, test_mapped):
-        """Test the map_to_height function."""
+        """Test the map_to_height function.
+
+        Parameters
+        ----------
+        in_args : list
+            List of input arguments
+        test_mapped : list
+            List of expected outputs
+
+        """
         mapped = self.apex_out.map_to_height(*in_args)
-        np.testing.assert_allclose(mapped, test_mapped, atol=1e-6)
+        np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5, atol=1e-5)
         return
 
     def test_map_to_height_same_height(self):
@@ -868,13 +877,22 @@ class TestApexMapMethods(object):
         mapped = self.apex_out.map_to_height(60, 15, 100, 100, conjugate=False,
                                              precision=1e-10)
         np.testing.assert_allclose(mapped, (60.0, 15.000003814697266, 0.0),
-                                   rtol=1e-5)
+                                   rtol=1e-5, atol=1e-5)
         return
 
     @pytest.mark.parametrize('arr_shape', [(2,), (2, 2), (1, 4)])
     @pytest.mark.parametrize('ivec', range(0, 4))
     def test_map_to_height_array_location(self, arr_shape, ivec):
-        """Test map_to_height with array input."""
+        """Test map_to_height with array input.
+
+        Parameters
+        ----------
+        arr_shape : tuple
+            Expected array shape
+        ivec : int
+            Input argument index for vectorized input
+
+        """
         # Set the base input and output values
         in_args = [60, 15, 100, 100]
         test_mapped = [60, 15.00000381, 0.0]
@@ -886,7 +904,8 @@ class TestApexMapMethods(object):
         mapped = self.apex_out.map_to_height(*in_args)
         for i, test_val in enumerate(test_mapped):
             assert mapped[i].shape == arr_shape
-            np.testing.assert_allclose(mapped[i], test_val, rtol=1e-5)
+            np.testing.assert_allclose(mapped[i], test_val, rtol=1e-5,
+                                       atol=1e-5)
         return
 
     @pytest.mark.parametrize("method_name,in_args",
@@ -997,7 +1016,7 @@ class TestApexMapMethods(object):
 
 class TestApexBasevectorMethods(object):
     """Test the Apex height base vector methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.lat = 60
@@ -1005,7 +1024,7 @@ class TestApexBasevectorMethods(object):
         self.height = 100
         self.test_basevec = None
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.test_basevec, self.lat, self.lon, self.height
 
@@ -1210,11 +1229,11 @@ class TestApexBasevectorMethods(object):
 
 class TestApexGetMethods(object):
     """Test the Apex `get` methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out
 

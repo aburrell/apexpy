@@ -12,9 +12,10 @@ else:
     from numpy.distutils.core import setup, Extension
     extensions = [
         Extension(name='apexpy.fortranapex',
-                  sources=['fortranapex/magfld.f', 'fortranapex/apex.f',
+                  sources=['fortranapex/igrf.f90',
+                           'fortranapex/magfld.f90',
+                           'fortranapex/apex.f90',
                            'fortranapex/makeapexsh.f90',
-                           'fortranapex/igrf.f90',
                            'fortranapex/apexsh.f90',
                            'fortranapex/checkapexsh.f90',
                            'fortranapex/fortranapex.pyf'])]

@@ -8,7 +8,7 @@ import subprocess
 
 
 class TestCommandLine():
-    def setup(self):
+    def setup_method(self):
         """Runs before every test method to create a clean environment."""
         # Define the desired working paths
         self.startdir = os.path.abspath(os.path.curdir)
@@ -25,7 +25,7 @@ class TestCommandLine():
         self.singlefile = os.path.join(split_dirs[1],
                                        'test_convert_single_line.txt')
 
-    def teardown(self):
+    def teardown_method(self):
         """Runs after every method to clean up previous testing."""
         # Remove testing output
         if os.path.isfile(self.outfile):

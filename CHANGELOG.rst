@@ -2,8 +2,9 @@
 Changelog
 =========
 
-1.1.1 (2022-XX-XX)
+2.0.0 (2022-XX-XX)
 ------------------
+* Update Fortran source code to Fortran 90 standards
 * Removed Python 2 support
 * Updated community and package documentation
 * Updated unit test style to reduce duplication and better follow PEP8

@@ -15,7 +15,8 @@ The code behind this package is written in Fortran.  Because of this, you
 **MUST** have a fortran compiler installed on your system before you attempt
 the next step.  `Gfortran <https://gcc.gnu.org/wiki/GFortran>`_ is a free
 compiler that can be installed, if one is not already available on your system.
-
+If you are installling this or MinGW in Windows, make sure you install it
+**after** installing the Windows Microsoft C++ Build tools.
 
 .. _installation-tested:
 
@@ -75,7 +76,10 @@ installing both gfortran and numpy).
 If you are on Apple and encounter a library error such as
 ``ld: library not found for -lm``, you will need to provide an additional
 linking flag to the Mac OSX SDK library.  This example assumes you are building
-locally from the cloned Git repository.
+locally from the cloned Git repository.  Issues on Mac OS have also been
+encountered when using clang for ``CC`` alongside gfortran.  This resulted in a
+seemly successful installation with apexpy reporting that fortranapex cannot be
+imported.
 
 ::
    LDFLAGS="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib ${LDFLAGS}" /opt/local/bin/python3.10 setup.py install
@@ -97,22 +101,26 @@ a virtual environment. After clonining the fork (see :ref:`contributing`),
 you may install by::
 
   cd apexpy
-  python setup.py develop --user
-
-
-or with ``pip``::
-
-  cd apexpy
+  python -m build .
   pip install -e .
 
 
+The ``-e`` flag uses pip to peform what used to be ``python setup.py develop``.
+
 Another benefit of installing apexpy from the command line is specifying the
-fortran compiler you would like to use.  By default, apexpy uses
-`numpy`'s `f2py`, but you can change this using the global `--compiler` flag
-when running the `python setup.py install` command.
-However, if using an Intel compiler, you will need to
-uncomment a line at the top of ``src/fortranapex/igrf.f90`` to ensure all
-necessary libraries are imported.
+compilers you would like to use.  These can be changed by altering the ``CC``
+and ``FC`` environment variables on your computer.  If using an Intel compiler,
+you will need to uncomment a line at the top of ``src/fortranapex/igrf.f90`` to
+ensure all necessary libraries are imported.
+
+If the above command doesn't work for you (as may be the case for Windows), you
+can try::
+
+  cd apexpy
+  meson setup build
+  ninja -j 2 -C build
+  cd build
+  meson install
 
 .. [1] pip is included with Python 2 from v2.7.9 and Python 3 from v3.4.
        If you don't have pip,

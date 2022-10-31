@@ -351,8 +351,9 @@ class Apex(object):
             raise ValueError('unknown electric field/drift flag')
 
         # Make sure data is array of correct shape
-        if(not (np.ndim(data) == 1 and np.size(data) == 3)
-           and not (np.ndim(data) == 2 and np.shape(data)[0] == 3)):
+        if not (np.ndim(data) == 1
+                and np.size(data) == 3) and not (np.ndim(data) == 2
+                                                 and np.shape(data)[0] == 3):
             # Raise ValueError because if passing e.g. a (6,) ndarray the
             # reshape below will work even though the input is invalid
             raise ValueError('{:} must be (3, N) or (3,) ndarray'.format(

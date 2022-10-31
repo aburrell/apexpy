@@ -12,30 +12,52 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        architecture: 'x64'
 
-    - name: Install standard and test dependencies
-      run: pip install coveralls flake8 numpy pytest pytest-cov
+    - name: Install standard and test dependencies on Mac/Linux
+      if: ${{ matrix.os != 'windows-latest' }}
+      run: pip install build coverage coveralls flake8 numpy pytest
+
+    - name: Install standard and test dependencies on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+           choco install ninja mingw
+           choco install rtools --no-progress
+           echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
+           gfortran --version
+           pip install coverage coveralls flake8 meson-python numpy pytest scipy
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: python setup.py develop
+      run: |
+          python -m build .
+          pip install .
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
-          CFLAGS="-falign-functions=8 ${CFLAGS}" python setup.py develop
+          python -m build .
+          pip install .
+
+    - name: Install on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+          meson setup build
+          ninja -j 2 -C build
+          cd build
+          meson install --destdir=${{ env.Python3_ROOT_DIR }} 
 
     - name: Test PEP8 compliance
       run: flake8 . --count --show-source --statistics
@@ -43,13 +65,34 @@ jobs:
     - name: Evaluate complexity
       run: flake8 . --count --exit-zero --max-complexity=10 --statistics
 
-    - name: Run unit and integration tests
-      run: coverage run --rcfile=setup.cfg -m pytest
+    - name: Run unit and integration tests on Mac/Linux
+      if: ${{ matrix.os != 'windows-latest' }}
+      run: |
+           cd ..
+           coverage run --rcfile=apexpy/setup.cfg -m pytest
 
-    - name: Publish results to coveralls upon success
+    - name: Run unit and integration tests on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+           cd ..
+           coverage run --rcfile=apexpy\setup.cfg -m pytest
+
+    - name: Publish results to coveralls upon success on Mac/Linux
+      if: ${{ matrix.os != 'windows-latest' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+           cd ..
            coverage combine
            coverage report -m
-           coveralls --rcfile=setup.cfg --service=github
+           coveralls --rcfile=apexpy/setup.cfg --service=github
+
+    - name: Publish results to coveralls upon success on Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+           cd ..
+           coverage combine
+           coverage report -m
+           coveralls --rcfile=apexpy\setup.cfg --service=github

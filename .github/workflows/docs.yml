@@ -21,17 +21,17 @@ jobs:
     name: Docs ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Install standard and test dependencies, then apexpy
       run: |
-        pip install -r docs/requirements.txt sphinx_rtd_theme
-        python setup.py clean --all build_ext --force --inplace
-        python setup.py install
+        pip install build
+        python -m build .
+        pip install -r docs/requirements.txt
 
     - name: Check documentation build
       run: sphinx-build -E -b html docs dist/docs
