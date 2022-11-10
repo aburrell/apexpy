@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Classes that make up the core of apexpy.
-"""
+"""Classes that make up the core of apexpy."""
 
 import datetime as dt
 import numpy as np
@@ -13,10 +11,11 @@ from apexpy import helpers
 # Below try..catch required for autodoc to work on readthedocs
 try:
     from apexpy import fortranapex as fa
-except ImportError:
+except ImportError as ierr:
     warnings.warn("".join(["fortranapex module could not be imported, so ",
                            "apexpy probably won't work.  Make sure you have ",
-                           "a gfortran compiler."]))
+                           "a gfortran compiler. Failed with error: ",
+                           str(ierr)]))
 
 # Make sure invalid warnings are always shown
 warnings.filterwarnings('always', message='.*set to NaN where*',
@@ -262,8 +261,8 @@ class Apex(object):
 
         # Convert the latitude
         salat = np.sign(alat) if alat != 0 else 1
-        qlat = salat * np.degrees(np.arccos(np.sqrt((self.RE + height) /
-                                                    (self.RE + h_apex))))
+        qlat = salat * np.degrees(np.arccos(np.sqrt((self.RE + height)
+                                                    / (self.RE + h_apex))))
 
         return qlat, qlon
 
@@ -311,8 +310,8 @@ class Apex(object):
 
         # Convert the latitude
         sqlat = np.sign(qlat) if qlat != 0 else 1
-        alat = sqlat * np.degrees(np.arccos(np.sqrt((self.RE + self.refh) /
-                                                    (self.RE + h_apex))))
+        alat = sqlat * np.degrees(np.arccos(np.sqrt((self.RE + self.refh)
+                                                    / (self.RE + h_apex))))
 
         return alat, alon
 
@@ -352,8 +351,9 @@ class Apex(object):
             raise ValueError('unknown electric field/drift flag')
 
         # Make sure data is array of correct shape
-        if(not (np.ndim(data) == 1 and np.size(data) == 3)
-           and not (np.ndim(data) == 2 and np.shape(data)[0] == 3)):
+        if not (np.ndim(data) == 1
+                and np.size(data) == 3) and not (np.ndim(data) == 2
+                                                 and np.shape(data)[0] == 3):
             # Raise ValueError because if passing e.g. a (6,) ndarray the
             # reshape below will work even though the input is invalid
             raise ValueError('{:} must be (3, N) or (3,) ndarray'.format(
@@ -1177,6 +1177,32 @@ class Apex(object):
         apex_height = (self.RE + height) / cos_lat_squared - self.RE
 
         return apex_height
+
+    def get_height(self, lat, apex_height):
+        """Calculate the height given an apex latitude and apex height.
+
+        Parameters
+        ----------
+        lat : float
+            Apex latitude in degrees
+        apex_height : float
+            Maximum height of the apex field line above the surface of the
+            Earth in km
+
+        Returns
+        -------
+        height : float
+            Height above the surface of the Earth in km
+
+        """
+        # Check the latitude
+        lat = helpers.checklat(lat, name='alat')
+
+        # Calculate the height from the apex height
+        cos_lat_squared = np.cos(np.radians(lat)) ** 2
+        height = cos_lat_squared * (apex_height + self.RE) - self.RE
+
+        return height
 
     def set_epoch(self, year):
         """Updates the epoch for all subsequent conversions.

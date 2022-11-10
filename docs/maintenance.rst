@@ -37,12 +37,44 @@ code in the ``apexpy/src/fortranapex`` directory. Working in that directory:
    and ``epochgrid`` only has up to the year 2020, then add 2025 to
    ``epochgrid`` and then increment ``nepochgrid`` by 1.
 4. Build the ``apextest`` binary by running the ``make`` command.
-5. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file.
-6. Copy the new ``apexsh.dat`` file to the ``apexpy/src/apexpy`` directory.
+5. Copy the IGRF coefficient file (``cp ../apexpy/igrf13coeff.txt``) into the
+   current directory.
+6. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file.
+7. Copy the new ``apexsh.dat`` file to the ``apexpy/src/apexpy`` directory.
 
 After updating the ``apexsh.dat`` file, some of the unit tests and the
 documentation examples in the README and ``apexpy/docs/examples`` directory
 will need to be updated as well.
+
+Modifying Fortran Source
+------------------------
+When modifying the fortran source code, it can be helpful to run a preliminary
+validation of the fortran output independent of the python wrapper.
+
+1. Remove any existing binaries by running the ``make clean`` command.
+2. Build the ``apextest`` binary by running the ``make`` command.
+3. Copy the IGRF coefficient file (``cp ../apexpy/igrf13coeff.txt``) into the
+   current directory.
+4. Execute the ``apextext`` binary.
+5. Confirm the output printed to the screen matches the test output shown in
+   the comment blot at the bottom of ``checkapexsh.f90``.
+
+The output may not match the test output exactly due to floating point errors
+and improvements in the precision of the calculation.
+
+After updating the fortran source code, the signature file must be recreated so
+the python wrapper works correctly.  It is also a good idea to update
+``apexsh.dat`` following the instructions above.  Use `f2py <https://numpy.org/doc/stable/f2py/>`_
+to create a new signature file from the ``apexpy/src/fortranapex`` directory.
+::
+
+  f2py -m fortranapex apexsh.f90 igrf.f90 apex.f90 magfld.f90 makeapexsh.f90 -h fortranapex.pyf --overwrite-signature
+
+
+This will create the file ``fortranapex.pyf``.  Then reinstall the package with
+``pip`` from the root directory.  If the modifications involved adding or
+removing fortran source files, modify the list of extension sources in
+``setup.py``.
 
 Updating tests and style standards
 -----------------------------------

@@ -1,0 +1,43 @@
+# This workflow will install Python dependencies, run tests and lint with a
+# variety of Python versions. For more information see:
+# https://help.github.com/actions/language-and-framework-guides/
+# using-python-with-github-actions
+
+name: Documentation test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.9"]
+
+    env:
+       FC: gfortran
+
+    name: Docs ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install standard and test dependencies, then apexpy
+      run: |
+        pip install build
+        python -m build .
+        pip install -r docs/requirements.txt
+
+    - name: Check documentation build
+      run: sphinx-build -E -b html docs dist/docs
+
+    - name: Check documentation links
+      run: sphinx-build -b linkcheck docs dist/docs
+
+    - name: Load .zenodo.json to check for errors
+      run: python -c "import json; json.loads(open('.zenodo.json').read())"

@@ -2,8 +2,9 @@
 Changelog
 =========
 
-1.1.1 (2021-06-05)
+2.0.0 (2022-XX-XX)
 ------------------
+* Update Fortran source code to Fortran 90 standards
 * Removed Python 2 support
 * Updated community and package documentation
 * Updated unit test style to reduce duplication and better follow PEP8
@@ -12,6 +13,8 @@ Changelog
 * Improved input testing for Apex methods
 * Added more examples to the documentation
 * Fixed missing microseconds bug in helpers.subsol
+* Added function to calculate height along a field line
+* Changed installation to use meson
 
 1.1.0 (2021-03-05)
 ------------------
