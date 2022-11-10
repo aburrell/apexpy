@@ -16,14 +16,22 @@ import datetime as dt
 import numpy as np
 import os
 import pytest
+import shutil
 import warnings
 
 import apexpy
 
 
 @pytest.fixture()
-def igrf_file():
-    """A fixture for handling the coefficient file."""
+def igrf_file(max_attempts=100):
+    """A fixture for handling the coefficient file.
+
+    Parameters
+    ----------
+    max_attempts : int
+        Maximum rename attemps, needed for Windows (default=100)
+
+    """
     # Ensure the coefficient file exists
     original_file = os.path.join(os.path.dirname(apexpy.helpers.__file__),
                                  'igrf13coeffs.txt')
@@ -31,11 +39,21 @@ def igrf_file():
     assert os.path.isfile(original_file)
 
     # Move the coefficient file
-    os.rename(original_file, tmp_file)
+    for _ in range(max_attempts):
+        try:
+            shutil.move(original_file, tmp_file)
+            break
+        except Exception:
+            pass
     yield original_file
 
     # Move the coefficient file back
-    os.rename(tmp_file, original_file)
+    for _ in range(max_attempts):
+        try:
+            shutil.move(tmp_file, original_file)
+            break
+        except Exception:
+            pass
     return
 
 
@@ -49,14 +67,14 @@ def test_set_epoch_file_error(igrf_file):
     return
 
 
-class TestApexInit():
-    def setup(self):
+class TestApexInit(object):
+    def setup_method(self):
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
 
-    def teardown(self):
+    def teardown_method(self):
         del self.apex_out, self.test_date, self.test_refh, self.bad_file
 
     def eval_date(self):
@@ -217,16 +235,16 @@ class TestApexInit():
         return
 
 
-class TestApexMethod():
+class TestApexMethod(object):
     """Test the Apex methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_lat = 60
         self.in_lon = 15
         self.in_alt = 100
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.in_lat, self.in_lon, self.in_alt
 
@@ -651,14 +669,14 @@ class TestApexMethod():
         return
 
 
-class TestApexMLTMethods():
+class TestApexMLTMethods(object):
     """Test the Apex Magnetic Local Time (MLT) methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.in_time = dt.datetime(2000, 2, 3, 4, 5, 6)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.in_time
 
@@ -816,13 +834,13 @@ class TestApexMLTMethods():
         return
 
 
-class TestApexMapMethods():
+class TestApexMapMethods(object):
     """Test the Apex height mapping methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out
 
@@ -988,7 +1006,7 @@ class TestApexMapMethods():
                               ([60, 30, 100, 500, [1, 2, 3]],
                                [0.76141245, 2.87884673, 0.73655941]),
                               ([70, 15, 100, 500, [1, 2, 3]],
-                               [0.84681866, 2.5925821,  0.34792655])])
+                               [0.84681866, 2.5925821, 0.34792655])])
     def test_map_V_to_height_scalar_location(self, in_args, test_mapped):
         """Test mapping of velocity to a specified height."""
         mapped = self.apex_out.map_V_to_height(*in_args)
@@ -996,9 +1014,9 @@ class TestApexMapMethods():
         return
 
 
-class TestApexBasevectorMethods():
+class TestApexBasevectorMethods(object):
     """Test the Apex height base vector methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
         self.lat = 60
@@ -1006,7 +1024,7 @@ class TestApexBasevectorMethods():
         self.height = 100
         self.test_basevec = None
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.test_basevec, self.lat, self.lon, self.height
 
@@ -1209,13 +1227,13 @@ class TestApexBasevectorMethods():
         return
 
 
-class TestApexGetMethods():
+class TestApexGetMethods(object):
     """Test the Apex `get` methods."""
-    def setup(self):
+    def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2000, refh=300)
 
-    def teardown(self):
+    def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out
 
@@ -1282,4 +1300,44 @@ class TestApexGetMethods():
 
         # Test the outputs
         np.testing.assert_allclose(excess_out, bound_out, rtol=0, atol=1e-8)
+        return
+
+    @pytest.mark.parametrize("apex_height", [-100, 0, 300, 10000])
+    def test_get_height_at_equator(self, apex_height):
+        """Test that `get_height` returns apex height at equator.
+
+        Parameters
+        ----------
+        apex_height : float
+            Apex height
+
+        """
+
+        assert apex_height == self.apex_out.get_height(0.0, apex_height)
+        return
+
+    @pytest.mark.parametrize("lat, height", [
+        (-90, -6371.009), (-80, -6088.438503309167), (-70, -5274.8091854339655),
+        (-60, -4028.256749999999), (-50, -2499.1338178752017),
+        (-40, -871.8751821247979), (-30, 657.2477500000014),
+        (-20, 1903.8001854339655), (-10, 2717.4295033091657), (0, 3000.0),
+        (10, 2717.4295033091657), (20, 1903.8001854339655),
+        (30, 657.2477500000014), (40, -871.8751821247979),
+        (50, -2499.1338178752017), (60, -4028.256749999999),
+        (70, -5274.8091854339655), (80, -6088.438503309167)])
+    def test_get_height_along_fieldline(self, lat, height):
+        """Test that `get_height` returns expected height of field line.
+
+        Parameters
+        ----------
+        lat : float
+            Input latitude
+        height : float
+            Output field-line height for line with apex of 3000 km
+
+        """
+
+        fheight = self.apex_out.get_height(lat, 3000.0)
+        assert abs(height - fheight) < 1.0e-7, \
+            "bad height calculation: {:.7f} != {:.7f}".format(height, fheight)
         return

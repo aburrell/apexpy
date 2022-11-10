@@ -6,7 +6,6 @@ ratings:
   paths:
   - "**.py"
 exclude_paths:
-  - "ci/**/*"
   - "tests/**/*"
   - "docs/**/*"
   - "setup.py"

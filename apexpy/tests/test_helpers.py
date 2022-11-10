@@ -48,12 +48,12 @@ def datetime64_to_datetime(dt64):
 
 
 class TestHelpers():
-    def setup(self):
+    def setup_method(self):
         self.in_shape = None
         self.calc_val = None
         self.test_val = None
 
-    def teardown(self):
+    def teardown_method(self):
         del self.in_shape, self.calc_val, self.test_val
 
     def eval_output(self, rtol=1e-7, atol=0.0):
