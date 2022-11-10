@@ -12,6 +12,7 @@ Changelog
 * Added class representation strings to Apex
 * Improved input testing for Apex methods
 * Added more examples to the documentation
+* Fixed missing microseconds bug in helpers.subsol
 * Added function to calculate height along a field line
 * Changed installation to use meson
 

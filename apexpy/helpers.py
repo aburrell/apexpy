@@ -166,15 +166,16 @@ def subsol(datetime):
         year = np.asanyarray([datetime.year])
         doy = np.asanyarray([datetime.timetuple().tm_yday])
         ut = np.asanyarray([datetime.hour * 3600 + datetime.minute * 60
-                            + datetime.second])
+                            + datetime.second + datetime.microsecond / 1.0e6])
     elif isinstance(datetime, np.ndarray):
         # This conversion works for datetime of wrong precision or unit epoch
-        times = datetime.astype('datetime64[s]')
+        times = datetime.astype('datetime64[us]')
         year_floor = times.astype('datetime64[Y]')
         day_floor = times.astype('datetime64[D]')
         year = year_floor.astype(int) + 1970
         doy = (day_floor - year_floor).astype(int) + 1
-        ut = (times.astype('datetime64[s]') - day_floor).astype(float)
+        ut = (times.astype('datetime64[us]') - day_floor).astype(float)
+        ut /= 1e6
     else:
         raise ValueError("input must be datetime.datetime or numpy array")
 

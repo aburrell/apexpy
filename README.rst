@@ -136,5 +136,5 @@ Badges
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
 
-.. |doi| image:: https://www.zenodo.org/badge/46420037.svg
-   :target: https://www.zenodo.org/badge/latestdoi/46420037
+.. |doi| image:: https://www.zenodo.org/badge/doi/10.5281/zenodo.4585641.svg
+   :target: https://doi.org/10.5281/zenodo.1214206

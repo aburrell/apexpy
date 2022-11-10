@@ -23,7 +23,8 @@ IGRF-12 with coefficients valid through 2020 [Thébault et al., 2015] [3]_.
 
 .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
        Magnetic Apex Coordinates, Journal of geomagnetism and
-       geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
+       geoelectricity, 47(2), 191–212,
+       `doi:10.5636/jgg.47.191 <http://dx.doi.org/10.5636/jgg.47.191>`_.
 
 .. [3] Thébault, E. et al. (2015), International Geomagnetic Reference
        Field: the 12th generation, Earth, Planets and Space, 67(1), 79,
