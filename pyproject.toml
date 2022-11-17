@@ -61,6 +61,9 @@ dynamic = ['version']
 [tool.project.scripts]
 apexpy = {reference = 'apexpy.__main__:main', type = 'console'}
 
+[tool.cibuildwheel]
+before-all = "apt install libpng-dev"
+
 [project.optional-dependencies]
 test = [
   "pytest",
