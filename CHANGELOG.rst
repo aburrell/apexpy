@@ -16,6 +16,7 @@ Changelog
 * Added function to calculate height along a field line
 * Changed installation to use meson
 * Added wheel creation to CI
+* Updated flake8 ignore syntax
 
 1.1.0 (2021-03-05)
 ------------------
