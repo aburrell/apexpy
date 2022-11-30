@@ -1,6 +1,25 @@
 Package Maintenance
 ===================
 
+Providing Wheels with Releases
+------------------------------
+
+The Continuous Integration (CI) now saves wheels created for each tested Python
+version and computer Operating System (OS) as artifacts. When preparing a new
+PyPi release, these wheels should be downloaded from the release candidate.
+The list of artifacts may be found
+`here <https://api.github.com/repos/aburrell/apexpy/actions/artifacts>`_.
+
+To download an artifact:
+
+1. run ``curl -v -H "Authorization: token <GITHUB-ACCESS-TOKEN>" https://api.github.com/repos/aburrell/apexpy/actions/artifacts/<ARTIFACT-ID>/zip``, where
+   <ITEM> should be replaced with the appropriate item string.
+2. Copy the URL from the ``Location`` output produced by the previous command
+   into a browser, which will download a zip archive into your standard
+   download location.
+3. Copy the zip archive into the ``apexpy/dist`` directory and unzip.
+4. Check the archive for the expected matrix of *.whl objects
+
 Updating IGRF
 -------------
 
