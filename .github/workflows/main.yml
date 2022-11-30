@@ -50,7 +50,6 @@ jobs:
           brew reinstall gcc
           python -m build .
           pip install .
-          ls dist
 
     - name: Install on Windows
       if: ${{ matrix.os == 'windows-latest' }}
@@ -103,10 +102,9 @@ jobs:
       run: |
            mkdir dist
            pip wheel . -w dist
-           dir dist
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
       with:
          path: dist/*.whl
-         if-no-files-found: warning
+         if-no-files-found: warn
