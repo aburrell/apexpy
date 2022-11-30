@@ -101,7 +101,7 @@ jobs:
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
            mkdir dist
-           pip wheel -w dist
+           pip wheel . -w dist
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
