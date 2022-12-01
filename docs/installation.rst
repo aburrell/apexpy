@@ -92,7 +92,7 @@ seemly successful installation with apexpy reporting that fortranapex cannot be
 imported.
 
 ::
-   LDFLAGS="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib ${LDFLAGS}" python setup.py install
+   LDFLAGS="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib ${LDFLAGS}" pip install apexpy
 
 Windows systems are known to have issues with Fortran-based codes.  The Windows
 testing we do uses miniconda, so we recommend using the Anaconda environment.
