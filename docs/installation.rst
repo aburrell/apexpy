@@ -17,7 +17,10 @@ The code behind this package is written in Fortran.  Because of this, you
 the next step.  `Gfortran <https://gcc.gnu.org/wiki/GFortran>`_ is a free
 compiler that can be installed, if one is not already available on your system.
 If you are installling this or MinGW in Windows, make sure you install it
-**after** installing the Windows Microsoft C++ Build tools.
+**after** installing the Windows Microsoft C++ Build tools.  The apexpy
+installation has been tested successfully with gfortran 7 and some more recent
+versions.  Earlier versions of gfortran may not work and are not recommended.
+
 
 .. _installation-tested:
 
@@ -60,13 +63,19 @@ Windows with the Mingw32 compiler, you might find `this information <https://wik
 useful for helping build apexpy.
 
 Problems have also been encountered when installing in a conda environment.
-In this case, pip seems to ignore the installed numby version when installing.
+In this case, pip seems to ignore the installed numpy version when installing.
 This appears to result in a successful installation that fails upon import.  In
 this case, try::
 
   pip install apexpy --no-build-isolation
 
-  
+The specific fortran compiler to use can be specified with the `FC` flag.  This
+can be useful your system has multiple versions of gfortran and the default
+is not appropriate (ie., an older version).
+
+::
+   FC=/path/to/correct/gfortran pip install apexpy
+
 Apple Silicon systems require certain compliation flags to deal with memory
 problems.  In this case, the following command has worked (after first
 installing both gfortran and numpy).
@@ -83,7 +92,7 @@ seemly successful installation with apexpy reporting that fortranapex cannot be
 imported.
 
 ::
-   LDFLAGS="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib ${LDFLAGS}" /opt/local/bin/python3.10 setup.py install
+   LDFLAGS="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib ${LDFLAGS}" python setup.py install
 
 Windows systems are known to have issues with Fortran-based codes.  The Windows
 testing we do uses miniconda, so we recommend using the Anaconda environment.
