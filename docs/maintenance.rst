@@ -12,13 +12,16 @@ The list of artifacts may be found
 
 To download an artifact:
 
-1. run ``curl -v -H "Authorization: token <GITHUB-ACCESS-TOKEN>" https://api.github.com/repos/aburrell/apexpy/actions/artifacts/<ARTIFACT-ID>/zip``, where
+1. If you don't have a GitHub Personal Access Token, follow
+   `these instructions <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_
+   to create one.
+2. Run ``curl -v -H "Authorization: token <GITHUB-ACCESS-TOKEN>" https://api.github.com/repos/aburrell/apexpy/actions/artifacts/<ARTIFACT-ID>/zip``, where
    <ITEM> should be replaced with the appropriate item string.
-2. Copy the URL from the ``Location`` output produced by the previous command
+3. Copy the URL from the ``Location`` output produced by the previous command
    into a browser, which will download a zip archive into your standard
    download location.
-3. Copy the zip archive into the ``apexpy/dist`` directory and unzip.
-4. Check the archive for the expected matrix of *.whl objects
+4. Copy the zip archive into the ``apexpy/dist`` directory and unzip.
+5. Check the archive for the expected matrix of *.whl objects
 
 Updating IGRF
 -------------
