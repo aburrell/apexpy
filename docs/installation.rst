@@ -46,8 +46,8 @@ If you are installing this or MinGW in Windows, make sure you install it
 installation has been tested successfully with gfortran 7 and some more recent
 versions.  Earlier versions of gfortran may not work and are not recommended.
 
-Installation also requires gcc. `GCC <https://gcc.gnu.org/>`_ is a free compiler
-that can be installed from a variety of sources and standard package managers.
+Installation also requires a C compiler of the same type as the fortran compiler. `GCC <https://gcc.gnu.org/>`_ is a free compiler that works goth Gfortran and
+can be installed from a variety of sources and standard package managers.
 It is recommended that you check to see if you have gcc available on your system
 before installing as it is relatively common and multiple competing versions
 may cause problems if paths are not managed carefully.
@@ -88,7 +88,7 @@ appropriate command would be::
 Install without Wheels
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Many times, skipping building wheels locally will solve installation problem,
+Many times, skipping building wheels locally will solve installation problems,
 but it requires that both libgfortran and gfortran are installed on your
 system::
 
