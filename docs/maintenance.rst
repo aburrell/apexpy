@@ -19,7 +19,7 @@ To download an artifact:
    <ITEM> should be replaced with the appropriate item string.
 3. Copy the URL from the ``Location`` output produced by the previous command
    into a browser, which will download a zip archive into your standard
-   download location.
+   download location. Alternatively (or if this doesn't work) you can use `wget` to retrieve the archive.
 4. Copy the zip archive into the ``apexpy/dist`` directory and unzip.
 5. Check the archive for the expected matrix of *.whl objects
 
