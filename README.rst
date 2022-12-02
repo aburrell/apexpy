@@ -55,7 +55,7 @@ perform the desired calculations. Some simple examples::
     20.90
 
 If you don't know or use Python, you can also use the command line. See details
-in the full documentation.
+(including more installation help) in the full documentation.
 
 Documentation
 =============
