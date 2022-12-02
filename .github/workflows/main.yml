@@ -96,3 +96,15 @@ jobs:
            coverage combine
            coverage report -m
            coveralls --rcfile=apexpy\setup.cfg --service=github
+
+    - name: Create a Windows wheel
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: |
+           mkdir dist
+           pip wheel . -w dist
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v3
+      with:
+         path: dist/*.whl
+         if-no-files-found: warn
