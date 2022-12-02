@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.0.0 (2022-XX-XX)
+2.0.0 (2022-12-09)
 ------------------
 * Update Fortran source code to Fortran 90 standards
 * Removed Python 2 support
@@ -11,7 +11,7 @@ Changelog
 * Updated code style using codacy suggestions and reduced complexity
 * Added class representation strings to Apex
 * Improved input testing for Apex methods
-* Added more examples to the documentation
+* Added more examples and installation help to the documentation
 * Fixed missing microseconds bug in helpers.subsol
 * Added function to calculate height along a field line
 * Changed installation to use meson
