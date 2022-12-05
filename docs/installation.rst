@@ -131,10 +131,12 @@ you may install by::
 
   cd apexpy
   python -m build .
-  pip install -e .
+  pip install .
 
 
-The ``-e`` flag uses pip to perform what used to be ``python setup.py develop``.
+Note that the ``-e`` flag for pip, which performs what used to be
+``python setup.py develop``, isn't used here.  That's because meson currently
+doesn't support develop style builds.
 
 If the above command doesn't work for you (as may be the case for Windows), you
 can try::
