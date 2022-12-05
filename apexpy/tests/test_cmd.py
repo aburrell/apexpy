@@ -7,7 +7,7 @@ import pytest
 import subprocess
 
 
-class TestCommandLine():
+class TestCommandLine(object):
     def setup_method(self):
         """Runs before every test method to create a clean environment."""
         # Define the desired working paths

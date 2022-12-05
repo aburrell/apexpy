@@ -47,13 +47,15 @@ def datetime64_to_datetime(dt64):
     return dt.datetime(year, month, day)
 
 
-class TestHelpers():
+class TestHelpers(object):
     def setup_method(self):
+        """Set up a clean test environment."""
         self.in_shape = None
         self.calc_val = None
         self.test_val = None
 
     def teardown_method(self):
+        """Clean up the test environment."""
         del self.in_shape, self.calc_val, self.test_val
 
     def eval_output(self, rtol=1e-7, atol=0.0):

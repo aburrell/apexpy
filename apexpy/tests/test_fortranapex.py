@@ -20,7 +20,7 @@ import apexpy
 from apexpy import fortranapex as fa
 
 
-class TestFortranApex():
+class TestFortranApex(object):
     def setup_method(self):
         """Initialize each test."""
         fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__),
