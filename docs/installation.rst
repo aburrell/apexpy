@@ -98,6 +98,28 @@ This is the default option for Linux, and so should not be an issue there. On
 Windows with the Mingw32 compiler, you might find `this information <https://wiki.python.org/moin/WindowsCompilers#GCC_-_MinGW-w64_.28x86.2C_x64.29>`_
 useful for helping build apexpy.
 
+Installation using CI Wheels
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If your local set up is essentially identical to one of the CI test
+environments, then you can use one of the wheel artifacts to install apexpy.
+The list of artifacts may be found
+`here <https://api.github.com/repos/aburrell/apexpy/actions/artifacts>`_.
+
+To download an artifact:
+
+1. If you don't have a GitHub Personal Access Token, follow
+   `these instructions <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_
+   to create one.
+2. Run ``curl -v -H "Authorization: token <GITHUB-ACCESS-TOKEN>" https://api.github.com/repos/aburrell/apexpy/actions/artifacts/<ARTIFACT-ID>/zip``, where
+   <ITEM> should be replaced with the appropriate item string.
+3. Copy the URL from the ``Location`` output produced by the previous command
+   into a browser, which will download a zip archive into your standard
+   download location. Alternatively (or if this doesn't work) you can use `wget` to retrieve the archive.
+4. Copy the zip archive into the ``apexpy/dist`` directory and unzip.
+5. Check the archive for the expected matrix of *.whl objects
+
+To install, use ``pip install .``
 
 Build from Source
 ^^^^^^^^^^^^^^^^^
