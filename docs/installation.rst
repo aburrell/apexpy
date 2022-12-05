@@ -131,7 +131,8 @@ When you install apexpy from the command line you can specify the compilers you
 would like to use.  These can be changed by altering the ``CC`` and ``FC``
 environment variables on your computer::
 
-  FC=/path/to/correct/gfortran CC=/path/to/correct/gcc pip install -e .
+  FC=/path/to/correct/gfortran CC=/path/to/correct/gcc python -m build
+  pip install .
 
 This can be useful your system has multiple versions of gfortran or gcc and the
 default is not appropriate (ie., an older version). If using an Intel compiler,
