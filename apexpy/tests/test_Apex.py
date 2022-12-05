@@ -68,6 +68,8 @@ def test_set_epoch_file_error(igrf_file):
 
 
 class TestApexInit(object):
+    """Test class for the Apex class object."""
+
     def setup_method(self):
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()

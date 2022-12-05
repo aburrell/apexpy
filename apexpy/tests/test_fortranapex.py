@@ -21,6 +21,8 @@ from apexpy import fortranapex as fa
 
 
 class TestFortranApex(object):
+    """Test class for the Python-wrapped Fortran functions."""
+
     def setup_method(self):
         """Initialize each test."""
         fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__),

@@ -48,6 +48,8 @@ def datetime64_to_datetime(dt64):
 
 
 class TestHelpers(object):
+    """Test class for the helper sub-module."""
+
     def setup_method(self):
         """Set up a clean test environment."""
         self.in_shape = None
