@@ -8,7 +8,7 @@ The Continuous Integration (CI) now saves wheels created for each tested Python
 version and computer Operating System (OS) as artifacts. When preparing a new
 PyPi release, these wheels may be downloaded from the release candidate.  We
 currently don't include them, because the wheels only work when the installation
-environment mirros the CI environment.
+environment mirrors the CI environment.
 
 Updating IGRF
 -------------

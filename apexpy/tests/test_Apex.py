@@ -71,12 +71,14 @@ class TestApexInit(object):
     """Test class for the Apex class object."""
 
     def setup_method(self):
+        """Initialize all tests."""
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
 
     def teardown_method(self):
+        """Clean up after each test."""
         del self.apex_out, self.test_date, self.test_refh, self.bad_file
 
     def eval_date(self):
