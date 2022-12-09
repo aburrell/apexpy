@@ -9,7 +9,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.githubpages',
               'sphinx.ext.napoleon',
-              'sphinx.ext.extlinks']
+              'sphinx.ext.extlinks',
+              'autoapi.extension']
 
 # Define common elements
 
@@ -28,6 +29,13 @@ with open('../apexpy/__init__.py', 'r') as fin:
 match = re.findall(regex, text)
 version = release = match[0].strip("'")
 
+# Configure autoapi
+autoapi_type = 'python'
+autoapi_dirs = ['../apexpy']
+autoapi_keep_files = True
+autoapi_root = 'autoapi/generated'
+
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'sphinx_rtd_theme'
@@ -41,6 +49,7 @@ html_split_index = True
 html_sidebars = {'**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html']}
 html_short_title = '-'.join([project, version])
 autodoc_member_order = 'bysource'
+autodoc_mock_imports = ['apexpy']
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False

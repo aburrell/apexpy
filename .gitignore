@@ -52,6 +52,7 @@ docs/_build
 *~
 .*.sw[po]
 .build
+autoapi
 .ve
 .env
 .cache
