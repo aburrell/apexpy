@@ -3,8 +3,7 @@
 import json
 import re
 
-extensions = ['autoapi.extension',
-              'sphinx.ext.autodoc',
+extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.coverage',
               'sphinx.ext.viewcode',
@@ -45,6 +44,5 @@ autodoc_member_order = 'bysource'
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
-autoapi_dirs = ['../apexpy', '../fortranapex']
 
 extlinks = {'doi': ('http://dx.doi.org/%s', 'doi:')}

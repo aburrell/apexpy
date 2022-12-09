@@ -78,6 +78,7 @@ c_flags = ['-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION']
 is_windows = host_machine.system() == 'windows'
 is_mac = host_machine.system() == 'darwin'
 is_mingw = is_windows and cc.get_id() == 'gcc'
+is_rtd = fc == 'readthedocs'
 
 cython_c_args = []
 if is_windows
@@ -145,31 +146,32 @@ fortranobject_dep = declare_dependency(
   link_with: fortranobject_lib,
   include_directories: [incdir_numpy, incdir_f2py])
 
-# Make a custom target, output should not contain a path segment.
-# The name 'fortranapex-f2pywrappers2.f90' is used because an empty
-# 'fortranapex-f2pywrappers.f' is also created, making the F90 wrapper the
-# second wrapper.  F2PY controls these names, so it may change at some point.
-fortranapex_source = custom_target(
-  'fortranapexmodule.c',
-   input : ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
-            'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
-	    'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90'],
-   output : ['fortranapexmodule.c', 'fortranapex-f2pywrappers2.f90'],
-   command : [py3, '-m', 'numpy.f2py', '@INPUT@', '-m', 'fortranapex',
-              '--lower'])
+if not is_rtd:
+  # Make a custom target, output should not contain a path segment.
+  # The name 'fortranapex-f2pywrappers2.f90' is used because an empty
+  # 'fortranapex-f2pywrappers.f' is also created, making the F90 wrapper the
+  # second wrapper.  F2PY controls these names, so it may change at some point.
+  fortranapex_source = custom_target(
+    'fortranapexmodule.c',
+     input : ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
+              'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
+              'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90'],
+     output : ['fortranapexmodule.c', 'fortranapex-f2pywrappers2.f90'],
+     command : [py3, '-m', 'numpy.f2py', '@INPUT@', '-m', 'fortranapex',
+                '--lower'])
 
-# Declare the fortran extension module
-py3.extension_module('fortranapex',
-  ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
-   'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
-   'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
-   fortranapex_source, fortranobject_c],
-  c_args: c_flags,
-  include_directories: inc_dirs,
-  link_with: fortranobject_lib,
-  dependencies : [py3_dep, fortranobject_dep],
-  subdir: 'apexpy',
-  install : true)
+  # Declare the fortran extension module
+  py3.extension_module('fortranapex',
+    ['fortranapex/magfld.f90', 'fortranapex/apex.f90',
+     'fortranapex/makeapexsh.f90', 'fortranapex/igrf.f90',
+     'fortranapex/apexsh.f90', 'fortranapex/checkapexsh.f90',
+     fortranapex_source, fortranobject_c],
+    c_args: c_flags,
+    include_directories: inc_dirs,
+    link_with: fortranobject_lib,
+    dependencies : [py3_dep, fortranobject_dep],
+    subdir: 'apexpy',
+    install : true)
 
 # Declare the sources
 py3.install_sources([
