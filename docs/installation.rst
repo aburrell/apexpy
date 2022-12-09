@@ -56,9 +56,8 @@ versions may cause problems if paths are not managed carefully.
 This package requires NumPy, which you can install alone or as a part of SciPy.
 `Some Python distributions <https://scipy.org/install/>`_
 come with NumPy/SciPy pre-installed. For Python distributions without
-NumPy/SciPy, Windows/Mac users should install
-`pre-compiled binaries of NumPy/SciPy <https://scipy.org/download/#official-source-and-binary-releases>`_, and Linux users may have
-NumPy/SciPy available in `their repositories <https://scipy.org/download/>`_.
+NumPy/SciPy, various package managers for different operating systems allow
+for simple local installation (as directed on the SciPy installation page.
 Pip should install NumPy automatically when installing :py:mod:`apexpy`, but if
 not, install it manually before attempting to install :py:mod:`apexpy`.
 :py:mod:`apexpy` is not compatible with NumPy version 1.19.X, older and newer
