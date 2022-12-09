@@ -68,13 +68,17 @@ def test_set_epoch_file_error(igrf_file):
 
 
 class TestApexInit(object):
+    """Test class for the Apex class object."""
+
     def setup_method(self):
+        """Initialize all tests."""
         self.apex_out = None
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
 
     def teardown_method(self):
+        """Clean up after each test."""
         del self.apex_out, self.test_date, self.test_refh, self.bad_file
 
     def eval_date(self):
@@ -108,7 +112,14 @@ class TestApexInit(object):
                              [2015, 2015.5, dt.date(2015, 1, 1),
                               dt.datetime(2015, 6, 1, 18, 23, 45)])
     def test_init_date(self, in_date):
-        """Test Apex class with date initialization."""
+        """Test Apex class with date initialization.
+
+        Parameters
+        ----------
+        in_date : int, float, dt.date, or dt.datetime
+            Input date in a variety of formats
+
+        """
         self.test_date = in_date
         self.apex_out = apexpy.Apex(date=self.test_date)
         self.eval_date()
@@ -117,7 +128,14 @@ class TestApexInit(object):
 
     @pytest.mark.parametrize("new_date", [2015, 2015.5])
     def test_set_epoch(self, new_date):
-        """Test successful setting of Apex epoch after initialization."""
+        """Test successful setting of Apex epoch after initialization.
+
+        Parameters
+        ----------
+        new_date : int or float
+            New date for the Apex class
+
+        """
         # Evaluate the default initialization
         self.apex_out = apexpy.Apex()
         self.eval_date()
@@ -133,7 +151,14 @@ class TestApexInit(object):
 
     @pytest.mark.parametrize("in_refh", [0.0, 300.0, 30000.0, -1.0])
     def test_init_refh(self, in_refh):
-        """Test Apex class with reference height initialization."""
+        """Test Apex class with reference height initialization.
+
+        Parameters
+        ----------
+        in_refh : float
+            Input reference height in km
+
+        """
         self.test_refh = in_refh
         self.apex_out = apexpy.Apex(refh=self.test_refh)
         self.eval_date()
@@ -142,7 +167,14 @@ class TestApexInit(object):
 
     @pytest.mark.parametrize("new_refh", [0.0, 300.0, 30000.0, -1.0])
     def test_set_refh(self, new_refh):
-        """Test the method used to set the reference height after the init."""
+        """Test the method used to set the reference height after the init.
+
+        Parameters
+        ----------
+        new_refh : float
+            Reference height in km
+
+        """
         # Verify the defaults are set
         self.apex_out = apexpy.Apex(date=self.test_date)
         self.eval_date()
@@ -290,7 +322,22 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("lon", [-179, -90, 0, 90, 180])
     def test_fortran_scalar_input(self, apex_method, fortran_method, fslice,
                                   lat, lon):
-        """Tests Apex/fortran interface consistency for scalars."""
+        """Tests Apex/fortran interface consistency for scalars.
+
+        Parameters
+        ----------
+        apex_method : str
+            Name of the Apex class method to test
+        fortran_method : str
+            Name of the Fortran function to test
+        fslice : slice
+            Slice used select the appropriate Fortran outputs
+        lat : int or float
+            Latitude in degrees N
+        lon : int or float
+            Longitude in degrees E
+
+        """
         # Set the input coordinates
         self.in_lat = lat
         self.in_lon = lon
@@ -319,7 +366,24 @@ class TestApexMethod(object):
                                            (-345, 15), (375, 15)])
     def test_fortran_longitude_rollover(self, apex_method, fortran_method,
                                         fslice, lat, lon1, lon2):
-        """Tests Apex/fortran interface consistency for longitude rollover."""
+        """Tests Apex/fortran interface consistency for longitude rollover.
+
+        Parameters
+        ----------
+        apex_method : str
+            Name of the Apex class method to test
+        fortran_method : str
+            Name of the Fortran function to test
+        fslice : slice
+            Slice used select the appropriate Fortran outputs
+        lat : int or float
+            Latitude in degrees N
+        lon1 : int or float
+            Longitude in degrees E
+        lon2 : int or float
+            Equivalent longitude in degrees E
+
+        """
         # Set the fixed input coordinate
         self.in_lat = lat
 
@@ -347,7 +411,20 @@ class TestApexMethod(object):
                               ("_basevec", "apxg2q", slice(2, 4, 1))])
     def test_fortran_array_input(self, arr_shape, apex_method, fortran_method,
                                  fslice):
-        """Tests Apex/fortran interface consistency for array input."""
+        """Tests Apex/fortran interface consistency for array input.
+
+        Parameters
+        ----------
+        arr_shape : tuple
+            Expected output shape
+        apex_method : str
+            Name of the Apex class method to test
+        fortran_method : str
+            Name of the Fortran function to test
+        fslice : slice
+            Slice used select the appropriate Fortran outputs
+
+        """
         # Get the Apex class method and the fortran function call
         apex_func = getattr(self.apex_out, apex_method)
         fortran_func = getattr(apexpy.fortranapex, fortran_method)
@@ -397,7 +474,16 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("lat", [0, 30, 60, 89])
     @pytest.mark.parametrize("lon", [-179, -90, 0, 90, 180])
     def test_geo2apexall_scalar(self, lat, lon):
-        """Test Apex/fortran geo2apexall interface consistency for scalars."""
+        """Test Apex/fortran geo2apexall interface consistency for scalars.
+
+        Parameters
+        ----------
+        lat : int or float
+            Latitude in degrees N
+        long : int or float
+            Longitude in degrees E
+
+        """
         # Get the Apex and Fortran results
         aret = self.apex_out._geo2apexall(lat, lon, self.in_alt)
         fret = apexpy.fortranapex.apxg2all(lat, lon, self.in_alt, 300, 1)
@@ -408,7 +494,14 @@ class TestApexMethod(object):
 
     @pytest.mark.parametrize("arr_shape", [(2, 2), (4,), (1, 4)])
     def test_geo2apexall_array(self, arr_shape):
-        """Test Apex/fortran geo2apexall interface consistency for arrays."""
+        """Test Apex/fortran geo2apexall interface consistency for arrays.
+
+        Parameters
+        ----------
+        arr_shape : tuple
+            Expected output shape
+
+        """
         # Set the input
         self.in_lat = np.array([0, 30, 60, 90])
         self.in_alt = np.array([100, 200, 300, 400])
@@ -442,7 +535,16 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
     def test_convert_consistency(self, in_coord, out_coord):
-        """Test the self-consistency of the Apex convert method."""
+        """Test the self-consistency of the Apex convert method.
+
+        Parameters
+        ----------
+        in_coord : str
+            Input coordinate system
+        out_coord : str
+            Output coordinate system
+
+        """
         if in_coord == out_coord:
             pytest.skip("Test not needed for same src and dest coordinates")
 
@@ -470,7 +572,18 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
     def test_convert_at_lat_boundary(self, bound_lat, in_coord, out_coord):
-        """Test the conversion at the latitude boundary, with allowed excess."""
+        """Test the conversion at the latitude boundary, with allowed excess.
+
+        Parameters
+        ----------
+        bound_lat : int or float
+            Boundary latitude in degrees N
+        in_coord : str
+            Input coordinate system
+        out_coord : str
+            Output coordinate system
+
+        """
         excess_lat = np.sign(bound_lat) * (abs(bound_lat) + 1.0e-5)
 
         # Get the two outputs, slight tolerance outside of boundary allowed
@@ -493,7 +606,16 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("src", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("dest", ["geo", "apex", "qd"])
     def test_convert_withnan(self, src, dest):
-        """Test Apex.convert success with NaN input."""
+        """Test Apex.convert success with NaN input.
+
+        Parameters
+        ----------
+        src : str
+            Input coordinate system
+        dest : str
+            Output coordinate system
+
+        """
         if src == dest:
             pytest.skip("Test not needed for same src and dest coordinates")
 
@@ -511,7 +633,14 @@ class TestApexMethod(object):
 
     @pytest.mark.parametrize("bad_lat", [91, -91])
     def test_convert_invalid_lat(self, bad_lat):
-        """Test convert raises ValueError for invalid latitudes."""
+        """Test convert raises ValueError for invalid latitudes.
+
+        Parameters
+        ----------
+        bad_lat : int or float
+            Latitude ouside the supported range in degrees N
+
+        """
 
         with pytest.raises(ValueError) as verr:
             self.apex_out.convert(bad_lat, 0, 'geo', 'geo')
@@ -522,7 +651,14 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("coords", [("foobar", "geo"), ("geo", "foobar"),
                                         ("geo", "mlt")])
     def test_convert_invalid_transformation(self, coords):
-        """Test raises NotImplementedError for bad coordinates."""
+        """Test raises NotImplementedError for bad coordinates.
+
+        Parameters
+        ----------
+        coords : tuple
+            Tuple specifying the input and output coordinate systems
+
+        """
         if "mlt" in coords:
             estr = "datetime must be given for MLT calculations"
         else:
@@ -545,7 +681,16 @@ class TestApexMethod(object):
                               ("apex2qd", (60.498401178276744, 15.0)),
                               ("qd2apex", (59.49138097045895, 15.0))])
     def test_method_scalar_input(self, method_name, out_comp):
-        """Test the user method against set values with scalars."""
+        """Test the user method against set values with scalars.
+
+        Parameters
+        ----------
+        method_name : str
+            Apex class method to be tested
+        out_comp : tuple of floats
+            Expected output values
+
+        """
         # Get the desired methods
         user_method = getattr(self.apex_out, method_name)
 
@@ -568,7 +713,20 @@ class TestApexMethod(object):
                               ([[50, 60], [15, 16], [100, 200]], (2,))])
     def test_method_broadcast_input(self, in_coord, out_coord, method_args,
                                     out_shape):
-        """Test the user method with inputs that require some broadcasting."""
+        """Test the user method with inputs that require some broadcasting.
+
+        Parameters
+        ----------
+        in_coord : str
+            Input coordiante system
+        out_coord : str
+            Output coordiante system
+        method_args : list
+            List of input arguments
+        out_shape : tuple
+            Expected shape of output values
+
+        """
         if in_coord == out_coord:
             pytest.skip("Test not needed for same src and dest coordinates")
 
@@ -589,7 +747,18 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("bad_lat", [91, -91])
     def test_method_invalid_lat(self, in_coord, out_coord, bad_lat):
-        """Test convert raises ValueError for invalid latitudes."""
+        """Test convert raises ValueError for invalid latitudes.
+
+        Parameters
+        ----------
+        in_coord : str
+            Input coordiante system
+        out_coord : str
+            Output coordiante system
+        bad_lat : int
+            Latitude in degrees N that is out of bounds
+
+        """
         if in_coord == out_coord:
             pytest.skip("Test not needed for same src and dest coordinates")
 
@@ -607,7 +776,18 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
     @pytest.mark.parametrize("bound_lat", [90, -90])
     def test_method_at_lat_boundary(self, in_coord, out_coord, bound_lat):
-        """Test user methods at the latitude boundary, with allowed excess."""
+        """Test user methods at the latitude boundary, with allowed excess.
+
+        Parameters
+        ----------
+        in_coord : str
+            Input coordiante system
+        out_coord : str
+            Output coordiante system
+        bad_lat : int
+            Latitude in degrees N that is at the limits of the boundary
+
+        """
         if in_coord == out_coord:
             pytest.skip("Test not needed for same src and dest coordinates")
 
@@ -646,7 +826,16 @@ class TestApexMethod(object):
     @pytest.mark.parametrize("method_name", ["apex2qd", "qd2apex"])
     @pytest.mark.parametrize("delta_h", [1.0e-6, -1.0e-6])
     def test_quasidipole_apexheight_close(self, method_name, delta_h):
-        """Test quasi-dipole success with a height close to the reference."""
+        """Test quasi-dipole success with a height close to the reference.
+
+        Parameters
+        ----------
+        method_name : str
+            Apex class method name to be tested
+        delta_h : float
+            tolerance for height in km
+
+        """
         qd_method = getattr(self.apex_out, method_name)
         in_args = [0, 15, self.apex_out.refh + delta_h]
         out_coords = qd_method(*in_args)
@@ -659,7 +848,18 @@ class TestApexMethod(object):
                              [("apex2qd", 1.0, "is > apex height"),
                               ("qd2apex", -1.0, "is < reference height")])
     def test_quasidipole_raises_apexheight(self, method_name, hinc, msg):
-        """Quasi-dipole raises ApexHeightError when height above reference."""
+        """Quasi-dipole raises ApexHeightError when height above reference.
+
+        Parameters
+        ----------
+        method_name : str
+            Apex class method name to be tested
+        hinc : float
+            Height increment in km
+        msg : str
+            Expected output message
+
+        """
         qd_method = getattr(self.apex_out, method_name)
 
         with pytest.raises(apexpy.ApexHeightError) as aerr:
@@ -682,7 +882,14 @@ class TestApexMLTMethods(object):
 
     @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
     def test_convert_to_mlt(self, in_coord):
-        """Test the conversions to MLT using Apex convert."""
+        """Test the conversions to MLT using Apex convert.
+
+        Parameters
+        ----------
+        in_coord : str
+            Input coordinate system
+
+        """
 
         # Get the magnetic longitude from the appropriate method
         if in_coord == "geo":
@@ -703,7 +910,14 @@ class TestApexMLTMethods(object):
 
     @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
     def test_convert_mlt_to_lon(self, out_coord):
-        """Test the conversions from MLT using Apex convert."""
+        """Test the conversions from MLT using Apex convert.
+
+        Parameters
+        ----------
+        out_coord : str
+            Output coordinate system
+
+        """
         # Get the output longitudes
         convert_out = self.apex_out.convert(60, 15, 'mlt', out_coord,
                                             height=100, ssheight=2e5,
@@ -733,7 +947,16 @@ class TestApexMLTMethods(object):
                              [({}, 23.019629923502603),
                               ({"ssheight": 100000}, 23.026712036132814)])
     def test_mlon2mlt_scalar_inputs(self, mlon_kwargs, test_mlt):
-        """Test mlon2mlt with scalar inputs."""
+        """Test mlon2mlt with scalar inputs.
+
+        Parameters
+        ----------
+        mlon_kwargs : dict
+            Input kwargs
+        test_mlt : float
+            Output MLT in hours
+
+        """
         mlt = self.apex_out.mlon2mlt(0, self.in_time, **mlon_kwargs)
 
         np.testing.assert_allclose(mlt, test_mlt)
@@ -744,7 +967,16 @@ class TestApexMLTMethods(object):
                              [({}, 14.705535888671875),
                               ({"ssheight": 100000}, 14.599319458007812)])
     def test_mlt2mlon_scalar_inputs(self, mlt_kwargs, test_mlon):
-        """Test mlt2mlon with scalar inputs."""
+        """Test mlt2mlon with scalar inputs.
+
+        Parameters
+        ----------
+        mlt_kwargs : dict
+            Input kwargs
+        test_mlon : float
+            Output longitude in degrees E
+
+        """
         mlon = self.apex_out.mlt2mlon(0, self.in_time, **mlt_kwargs)
 
         np.testing.assert_allclose(mlon, test_mlon)
@@ -763,7 +995,16 @@ class TestApexMLTMethods(object):
                                 9.01963, 11.01963, 13.01963, 15.01963, 17.01963,
                                 19.01963, 21.01963, 23.01963])])
     def test_mlon2mlt_array(self, mlon, test_mlt):
-        """Test mlon2mlt with array inputs."""
+        """Test mlon2mlt with array inputs.
+
+        Parameters
+        ----------
+        mlon : array-like
+            Input longitudes in degrees E
+        test_mlt : float
+            Output MLT in hours
+
+        """
         mlt = self.apex_out.mlon2mlt(mlon, self.in_time)
 
         assert mlt.shape == np.asarray(test_mlt).shape
@@ -783,7 +1024,16 @@ class TestApexMLTMethods(object):
                                 254.705551, 284.705551, 314.705551, 344.705551,
                                 14.705551])])
     def test_mlt2mlon_array(self, mlt, test_mlon):
-        """Test mlt2mlon with array inputs."""
+        """Test mlt2mlon with array inputs.
+
+        Parameters
+        ----------
+        mlt : array-like
+            Input MLT in hours
+        test_mlon : float
+            Output longitude in degrees E
+
+        """
         mlon = self.apex_out.mlt2mlon(mlt, self.in_time)
 
         assert mlon.shape == np.asarray(test_mlon).shape
@@ -792,7 +1042,14 @@ class TestApexMLTMethods(object):
 
     @pytest.mark.parametrize("method_name", ["mlon2mlt", "mlt2mlon"])
     def test_mlon2mlt_diffdates(self, method_name):
-        """Test that MLT varies with universal time."""
+        """Test that MLT varies with universal time.
+
+        Parameters
+        ----------
+        method_name : str
+            Name of Apex class method to be tested
+
+        """
         apex_method = getattr(self.apex_out, method_name)
         mlt1 = apex_method(0, self.in_time)
         mlt2 = apex_method(0, self.in_time + dt.timedelta(hours=1))
@@ -802,7 +1059,14 @@ class TestApexMLTMethods(object):
 
     @pytest.mark.parametrize("mlt_offset", [1.0, 10.0])
     def test_mlon2mlt_offset(self, mlt_offset):
-        """Test the time wrapping logic for the MLT."""
+        """Test the time wrapping logic for the MLT.
+
+        Parameters
+        ----------
+        mlt_offset : float
+            MLT offset in hours
+
+        """
         mlt1 = self.apex_out.mlon2mlt(0.0, self.in_time)
         mlt2 = self.apex_out.mlon2mlt(-15.0 * mlt_offset,
                                       self.in_time) + mlt_offset
@@ -812,7 +1076,14 @@ class TestApexMLTMethods(object):
 
     @pytest.mark.parametrize("mlon_offset", [15.0, 150.0])
     def test_mlt2mlon_offset(self, mlon_offset):
-        """Test the time wrapping logic for the magnetic longitude."""
+        """Test the time wrapping logic for the magnetic longitude.
+
+        Parameters
+        ----------
+        mlt_offset : float
+            MLT offset in hours
+
+        """
         mlon1 = self.apex_out.mlt2mlon(0, self.in_time)
         mlon2 = self.apex_out.mlt2mlon(mlon_offset / 15.0,
                                        self.in_time) - mlon_offset
@@ -823,7 +1094,16 @@ class TestApexMLTMethods(object):
     @pytest.mark.parametrize("order", [["mlt", "mlon"], ["mlon", "mlt"]])
     @pytest.mark.parametrize("start_val", [0, 6, 12, 18, 22])
     def test_convert_and_return(self, order, start_val):
-        """Test the conversion to magnetic longitude or MLT and back again."""
+        """Test the conversion to magnetic longitude or MLT and back again.
+
+        Parameters
+        ----------
+        order : list
+            List of strings specifying the order to run functions
+        start_val : int or float
+            Input value
+
+        """
         first_method = getattr(self.apex_out, "2".join(order))
         second_method = getattr(self.apex_out, "2".join([order[1], order[0]]))
 
@@ -915,7 +1195,16 @@ class TestApexMapMethods(object):
                               ("map_V_to_height",
                                [0, 15, 100, 10000, [1, 2, 3]])])
     def test_mapping_height_raises_ApexHeightError(self, method_name, in_args):
-        """Test map_to_height raises ApexHeightError."""
+        """Test map_to_height raises ApexHeightError.
+
+        Parameters
+        ----------
+        method_name : str
+            Name of the Apex class method to test
+        in_args : list
+            List of input arguments
+
+        """
         apex_method = getattr(self.apex_out, method_name)
 
         with pytest.raises(apexpy.ApexHeightError) as aerr:
@@ -929,7 +1218,16 @@ class TestApexMapMethods(object):
     @pytest.mark.parametrize("ev_input", [([1, 2, 3, 4, 5]),
                                           ([[1, 2], [3, 4], [5, 6], [7, 8]])])
     def test_mapping_EV_bad_shape(self, method_name, ev_input):
-        """Test height mapping of E/V with baddly shaped input raises Error."""
+        """Test height mapping of E/V with baddly shaped input raises Error.
+
+        Parameters
+        ----------
+        method_name : str
+            Name of the Apex class method to test
+        ev_input : list
+            E/V input arguments
+
+        """
         apex_method = getattr(self.apex_out, method_name)
         in_args = [60, 15, 100, 500, ev_input]
         with pytest.raises(ValueError) as verr:
@@ -960,7 +1258,16 @@ class TestApexMapMethods(object):
                               ([70, 15, 100, 500, [1, 2, 3]],
                                [0.72760378, 2.18082305, 0.29141979])])
     def test_map_E_to_height_scalar_location(self, in_args, test_mapped):
-        """Test mapping of E-field to a specified height."""
+        """Test mapping of E-field to a specified height.
+
+        Parameters
+        ----------
+        in_args : list
+            List of input arguments
+        test_mapped : list
+            List of expected outputs
+
+        """
         mapped = self.apex_out.map_E_to_height(*in_args)
         np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
         return
@@ -972,7 +1279,20 @@ class TestApexMapMethods(object):
     @pytest.mark.parametrize('ivec', range(0, 5))
     def test_map_EV_to_height_array_location(self, ev_flag, test_mapped,
                                              arr_shape, ivec):
-        """Test mapping of E-field/drift to a specified height with arrays."""
+        """Test mapping of E-field/drift to a specified height with arrays.
+
+        Parameters
+        ----------
+        ev_flag : str
+            Character flag specifying whether to run 'E' or 'V' methods
+        test_mapped : list
+            List of expected outputs
+        arr_shape : tuple
+            Shape of the expected output
+        ivec : int
+            Index of the expected output
+
+        """
         # Set the base input and output values
         eshape = list(arr_shape)
         eshape.insert(0, 3)
@@ -1008,7 +1328,16 @@ class TestApexMapMethods(object):
                               ([70, 15, 100, 500, [1, 2, 3]],
                                [0.84681866, 2.5925821, 0.34792655])])
     def test_map_V_to_height_scalar_location(self, in_args, test_mapped):
-        """Test mapping of velocity to a specified height."""
+        """Test mapping of velocity to a specified height.
+
+        Parameters
+        ----------
+        in_args : list
+            List of input arguments
+        test_mapped : list
+            List of expected outputs
+
+        """
         mapped = self.apex_out.map_V_to_height(*in_args)
         np.testing.assert_allclose(mapped, test_mapped, rtol=1e-5)
         return
@@ -1095,7 +1424,18 @@ class TestApexBasevectorMethods(object):
     @pytest.mark.parametrize("coords,precision",
                              [("geo", 1e-10), ("apex", 1.0e-2), ("qd", 1.0e-2)])
     def test_basevectors_scalar(self, bv_coord, coords, precision):
-        """Test the base vector calculations with scalars."""
+        """Test the base vector calculations with scalars.
+
+        Parameters
+        ----------
+        bv_coord : str
+            Name of the input coordinate system
+        coords : str
+            Name of the output coordinate system
+        precision : float
+            Level of run precision requested
+
+        """
         # Get the base vectors
         base_method = getattr(self.apex_out,
                               "basevectors_{:s}".format(bv_coord))
@@ -1115,7 +1455,14 @@ class TestApexBasevectorMethods(object):
 
     @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
     def test_basevectors_scalar_shape(self, bv_coord):
-        """Test the shape of the scalar output."""
+        """Test the shape of the scalar output.
+
+        Parameters
+        ----------
+        bv_coord : str
+            Name of the input coordinate system
+
+        """
         base_method = getattr(self.apex_out,
                               "basevectors_{:s}".format(bv_coord))
         basevec = base_method(self.lat, self.lon, self.height)
@@ -1131,7 +1478,18 @@ class TestApexBasevectorMethods(object):
     @pytest.mark.parametrize("bv_coord", ["qd", "apex"])
     @pytest.mark.parametrize("ivec", range(3))
     def test_basevectors_array(self, arr_shape, bv_coord, ivec):
-        """Test the output shape for array inputs."""
+        """Test the output shape for array inputs.
+
+        Parameters
+        ----------
+        arr_shape : tuple
+            Expected output shape
+        bv_coord : str
+            Name of the input coordinate system
+        ivec : int
+            Index of the evaluated output value
+
+        """
         # Define the input arguments
         in_args = [self.lat, self.lon, self.height]
         in_args[ivec] = np.full(shape=arr_shape, fill_value=in_args[ivec])
@@ -1158,7 +1516,14 @@ class TestApexBasevectorMethods(object):
 
     @pytest.mark.parametrize("coords", ["geo", "apex", "qd"])
     def test_bvectors_apex(self, coords):
-        """Test the bvectors_apex method."""
+        """Test the bvectors_apex method.
+
+        Parameters
+        ----------
+        coords : str
+            Name of the coordiante system
+
+        """
         in_args = [[self.lat, self.lat], [self.lon, self.lon],
                    [self.height, self.height]]
         self.get_comparison_results("bvectors_apex", coords, 1e-10)
@@ -1190,7 +1555,16 @@ class TestApexBasevectorMethods(object):
     @pytest.mark.parametrize("lat", range(0, 90, 10))
     @pytest.mark.parametrize("lon", range(0, 360, 15))
     def test_basevectors_apex_delta(self, lat, lon):
-        """Test that vectors are calculated correctly."""
+        """Test that vectors are calculated correctly.
+
+        Parameters
+        ----------
+        lat : int or float
+            Latitude in degrees N
+        lon : int or float
+            Longitude in degrees E
+
+        """
         # Get the apex base vectors and sort them for easy testing
         (f1, f2, f3, g1, g2, g3, d1, d2, d3, e1, e2,
          e3) = self.apex_out.basevectors_apex(lat, lon, 500)
@@ -1245,7 +1619,16 @@ class TestApexGetMethods(object):
                               ([[10], [60]],
                                [[507.409702543805], [20313.026999999987]])])
     def test_get_apex(self, alat, aheight):
-        """Test the apex height retrieval results."""
+        """Test the apex height retrieval results.
+
+        Parameters
+        ----------
+        alat : int or float
+            Apex latitude in degrees N
+        aheight : int or float
+            Apex height in km
+
+        """
         alt = self.apex_out.get_apex(alat)
         np.testing.assert_allclose(alt, aheight)
         return
@@ -1263,14 +1646,34 @@ class TestApexGetMethods(object):
                                          4.90054816e-05])),
                               (90.0, 0, 1000, 3.7834718823432923e-05)])
     def test_get_babs(self, glat, glon, height, test_bmag):
-        """Test the method to get the magnitude of the magnetic field."""
+        """Test the method to get the magnitude of the magnetic field.
+
+        Parameters
+        ----------
+        glat : list
+            List of latitudes in degrees N
+        glon : list
+            List of longitudes in degrees E
+        height : list
+            List of heights in km
+        test_bmag : float
+            Expected B field magnitude
+
+        """
         bmag = self.apex_out.get_babs(glat, glon, height)
         np.testing.assert_allclose(bmag, test_bmag, rtol=0, atol=1e-5)
         return
 
     @pytest.mark.parametrize("bad_lat", [(91), (-91)])
     def test_get_apex_with_invalid_lat(self, bad_lat):
-        """Test get methods raise ValueError for invalid latitudes."""
+        """Test get methods raise ValueError for invalid latitudes.
+
+        Parameters
+        ----------
+        bad_lat : int or float
+            Bad input latitude in degrees N
+
+        """
 
         with pytest.raises(ValueError) as verr:
             self.apex_out.get_apex(bad_lat)
@@ -1280,7 +1683,14 @@ class TestApexGetMethods(object):
 
     @pytest.mark.parametrize("bad_lat", [(91), (-91)])
     def test_get_babs_with_invalid_lat(self, bad_lat):
-        """Test get methods raise ValueError for invalid latitudes."""
+        """Test get methods raise ValueError for invalid latitudes.
+
+        Parameters
+        ----------
+        bad_lat : int or float
+            Bad input latitude in degrees N
+
+        """
 
         with pytest.raises(ValueError) as verr:
             self.apex_out.get_babs(bad_lat, 15, 100)
@@ -1290,7 +1700,14 @@ class TestApexGetMethods(object):
 
     @pytest.mark.parametrize("bound_lat", [(90), (-90)])
     def test_get_at_lat_boundary(self, bound_lat):
-        """Test get methods at the latitude boundary, with allowed excess."""
+        """Test get methods at the latitude boundary, with allowed excess.
+
+        Parameters
+        ----------
+        bound_lat : int or float
+            Boundary input latitude in degrees N
+
+        """
         # Get a latitude just beyond the limit
         excess_lat = np.sign(bound_lat) * (abs(bound_lat) + 1.0e-5)
 

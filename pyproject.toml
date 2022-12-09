@@ -5,8 +5,9 @@ requires = [
 	 "meson-python>=0.8.0",
 	 "setuptools<60.0",  # Do not increase, 60.0 enables vendored distutils
 	 "Cython>=0.29.21",
-	 "numpy",
-	 "python-dev-tools"
+	 "python-dev-tools",
+	 "oldest-supported-numpy; python_version>'3.9'",
+	 "numpy; python_version<='3.9'"
 ]
 
 [project]

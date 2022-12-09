@@ -47,13 +47,17 @@ def datetime64_to_datetime(dt64):
     return dt.datetime(year, month, day)
 
 
-class TestHelpers():
+class TestHelpers(object):
+    """Test class for the helper sub-module."""
+
     def setup_method(self):
+        """Set up a clean test environment."""
         self.in_shape = None
         self.calc_val = None
         self.test_val = None
 
     def teardown_method(self):
+        """Clean up the test environment."""
         del self.in_shape, self.calc_val, self.test_val
 
     def eval_output(self, rtol=1e-7, atol=0.0):
@@ -66,7 +70,14 @@ class TestHelpers():
 
     @pytest.mark.parametrize('lat', [90, 0, -90, np.nan])
     def test_checklat_scalar(self, lat):
-        """Test good latitude check with scalars."""
+        """Test good latitude check with scalars.
+
+        Parameters
+        ----------
+        lat : int or float
+            Latitude in degrees N
+
+        """
         self.calc_val = helpers.checklat(lat)
 
         if np.isnan(lat):
@@ -77,7 +88,14 @@ class TestHelpers():
 
     @pytest.mark.parametrize('lat', [(90 + 1e-5), (-90 - 1e-5)])
     def test_checklat_scalar_clip(self, lat):
-        """Test good latitude check with scalars just beyond the lat limits."""
+        """Test good latitude check with scalars just beyond the lat limits.
+
+        Parameters
+        ----------
+        lat : int or float
+            Latitude in degrees N
+
+        """
         self.calc_val = helpers.checklat(lat)
         self.test_val = np.sign(lat) * np.floor(abs(lat))
         assert self.calc_val == self.test_val
@@ -91,7 +109,16 @@ class TestHelpers():
                               ([[-90 - 1e-4, -90, np.nan, np.nan, 90 + 1e-5]],
                                'lat must be in')])
     def test_checklat_error(self, in_args, msg):
-        """Test bad latitude raises ValueError with appropriate message."""
+        """Test bad latitude raises ValueError with appropriate message.
+
+        Parameters
+        ----------
+        in_args : list
+            List of input arguments
+        msg : str
+            Expected error message
+
+        """
         with pytest.raises(ValueError) as verr:
             helpers.checklat(*in_args)
 
@@ -107,7 +134,16 @@ class TestHelpers():
                               ([[-90, 0], [0, 90]], [[-90, 0], [0, 90]]),
                               ([[-90], [0], [90]], [[-90], [0], [90]])])
     def test_checklat_array(self, lat, test_lat):
-        """Test good latitude with finite values."""
+        """Test good latitude with finite values.
+
+        Parameters
+        ----------
+        lat : array-like
+            Latitudes in degrees N
+        test_lat : list-like
+            Output latitudes in degrees N
+
+        """
         self.calc_val = helpers.checklat(lat)
         self.in_shape = np.asarray(lat).shape
         self.test_val = test_lat
@@ -120,7 +156,16 @@ class TestHelpers():
         ([[60, 10], [60, 10]], [[0.96076892283052284, 0.33257924500670238],
                                 [0.96076892283052284, 0.33257924500670238]])])
     def test_getsinIm(self, lat, test_sin):
-        """Test sin(Im) calculation for scalar and array inputs."""
+        """Test sin(Im) calculation for scalar and array inputs.
+
+        Parameters
+        ----------
+        lat : float
+            Latitude in degrees N
+        test_sin : float
+            Output value
+
+        """
         self.calc_val = helpers.getsinIm(lat)
         self.in_shape = np.asarray(lat).shape
         self.test_val = test_sin
@@ -133,7 +178,16 @@ class TestHelpers():
         ([[60, 10], [60, 10]], [[0.27735009811261463, 0.94307531289434765],
                                 [0.27735009811261463, 0.94307531289434765]])])
     def test_getcosIm(self, lat, test_cos):
-        """Test cos(Im) calculation for scalar and array inputs."""
+        """Test cos(Im) calculation for scalar and array inputs.
+
+        Parameters
+        ----------
+        lat : float
+            Latitude in degrees N
+        test_cos : float
+            Expected output
+
+        """
         self.calc_val = helpers.getcosIm(lat)
         self.in_shape = np.asarray(lat).shape
         self.test_val = test_cos
@@ -146,7 +200,16 @@ class TestHelpers():
         (dt.datetime(2005, 2, 3, 4, 5, 6), 2005.090877283105),
         (dt.datetime(2005, 12, 11, 10, 9, 8), 2005.943624682902)])
     def test_toYearFraction(self, in_time, year):
-        """Test the datetime to fractional year calculation."""
+        """Test the datetime to fractional year calculation.
+
+        Parameters
+        ----------
+        in_time : dt.datetime or dt.date
+            Input time in a datetime format
+        year : int or float
+            Output year with fractional values
+
+        """
         self.calc_val = helpers.toYearFraction(in_time)
         np.testing.assert_allclose(self.calc_val, year)
         return
@@ -157,7 +220,16 @@ class TestHelpers():
         ([[0, 30], [90, 60]], [[0, 30.16692384950735],
                                [90, 60.166364190170931]])])
     def test_gc2gdlat(self, gc_lat, gd_lat):
-        """Test geocentric to geodetic calculation."""
+        """Test geocentric to geodetic calculation.
+
+        Parameters
+        ----------
+        gc_lat : int or float
+            Geocentric latitude in degrees N
+        gd_lat : int or float
+            Geodetic latitude in degrees N
+
+        """
         self.calc_val = helpers.gc2gdlat(gc_lat)
         self.in_shape = np.asarray(gc_lat).shape
         self.test_val = gd_lat
@@ -176,7 +248,16 @@ class TestHelpers():
         (dt.datetime(2100, 12, 31, 23, 59, 59), (-23.021061422069053,
                                                  -179.23129780639425))])
     def test_subsol(self, in_time, test_loc):
-        """Test the subsolar location calculation."""
+        """Test the subsolar location calculation.
+
+        Parameters
+        ----------
+        in_time : dt.datetime
+            Input time
+        test_loc : tuple
+            Expected output
+
+        """
         self.calc_val = helpers.subsol(in_time)
         np.testing.assert_allclose(self.calc_val, test_loc)
         return
@@ -184,7 +265,14 @@ class TestHelpers():
     @pytest.mark.parametrize('in_time', [dt.datetime(1600, 12, 31, 23, 59, 59),
                                          dt.datetime(2101, 1, 1, 0, 0, 0)])
     def test_bad_subsol_date(self, in_time):
-        """Test raises ValueError for bad time in subsolar calculation."""
+        """Test raises ValueError for bad time in subsolar calculation.
+
+        Parameters
+        ----------
+        in_time : dt.datetime
+            Input time
+
+        """
         with pytest.raises(ValueError) as verr:
             helpers.subsol(in_time)
 
@@ -193,7 +281,14 @@ class TestHelpers():
 
     @pytest.mark.parametrize('in_time', [None, 2015.0])
     def test_bad_subsol_input(self, in_time):
-        """Test raises ValueError for bad input type in subsolar calculation."""
+        """Test raises ValueError for bad input type in subsolar calculation.
+
+        Parameters
+        ----------
+        in_time : NoneType or float
+            Badly formatted input time
+
+        """
         with pytest.raises(ValueError) as verr:
             helpers.subsol(in_time)
 
@@ -208,6 +303,11 @@ class TestHelpers():
                   np.timedelta64(1, 'Y')).astype('datetime64[s]')])
     def test_subsol_datetime64_array(self, in_dates):
         """Verify subsolar point calculation using an array of np.datetime64.
+
+        Parameters
+        ----------
+        in_time : array-like
+            Array of input times
 
         Notes
         -----

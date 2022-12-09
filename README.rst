@@ -25,6 +25,9 @@ have trouble importing apexpy.  If you run into trouble, try the command::
     pip install --no-binary :apexpy: apexpy
 
 which requires both libgfortran and gfortran to be installed on your system.
+More detailed installation instructions (and troubleshooting) is available
+in the
+`documentation <https://apexpy.readthedocs.io/en/latest/installation.html>`_.
 
 Conversion is done by creating an ``Apex`` object and using its methods to
 perform the desired calculations. Some simple examples::
@@ -55,7 +58,7 @@ perform the desired calculations. Some simple examples::
     20.90
 
 If you don't know or use Python, you can also use the command line. See details
-in the full documentation.
+in the full documentation (link in the section below).
 
 Documentation
 =============

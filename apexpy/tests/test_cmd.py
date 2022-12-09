@@ -7,7 +7,9 @@ import pytest
 import subprocess
 
 
-class TestCommandLine():
+class TestCommandLine(object):
+    """Test class for the command-line apexpy interface."""
+
     def setup_method(self):
         """Runs before every test method to create a clean environment."""
         # Define the desired working paths
@@ -78,7 +80,14 @@ class TestCommandLine():
     @pytest.mark.parametrize("date_str", [("2015"), ("201501"), ('20150101'),
                                           ('20150101000000')])
     def test_convert_w_datetime(self, date_str):
-        """Test command line with different date and time specification."""
+        """Test command line with different date and time specification.
+
+        Parameters
+        ----------
+        date_str : str
+           Input date string
+
+        """
         # Build and execute the apexpy command line call
         cmd = ['python', '-m', 'apexpy', 'geo', 'apex', date_str, '--height',
                '300', '-i', self.infile, '-o', self.outfile]
@@ -108,7 +117,16 @@ class TestCommandLine():
                              [("300", [57.47145462, 93.62657928]),
                               ("100 --refh=300", [56.01779556, 93.35305023])])
     def test_convert_stdin_stdout_w_height_flags(self, height, out_list):
-        """Test use of pipe input to command-line call with height flags."""
+        """Test use of pipe input to command-line call with height flags.
+
+        Parameters
+        ----------
+        height : str
+            String specifying height with command line options
+        out_list : list
+            List of expected output values
+
+        """
         # Build and execute the apexpy command line call
         cmd = ''.join(['echo 60 15 | python -m apexpy geo apex 2015 --height ',
                        '{:s}'.format(height)])
@@ -134,7 +152,14 @@ class TestCommandLine():
 
     @pytest.mark.parametrize("date_str", [("201501010"), ("2015010100000")])
     def test_invalid_date(self, date_str):
-        """Test raises ValueError with an invalid input date."""
+        """Test raises ValueError with an invalid input date.
+
+        Parameters
+        ----------
+        date_str : str
+           Input date string
+
+        """
         # Build and execute the command
         cmd = 'echo 60 15 | python -m apexpy geo apex {:s}'.format(date_str)
         cmd_kwargs = {'shell': True, 'stderr': subprocess.PIPE}
@@ -159,7 +184,14 @@ class TestCommandLine():
 
     @pytest.mark.parametrize("coords", [("foobar apex"), ("geo foobar")])
     def test_invalid_coord(self, coords):
-        """Test raises error when bad coordinate input provided."""
+        """Test raises error when bad coordinate input provided.
+
+        Parameters
+        ----------
+        coords : str
+           Input/output coordinate pairs
+
+        """
         # Build and execute the command
         cmd = 'echo 60 15 | python -m apexpy {:s} 2015'.format(coords)
         cmd_kwargs = {'shell': True, 'stderr': subprocess.PIPE}

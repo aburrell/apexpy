@@ -20,7 +20,9 @@ import apexpy
 from apexpy import fortranapex as fa
 
 
-class TestFortranApex():
+class TestFortranApex(object):
+    """Test class for the Python-wrapped Fortran functions."""
+
     def setup_method(self):
         """Initialize each test."""
         fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__),
@@ -121,7 +123,16 @@ class TestFortranApex():
     @pytest.mark.parametrize("lat", [0, 30, 60, 89])
     @pytest.mark.parametrize("lon", [-179, -90, 0, 90, 179])
     def test_g2q2d(self, lat, lon):
-        """ Test fortran geographic to quasi-dipole and back again."""
+        """ Test fortran geographic to quasi-dipole and back again.
+
+        Parameters
+        ----------
+        lat : int or float
+            Latitude in degrees N
+        lon : int or float
+            Longitude in degrees E
+
+        """
         self.out = fa.apxg2q(lat, lon, self.height, 0)
         self.test_out = fa.apxq2g(self.out[0], self.out[1], self.height,
                                   self.precision)
