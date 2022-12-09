@@ -20,3 +20,6 @@ python:
    install:
    - requirements: docs/requirements.txt
    - method: FC=readthedocs; pip
+     path: .
+     extra_requirements:
+       - docs
