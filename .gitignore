@@ -17,7 +17,6 @@ lib
 lib64
 venv*/
 pyvenv*/
-apexpy/*.rst
 
 # Installer logs
 pip-log.txt
@@ -53,6 +52,7 @@ docs/_build
 *~
 .*.sw[po]
 .build
+autoapi
 .ve
 .env
 .cache
