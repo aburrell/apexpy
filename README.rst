@@ -25,37 +25,45 @@ have trouble importing apexpy.  If you run into trouble, try the command::
     pip install --no-binary :apexpy: apexpy
 
 which requires both libgfortran and gfortran to be installed on your system.
+More detailed installation instructions (and troubleshooting) is available
+in the
+`documentation <https://apexpy.readthedocs.io/en/latest/installation.html>`_.
 
 Conversion is done by creating an ``Apex`` object and using its methods to
 perform the desired calculations. Some simple examples::
 
-    >>> from apexpy import Apex
-    >>> from __future__ import print_function
-    >>> A = Apex(date=2015.3)  # datetime objects are also supported
-    >>> # geo to apex, scalar input
-    >>> mlat, mlon = A.convert(60, 15, 'geo', 'apex', height=300)
-    >>> print("{:.12f}, {:.12f}".format(mlat, mlon))
+    from apexpy import Apex
+    import datetime as dt
+    atime = dt.datetime(2015, 2, 10, 18, 0, 0)
+    apex15 = Apex(date=2015.3)  # dt.date and dt.datetime objects also work
+
+    # Geodetic to apex, scalar input
+    mlat, mlon = apex15.convert(60, 15, 'geo', 'apex', height=300)
+    print("{:.12f}, {:.12f}".format(mlat, mlon))
     57.477310180664, 93.590156555176
-    >>> # apex to geo, array input
-    >>> glat, glon = A.convert([90, -90], 0, 'apex', 'geo', height=0)
-    >>> print(["{:.12f}, {:.12f}".format(ll, glon[i]) for i,ll in enumerate(glat)])
+
+    # Apex to geodetic, array input
+    glat, glon = apex15.convert([90, -90], 0, 'apex', 'geo', height=0)
+    print(["{:.12f}, {:.12f}".format(ll, glon[i]) for i,ll in enumerate(glat)])
     ['83.103820800781, -84.526657104492', '-74.388252258301, 125.736274719238']
-    >>> # geo to MLT
-    >>> import datetime as dt
-    >>> mlat, mlt = A.convert(60, 15, 'geo', 'mlt', datetime=dt.datetime(2015, 2, 10, 18, 0, 0))
-    >>> print("{:.12f}, {:.12f}".format(mlat, mlt))
+
+    # Geodetic to magnetic local time
+    mlat, mlt = apex15.convert(60, 15, 'geo', 'mlt', datetime=atime)
+    print("{:.12f}, {:.12f}".format(mlat, mlt))
     56.598316192627, 19.107861709595
-    >>> # can also convert magnetic longitude to mlt
-    >>> mlt = A.mlon2mlt(120, dt.datetime(2015, 2, 10, 18, 0, 0))
-    >>> print("{:.2f}".format(mlt))
+
+    # can also convert magnetic longitude to mlt
+    mlt = apex15.mlon2mlt(120, atime)
+    print("{:.2f}".format(mlt))
     20.90
 
-If you don't know or use Python, you can also use the command line. See details in the full documentation.
+If you don't know or use Python, you can also use the command line. See details
+in the full documentation (link in the section below).
 
 Documentation
 =============
 
-https://apexpy.readthedocs.org/
+https://apexpy.readthedocs.io/en/latest
 
 References
 ==========
@@ -80,30 +88,22 @@ Badges
     * - docs
       - |docs|
     * - tests
-      - | |travis| |appveyor|
-        | |coveralls| |requires|
-        | |codeclimate| |scrutinizer| |codacy|
+      - | |ghactions|
+        | |coveralls| |codeclimate|
+        | |scrutinizer| |codacy|
     * - package
       - | |version| |supported-versions|
         | |wheel| |supported-implementations|
 
 .. |docs| image:: https://readthedocs.org/projects/apexpy/badge/?style=flat
-    :target: https://readthedocs.org/projects/apexpy
+    :target: https://apexpy.readthedocs.io/en/latest/
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/aburrell/apexpy.svg?branch=main
-    :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/aburrell/apexpy
+.. |ghactions| image:: https://github.com/aburrell/apexpy/actions/workflows/main.yml/badge.svg
+    :alt: GitHub Actions Build Status
+    :target: https://github.com/aburrell/apexpy/actions/workflows/main.yml
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/aburrell/apexpy?branch=main&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/aburrell/apexpy
-
-.. |requires| image:: https://requires.io/github/aburrell/apexpy/requirements.svg?branch=main
-     :alt: Requirements Status
-     :target: https://requires.io/github/aburrell/apexpy/requirements/?branch=main
-
-.. |coveralls| image:: https://coveralls.io/repos/github/aburrell/apexpy/badge.svg?branch=main
+.. |coveralls| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_98.svg
     :alt: Coverage Status
     :target: https://coveralls.io/github/aburrell/apexpy?branch=main
 
@@ -117,7 +117,7 @@ Badges
 
 .. |version| image:: https://img.shields.io/pypi/v/apexpy.svg?style=flat
     :alt: PyPI Package latest release
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy/
 
 .. |downloads| image:: https://img.shields.io/pypi/dm/apexpy.svg?style=flat
     :alt: PyPI Package monthly downloads
@@ -135,9 +135,9 @@ Badges
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/apexpy
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/aburrell/apexpy/main.svg?style=flat
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/quality/g/aburrell/apexpy/main.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
 
-.. |doi| image:: https://www.zenodo.org/badge/46420037.svg
-   :target: https://www.zenodo.org/badge/latestdoi/46420037
+.. |doi| image:: https://www.zenodo.org/badge/doi/10.5281/zenodo.4585641.svg
+   :target: https://doi.org/10.5281/zenodo.1214206

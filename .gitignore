@@ -1,8 +1,5 @@
 *.py[cod]
 
-# C extensions
-*.so
-
 # Packages
 *.egg
 *.egg-info
@@ -23,6 +20,7 @@ pyvenv*/
 
 # Installer logs
 pip-log.txt
+.mesonpy-native-file.ini
 
 # Unit test / coverage reports
 .coverage

@@ -2,6 +2,22 @@
 Changelog
 =========
 
+2.0.0 (2022-12-09)
+------------------
+* Update Fortran source code to Fortran 90 standards
+* Removed Python 2 support
+* Updated community and package documentation
+* Updated unit test style to reduce duplication and better follow PEP8
+* Updated code style using codacy suggestions and reduced complexity
+* Added class representation strings to Apex
+* Improved input testing for Apex methods
+* Added more examples and installation help to the documentation
+* Fixed missing microseconds bug in helpers.subsol
+* Added function to calculate height along a field line
+* Changed installation to use meson
+* Added wheel creation to CI
+* Updated flake8 ignore syntax
+
 1.1.0 (2021-03-05)
 ------------------
 * Adapted Fortran to read IRGF coefficients from a file (updated to IGRF-13)

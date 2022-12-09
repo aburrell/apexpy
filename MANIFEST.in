@@ -1,16 +1,12 @@
 graft docs
-graft src
-graft ci
-graft tests
+graft fortranapex
+graft .github
 
-include AUTHORS.rst
-include CHANGELOG.rst
-include CONTRIBUTING.rst
+recursive-include apexpy *.txt meson.build
+
+include *.rst
+include *.md
 include LICENSE
-include README.rst
-include CODE_OF_CONDUCT.md
 include .zenodo.json
-
-include tox.ini .travis.yml appveyor.yml .codeclimate.yml pyproject.toml
-
-global-exclude *.py[cod~] __pycache__ *.so *.dylib
+include pyproject.toml
+include .codeclimate.yml *.yml
