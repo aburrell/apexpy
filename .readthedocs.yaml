@@ -19,7 +19,9 @@ sphinx:
 python:
    install:
    - requirements: docs/requirements.txt
-   - method: FC=readthedocs; pip
+   - method: pip
+     env:
+       FC: "readthedocs"
      path: .
      extra_requirements:
        - docs
