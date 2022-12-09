@@ -17,6 +17,7 @@ lib
 lib64
 venv*/
 pyvenv*/
+apexpy/*.rst
 
 # Installer logs
 pip-log.txt

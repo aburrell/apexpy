@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = src/apexpy
+SPHINXPROJ    = apexpy
 SOURCEDIR     = .
 BUILDDIR      = .build
 
