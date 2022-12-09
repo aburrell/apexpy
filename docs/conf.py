@@ -41,6 +41,7 @@ html_split_index = True
 html_sidebars = {'**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html']}
 html_short_title = '-'.join([project, version])
 autodoc_member_order = 'bysource'
+autodoc_mock_imports = ['apexpy']
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
