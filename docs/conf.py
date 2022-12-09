@@ -9,7 +9,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.githubpages',
               'sphinx.ext.napoleon',
-              'sphinx.ext.extlinks']
+              'sphinx.ext.extlinks',
+              'autoapi.sphinx']
 
 # Define common elements
 
@@ -27,6 +28,9 @@ with open('../apexpy/__init__.py', 'r') as fin:
     text = fin.read()
 match = re.findall(regex, text)
 version = release = match[0].strip("'")
+
+# Configure autoapi
+autoapi_modules = {'apexpy': None}
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
