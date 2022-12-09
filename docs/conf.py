@@ -30,7 +30,7 @@ match = re.findall(regex, text)
 version = release = match[0].strip("'")
 
 # Configure autoapi
-autoapi_modules = {'apexpy': None}
+autoapi_modules = {'apexpy': {'output': '../apexpy'}}
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
