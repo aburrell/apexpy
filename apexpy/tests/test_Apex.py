@@ -108,6 +108,13 @@ class TestApexInit(object):
         self.eval_refh()
         return
 
+    def test_init_today(self):
+        """Test Apex class initialization with today's date."""
+        self.apex_out = apexpy.Apex(date=self.test_date)
+        self.eval_date()
+        self.eval_refh()
+        return
+
     @pytest.mark.parametrize("in_date",
                              [2015, 2015.5, dt.date(2015, 1, 1),
                               dt.datetime(2015, 6, 1, 18, 23, 45)])
