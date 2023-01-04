@@ -2,6 +2,12 @@
 Changelog
 =========
 
+2.X.X (2023-XX-XX)
+------------------
+* Expanded installation instructions in the documenation
+* Added unit tests for todays date, ensuring that `apex.dat` is current
+* Added cron unit test to GitHub Actions CI
+
 2.0.0 (2022-12-09)
 ------------------
 * Update Fortran source code to Fortran 90 standards
