@@ -49,7 +49,7 @@ jobs:
           pip install .
 
     - name: Install on MacOS
-      if: ${{ matrix.os == 'macos-latest' }}
+      if: ${{ matrix.os == 'macos-11' }}
       run: |
           brew reinstall gcc
           CC=/usr/local/bin/gcc-12 python -m build .
