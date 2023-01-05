@@ -1,4 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a
+ This workflow will install Python dependencies, run tests and lint with a
 # variety of Python versions. For more information see:
 # https://help.github.com/actions/language-and-framework-guides/
 # using-python-with-github-actions
@@ -52,6 +52,8 @@ jobs:
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
+	  /usr/local/bin/gcc --version
+	  ls /usr/local/bin/gcc*
           CC=/usr/local/bin/gcc; python -m build .
           CC=/usr/local/bin/gcc; pip install .
 
