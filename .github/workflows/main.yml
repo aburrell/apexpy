@@ -73,7 +73,6 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
            cd ..
-           python -m apexpy geo apex 2015 --height 300 -i apexpy/apexpy/test/test_convert_single_line.txt
            coverage run --rcfile=apexpy/setup.cfg -m pytest
 
     - name: Run unit and integration tests on Windows
