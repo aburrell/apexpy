@@ -6,7 +6,7 @@ and support functions.
 
 .. toctree::
 
-   ex_init.rst
-   ex_cli.rst
-   ex_apexh.rst
-   ex_gc.rst
+   examples/ex_init.rst
+   examples/ex_cli.rst
+   examples/ex_apexh.rst
+   examples/ex_gc.rst
