@@ -59,7 +59,8 @@ def main():
                                    '%Y%m%d%H%M%S'[:len(args.date) - 2])
 
     if args.date == "2015":
-        raise RuntimeError(in_time, args.date, '%Y%m%d%H%M%S'[:len(args.date) - 2])
+        raise RuntimeError(in_time, args.date,
+                           '%Y%m%d%H%M%S'[:len(args.date) - 2])
 
     # Run the desired apex conversion
     apex_obj = apexpy.Apex(date=in_time, refh=args.refh)
