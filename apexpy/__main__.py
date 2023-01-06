@@ -58,6 +58,9 @@ def main():
     in_time = dt.datetime.strptime(args.date,
                                    '%Y%m%d%H%M%S'[:len(args.date) - 2])
 
+    if args.date == "2015":
+        raise RuntimeError(in_time, args.date, '%Y%m%d%H%M%S'[:len(args.date) - 2])
+
     # Run the desired apex conversion
     apex_obj = apexpy.Apex(date=in_time, refh=args.refh)
     lats, lons = apex_obj.convert(arg_array[:, 0], arg_array[:, 1], args.source,
