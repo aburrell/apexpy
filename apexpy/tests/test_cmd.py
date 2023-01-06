@@ -72,11 +72,10 @@ class TestCommandLine(object):
         if pipe_out:
             data = out
         elif os.path.isfile(self.outfile):
+            bstst = os.stat(self.outfile)
             data = np.loadtxt(self.outfile)
-
-            if data is not None and len(data) == 0:
-                raise RuntimeError(data,
-                                   os.system("more {:s}".format(self.outfile)))
+            if len(data) == 0:
+                raise RuntimeError(bstst, os.stat(self.outfile))
 
         return data
 
