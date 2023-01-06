@@ -63,10 +63,6 @@ def main():
     lats, lons = apex_obj.convert(arg_array[:, 0], arg_array[:, 1], args.source,
                                   args.dest, args.height, datetime=in_time)
 
-    if args.date == "2015":
-        raise RuntimeError(in_time, args.date, args.refh, lats, lons,
-                           np.column_stack((lats, lons)))
-
     # Save the output to a file
     np.savetxt(args.file_out, np.column_stack((lats, lons)), fmt='%.8f')
 
