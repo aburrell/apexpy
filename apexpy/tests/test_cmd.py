@@ -74,9 +74,9 @@ class TestCommandLine(object):
         elif os.path.isfile(self.outfile):
             data = np.loadtxt(self.outfile)
 
-        if data is not None and len(data) == 0:
-            raise RuntimeError(data,
-                               os.system("more {:s}".format(self.outfile)))
+            if data is not None and len(data) == 0:
+                raise RuntimeError(data,
+                                   os.system("more {:s}".format(self.outfile)))
 
         return data
 
