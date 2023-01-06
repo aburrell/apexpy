@@ -75,6 +75,8 @@ class TestCommandLine(object):
         else:
             data = None
 
+        raise RuntimeError(command, pipe_out, self.outfile, data)
+
         return data
 
     @pytest.mark.parametrize("date_str", [("2015"), ("201501"), ('20150101'),
