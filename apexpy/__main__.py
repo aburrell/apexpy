@@ -5,7 +5,6 @@
 import argparse
 import datetime as dt
 import numpy as np
-import os
 import sys
 
 import apexpy
@@ -66,9 +65,6 @@ def main():
 
     # Save the output to a file
     np.savetxt(args.file_out, np.column_stack((lats, lons)), fmt='%.8f')
-
-    if os.path.isfile(args.file_out) and args.date == "2015":
-        raise RuntimeError(os.stats(args.file_out))
 
     return
 

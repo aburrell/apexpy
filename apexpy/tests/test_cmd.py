@@ -68,15 +68,15 @@ class TestCommandLine(object):
         out = pipe.communicate()
         pipe.wait()
 
+        data = None
         if pipe_out:
             data = out
         elif os.path.isfile(self.outfile):
             data = np.loadtxt(self.outfile)
-            raise RuntimeError(os.stat(self.outfile),
-                               os.system("more {:s}".format(self.outfile)),
-                               data)
-        else:
-            data = None
+
+        if data is not None and len(data) == 0:
+            raise RuntimeError(data,
+                               os.system("more {:s}".format(self.outfile)))
 
         return data
 
