@@ -61,19 +61,19 @@ class TestCommandLine(object):
             or the requested output from the pipe command.
 
         """
-        if command_kwargs is None:
-            command_kwargs = {}
-
-        pipe = subprocess.Popen(command, **command_kwargs)
-        out = pipe.communicate()
-        pipe.wait()
+        data = None
 
         if pipe_out:
-            data = out
-        elif os.path.isfile(self.outfile):
-            data = np.loadtxt(self.outfile)
+            if command_kwargs is None:
+                command_kwargs = {}
+
+            pipe = subprocess.Popen(command, **command_kwargs)
+            data = pipe.communicate()
+            pipe.wait()
         else:
-            data = None
+            os.system(" ".join(command))
+            if os.path.isfile(self.outfile):
+                data = np.loadtxt(self.outfile)
 
         return data
 

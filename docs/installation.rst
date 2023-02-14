@@ -42,7 +42,9 @@ The code behind this package is written in Fortran.  Because of this, you
 the following steps.  `Gfortran <https://gcc.gnu.org/wiki/GFortran>`_ is a free
 compiler that can be installed, if one is not already available on your system.
 If you are installing this or MinGW in Windows, make sure you install it
-**after** installing the Windows Microsoft C++ Build tools. The :py:mod:`apexpy`
+**after** installing the Windows Microsoft C++ Build tools. You must also make
+sure that the compilers and Python that are installed both use the same
+processing standard (either 32-bit or 64-bit). The :py:mod:`apexpy`
 installation has been tested successfully with gfortran 7 and some more recent
 versions.  Earlier versions of gfortran may not work and are not recommended.
 
@@ -125,7 +127,7 @@ To download an artifact:
    download location. Alternatively (or if this doesn't work) you can use
    `wget` to retrieve the archive.
 4. Copy the zip archive into the ``apexpy/dist`` directory and unzip.
-5. Check the archive for the expected matrix of *.whl objects
+5. Check the archive for the expected matrix of ``*.whl`` objects
 
 To install, use ``pip install .``
 

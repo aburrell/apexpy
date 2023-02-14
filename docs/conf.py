@@ -54,4 +54,4 @@ napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
 
-extlinks = {'doi': ('http://dx.doi.org/%s', 'doi:')}
+extlinks = {'doi': ('http://dx.doi.org/%s', 'doi:%s')}

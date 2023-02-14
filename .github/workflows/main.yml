@@ -5,7 +5,11 @@
 
 name: pytest with flake8
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: "0 3 * * 1"  # Runs 03:00 UT on Mondays 
 
 jobs:
   build:
@@ -48,8 +52,8 @@ jobs:
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
-          python -m build .
-          pip install .
+          CC=/usr/local/bin/gcc-12 python -m build .
+          CC=/usr/local/bin/gcc-12 pip install .
 
     - name: Install on Windows
       if: ${{ matrix.os == 'windows-latest' }}

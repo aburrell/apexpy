@@ -121,19 +121,19 @@ Badges
 
 .. |downloads| image:: https://img.shields.io/pypi/dm/apexpy.svg?style=flat
     :alt: PyPI Package monthly downloads
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/apexpy.svg?style=flat
     :alt: PyPI Wheel
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/apexpy.svg?style=flat
     :alt: Supported versions
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/apexpy.svg?style=flat
     :alt: Supported implementations
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/quality/g/aburrell/apexpy/main.svg?style=flat
     :alt: Scrutinizer Status
