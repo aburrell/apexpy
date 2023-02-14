@@ -215,6 +215,20 @@ encountered when using clang for ``CC`` alongside gfortran.  This resulted in a
 seemly successful installation with :py:mod:`apexpy` reporting that fortranapex
 cannot be imported.
 
+Some users have reported unusual behavior when using Anaconda on Apple Silicon
+systems.  Anaconda will attempt to build and install the Intel versions of
+wheels instead of the M1 versions and run everything through Rosetta.  This
+configuration has not been fully evaluated, but it results in a seemly
+successful installation with :py:mod:`apexpy` reporting that fortranapex
+cannot be imported.  Users should confirm that wheels created by conda (both for
+apexpy and other packages) end in ``arm64.whl`` not ``osx-64.whl``.  If the
+later is true, users should consider uninstalling anaconda completely, and
+instead installing miniconda following
+`these instructions <https://conda.io/projects/conda/en/stable/user-guide/install/macos.html>`_,
+which has been confirmed to work. **WARNING:** This will remove any environments
+you have set up and likely undo all IDE settings, so be cautious and consider
+backing up your work first!
+
 
 Windows systems are known to have issues with Fortran-based codes.  The Windows
 testing we do uses miniconda, so we recommend using the Anaconda environment.
