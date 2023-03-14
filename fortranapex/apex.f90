@@ -328,8 +328,8 @@ subroutine linapx(gdlat, glon, alt, a, alat, alon, xmag, ymag, zmag, f)
   ! May 1999: avoid possible divide by zero (when SINGML = 1.): the old version
   ! limited DS to its value at 60 deg GM latitude with:
   ! DS = .06*R/(1.-SINGML*SINGML) - 370. IF (DS .GT. 1186.) DS = 1186.
-  cgml2 = amax1(0.25, 1.- singml * singml)
-  ds = 0.06 * r / cgml2 - 370.
+  cgml2 = max(0.25D0, 1.D0- singml * singml)
+  ds = 0.06D0 * r / cgml2 - 370.D0
 
   ! Initialize yapx array
   do j = 1, 3
@@ -608,6 +608,7 @@ subroutine fndapx(alt, zmag, a, alat, alon)
   end do
 
   if (abdob > 2.e-6) then
+!    write(*,*) nitr, abdob
     write(0, '("APEX: Imprecise fit of apex: |Bdown/B| "(1PE7.1))') abdob
   end if
 
@@ -617,7 +618,7 @@ subroutine fndapx(alt, zmag, a, alat, alon)
   ! hemisphere (sign) is inferred from the sign of the dip angle at the
   ! starting point
 
-  a = (Req + amax1(alt, hta)) / Req
+  a = (Req + max(alt, hta)) / Req
   if (a < 1.) then
     write(0, '("APEX: A cannot be less than 1; A, REQ, HTA "(1P3))') a, Req, hta
     ! write(0, *) "APEX: A cannot be less than 1; A, REQ, HTA ", a, Req, hta
