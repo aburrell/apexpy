@@ -118,8 +118,12 @@ class Apex(object):
         if not os.path.exists(self.igrf_fn):
             raise OSError("File {} does not exist".format(self.igrf_fn))
 
+        print('LINE 125')
+
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)
+
+        print('LINE 130')
 
         # Vectorize the fortran functions
         self._geo2qd = np.frompyfunc(
@@ -1217,8 +1221,10 @@ class Apex(object):
         self.year = np.float64(year)
         fa.loadapxsh(self.datafile, self.year)
 
+        print('LINE 1224', self.year, self.igrf_fn)
         # Call the Fortran routine to set time
         fa.cofrm(self.year, self.igrf_fn)
+        print('LINE 1227')
         return
 
     def set_refh(self, refh):

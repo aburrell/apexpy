@@ -168,7 +168,7 @@ subroutine cofrm(date, filename)
       write(0, '("COFRM:  DATE "(F9.3)" preceeds earliest available "(F6.1))') date, epoch(1)
       call exit(1)
     elseif (date > epoch(nepo) + 5.) then
-      write(0, '("COFRM:  DATE "(F9.3)" is after the last recommended for extrapolation "(F6.1))') date, epoch(1) + 5.
+      write(0, '("COFRM:  DATE "(F9.3)" is after the last recommended for extrapolation "(F6.1))') date, epoch(nepo)
       call exit(1)
     end if
 
