@@ -353,7 +353,7 @@ subroutine apxg2q(glat, glon, alt, vecflagin, qlatout, qlonout, f1, f2, f)
       end do
       altlastq = alt
     end if
-
+    
     ! COMPUTE SPHERICAL HARMONICS
     theta = (90D0 - dble(glat)) * dtor
     phi = glon * dtor

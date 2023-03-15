@@ -56,28 +56,15 @@ contains
     end do
     ! Add one epoch for extapolation 5 years beyond file date
     num_epochs = num_epochs + 1
-    write(*,*) num_epochs
-    ! num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'IGRF')
-    ! num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'DGRF') + num_epochs
     allocate(epoch(1:num_epochs))
     allocate(nmxe(1:num_epochs))
 
-    ! Why do we assume these things?  These are written IN THE FILE
     ! Read epochs
     read(unit = 100, fmt = '(A)', iostat = state) s
     read(s(8:), *) epoch
+    ! Add one epoch for extapolation 5 years beyond file date
     epoch(num_epochs) = epoch(num_epochs-1) + 5.0d0
-!    do i=1,num_epochs
-!        read(s(8+(i-1)*7:8+i*7), '(F6.1)') epoch(i)
-!        write(*,*) epoch(i)
-!    end do
-!    read(unit = 100, fmt = *, iostat = state) epoch(:)
-    write(*,*) epoch
-!    do i = 1, num_epochs
-!       epoch(i) = 1900.0 + real(i - 1) * 5.0d0
-!    end do
 
-    ! Shouldn't be nessisary - files contain 0 when no coeffiecents?
     ! Number of coefficients
     do i = 1, num_epochs
        if (epoch(i) .ge. 2000.0d0) then

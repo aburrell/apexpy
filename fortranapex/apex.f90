@@ -608,7 +608,6 @@ subroutine fndapx(alt, zmag, a, alat, alon)
   end do
 
   if (abdob > 2.e-6) then
-!    write(*,*) nitr, abdob
     write(0, '("APEX: Imprecise fit of apex: |Bdown/B| "(1PE7.1))') abdob
   end if
 
