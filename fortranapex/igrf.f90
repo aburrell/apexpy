@@ -48,16 +48,30 @@ contains
     end do
 
     ! Read epochs
-    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'IGRF')
-    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'DGRF') + num_epochs
+    num_epochs = 0
+    do i=1, len_trim(s)
+      if ((s(i:i+3) == 'IGRF').or.(s(i:i+3) == 'DGRF')) then
+        num_epochs = num_epochs + 1
+      end if
+    end do
     allocate(epoch(1:num_epochs))
     allocate(nmxe(1:num_epochs))
 
     ! Read epochs
-    read(100,*, iostat = state) s
-    do i = 1, num_epochs
-       epoch(i) = 1900.0 + real(i - 1) * 5.0d0
-    end do
+    read(unit = 100, fmt = '(A)', iostat = state) s
+    read(s(8:), *) epoch
+
+!    ! Read epochs
+!    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'IGRF')
+!    num_epochs = count([(s(i:i + 3), i = 1, len_trim(s))]== 'DGRF') + num_epochs
+!    allocate(epoch(1:num_epochs))
+!    allocate(nmxe(1:num_epochs))
+!
+!    ! Read epochs
+!    read(100,*, iostat = state) s
+!    do i = 1, num_epochs
+!       epoch(i) = 1900.0 + real(i - 1) * 5.0d0
+!    end do
 
     ! Number of coefficients
     do i = 1, num_epochs
