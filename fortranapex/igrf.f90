@@ -103,7 +103,7 @@ contains
     call fseek(100, offset, 0, state)
 
     ! Assign the variables for Gauss coefficients
-    allocate(g(1:num_sh, 1:num_epochs))
+    allocate(g(1:num_sh, 1:num_epochs+1))
     allocate(nm(1:num_sh, 2))
 
     ! Read coefficients
