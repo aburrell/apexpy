@@ -131,6 +131,8 @@ To download an artifact:
 
 To install, use ``pip install .``
 
+.. _installation-build:
+
 Build from Source
 ^^^^^^^^^^^^^^^^^
 
