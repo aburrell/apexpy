@@ -1768,7 +1768,8 @@ class TestApexGetMethods(object):
 
 
 class TestApexMethodExtrapolateIGRF(object):
-    """Test the Apex methods on a year when IGRF must be extrapolated. This should be a year within 5 years of the latest IGRF model."""
+    """Test the Apex methods on a year when IGRF must be extrapolated. This 
+    should be a year within 5 years of the latest IGRF model."""
     def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2025, refh=300)
