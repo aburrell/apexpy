@@ -7,6 +7,7 @@ Changelog
 * Expanded installation instructions in the documenation
 * Added unit tests for todays date, ensuring that `apex.dat` is current
 * Added cron unit test to GitHub Actions CI
+* Added a logo
 
 2.0.0 (2022-12-09)
 ------------------
