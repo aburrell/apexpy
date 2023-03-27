@@ -1,3 +1,5 @@
+|logo|
+
 ========
 Overview
 ========
@@ -141,3 +143,6 @@ Badges
 
 .. |doi| image:: https://www.zenodo.org/badge/doi/10.5281/zenodo.4585641.svg
    :target: https://doi.org/10.5281/zenodo.1214206
+
+.. |logo| image:: docs/apexpy.png
+   :alt: ApexPy logo: yellow magnetic field lines surrounding the Earth's surface, which is blue
