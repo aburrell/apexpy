@@ -975,7 +975,7 @@ class Apex(object):
         ----------
         .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
-               geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
+               geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
 
         .. [3] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
@@ -1074,7 +1074,7 @@ class Apex(object):
         ----------
         .. [4] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
                Magnetic Apex Coordinates, Journal of geomagnetism and
-               geoelectricity, 47(2), 191–212, :doi:`10.5636/jgg.47.191`.
+               geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191.
 
         .. [5] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
