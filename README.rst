@@ -73,8 +73,7 @@ References
 .. [1] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
        A computationally compact representation of Magnetic-Apex
        and Quasi-Dipole coordinates with smooth base vectors,
-       J. Geophys. Res., 115(A8), A08322,
-       `doi:10.1029/2010JA015326 <http://dx.doi.org/10.1029/2010JA015326>`_.
+       J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
 
 .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
        Magnetic Apex Coordinates, Journal of geomagnetism and
