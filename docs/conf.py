@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 import re
 
 extensions = ['sphinx.ext.autodoc',
@@ -35,6 +36,9 @@ autoapi_dirs = ['../apexpy']
 autoapi_keep_files = True
 autoapi_root = 'autoapi/generated'
 
+# The name of an image file (relative to this directory) to place at the top
+# of the sidebar.
+html_logo = os.path.join(os.path.abspath('.'), 'apexpy.png')
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
