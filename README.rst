@@ -1,3 +1,5 @@
+|logo|
+
 ========
 Overview
 ========
@@ -71,8 +73,7 @@ References
 .. [1] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
        A computationally compact representation of Magnetic-Apex
        and Quasi-Dipole coordinates with smooth base vectors,
-       J. Geophys. Res., 115(A8), A08322,
-       `doi:10.1029/2010JA015326 <http://dx.doi.org/10.1029/2010JA015326>`_.
+       J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
 
 .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
        Magnetic Apex Coordinates, Journal of geomagnetism and
@@ -141,3 +142,6 @@ Badges
 
 .. |doi| image:: https://www.zenodo.org/badge/doi/10.5281/zenodo.4585641.svg
    :target: https://doi.org/10.5281/zenodo.1214206
+
+.. |logo| image:: docs/apexpy.png
+   :alt: ApexPy logo: yellow magnetic field lines surrounding the Earth's surface, which is blue

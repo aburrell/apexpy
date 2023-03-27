@@ -7,6 +7,7 @@ Changelog
 * Expanded installation instructions in the documenation
 * Added unit tests for todays date, ensuring that `apex.dat` is current
 * Added cron unit test to GitHub Actions CI
+* Added a logo
 * Correct indexing bug in Fortran source that was causing array overflow and
   memory errors for extrapolated years beyond the latest formal IGRF fit.
 
