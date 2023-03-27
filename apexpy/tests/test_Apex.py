@@ -1768,7 +1768,7 @@ class TestApexGetMethods(object):
 
 
 class TestApexMethodExtrapolateIGRF(object):
-    """Test the Apex methods on a year when IGRF must be extrapolated. This 
+    """Test the Apex methods on a year when IGRF must be extrapolated. This
     should be a year within 5 years of the latest IGRF model."""
     def setup_method(self):
         """Initialize all tests."""
@@ -1786,7 +1786,7 @@ class TestApexMethodExtrapolateIGRF(object):
                              [("geo2apex",
                                (56.25343704223633, 92.04932403564453)),
                               ("apex2geo",
-                               (53.84184265136719, -66.93045806884766, 
+                               (53.84184265136719, -66.93045806884766,
                                 3.6222547805664362e-06)),
                               ("geo2qd",
                                (56.82968521118164, 92.04932403564453)),
@@ -1821,7 +1821,7 @@ class TestApexMethodExtrapolateIGRF(object):
 
         # Get user output
         user_out = self.apex_out.mlon2mlt(self.in_lon, self.in_time)
-        
+
         # Set comparison values
         out_comp = 23.955474853515625
 
@@ -1884,5 +1884,3 @@ class TestApexMethodExtrapolateIGRF(object):
 #        # Evaluate the outputs
 #        np.testing.assert_allclose(convert_out, method_out)
 #        return
-
-
