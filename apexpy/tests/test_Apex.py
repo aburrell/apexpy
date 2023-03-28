@@ -320,6 +320,13 @@ class TestApexMethod(object):
 
         return in_args
 
+    def test_apex_conversion_today(self):
+        """Test Apex class conversion with today's date."""
+        self.apex_out = apexpy.Apex(date=dt.datetime.utcnow(), refh=300)
+        assert not np.isnan(self.apex_out.geo2apex(self.in_lat, self.in_lon,
+                                                   self.in_alt)).any()
+        return
+
     @pytest.mark.parametrize("apex_method,fortran_method,fslice",
                              [("_geo2qd", "apxg2q", slice(0, 2, 1)),
                               ("_geo2apex", "apxg2all", slice(2, 4, 1)),
