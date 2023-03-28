@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.0.1 (2023-XX-XX)
+2.0.1 (2023-04-11)
 ------------------
 * Expanded installation instructions in the documenation
 * Added unit tests for todays date, ensuring that `apex.dat` is current
