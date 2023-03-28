@@ -172,11 +172,11 @@ subroutine cofrm(date, filename)
       call exit(1)
     end if
 
-    ! Set the date and time
-    iy = 1
-    do while (date > epoch(iy))
-      iy = iy + 1
+    ! Set the date and time index
+    do iy = 1, nepo
+      if (date < epoch(iy)) exit
     end do
+    iy = iy - 1
 
     ngh = nght * nepo
     nmax1 = int(nmxe(iy))
