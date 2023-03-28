@@ -1768,8 +1768,15 @@ class TestApexGetMethods(object):
 
 
 class TestApexMethodExtrapolateIGRF(object):
-    """Test the Apex methods on a year when IGRF must be extrapolated. This
-    should be a year within 5 years of the latest IGRF model."""
+    """Test the Apex methods on a year when IGRF must be extrapolated.
+
+    Notes
+    -----
+    Extrapolation should be done using a year within 5 years of the latest IGRF
+    model epoch.
+
+    """
+
     def setup_method(self):
         """Initialize all tests."""
         self.apex_out = apexpy.Apex(date=2025, refh=300)
@@ -1777,10 +1784,12 @@ class TestApexMethodExtrapolateIGRF(object):
         self.in_lon = 15
         self.in_alt = 100
         self.in_time = dt.datetime(2024, 2, 3, 4, 5, 6)
+        return
 
     def teardown_method(self):
         """Clean up after each test."""
         del self.apex_out, self.in_lat, self.in_lon, self.in_alt
+        return
 
     @pytest.mark.parametrize("method_name, out_comp",
                              [("geo2apex",
@@ -1827,60 +1836,4 @@ class TestApexMethodExtrapolateIGRF(object):
 
         # Evaluate user output
         np.testing.assert_allclose(user_out, out_comp, rtol=1e-5, atol=1e-5)
-
-#    @pytest.mark.parametrize("in_coord", ["geo", "apex", "qd"])
-#    def test_convert_to_mlt(self, in_coord):
-#        """Test the conversions to MLT using Apex convert.
-#
-#        Parameters
-#        ----------
-#        in_coord : str
-#            Input coordinate system
-#
-#        """
-#
-#        # Get the magnetic longitude from the appropriate method
-#        if in_coord == "geo":
-#            apex_method = getattr(self.apex_out, "{:s}2apex".format(in_coord))
-#            mlon = apex_method(60, 15, 100)[1]
-#        else:
-#            mlon = 15
-#
-#        # Get the output MLT values
-#        convert_mlt = self.apex_out.convert(60, 15, in_coord, 'mlt',
-#                                            height=100, ssheight=2e5,
-#                                            datetime=self.in_time)[1]
-#        method_mlt = self.apex_out.mlon2mlt(mlon, self.in_time, ssheight=2e5)
-#
-#        # Test the outputs
-#        np.testing.assert_allclose(convert_mlt, method_mlt)
-#        return
-#
-#    @pytest.mark.parametrize("out_coord", ["geo", "apex", "qd"])
-#    def test_convert_mlt_to_lon(self, out_coord):
-#        """Test the conversions from MLT using Apex convert.
-#
-#        Parameters
-#        ----------
-#        out_coord : str
-#            Output coordinate system
-#
-#        """
-#        # Get the output longitudes
-#        convert_out = self.apex_out.convert(60, 15, 'mlt', out_coord,
-#                                            height=100, ssheight=2e5,
-#                                            datetime=self.in_time,
-#                                            precision=1e-2)
-#        mlon = self.apex_out.mlt2mlon(15, self.in_time, ssheight=2e5)
-#
-#        if out_coord == "geo":
-#            method_out = self.apex_out.apex2geo(60, mlon, 100,
-#                                                precision=1e-2)[:-1]
-#        elif out_coord == "qd":
-#            method_out = self.apex_out.apex2qd(60, mlon, 100)
-#        else:
-#            method_out = (60, mlon)
-#
-#        # Evaluate the outputs
-#        np.testing.assert_allclose(convert_out, method_out)
-#        return
+        return
