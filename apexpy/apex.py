@@ -103,7 +103,7 @@ class Apex(object):
         # If datafile is not specified, use the package default, otherwise
         #   check that the provided file exists
         if datafile is None:
-            datafile = files(__package__).joinpath('apexsh.dat')
+            datafile = str(files(__package__).joinpath('apexsh.dat'))
         else:
             if not os.path.isfile(datafile):
                 raise IOError('Data file does not exist: {}'.format(datafile))
@@ -121,7 +121,8 @@ class Apex(object):
         self.fortranlib = fortranlib
 
         # Set the IGRF coefficient text file name
-        self.igrf_fn = files(__package__).joinpath('igrf13coeffs.txt')
+        self.igrf_fn = str(files(__package__).joinpath('igrf13coeffs.txt'))
+        print(self.igrf_fn)
 
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)
