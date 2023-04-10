@@ -5,6 +5,10 @@ import datetime as dt
 import numpy as np
 import os
 import warnings
+try:
+    from importlib.resources import files
+except ModuleNotFoundError:
+    from importlib_resources import files
 
 from apexpy import helpers
 
@@ -82,11 +86,15 @@ class Apex(object):
 
     def __init__(self, date=None, refh=0, datafile=None, fortranlib=None):
 
-        if datafile is None:
-            datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
+#        if datafile is None:
+#            datafile0 = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
+#            datafile = files('apexpy').joinpath('apexsh.dat')
+#        print(datafile0, datafile)
+#
+#        if fortranlib is None:
+#            fortranlib = fa.__file__
 
-        if fortranlib is None:
-            fortranlib = fa.__file__
+
 
         self.RE = 6371.009  # Mean Earth radius in km
         self.set_refh(refh)  # Reference height in km
@@ -102,21 +110,30 @@ class Apex(object):
                 # date is probably an int or float; use directly
                 self.year = date
 
-        if not os.path.isfile(datafile):
-            raise IOError('Data file does not exist: {}'.format(datafile))
+        if datafile is None:
+#            datafile0 = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
+            datafile = files('apexpy').joinpath('apexsh.dat')
+#        print(datafile0, datafile)
+        else:
+            if not os.path.isfile(datafile):
+                raise IOError('Data file does not exist: {}'.format(datafile))
 
-        if not os.path.isfile(fortranlib):
-            raise IOError('Fortran library does not exist: {}'.format(
-                fortranlib))
+        if fortranlib is None:
+            fortranlib = fa.__file__
+        else:
+            if not os.path.isfile(fortranlib):
+                raise IOError('Fortran library does not exist: {}'.format(
+                    fortranlib))
 
         self.datafile = datafile
         self.fortranlib = fortranlib
 
         # Set the IGRF coefficient text file name
-        self.igrf_fn = os.path.join(os.path.dirname(__file__),
-                                    'igrf13coeffs.txt')
-        if not os.path.exists(self.igrf_fn):
-            raise OSError("File {} does not exist".format(self.igrf_fn))
+#        self.igrf_fn = os.path.join(os.path.dirname(__file__),
+#                                    'igrf13coeffs.txt')
+        self.igrf_fn = files('apexpy').joinpath('igrf13coeffs.txt')
+       # if not os.path.exists(self.igrf_fn):
+       #     raise OSError("File {} does not exist".format(self.igrf_fn))
 
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)
