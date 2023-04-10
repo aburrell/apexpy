@@ -18,6 +18,10 @@ import os
 import pytest
 import shutil
 import warnings
+try:
+    from importlib.resources import files
+except ModuleNotFoundError:
+    from importlib_resources import files
 
 import apexpy
 
@@ -34,7 +38,8 @@ def igrf_file(max_attempts=100):
     """
     # Ensure the coefficient file exists
     original_file = os.path.join(os.path.dirname(apexpy.helpers.__file__),
-                                 'igrf13coeffs.txt')
+        'igrf13coeffs.txt')
+    #original_file = file(apexpy).joinpath('igrf13coeffs.txt')
     tmp_file = "temp_coeff.txt"
     assert os.path.isfile(original_file)
 

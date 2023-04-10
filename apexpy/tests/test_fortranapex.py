@@ -14,6 +14,10 @@ These results are expected to change when IGRF is updated.
 
 from numpy.testing import assert_allclose
 import os
+try:
+    from importlib.resources import files
+except ModuleNotFoundError:
+    from importlib_resources import files
 import pytest
 
 import apexpy
@@ -25,8 +29,9 @@ class TestFortranApex(object):
 
     def setup_method(self):
         """Initialize each test."""
-        fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__),
-                                  'apexsh.dat'), 2000)
+        #fa.loadapxsh(os.path.join(os.path.dirname(apexpy.__file__),
+        #                          'apexsh.dat'), 2000)
+        fa.loadapxsh(files(apexpy).joinpath('apexsh.dat'), 2000)
 
         # Set the inputs
         self.lat = 60
