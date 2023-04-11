@@ -12,5 +12,5 @@ from apexpy.apex import Apex, ApexHeightError  # noqa F401
 from apexpy import helpers  # noqa F401
 
 # Define the global variables
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 __all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']
