@@ -980,7 +980,7 @@ class Apex(object):
         .. [3] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
                and Quasi-Dipole coordinates with smooth base vectors,
-               J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
+               J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
 
         """
         # Convert from current coordinates to geodetic coordinates
@@ -1079,7 +1079,7 @@ class Apex(object):
         .. [5] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
                A computationally compact representation of Magnetic-Apex
                and Quasi-Dipole coordinates with smooth base vectors,
-               J. Geophys. Res., 115(A8), A08322, :doi:`10.1029/2010JA015326`.
+               J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
 
         """
         # Convert to geodetic coordinates from current coordinate system

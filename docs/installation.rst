@@ -42,7 +42,9 @@ The code behind this package is written in Fortran.  Because of this, you
 the following steps.  `Gfortran <https://gcc.gnu.org/wiki/GFortran>`_ is a free
 compiler that can be installed, if one is not already available on your system.
 If you are installing this or MinGW in Windows, make sure you install it
-**after** installing the Windows Microsoft C++ Build tools. The :py:mod:`apexpy`
+**after** installing the Windows Microsoft C++ Build tools. You must also make
+sure that the compilers and Python that are installed both use the same
+processing standard (either 32-bit or 64-bit). The :py:mod:`apexpy`
 installation has been tested successfully with gfortran 7 and some more recent
 versions.  Earlier versions of gfortran may not work and are not recommended.
 
@@ -125,9 +127,11 @@ To download an artifact:
    download location. Alternatively (or if this doesn't work) you can use
    `wget` to retrieve the archive.
 4. Copy the zip archive into the ``apexpy/dist`` directory and unzip.
-5. Check the archive for the expected matrix of *.whl objects
+5. Check the archive for the expected matrix of ``*.whl`` objects
 
 To install, use ``pip install .``
+
+.. _installation-build:
 
 Build from Source
 ^^^^^^^^^^^^^^^^^
@@ -214,6 +218,20 @@ locally from the cloned Git repository.  Issues on Mac OS have also been
 encountered when using clang for ``CC`` alongside gfortran.  This resulted in a
 seemly successful installation with :py:mod:`apexpy` reporting that fortranapex
 cannot be imported.
+
+Some users have reported unusual behavior when using Anaconda on Apple Silicon
+systems.  Anaconda will attempt to build and install the Intel versions of
+wheels instead of the M1 versions and run everything through Rosetta.  This
+configuration has not been fully evaluated, but it results in a seemly
+successful installation with :py:mod:`apexpy` reporting that fortranapex
+cannot be imported.  Users should confirm that wheels created by conda (both for
+apexpy and other packages) end in ``arm64.whl`` not ``osx-64.whl``.  If the
+later is true, users should consider uninstalling anaconda completely, and
+instead installing miniconda following
+`these instructions <https://conda.io/projects/conda/en/stable/user-guide/install/macos.html>`_,
+which has been confirmed to work. **WARNING:** This will remove any environments
+you have set up and likely undo all IDE settings, so be cautious and consider
+backing up your work first!
 
 
 Windows systems are known to have issues with Fortran-based codes.  The Windows

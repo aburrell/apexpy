@@ -108,6 +108,13 @@ class TestApexInit(object):
         self.eval_refh()
         return
 
+    def test_init_today(self):
+        """Test Apex class initialization with today's date."""
+        self.apex_out = apexpy.Apex(date=self.test_date)
+        self.eval_date()
+        self.eval_refh()
+        return
+
     @pytest.mark.parametrize("in_date",
                              [2015, 2015.5, dt.date(2015, 1, 1),
                               dt.datetime(2015, 6, 1, 18, 23, 45)])
@@ -312,6 +319,13 @@ class TestApexMethod(object):
             in_args.append(1)
 
         return in_args
+
+    def test_apex_conversion_today(self):
+        """Test Apex class conversion with today's date."""
+        self.apex_out = apexpy.Apex(date=dt.datetime.utcnow(), refh=300)
+        assert not np.isnan(self.apex_out.geo2apex(self.in_lat, self.in_lon,
+                                                   self.in_alt)).any()
+        return
 
     @pytest.mark.parametrize("apex_method,fortran_method,fslice",
                              [("_geo2qd", "apxg2q", slice(0, 2, 1)),
@@ -1757,4 +1771,76 @@ class TestApexGetMethods(object):
         fheight = self.apex_out.get_height(lat, 3000.0)
         assert abs(height - fheight) < 1.0e-7, \
             "bad height calculation: {:.7f} != {:.7f}".format(height, fheight)
+        return
+
+
+class TestApexMethodExtrapolateIGRF(object):
+    """Test the Apex methods on a year when IGRF must be extrapolated.
+
+    Notes
+    -----
+    Extrapolation should be done using a year within 5 years of the latest IGRF
+    model epoch.
+
+    """
+
+    def setup_method(self):
+        """Initialize all tests."""
+        self.apex_out = apexpy.Apex(date=2025, refh=300)
+        self.in_lat = 60
+        self.in_lon = 15
+        self.in_alt = 100
+        self.in_time = dt.datetime(2024, 2, 3, 4, 5, 6)
+        return
+
+    def teardown_method(self):
+        """Clean up after each test."""
+        del self.apex_out, self.in_lat, self.in_lon, self.in_alt
+        return
+
+    @pytest.mark.parametrize("method_name, out_comp",
+                             [("geo2apex",
+                               (56.25343704223633, 92.04932403564453)),
+                              ("apex2geo",
+                               (53.84184265136719, -66.93045806884766,
+                                3.6222547805664362e-06)),
+                              ("geo2qd",
+                               (56.82968521118164, 92.04932403564453)),
+                              ("apex2qd", (60.498401178276744, 15.0)),
+                              ("qd2apex", (59.49138097045895, 15.0))])
+    def test_method_scalar_input(self, method_name, out_comp):
+        """Test the user method against set values with scalars.
+
+        Parameters
+        ----------
+        method_name : str
+            Apex class method to be tested
+        out_comp : tuple of floats
+            Expected output values
+
+        """
+        # Get the desired methods
+        user_method = getattr(self.apex_out, method_name)
+
+        # Get the user output
+        user_out = user_method(self.in_lat, self.in_lon, self.in_alt)
+
+        # Evaluate the user output
+        np.testing.assert_allclose(user_out, out_comp, rtol=1e-5, atol=1e-5)
+
+        for out_val in user_out:
+            assert np.asarray(out_val).shape == (), "output is not a scalar"
+        return
+
+    def test_convert_to_mlt(self):
+        """Test conversion from mlon to mlt with scalars."""
+
+        # Get user output
+        user_out = self.apex_out.mlon2mlt(self.in_lon, self.in_time)
+
+        # Set comparison values
+        out_comp = 23.955474853515625
+
+        # Evaluate user output
+        np.testing.assert_allclose(user_out, out_comp, rtol=1e-5, atol=1e-5)
         return

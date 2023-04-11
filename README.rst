@@ -1,3 +1,5 @@
+|logo|
+
 ========
 Overview
 ========
@@ -71,8 +73,7 @@ References
 .. [1] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
        A computationally compact representation of Magnetic-Apex
        and Quasi-Dipole coordinates with smooth base vectors,
-       J. Geophys. Res., 115(A8), A08322,
-       `doi:10.1029/2010JA015326 <http://dx.doi.org/10.1029/2010JA015326>`_.
+       J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.
 
 .. [2] Richmond, A. D. (1995), Ionospheric Electrodynamics Using
        Magnetic Apex Coordinates, Journal of geomagnetism and
@@ -121,19 +122,19 @@ Badges
 
 .. |downloads| image:: https://img.shields.io/pypi/dm/apexpy.svg?style=flat
     :alt: PyPI Package monthly downloads
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/apexpy.svg?style=flat
     :alt: PyPI Wheel
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/apexpy.svg?style=flat
     :alt: Supported versions
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/apexpy.svg?style=flat
     :alt: Supported implementations
-    :target: https://pypi.python.org/pypi/apexpy
+    :target: https://pypi.org/project/apexpy
 
 .. |scrutinizer| image:: https://img.shields.io/scrutinizer/quality/g/aburrell/apexpy/main.svg?style=flat
     :alt: Scrutinizer Status
@@ -141,3 +142,6 @@ Badges
 
 .. |doi| image:: https://www.zenodo.org/badge/doi/10.5281/zenodo.4585641.svg
    :target: https://doi.org/10.5281/zenodo.1214206
+
+.. |logo| image:: docs/apexpy.png
+   :alt: ApexPy logo: yellow magnetic field lines surrounding the Earth's surface, which is blue

@@ -7,7 +7,7 @@ Contents
 
    readme
    installation
-   examples/index
+   ex_index
    api
    contributing
    maintenance

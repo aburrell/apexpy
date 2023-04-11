@@ -27,8 +27,8 @@ program checkapexsh
   integer(4), parameter :: nepochgrid=26
   ! integer(4), parameter :: nepochgrid=3       ! For testing/debugging
   integer(4)            :: lmax=3, nmmax=6
-  character(1000)       :: apexshfile='apexsh.dat'
-  character(len=1000)   :: igrffilein='igrf13coeffs.txt'
+  character(1000)       :: apexshfile='../apexpy/apexsh.dat'
+  character(len=1000)   :: igrffilein='../apexpy/igrf13coeffs.txt'
   real(8)               :: epochgrid(0:nepochgrid - 1)
   real(8)               :: epoch
   real(8)               :: glat, glon, alt, hr, prec, error
