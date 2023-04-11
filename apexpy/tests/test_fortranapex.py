@@ -14,7 +14,7 @@ These results are expected to change when IGRF is updated.
 
 from numpy.testing import assert_allclose
 import sys
-if sys.version_info >= (3,9):
+if sys.version_info >= (3, 9):
     from importlib.resources import files
 else:
     from importlib_resources import files
