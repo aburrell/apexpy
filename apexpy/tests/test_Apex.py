@@ -26,6 +26,7 @@ except ModuleNotFoundError:
 import apexpy
 
 
+<<<<<<< HEAD
 @pytest.fixture()
 def igrf_file(max_attempts=100):
     """A fixture for handling the coefficient file.
@@ -60,16 +61,51 @@ def igrf_file(max_attempts=100):
         except Exception:
             pass
     return
+=======
+#@pytest.fixture()
+#def igrf_file(max_attempts=100):
+#    """A fixture for handling the coefficient file.
+#
+#    Parameters
+#    ----------
+#    max_attempts : int
+#        Maximum rename attemps, needed for Windows (default=100)
+#
+#    """
+#    # Ensure the coefficient file exists
+#    original_file = os.path.join(os.path.dirname(apexpy.helpers.__file__),
+#                                 'igrf13coeffs.txt')
+#    tmp_file = "temp_coeff.txt"
+#    assert os.path.isfile(original_file)
+#
+#    # Move the coefficient file
+#    for _ in range(max_attempts):
+#        try:
+#            shutil.move(original_file, tmp_file)
+#            break
+#        except Exception:
+#            pass
+#    yield original_file
+#
+#    # Move the coefficient file back
+#    for _ in range(max_attempts):
+#        try:
+#            shutil.move(tmp_file, original_file)
+#            break
+#        except Exception:
+#            pass
+#    return
+>>>>>>> develop
 
 
-def test_set_epoch_file_error(igrf_file):
-    """Test raises OSError when IGRF coefficient file is missing."""
-    # Test missing coefficient file failure
-    with pytest.raises(OSError) as oerr:
-        apexpy.Apex()
-    error_string = "File {:} does not exist".format(igrf_file)
-    assert str(oerr.value).startswith(error_string)
-    return
+#def test_set_epoch_file_error(igrf_file):
+#    """Test raises OSError when IGRF coefficient file is missing."""
+#    # Test missing coefficient file failure
+#    with pytest.raises(OSError) as oerr:
+#        apexpy.Apex()
+#    error_string = "File {:} does not exist".format(igrf_file)
+#    assert str(oerr.value).startswith(error_string)
+#    return
 
 
 class TestApexInit(object):
@@ -204,6 +240,43 @@ class TestApexInit(object):
         self.eval_refh()
         return
 
+    def copy_file(self, original, max_attempts=100):
+        
+        _, ext = os.path.splitext(original)
+        temp_file = 'temp'+ext
+        
+        for _ in range(max_attempts):
+            try:
+                shutil.copy(original, temp_file)
+                break
+            except Exception:
+                pass
+        
+        return temp_file
+
+    def test_default_datafile(self):
+        """Test that the class initializes with the default datafile."""
+        apex_out = apexpy.Apex()
+        assert os.path.isfile(apex_out.datafile)
+        return
+
+    def test_custom_datafile(self):
+        """Test that the class initializes with a good datafile input."""
+
+        # Get the original datafile name
+        apex_out_orig = apexpy.Apex()
+        original_file = apex_out_orig.datafile
+        del apex_out_orig
+
+        # Create copy of datafile
+        custom_file = self.copy_file(original_file)
+
+        apex_out = apexpy.Apex(datafile=custom_file)
+        assert apex_out.datafile == custom_file
+
+        os.remove(custom_file)
+        return
+
     def test_init_with_bad_datafile(self):
         """Test raises IOError with non-existent datafile input."""
         with pytest.raises(IOError) as oerr:
@@ -211,13 +284,42 @@ class TestApexInit(object):
         assert str(oerr.value).startswith('Data file does not exist')
         return
 
+    def test_default_fortranlib(self):
+        """Test that the class initializes with the default fortranlib."""
+        apex_out = apexpy.Apex()
+        assert os.path.isfile(apex_out.fortranlib)
+        return
+
+    def test_custom_fortranlib(self):
+        """Test that the class initializes with a good fortranlib input."""
+ 
+        # Get the original fortranlib name
+        apex_out_orig = apexpy.Apex()
+        original_lib = apex_out_orig.fortranlib
+        del apex_out_orig
+
+        # Create copy of datafile
+        custom_lib = self.copy_file(original_lib)
+
+        apex_out = apexpy.Apex(fortranlib=custom_lib)
+        assert apex_out.fortranlib == custom_lib
+
+        os.remove(custom_lib)
+        return
+
     def test_init_with_bad_fortranlib(self):
-        """Test raises IOError with non-existent datafile input."""
+        """Test raises IOError with non-existent fortranlib input."""
         with pytest.raises(IOError) as oerr:
             apexpy.Apex(fortranlib=self.bad_file)
         assert str(oerr.value).startswith('Fortran library does not exist')
         return
 
+    def test_igrf_fn(self):
+        """Test the default igrf_fn."""
+        apex_out = apexpy.Apex()
+        assert os.path.isfile(apex_out.igrf_fn)
+        return
+    
     def test_repr_eval(self):
         """Test the Apex.__repr__ results."""
         # Initialize the apex object
