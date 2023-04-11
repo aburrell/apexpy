@@ -26,43 +26,6 @@ except ModuleNotFoundError:
 import apexpy
 
 
-<<<<<<< HEAD
-@pytest.fixture()
-def igrf_file(max_attempts=100):
-    """A fixture for handling the coefficient file.
-
-    Parameters
-    ----------
-    max_attempts : int
-        Maximum rename attemps, needed for Windows (default=100)
-
-    """
-    # Ensure the coefficient file exists
-    original_file = os.path.join(os.path.dirname(apexpy.helpers.__file__),
-        'igrf13coeffs.txt')
-    #original_file = file(apexpy).joinpath('igrf13coeffs.txt')
-    tmp_file = "temp_coeff.txt"
-    assert os.path.isfile(original_file)
-
-    # Move the coefficient file
-    for _ in range(max_attempts):
-        try:
-            shutil.move(original_file, tmp_file)
-            break
-        except Exception:
-            pass
-    yield original_file
-
-    # Move the coefficient file back
-    for _ in range(max_attempts):
-        try:
-            shutil.move(tmp_file, original_file)
-            break
-        except Exception:
-            pass
-    return
-=======
-#@pytest.fixture()
 #def igrf_file(max_attempts=100):
 #    """A fixture for handling the coefficient file.
 #
@@ -95,7 +58,6 @@ def igrf_file(max_attempts=100):
 #        except Exception:
 #            pass
 #    return
->>>>>>> develop
 
 
 #def test_set_epoch_file_error(igrf_file):
