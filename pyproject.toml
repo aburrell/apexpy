@@ -22,7 +22,6 @@ dependencies = [
     # TODO: update to "pin-compatible" once possible, see
     # https://github.com/FFY00/meson-python/issues/29
     "numpy>=1.19.5",
-    "importlib-resources; python_version<'3.9'"
 ]
 readme = "README.rst"
 keywords = [

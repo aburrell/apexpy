@@ -6,10 +6,7 @@ import numpy as np
 import os
 import warnings
 import sys
-if sys.version_info >= (3, 9):
-    from importlib.resources import files
-else:
-    from importlib_resources import files
+from importlib import resources
 
 from apexpy import helpers
 
@@ -104,7 +101,7 @@ class Apex(object):
         # If datafile is not specified, use the package default, otherwise
         #   check that the provided file exists
         if datafile is None:
-            datafile = str(files(__package__).joinpath('apexsh.dat'))
+            datafile = str(resources.path(__package__, 'apexsh.dat').__enter__())
         else:
             if not os.path.isfile(datafile):
                 raise IOError('Data file does not exist: {}'.format(datafile))
@@ -122,7 +119,7 @@ class Apex(object):
         self.fortranlib = fortranlib
 
         # Set the IGRF coefficient text file name
-        self.igrf_fn = str(files(__package__).joinpath('igrf13coeffs.txt'))
+        self.igrf_fn = str(resources.path(__package__, 'igrf13coeffs.txt').__enter__())
 
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)

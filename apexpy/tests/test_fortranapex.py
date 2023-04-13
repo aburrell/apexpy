@@ -13,11 +13,7 @@ These results are expected to change when IGRF is updated.
 """
 
 from numpy.testing import assert_allclose
-import sys
-if sys.version_info >= (3, 9):
-    from importlib.resources import files
-else:
-    from importlib_resources import files
+from importlib import resources
 import pytest
 
 import apexpy
@@ -29,7 +25,8 @@ class TestFortranApex(object):
 
     def setup_method(self):
         """Initialize each test."""
-        fa.loadapxsh(files(apexpy).joinpath('apexsh.dat'), 2000)
+        datafile = str(resources.path(apexpy, 'apexsh.dat').__enter__())
+        fa.loadapxsh(datafile, 2000)
 
         # Set the inputs
         self.lat = 60
