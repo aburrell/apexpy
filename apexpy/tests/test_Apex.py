@@ -31,10 +31,12 @@ class TestApexInit(object):
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
+        self.temp_file = None
 
     def teardown_method(self):
         """Clean up after each test."""
-        del self.apex_out, self.test_date, self.test_refh, self.bad_file
+        del self.apex_out, self.test_date, self.test_refh, self.bad_file, \
+            self.temp_file
 
     def eval_date(self):
         """Evaluate the times in self.test_date and self.apex_out."""
@@ -157,21 +159,21 @@ class TestApexInit(object):
     def copy_file(self, original, max_attempts=100):
         """Make a temporary copy of input file."""
         _, ext = os.path.splitext(original)
-        temp_file = 'temp' + ext
+        self.temp_file = 'temp' + ext
 
         for _ in range(max_attempts):
             try:
-                shutil.copy(original, temp_file)
+                shutil.copy(original, self.temp_file)
                 break
             except Exception:
                 pass
 
-        return temp_file
+        return
 
     def test_default_datafile(self):
         """Test that the class initializes with the default datafile."""
-        apex_out = apexpy.Apex()
-        assert os.path.isfile(apex_out.datafile)
+        self.apex_out = apexpy.Apex()
+        assert os.path.isfile(self.apex_out.datafile)
         return
 
     def test_custom_datafile(self):
@@ -183,12 +185,11 @@ class TestApexInit(object):
         del apex_out_orig
 
         # Create copy of datafile
-        custom_file = self.copy_file(original_file)
+        self.copy_file(original_file)
 
-        apex_out = apexpy.Apex(datafile=custom_file)
-        assert apex_out.datafile == custom_file
+        self.apex_out = apexpy.Apex(datafile=self.temp_file)
+        assert self.apex_out.datafile == self.temp_file
 
-        os.remove(custom_file)
         return
 
     def test_init_with_bad_datafile(self):
@@ -200,8 +201,8 @@ class TestApexInit(object):
 
     def test_default_fortranlib(self):
         """Test that the class initializes with the default fortranlib."""
-        apex_out = apexpy.Apex()
-        assert os.path.isfile(apex_out.fortranlib)
+        self.apex_out = apexpy.Apex()
+        assert os.path.isfile(self.apex_out.fortranlib)
         return
 
     def test_custom_fortranlib(self):
@@ -213,12 +214,11 @@ class TestApexInit(object):
         del apex_out_orig
 
         # Create copy of datafile
-        custom_lib = self.copy_file(original_lib)
+        self.copy_file(original_lib)
 
-        apex_out = apexpy.Apex(fortranlib=custom_lib)
-        assert apex_out.fortranlib == custom_lib
+        self.apex_out = apexpy.Apex(fortranlib=self.temp_file)
+        assert self.apex_out.fortranlib == self.temp_file
 
-        os.remove(custom_lib)
         return
 
     def test_init_with_bad_fortranlib(self):
@@ -230,8 +230,8 @@ class TestApexInit(object):
 
     def test_igrf_fn(self):
         """Test the default igrf_fn."""
-        apex_out = apexpy.Apex()
-        assert os.path.isfile(apex_out.igrf_fn)
+        self.apex_out = apexpy.Apex()
+        assert os.path.isfile(self.apex_out.igrf_fn)
         return
 
     def test_repr_eval(self):
