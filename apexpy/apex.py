@@ -98,7 +98,7 @@ class Apex(object):
                 self.year = date
 
         # If datafile is not specified, use the package default, otherwise
-        #   check that the provided file exists
+        # check that the provided file exists
         if datafile is None:
             datafile = str(resources.path(__package__,
                                           'apexsh.dat').__enter__())
@@ -107,7 +107,7 @@ class Apex(object):
                 raise IOError('Data file does not exist: {}'.format(datafile))
 
         # If fortranlib is not specified, use the package default, otherwise
-        #   check that the provided file exists
+        # check that the provided file exists
         if fortranlib is None:
             fortranlib = fa.__file__
         else:
