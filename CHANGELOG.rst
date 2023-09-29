@@ -10,6 +10,7 @@ Changelog
 * Added a logo
 * Correct indexing bug in Fortran source that was causing array overflow and
   memory errors for extrapolated years beyond the latest formal IGRF fit
+* Migrate to using importlib to keep track of pacage data files
 
 2.0.0 (2022-12-09)
 ------------------

@@ -2,7 +2,7 @@
 build-backend = 'mesonpy'
 requires = [
 	 "wheel",
-	 "meson-python>=0.8.0",
+	 "meson-python>=0.12.0",
 	 "setuptools<60.0",  # Do not increase, 60.0 enables vendored distutils
 	 "Cython>=0.29.21",
 	 "python-dev-tools",
