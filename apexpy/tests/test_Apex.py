@@ -35,8 +35,8 @@ class TestApexInit(object):
 
     def teardown_method(self):
         """Clean up after each test."""
-        del self.apex_out, self.test_date, self.test_refh, self.bad_file, \
-            self.temp_file
+        del self.apex_out, self.test_date, self.test_refh
+        del self.bad_file, self.temp_file
 
     def eval_date(self):
         """Evaluate the times in self.test_date and self.apex_out."""
