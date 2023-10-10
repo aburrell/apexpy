@@ -46,7 +46,7 @@ jobs:
     - name: Install on not Windows
       if: ${{ matrix.os != 'macos-latest' }}
       run: |
-          pip install .
+          pip install ".[test]"
 
     - name: Run unit and integration tests
       run: |
