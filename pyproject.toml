@@ -75,3 +75,18 @@ source = "https://github.com/aburrell/apexpy"
 documentation = "https://apexpy.readthedocs.io/en/latest/"
 tracker = "https://github.com/aburrell/apexpy/issues"
 download = "https://github.com/aburrell/apexpy/releases"
+
+[tool.cibuildwheel]
+build-verbosity = "3"
+test-command = "pytest {project}"
+
+[tool.cibuildwheel.linux]
+manylinux-i686-image = "manylinux2014"
+manylinux-x86_64-image = "manylinux2014"
+
+[tool.cibuildwheel.macos]
+before-build = "bash {project}/python/build_tools/cibw_before_build_macos.sh"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-win_amd64"
+environment = { PKG_CONFIG_PATH="c:/opt/64/lib/pkgconfig" }

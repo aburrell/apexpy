@@ -102,21 +102,17 @@ jobs:
            coveralls --rcfile=apexpy\setup.cfg --service=github
 
   publish:
-    # Build wheels when pushing to any branch except main
-    # publish.yml will only publish if tagged ^v.*
-    if: |
-      (
-        github.event_name != 'pull_request' && (
-          github.ref_name != 'main' ||
-          github.event_name == 'workflow_dispatch'
-        )
-      ) || (
-        github.event_name == 'pull_request' &&
-        contains(github.event.pull_request.labels.*.name, 'Run publish')
-      )
-    uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish.yml@main
-    with:
-      sdist: false
-      test_extras: test
-      test_command: 'pytest --pyargs apexpy'
-      submodules: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install mingw-w64 on Windows
+        if: ${{ runner.os == 'Windows' }}
+        uses: msys2/setup-msys2@v2
+        with:
+          path-type: inherit
+          install: |
+            mingw-w64-x86_64-gcc-fortran
+
+      - name: Build and test wheels
+        uses: pypa/cibuildwheel@v2.16.1
