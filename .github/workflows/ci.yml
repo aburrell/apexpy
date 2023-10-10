@@ -117,5 +117,6 @@ jobs:
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish.yml@main
     with:
       sdist: false
+      test_extras: test
       test_command: 'pytest --pyargs apexpy'
       submodules: false
