@@ -50,7 +50,7 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-        pytest
+        pytest tests/
 
   publish:
     strategy:
