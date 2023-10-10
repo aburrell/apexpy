@@ -114,7 +114,6 @@ jobs:
         github.event_name == 'pull_request' &&
         contains(github.event.pull_request.labels.*.name, 'Run publish')
       )
-    needs: [test]
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/publish.yml@main
     with:
       sdist: false
