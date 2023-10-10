@@ -29,7 +29,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         architecture: 'x64'
 
-    - name: Install standard and test dependencies on Windows
+    - name: Install system deps on Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
            choco install ninja mingw
@@ -37,33 +37,20 @@ jobs:
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
 
-    - name: Install on Linux
-      if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: |
-          pip install .
-
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
           CC=/usr/local/bin/gcc-12 pip install .
 
-    - name: Install on Windows
-      if: ${{ matrix.os == 'windows-latest' }}
+    - name: Install on not Windows
+      if: ${{ matrix.os != 'macos-latest' }}
       run: |
           pip install .
 
-    - name: Run unit and integration tests on Mac/Linux
-      if: ${{ matrix.os != 'windows-latest' }}
+    - name: Run unit and integration tests
       run: |
-           cd ..
-           coverage run --rcfile=apexpy/setup.cfg -m pytest
-
-    - name: Run unit and integration tests on Windows
-      if: ${{ matrix.os == 'windows-latest' }}
-      run: |
-           cd ..
-           coverage run --rcfile=apexpy\setup.cfg -m pytest
+        pytest
 
   publish:
     strategy:

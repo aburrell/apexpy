@@ -95,7 +95,7 @@ if is_windows
 
     # Manual add of MS_WIN64 macro when not using MSVC.
     # https://bugs.python.org/issue28267
-    bitness = run_command('apexpy/_gcc_build_bitness.py').stdout().strip()
+    bitness = run_command('src/apexpy/_gcc_build_bitness.py').stdout().strip()
     if bitness == '64'
       add_global_arguments('-DMS_WIN64', language: ['c', 'fortran'])
     endif
@@ -173,11 +173,12 @@ py3.extension_module('fortranapex',
 
 # Declare the sources
 py3.install_sources([
-  'apexpy/__init__.py',
-  'apexpy/__main__.py',
-  'apexpy/apex.py',
-  'apexpy/apexsh.dat',
-  'apexpy/helpers.py',
-  'apexpy/igrf13coeffs.txt'],
+  'src/apexpy/__init__.py',
+  'src/apexpy/__main__.py',
+  'src/apexpy/apex.py',
+  'src/apexpy/apexsh.dat',
+  'src/apexpy/helpers.py',
+  'src/apexpy/igrf13coeffs.txt',
+  ],
   pure: false,
   subdir: 'apexpy')
