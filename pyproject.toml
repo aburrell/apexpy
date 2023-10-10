@@ -17,7 +17,7 @@ description = "A Python wrapper for Apex coordinates"
 maintainers = [
     {name = "Angeline G. Burrell", email = "angeline.burrell@nrl.navy.mil"},
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     # TODO: update to "pin-compatible" once possible, see
     # https://github.com/FFY00/meson-python/issues/29
@@ -79,6 +79,8 @@ download = "https://github.com/aburrell/apexpy/releases"
 [tool.cibuildwheel]
 build-verbosity = "3"
 test-command = "pytest {project}"
+# Will cause the wheel to be installed with `pip install <wheel_file>[test]`
+test-extras = ["test"]
 
 [tool.cibuildwheel.linux]
 manylinux-i686-image = "manylinux2014"
