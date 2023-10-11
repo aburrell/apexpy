@@ -81,11 +81,7 @@ is_mingw = is_windows and cc.get_id() == 'gcc'
 
 cython_c_args = []
 if is_windows
-  # For mingw-w64, link statically against the UCRT.
-  gcc_link_args = ['-lucrt', '-static']
   if is_mingw
-    add_global_link_arguments(gcc_link_args, language: ['c'])
-
     # Force gcc to float64 long doubles for compatibility with MSVC
     # builds, for C only.
     add_global_arguments('-mlong-double-64', language: 'c')
@@ -95,7 +91,7 @@ if is_windows
 
     # Manual add of MS_WIN64 macro when not using MSVC.
     # https://bugs.python.org/issue28267
-    bitness = run_command('apexpy/_gcc_build_bitness.py').stdout().strip()
+    bitness = run_command('src/apexpy/_gcc_build_bitness.py').stdout().strip()
     if bitness == '64'
       add_global_arguments('-DMS_WIN64', language: ['c', 'fortran'])
     endif
@@ -108,15 +104,13 @@ if is_windows
     # Windows may need the directory for Python.h added.  This location
     # does not have the same name for all installs.  This is the one
     # for Windows on GitHub actions
-    incdir_py = run_command(py3,
-      ['-c', 'import os; os.chdir(".."); import sys; print(os.path.join(sys.prefix, "include"))'],
-      check : true).stdout().strip()
-    inc_dirs = include_directories(incdir_numpy, incdir_f2py, incdir_py)
+    # incdir_py = run_command(py3,
+    #   ['-c', 'import os; os.chdir(".."); import sys; print(os.path.join(sys.prefix, "include"))'],
+    #   check : true).stdout().strip()
+    # inc_dirs = include_directories(incdir_numpy, incdir_f2py, incdir_py)
   endif
 
   if meson.get_compiler('fortran').get_id() == 'gcc'
-    add_global_link_arguments(gcc_link_args, language: ['fortran'])
-
     # Flag needed to work around BLAS and LAPACK Gfortran dependence on
     # undocumented C feature when passing single character string
     # arguments.
@@ -173,11 +167,12 @@ py3.extension_module('fortranapex',
 
 # Declare the sources
 py3.install_sources([
-  'apexpy/__init__.py',
-  'apexpy/__main__.py',
-  'apexpy/apex.py',
-  'apexpy/apexsh.dat',
-  'apexpy/helpers.py',
-  'apexpy/igrf13coeffs.txt'],
+  'src/apexpy/__init__.py',
+  'src/apexpy/__main__.py',
+  'src/apexpy/apex.py',
+  'src/apexpy/apexsh.dat',
+  'src/apexpy/helpers.py',
+  'src/apexpy/igrf13coeffs.txt',
+  ],
   pure: false,
   subdir: 'apexpy')

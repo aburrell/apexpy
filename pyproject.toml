@@ -1,13 +1,13 @@
 [build-system]
 build-backend = 'mesonpy'
 requires = [
-	 "wheel",
-	 "meson-python>=0.12.0",
-	 "setuptools<60.0",  # Do not increase, 60.0 enables vendored distutils
-	 "Cython>=0.29.21",
-	 "python-dev-tools",
-	 "oldest-supported-numpy; python_version>'3.9'",
-	 "numpy; python_version<='3.9'"
+    "wheel",
+    "meson-python>=0.12.0",
+    "setuptools<60.0",  # Do not increase, 60.0 enables vendored distutils
+    "Cython>=0.29.21",
+    "python-dev-tools",
+    "oldest-supported-numpy; python_version>'3.9'",
+    "numpy; python_version<='3.9'"
 ]
 
 [project]
@@ -17,7 +17,7 @@ description = "A Python wrapper for Apex coordinates"
 maintainers = [
     {name = "Angeline G. Burrell", email = "angeline.burrell@nrl.navy.mil"},
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     # TODO: update to "pin-compatible" once possible, see
     # https://github.com/FFY00/meson-python/issues/29
@@ -25,16 +25,16 @@ dependencies = [
 ]
 readme = "README.rst"
 keywords = [
-	 "apex",
-	 "modified apex",
-	 "quasi-dipole",
-	 "quasi dipole",
-	 "coordinates",
-	 "magnetic coordinates",
-	 "mlt",
-	 "magnetic local time",
-	 "conversion",
-	 "converting",
+    "apex",
+    "modified apex",
+    "quasi-dipole",
+    "quasi dipole",
+    "coordinates",
+    "magnetic coordinates",
+    "mlt",
+    "magnetic local time",
+    "conversion",
+    "converting",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -47,6 +47,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Software Development :: Libraries",
     "Topic :: Scientific/Engineering :: Physics",
@@ -75,3 +76,27 @@ source = "https://github.com/aburrell/apexpy"
 documentation = "https://apexpy.readthedocs.io/en/latest/"
 tracker = "https://github.com/aburrell/apexpy/issues"
 download = "https://github.com/aburrell/apexpy/releases"
+
+[tool.cibuildwheel]
+build = "cp*"
+build-verbosity = "3"
+test-command = "pytest {project}/tests"
+# Will cause the wheel to be installed with `pip install <wheel_file>[test]`
+test-extras = ["test"]
+# Skip building on CPython 3.12 on all platforms (seems meson dosen't work at the moment)
+# Also skip 32bit builds
+skip = ["cp312-*", "*-win32", "*-manylinux_i686"]
+
+[tool.cibuildwheel.linux]
+manylinux-i686-image = "manylinux2014"
+manylinux-x86_64-image = "manylinux2014"
+
+[tool.cibuildwheel.macos]
+before-build = "bash {project}/cibw_before_build_macos.sh"
+
+[tool.cibuildwheel.windows]
+repair-wheel-command = "bash python/build_tools/cibw_repair_wheel_command_windows.sh {wheel} {dest_dir}"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-win_amd64"
+environment = { PKG_CONFIG_PATH="c:/opt/64/lib/pkgconfig" }
