@@ -1,13 +1,13 @@
 [build-system]
 build-backend = 'mesonpy'
 requires = [
-	 "wheel",
-	 "meson-python>=0.12.0",
-	 "setuptools<60.0",  # Do not increase, 60.0 enables vendored distutils
-	 "Cython>=0.29.21",
-	 "python-dev-tools",
-	 "oldest-supported-numpy; python_version>'3.9'",
-	 "numpy; python_version<='3.9'"
+    "wheel",
+    "meson-python>=0.12.0",
+    "setuptools<60.0",  # Do not increase, 60.0 enables vendored distutils
+    "Cython>=0.29.21",
+    "python-dev-tools",
+    "oldest-supported-numpy; python_version>'3.9'",
+    "numpy; python_version<='3.9'"
 ]
 
 [project]
@@ -25,16 +25,16 @@ dependencies = [
 ]
 readme = "README.rst"
 keywords = [
-	 "apex",
-	 "modified apex",
-	 "quasi-dipole",
-	 "quasi dipole",
-	 "coordinates",
-	 "magnetic coordinates",
-	 "mlt",
-	 "magnetic local time",
-	 "conversion",
-	 "converting",
+    "apex",
+    "modified apex",
+    "quasi-dipole",
+    "quasi dipole",
+    "coordinates",
+    "magnetic coordinates",
+    "mlt",
+    "magnetic local time",
+    "conversion",
+    "converting",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -47,6 +47,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Software Development :: Libraries",
     "Topic :: Scientific/Engineering :: Physics",
