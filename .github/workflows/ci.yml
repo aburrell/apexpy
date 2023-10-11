@@ -35,6 +35,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: ucrt64
+        update: true
         install: |
           mingw-w64-ucrt-x86_64-toolchain
 
@@ -74,9 +75,9 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: ucrt64
+          update: true
           install: |
             mingw-w64-ucrt-x86_64-toolchain
-
 
       - name: Build and test wheels
         uses: pypa/cibuildwheel@v2.16.1
