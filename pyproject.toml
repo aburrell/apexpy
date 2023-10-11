@@ -83,7 +83,8 @@ test-command = "pytest {project}/tests"
 # Will cause the wheel to be installed with `pip install <wheel_file>[test]`
 test-extras = ["test"]
 # Skip building on CPython 3.12 on all platforms (seems meson dosen't work at the moment)
-skip = "cp312-*"
+# Also skip 32bit builds
+skip = ["cp312-*", "*-win32", "*-manylinux_i686"]
 
 [tool.cibuildwheel.linux]
 manylinux-i686-image = "manylinux2014"

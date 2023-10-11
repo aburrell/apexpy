@@ -35,7 +35,8 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: ucrt64
-        install: mingw-w64-ucrt-x86_64-gcc-fortran
+        install: |
+          mingw-w64-ucrt-x86_64-toolchain
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
@@ -73,7 +74,8 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: ucrt64
-          install: mingw-w64-ucrt-x86_64-gcc-fortran
+          install: |
+            mingw-w64-ucrt-x86_64-toolchain
 
 
       - name: Build and test wheels
