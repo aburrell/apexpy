@@ -36,6 +36,7 @@ jobs:
            choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
+           pip install meson-python
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
