@@ -78,9 +78,11 @@ download = "https://github.com/aburrell/apexpy/releases"
 
 [tool.cibuildwheel]
 build-verbosity = "3"
-test-command = "pytest {project}"
+test-command = "pytest {project}/tests"
 # Will cause the wheel to be installed with `pip install <wheel_file>[test]`
 test-extras = ["test"]
+# Skip building on CPython 3.12 on all platforms (seems meson dosen't work at the moment)
+skip = "cp312-*"
 
 [tool.cibuildwheel.linux]
 manylinux-i686-image = "manylinux2014"
