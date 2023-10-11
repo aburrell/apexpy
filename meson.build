@@ -82,8 +82,6 @@ is_mingw = is_windows and cc.get_id() == 'gcc'
 cython_c_args = []
 if is_windows
   if is_mingw
-    add_global_link_arguments(gcc_link_args, language: ['c'])
-
     # Force gcc to float64 long doubles for compatibility with MSVC
     # builds, for C only.
     add_global_arguments('-mlong-double-64', language: 'c')
@@ -113,8 +111,6 @@ if is_windows
   endif
 
   if meson.get_compiler('fortran').get_id() == 'gcc'
-    add_global_link_arguments(gcc_link_args, language: ['fortran'])
-
     # Flag needed to work around BLAS and LAPACK Gfortran dependence on
     # undocumented C feature when passing single character string
     # arguments.
