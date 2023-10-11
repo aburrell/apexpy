@@ -78,6 +78,7 @@ tracker = "https://github.com/aburrell/apexpy/issues"
 download = "https://github.com/aburrell/apexpy/releases"
 
 [tool.cibuildwheel]
+build = "cp*"
 build-verbosity = "3"
 test-command = "pytest {project}/tests"
 # Will cause the wheel to be installed with `pip install <wheel_file>[test]`
@@ -92,6 +93,9 @@ manylinux-x86_64-image = "manylinux2014"
 
 [tool.cibuildwheel.macos]
 before-build = "bash {project}/cibw_before_build_macos.sh"
+
+[tool.cibuildwheel.windows]
+repair-wheel-command = "bash python/build_tools/cibw_repair_wheel_command_windows.sh {wheel} {dest_dir}"
 
 [[tool.cibuildwheel.overrides]]
 select = "*-win_amd64"
