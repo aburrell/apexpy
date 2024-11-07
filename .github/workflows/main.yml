@@ -50,15 +50,15 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: pip install .[test]
 
-    - name: Install on MacOS
-      if: ${{ matrix.os }} == 'macos-13'
+    - name: Install on MacOS-13
+      if: ${{ matrix.os == 'macos-13' }}
       run: |
           brew reinstall gcc@13
           ls /usr/local/bin/gfortran*
           CC=/usr/local/bin/gcc-13 FF=/usr/local/bin/gfortran pip install .[test]
 
-    - name: Install on MacOS
-      if: ${{ matrix.os }} == 'macos-latest'
+    - name: Install on MacOS-Latest
+      if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc@14
           ls /opt/homebrew/bin/gcc*
