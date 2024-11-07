@@ -2,6 +2,10 @@
 Changelog
 =========
 
+2.X.X (2023-XX-XX)
+-----------------
+* Migrate to using importlib to keep track of package data files
+
 2.0.1 (2023-04-11)
 ------------------
 * Expanded installation instructions in the documenation
@@ -10,7 +14,6 @@ Changelog
 * Added a logo
 * Correct indexing bug in Fortran source that was causing array overflow and
   memory errors for extrapolated years beyond the latest formal IGRF fit
-* Migrate to using importlib to keep track of pacage data files
 
 2.0.0 (2022-12-09)
 ------------------
