@@ -51,7 +51,7 @@ jobs:
       run: pip install .[test]
 
     - name: Install on MacOS
-      if: ${{ containsValue(matrix.os, 'macos') }}
+      if: contains(${{ matrix.os }}, 'macos')
       run: |
           brew reinstall gcc-14
           CC=/usr/local/bin/gcc-14 pip install .[test]
