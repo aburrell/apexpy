@@ -29,11 +29,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         architecture: 'x64'
 
-    - name: Install standard and test dependencies on Mac/Linux
-      if: ${{ matrix.os != 'windows-latest' }}
-      run: pip install build
-
-    - name: Install standard and test dependencies on Windows
+    - name: Install Windows-specific dependencies for non-pip install
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
            choco install ninja mingw
@@ -45,15 +41,12 @@ jobs:
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: |
-          python -m build .[test]
-          pip install .[test]
+      run: pip install .[test]
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
-          CC=/usr/local/bin/gcc python -m build .[test]
           CC=/usr/local/bin/gcc pip install .[test]
 
     - name: Install on Windows
