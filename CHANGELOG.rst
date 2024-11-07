@@ -6,6 +6,7 @@ Changelog
 ------------------
 * Updated supported Python versions (3.9-3.11)
 * Added a ReadTheDocs yaml
+* Migrate to using importlib to keep track of package data files
 
 2.0.1 (2023-04-11)
 ------------------
