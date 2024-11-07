@@ -22,51 +22,6 @@ import warnings
 import apexpy
 
 
-#@pytest.fixture()
-#def igrf_file(max_attempts=100):
-#    """A fixture for handling the coefficient file.
-#
-#    Parameters
-#    ----------
-#    max_attempts : int
-#        Maximum rename attemps, needed for Windows (default=100)
-#
-#    """
-#    # Ensure the coefficient file exists
-#    original_file = os.path.join(os.path.dirname(apexpy.helpers.__file__),
-#                                 'igrf13coeffs.txt')
-#    tmp_file = "temp_coeff.txt"
-#    assert os.path.isfile(original_file)
-#
-#    # Move the coefficient file
-#    for _ in range(max_attempts):
-#        try:
-#            shutil.move(original_file, tmp_file)
-#            break
-#        except Exception:
-#            pass
-#    yield original_file
-#
-#    # Move the coefficient file back
-#    for _ in range(max_attempts):
-#        try:
-#            shutil.move(tmp_file, original_file)
-#            break
-#        except Exception:
-#            pass
-#    return
-
-
-#def test_set_epoch_file_error(igrf_file):
-#    """Test raises OSError when IGRF coefficient file is missing."""
-#    # Test missing coefficient file failure
-#    with pytest.raises(OSError) as oerr:
-#        apexpy.Apex()
-#    error_string = "File {:} does not exist".format(igrf_file)
-#    assert str(oerr.value).startswith(error_string)
-#    return
-
-
 class TestApexInit(object):
     """Test class for the Apex class object."""
 
@@ -76,10 +31,12 @@ class TestApexInit(object):
         self.test_date = dt.datetime.utcnow()
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
+        self.temp_file = None
 
     def teardown_method(self):
         """Clean up after each test."""
-        del self.apex_out, self.test_date, self.test_refh, self.bad_file
+        del self.apex_out, self.test_date, self.test_refh
+        del self.bad_file, self.temp_file
 
     def eval_date(self):
         """Evaluate the times in self.test_date and self.apex_out."""
@@ -200,23 +157,23 @@ class TestApexInit(object):
         return
 
     def copy_file(self, original, max_attempts=100):
-        
+        """Make a temporary copy of input file."""
         _, ext = os.path.splitext(original)
-        temp_file = 'temp'+ext
-        
+        self.temp_file = 'temp' + ext
+
         for _ in range(max_attempts):
             try:
-                shutil.copy(original, temp_file)
+                shutil.copy(original, self.temp_file)
                 break
             except Exception:
                 pass
-        
-        return temp_file
+
+        return
 
     def test_default_datafile(self):
         """Test that the class initializes with the default datafile."""
-        apex_out = apexpy.Apex()
-        assert os.path.isfile(apex_out.datafile)
+        self.apex_out = apexpy.Apex()
+        assert os.path.isfile(self.apex_out.datafile)
         return
 
     def test_custom_datafile(self):
@@ -251,7 +208,7 @@ class TestApexInit(object):
 
     def test_custom_fortranlib(self):
         """Test that the class initializes with a good fortranlib input."""
- 
+
         # Get the original fortranlib name
         apex_out_orig = apexpy.Apex()
         original_lib = apex_out_orig.fortranlib

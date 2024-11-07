@@ -5,6 +5,7 @@ import datetime as dt
 import numpy as np
 import os
 import warnings
+from importlib import resources
 
 from apexpy import helpers
 
@@ -82,12 +83,6 @@ class Apex(object):
 
     def __init__(self, date=None, refh=0, datafile=None, fortranlib=None):
 
-        if datafile is None:
-            datafile = os.path.join(os.path.dirname(__file__), 'apexsh.dat')
-
-        if fortranlib is None:
-            fortranlib = fa.__file__
-
         self.RE = 6371.009  # Mean Earth radius in km
         self.set_refh(refh)  # Reference height in km
 
@@ -102,21 +97,30 @@ class Apex(object):
                 # date is probably an int or float; use directly
                 self.year = date
 
-        if not os.path.isfile(datafile):
-            raise IOError('Data file does not exist: {}'.format(datafile))
+        # If datafile is not specified, use the package default, otherwise
+        # check that the provided file exists
+        if datafile is None:
+            datafile = str(resources.path(__package__,
+                                          'apexsh.dat').__enter__())
+        else:
+            if not os.path.isfile(datafile):
+                raise IOError('Data file does not exist: {}'.format(datafile))
 
-        if not os.path.isfile(fortranlib):
-            raise IOError('Fortran library does not exist: {}'.format(
-                fortranlib))
+        # If fortranlib is not specified, use the package default, otherwise
+        # check that the provided file exists
+        if fortranlib is None:
+            fortranlib = fa.__file__
+        else:
+            if not os.path.isfile(fortranlib):
+                raise IOError('Fortran library does not exist: {}'.format(
+                    fortranlib))
 
         self.datafile = datafile
         self.fortranlib = fortranlib
 
         # Set the IGRF coefficient text file name
-        self.igrf_fn = os.path.join(os.path.dirname(__file__),
-                                    'igrf13coeffs.txt')
-        if not os.path.exists(self.igrf_fn):
-            raise OSError("File {} does not exist".format(self.igrf_fn))
+        self.igrf_fn = str(resources.path(__package__,
+                                          'igrf13coeffs.txt').__enter__())
 
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)
