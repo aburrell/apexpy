@@ -22,16 +22,16 @@ jobs:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         architecture: 'x64'
 
     - name: Install standard and test dependencies on Mac/Linux
       if: ${{ matrix.os != 'windows-latest' }}
-      run: pip install build coverage coveralls flake8 numpy pytest
+      run: pip install build
 
     - name: Install standard and test dependencies on Windows
       if: ${{ matrix.os == 'windows-latest' }}
@@ -40,20 +40,21 @@ jobs:
            choco install rtools --no-progress
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
-           pip install coverage coveralls flake8 meson-python numpy pytest scipy
+           pip install flake8 meson-python pytest pytest-cov pytest-xdist scipy
+           pip install numpy>=1.19.5,<2
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
-          python -m build .
-          pip install .
+          python -m build .[test]
+          pip install .[test]
 
     - name: Install on MacOS
       if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc
-          CC=/usr/local/bin/gcc-12 python -m build .
-          CC=/usr/local/bin/gcc-12 pip install .
+          CC=/usr/local/bin/gcc-12 python -m build .[test]
+          CC=/usr/local/bin/gcc-12 pip install .[test]
 
     - name: Install on Windows
       if: ${{ matrix.os == 'windows-latest' }}
@@ -73,33 +74,23 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
            cd ..
-           coverage run --rcfile=apexpy/setup.cfg -m pytest
+           pytest --rcfile=apexpy/setup.cfg --cov-report xml
+           mv *.xml apexpy/.
 
     - name: Run unit and integration tests on Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
            cd ..
-           coverage run --rcfile=apexpy\setup.cfg -m pytest
+           pytest --rcfile=apexpy\setup.cfg --cov-report xml
+           mv *.xml apexpy\.
 
-    - name: Publish results to coveralls upon success on Mac/Linux
-      if: ${{ matrix.os != 'windows-latest' }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-           cd ..
-           coverage combine
-           coverage report -m
-           coveralls --rcfile=apexpy/setup.cfg --service=github
-
-    - name: Publish results to coveralls upon success on Windows
-      if: ${{ matrix.os == 'windows-latest' }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-           cd ..
-           coverage combine
-           coverage report -m
-           coveralls --rcfile=apexpy\setup.cfg --service=github
+    - name: Publish results to coveralls upon success
+      uses: coverallsapp/github-actions@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        flag-name: run=${{ join(matrix.*, '-') }}
+        parallel: true
+        format: cobertura
 
     - name: Create a Windows wheel
       if: ${{ matrix.os == 'windows-latest' }}
@@ -112,3 +103,15 @@ jobs:
       with:
          path: dist/*.whl
          if-no-files-found: warn
+
+  finish:
+    name: Finish Coverage Analysis
+    needs: build
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true
