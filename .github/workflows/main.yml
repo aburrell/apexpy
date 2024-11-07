@@ -55,7 +55,7 @@ jobs:
       run: |
           brew reinstall gcc@13
           ls /usr/local/bin/gfortran*
-          CC=/usr/local/bin/gcc-13 FF=/usr/local/bin/gfortran pip install .[test]
+          CC=/usr/local/bin/gcc-13 FF=/usr/local/bin/gfortran-13 pip install .[test]
 
     - name: Install on MacOS-Latest
       if: ${{ matrix.os == 'macos-latest' }}
