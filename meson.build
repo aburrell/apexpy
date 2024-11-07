@@ -1,6 +1,6 @@
 project( 'apexpy', 'c',
   # Note that the git commit hash cannot be added dynamically here
-  version: '2.0.0',
+  version: '2.0.1',
   license: 'MIT',
   meson_version: '>= 0.63.0',
   default_options: [
