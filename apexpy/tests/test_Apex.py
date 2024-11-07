@@ -235,7 +235,7 @@ class TestApexInit(object):
         apex_out = apexpy.Apex()
         assert os.path.isfile(apex_out.igrf_fn)
         return
-    
+
     def test_repr_eval(self):
         """Test the Apex.__repr__ results."""
         # Initialize the apex object
