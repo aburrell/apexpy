@@ -51,12 +51,20 @@ jobs:
       run: pip install .[test]
 
     - name: Install on MacOS
-      if: contains(${{ matrix.os }}, 'macos')
+      if: ${{ matrix.os }} == 'macos-13'
       run: |
           brew reinstall gcc@13
-          brew install gfortran
-          ls /usr/local/bin/gcc*
-          CC=/usr/local/bin/gcc-13 pip install .[test]
+          brew reinstall gfortran@13
+          ls /usr/local/bin/gfortran*
+          CC=/usr/local/bin/gcc-13 FF=/usr/local/bin/gfortran-13 pip install .[test]
+
+    - name: Install on MacOS
+      if: ${{ matrix.os }} == 'macos-latest'
+      run: |
+          brew reinstall gcc@14
+          brew reinstall gfortran@14
+          ls /opt/homebrew/bin/gcc*
+          CC=/opt/homebrew/bin/gcc-14 pip install .[test]
 
     - name: Install on Windows
       if: ${{ matrix.os == 'windows-latest' }}
