@@ -53,8 +53,8 @@ jobs:
     - name: Install on MacOS
       if: contains(${{ matrix.os }}, 'macos')
       run: |
-          brew reinstall gcc-14
-          CC=/usr/local/bin/gcc-14 pip install .[test]
+          brew reinstall gcc@13
+          CC=/usr/local/bin/gcc-13 pip install .[test]
 
     - name: Install on Windows
       if: ${{ matrix.os == 'windows-latest' }}
