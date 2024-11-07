@@ -28,6 +28,9 @@ The package has been tested with the following setups (others might work, too):
 * Windows (64 bit Python), Linux (64 bit), and Mac (64 bit)
 * Python 3.7, 3.8, 3.9, 3.10
 
+Note that :py:mod:`apexpy` is NOT currently compatable with Python 3.12 or 
+`NumPy 2.0 <https://numpy.org/doc/stable/numpy_2_0_migration_guide.html#numpy-2-migration-guide>`_.  
+
 
 Advanced Installation
 ---------------------
