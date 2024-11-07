@@ -37,7 +37,7 @@ jobs:
            echo "c:\rtools40\ucrt64\bin;" >> $env:GITHUB_PATH
            gfortran --version
            pip install flake8 meson-python pytest pytest-cov pytest-xdist scipy
-           pip install numpy>=1.19.5,<2
+           pip install "numpy>=1.19.5,<2"
 
     - name: Install on Linux
       if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -67,14 +67,14 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
            cd ..
-           pytest --rcfile=apexpy/setup.cfg --cov-report xml
+           pytest --rootdir=apexpy --cov-report xml
            mv *.xml apexpy/.
 
     - name: Run unit and integration tests on Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
            cd ..
-           pytest --rcfile=apexpy\setup.cfg --cov-report xml
+           pytest --rootdir=apexpy --cov-report xml
            mv *.xml apexpy\.
 
     - name: Publish results to coveralls upon success
