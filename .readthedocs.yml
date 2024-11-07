@@ -18,7 +18,4 @@ sphinx:
 # This method avoids a local build of the package
 python:
    install:
-    - method: pip
-      path: docs
-      extra_requirements:
-        - requirements.txt
+    - requirements: docs/requirements.txt
