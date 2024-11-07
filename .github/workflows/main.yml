@@ -55,7 +55,7 @@ jobs:
       run: |
           brew reinstall gcc@13
           brew install gfortran
-	  ls /usr/local/bin/gcc*
+          ls /usr/local/bin/gcc*
           CC=/usr/local/bin/gcc-13 pip install .[test]
 
     - name: Install on Windows
