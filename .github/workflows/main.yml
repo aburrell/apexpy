@@ -80,13 +80,14 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
            cd ..
-           pytest --rootdir=apexpy --cov-report xml
+           pytest --rootdir=apexpy --cov-report=xml:apexpy/coverage.xml
+	   ls apexpy/coverage.xml
 
     - name: Run unit and integration tests on Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
            cd ..
-           pytest --rootdir=apexpy --cov-report xml
+           pytest --rootdir=apexpy --cov-report=xml:apexpy\coverage.xml
 
     - name: Publish results to coveralls upon success
       uses: coverallsapp/github-action@v2
@@ -95,7 +96,6 @@ jobs:
         flag-name: run=${{ join(matrix.*, '-') }}
         parallel: true
         format: cobertura
-        base-path: ..
 
     - name: Create a Windows wheel
       if: ${{ matrix.os == 'windows-latest' }}
