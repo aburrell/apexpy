@@ -81,7 +81,7 @@ jobs:
       run: |
            cd ..
            pytest --rootdir=apexpy --cov-report xml
-           ls *.xml apexpy/*.xml
+           ls *.* .* apexpy/*.* apexpy/.*
            mv *.xml apexpy/.
 
     - name: Run unit and integration tests on Windows
