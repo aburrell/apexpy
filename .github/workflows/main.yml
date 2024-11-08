@@ -80,10 +80,11 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
            cd ..
-           python -m pytest --rootdir=apexpy --cov-report=xml:coverage.xml
+           python -m pytest --cov-report=xml:coverage.xml
            pwd
            ls -a
            ls -a apexpy
+	   ls -a apexpy/.pytest_cache
 
     - name: Run unit and integration tests on Windows
       if: ${{ matrix.os == 'windows-latest' }}
