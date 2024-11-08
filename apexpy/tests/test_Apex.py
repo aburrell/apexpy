@@ -168,7 +168,7 @@ class TestApexInit(object):
             except Exception:
                 pass
 
-        return
+        return self.temp_file
 
     def test_default_datafile(self):
         """Test that the class initializes with the default datafile."""
