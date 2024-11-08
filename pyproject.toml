@@ -15,7 +15,7 @@ name = "apexpy"
 license = {file = "LICENSE"}
 description = "A Python wrapper for Apex coordinates"
 maintainers = [
-    {name = "Angeline G. Burrell", email = "angeline.burrell@nrl.navy.mil"},
+    {name = "Angeline Burrell", email = "angeline.g.burrell.civ@us.navy.mil"},
 ]
 requires-python = ">=3.9,<3.12"
 dependencies = [
