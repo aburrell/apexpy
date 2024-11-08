@@ -95,6 +95,7 @@ jobs:
         flag-name: run=${{ join(matrix.*, '-') }}
         parallel: true
         format: cobertura
+	base-path: ..
 
     - name: Create a Windows wheel
       if: ${{ matrix.os == 'windows-latest' }}
