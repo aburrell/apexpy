@@ -81,7 +81,7 @@ jobs:
       run: |
            cd ..
            pytest --rootdir=apexpy --cov-report=xml:apexpy/coverage.xml
-	   ls apexpy/coverage.xml
+           ls apexpy/coverage.xml
 
     - name: Run unit and integration tests on Windows
       if: ${{ matrix.os == 'windows-latest' }}
