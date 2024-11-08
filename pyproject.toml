@@ -17,11 +17,11 @@ description = "A Python wrapper for Apex coordinates"
 maintainers = [
     {name = "Angeline G. Burrell", email = "angeline.burrell@nrl.navy.mil"},
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.9,<3.12"
 dependencies = [
     # TODO: update to "pin-compatible" once possible, see
     # https://github.com/FFY00/meson-python/issues/29
-    "numpy>=1.19.5",
+    "numpy>=1.19.5,<2",
 ]
 readme = "README.rst"
 keywords = [
@@ -43,10 +43,9 @@ classifiers = [
     "Programming Language :: Fortran",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Software Development :: Libraries",
     "Topic :: Scientific/Engineering :: Physics",
@@ -64,9 +63,11 @@ apexpy = {reference = 'apexpy.__main__:main', type = 'console'}
 
 [project.optional-dependencies]
 test = [
+  "coverage",
+  "flake8",
   "pytest",
   "pytest-cov",
-  "pytest-xdist",
+  "pytest-xdist"
   ]
 doc = ["sphinx>=1.3", "sphinx-rtd-theme"]
 

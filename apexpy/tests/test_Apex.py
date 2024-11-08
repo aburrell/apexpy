@@ -168,7 +168,7 @@ class TestApexInit(object):
             except Exception:
                 pass
 
-        return
+        return self.temp_file
 
     def test_default_datafile(self):
         """Test that the class initializes with the default datafile."""
@@ -185,11 +185,12 @@ class TestApexInit(object):
         del apex_out_orig
 
         # Create copy of datafile
-        self.copy_file(original_file)
+        custom_file = self.copy_file(original_file)
 
-        self.apex_out = apexpy.Apex(datafile=self.temp_file)
-        assert self.apex_out.datafile == self.temp_file
+        apex_out = apexpy.Apex(datafile=custom_file)
+        assert apex_out.datafile == custom_file
 
+        os.remove(custom_file)
         return
 
     def test_init_with_bad_datafile(self):
@@ -201,8 +202,8 @@ class TestApexInit(object):
 
     def test_default_fortranlib(self):
         """Test that the class initializes with the default fortranlib."""
-        self.apex_out = apexpy.Apex()
-        assert os.path.isfile(self.apex_out.fortranlib)
+        apex_out = apexpy.Apex()
+        assert os.path.isfile(apex_out.fortranlib)
         return
 
     def test_custom_fortranlib(self):
@@ -214,11 +215,12 @@ class TestApexInit(object):
         del apex_out_orig
 
         # Create copy of datafile
-        self.copy_file(original_lib)
+        custom_lib = self.copy_file(original_lib)
 
-        self.apex_out = apexpy.Apex(fortranlib=self.temp_file)
-        assert self.apex_out.fortranlib == self.temp_file
+        apex_out = apexpy.Apex(fortranlib=custom_lib)
+        assert apex_out.fortranlib == custom_lib
 
+        os.remove(custom_lib)
         return
 
     def test_init_with_bad_fortranlib(self):
@@ -230,8 +232,8 @@ class TestApexInit(object):
 
     def test_igrf_fn(self):
         """Test the default igrf_fn."""
-        self.apex_out = apexpy.Apex()
-        assert os.path.isfile(self.apex_out.igrf_fn)
+        apex_out = apexpy.Apex()
+        assert os.path.isfile(apex_out.igrf_fn)
         return
 
     def test_repr_eval(self):
