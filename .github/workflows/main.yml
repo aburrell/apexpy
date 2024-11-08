@@ -80,7 +80,7 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
            cd ..
-           coverage run --rcfile=apexpy/setup.cfg -m pytest
+           coverage run -m pytest
            coverage report
            coverage xml
            mv coverage.xml apexpy/.
