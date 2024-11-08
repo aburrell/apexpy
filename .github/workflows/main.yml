@@ -81,15 +81,12 @@ jobs:
       run: |
            cd ..
            pytest --rootdir=apexpy --cov-report xml
-           ls *.* .* apexpy/*.* apexpy/.*
-           mv *.xml apexpy/.
 
     - name: Run unit and integration tests on Windows
       if: ${{ matrix.os == 'windows-latest' }}
       run: |
            cd ..
            pytest --rootdir=apexpy --cov-report xml
-           mv *.xml apexpy\.
 
     - name: Publish results to coveralls upon success
       uses: coverallsapp/github-action@v2
