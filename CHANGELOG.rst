@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.0.2 (2024-11-XX)
+2.0.2 (2024-11-12)
 ------------------
 * Updated supported Python versions (3.9-3.11)
 * Added a ReadTheDocs yaml
