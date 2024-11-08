@@ -84,7 +84,7 @@ jobs:
            pwd
            ls -a
            ls -a apexpy
-	   ls -a apexpy/.pytest_cache
+           ls -a apexpy/.pytest_cache
 
     - name: Run unit and integration tests on Windows
       if: ${{ matrix.os == 'windows-latest' }}
