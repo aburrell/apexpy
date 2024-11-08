@@ -63,6 +63,7 @@ apexpy = {reference = 'apexpy.__main__:main', type = 'console'}
 
 [project.optional-dependencies]
 test = [
+  "coverage",
   "flake8",
   "pytest",
   "pytest-cov",
