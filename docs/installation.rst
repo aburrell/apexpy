@@ -13,9 +13,9 @@ The recommended (and most straightforward) method for users to install
 
     pip install apexpy
 
-You should be able to import :py:mod:`apexpy` and run basic conversions as shown in the
-examples.  If you get errors or warnings upon importing, see below for more
-advanced options and troubleshooting.
+You should be able to import :py:mod:`apexpy` and run basic conversions as shown
+in the examples.  If you get errors or warnings upon importing, see below for
+more advanced options and troubleshooting.
 
 
 .. _installation-tested:
@@ -26,7 +26,10 @@ Tested environments
 The package has been tested with the following setups (others might work, too):
 
 * Windows (64 bit Python), Linux (64 bit), and Mac (64 bit)
-* Python 3.7, 3.8, 3.9, 3.10
+* Python 3.9, 3.10, 3.11
+
+Note that :py:mod:`apexpy` is NOT currently compatable with Python 3.12 or 
+`NumPy 2.0 <https://numpy.org/doc/stable/numpy_2_0_migration_guide.html#numpy-2-migration-guide>`_.  
 
 
 Advanced Installation
