@@ -1809,7 +1809,7 @@ class TestApexMethodExtrapolateIGRF(object):
 
     def setup_method(self):
         """Initialize all tests."""
-        self.apex_out = apexpy.Apex(date=2025, refh=300)
+        self.apex_out = apexpy.Apex(date=2030, refh=300)
         self.in_lat = 60
         self.in_lon = 15
         self.in_alt = 100

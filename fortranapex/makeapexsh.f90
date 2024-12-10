@@ -53,7 +53,7 @@ subroutine makeapxsh(datafilein, igrffilein, epochgridin, nepochin, lmaxin, mmax
 
     character(128), intent(in)      :: datafilein
     character(len=1000), intent(in) :: igrffilein
-    real(8), intent(in)             :: epochgridin(0:30)
+    real(8), intent(in)             :: epochgridin(0:31)
     integer(4), intent(in)          :: nmaxin, mmaxin, lmaxin, nepochin
 
     integer(4), parameter       :: sampfact=4, iun=12
