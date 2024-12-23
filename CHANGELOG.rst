@@ -5,6 +5,7 @@ Changelog
 2.1.0 (2024-12-XX)
 ------------------
 * Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
+* Updated docs to reflect missing command-line executable
 
 2.0.2 (2024-11-12)
 ------------------
