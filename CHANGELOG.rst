@@ -2,9 +2,9 @@
 Changelog
 =========
 
-2.0.3 (2024-12-10)
+3.0.0 (2024-12-XX)
 ------------------
-* Adapted Fortran to read IRGF coefficients from a file (updated to IGRF-14)
+* Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
 
 2.0.2 (2024-11-12)
 ------------------
