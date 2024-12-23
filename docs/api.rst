@@ -29,16 +29,21 @@ Command-line interface
 
 .. highlight:: none
 
-When you install this package you will get a command called ``apexpy``, which
-is an interface to the :py:meth:`~apexpy.Apex.convert` method. See the
-documentation for this method for a more thorough explanation of arguments and
-behaviour.
+When you install this package you used to get a command called ``apexpy``, which
+is an interface to the :py:meth:`~apexpy.Apex.convert` method. This interface is
+currently missing (see Issue
+`#113 <https://github.com/aburrell/apexpy/issues/113>`_).  Until this issue is
+addressed, you may follow the below examples by prefacing the command with
+``python -m``, as shown below.
 
-You can get help on the command by running ``apexpy -h``.
+See the documentation for this method for a more thorough explanation of
+arguments and behaviour.
+
+You can get help on the command by running ``python -m apexpy -h``.
 
 .. code::
 
-    $ apexpy -h
+    $ python -m apexpy -h
     usage: apexpy [-h] [--height HEIGHT] [--refh REFH] [-i FILE_IN]
                   [-o FILE_OUT] SOURCE DEST DATE
 
