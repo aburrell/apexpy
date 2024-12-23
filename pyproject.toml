@@ -17,11 +17,11 @@ description = "A Python wrapper for Apex coordinates"
 maintainers = [
     {name = "Angeline Burrell", email = "angeline.g.burrell.civ@us.navy.mil"},
 ]
-requires-python = ">=3.9,<3.12"
+requires-python = ">=3.9"
 dependencies = [
     # TODO: update to "pin-compatible" once possible, see
-    # https://github.com/FFY00/meson-python/issues/29
-    "numpy>=1.19.5,<2",
+    # https://github.com/mesonbuild/meson-python/issues/29
+    "numpy>=1.19.5",
 ]
 readme = "README.rst"
 keywords = [
@@ -46,6 +46,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Software Development :: Libraries",
     "Topic :: Scientific/Engineering :: Physics",
