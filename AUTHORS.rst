@@ -11,6 +11,7 @@ This python wrapper is made by:
 * Gregory Starr
 * Ashton Reimer
 * Achim Morschhauser
+* Ingo Michaelis
 
 Fortran code by Emmert et al. [2010] [1]_. Quasi-dipole and modified
 apex coordinates are defined by Richmond [1995] [2]_. The code uses

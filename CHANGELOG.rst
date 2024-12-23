@@ -2,6 +2,10 @@
 Changelog
 =========
 
+3.0.0 (2024-12-XX)
+------------------
+* Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
+
 2.0.2 (2024-11-12)
 ------------------
 * Updated supported Python versions (3.9-3.11)

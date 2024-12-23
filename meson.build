@@ -178,6 +178,6 @@ py3.install_sources([
   'apexpy/apex.py',
   'apexpy/apexsh.dat',
   'apexpy/helpers.py',
-  'apexpy/igrf13coeffs.txt'],
+  'apexpy/igrf14coeffs.txt'],
   pure: false,
   subdir: 'apexpy')

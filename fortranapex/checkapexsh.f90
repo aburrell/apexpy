@@ -24,11 +24,11 @@ program checkapexsh
 
   implicit none
 
-  integer(4), parameter :: nepochgrid=26
+  integer(4), parameter :: nepochgrid=27
   ! integer(4), parameter :: nepochgrid=3       ! For testing/debugging
   integer(4)            :: lmax=3, nmmax=6
   character(1000)       :: apexshfile='../apexpy/apexsh.dat'
-  character(len=1000)   :: igrffilein='../apexpy/igrf13coeffs.txt'
+  character(len=1000)   :: igrffilein='../apexpy/igrf14coeffs.txt'
   real(8)               :: epochgrid(0:nepochgrid - 1)
   real(8)               :: epoch
   real(8)               :: glat, glon, alt, hr, prec, error
@@ -44,7 +44,7 @@ program checkapexsh
   epochgrid = (/ 1900.0, 1905.0, 1910.0, 1915.0, 1920.0, 1925.0, 1930.0, &
                 1935.0, 1940.0, 1945.0, 1950.0, 1955.0, 1960.0, 1965.0, &
                 1970.0, 1975.0, 1980.0, 1985.0, 1990.0, 1995.0, 2000.0, &
-                2005.0, 2010.0, 2015.0, 2020.0, 2025.0 /)
+                2005.0, 2010.0, 2015.0, 2020.0, 2025.0, 2030.0 /)
   ! epochgrid = (/1995.0,2000.0,2005.0/)      ! For testing/debugging
   call makeapxsh(apexshfile, igrffilein, epochgrid, nepochgrid, lmax, nmmax, nmmax)
 

@@ -120,7 +120,7 @@ class Apex(object):
 
         # Set the IGRF coefficient text file name
         self.igrf_fn = str(resources.path(__package__,
-                                          'igrf13coeffs.txt').__enter__())
+                                          'igrf14coeffs.txt').__enter__())
 
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)
