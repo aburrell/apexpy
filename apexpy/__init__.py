@@ -14,5 +14,9 @@ from apexpy.apex import Apex, ApexHeightError  # noqa F401
 from apexpy import helpers  # noqa F401
 
 # Define the global variables
-__version__ = metadata.version('apexpy')
+try:
+    __version__ = metadata.version('apexpy')
+except metadata.PackageNotFoundError:
+    # Windows installation is not finding the version automatically
+    __version__ = "2.1.0"
 __all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']
