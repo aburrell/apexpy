@@ -13,7 +13,7 @@ def set_array_float(in_val):
     Parameters
     ----------
     in_val : any
-        Input value, only modified if it has the `dtype` attribute.
+        Input value, only modified if it is a np.ndarray
 
     Returns
     -------
@@ -23,8 +23,10 @@ def set_array_float(in_val):
 
     """
 
-    if hasattr(in_val, 'dtype'):
+    if isinstance(in_val, np.ndarray):
         out_val = in_val.astype(np.float64)
+    else:
+        out_val = in_val
 
     return out_val
 

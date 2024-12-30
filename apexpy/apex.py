@@ -565,7 +565,7 @@ class Apex(object):
 
         # If array is returned, dtype is object, so convert to float
         alat = helpers.set_array_float(alat)
-        alon = helpers.set_array_float(np.float64)
+        alon = helpers.set_array_float(alon)
 
         return alat, alon
 
@@ -639,7 +639,7 @@ class Apex(object):
         qlat = helpers.set_array_float(qlat)
         qlon = helpers.set_array_float(qlon)
 
-        return np.float64(qlat), np.float64(qlon)
+        return qlat, qlon
 
     def qd2geo(self, qlat, qlon, height, precision=1e-10):
         """Converts quasi-dipole to geodetic coordinates.
@@ -792,8 +792,8 @@ class Apex(object):
         _, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # Calculate the magnetic local time (0-24 h range) from apex longitude.
-        # np.float64 will ensure lists are converted to arrays
-        mlt = (180 + np.float64(mlon) - ssalon) / 15 % 24
+        # Ensure lists are converted to arrays
+        mlt = (180 + np.asarray(mlon) - ssalon) / 15 % 24
 
         return mlt
 
@@ -833,8 +833,8 @@ class Apex(object):
         _, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # Calculate the magnetic longitude (0-360 h range) from MLT.
-        # np.float64 will ensure lists are converted to arrays
-        mlon = (15 * np.float64(mlt) - 180 + ssalon + 360) % 360
+        # Ensure lists are converted to arrays
+        mlon = (15 * np.asarray(mlt) - 180 + ssalon + 360) % 360
 
         return mlon
 
@@ -1145,10 +1145,10 @@ class Apex(object):
         k_unit = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
 
         # Calculate the remaining quasi-dipole base vectors
-        g1 = ((self.RE + np.float64(height))
+        g1 = ((self.RE + np.asarray(height))
               / (self.RE + self.refh)) ** (3 / 2) * d1 / F_scalar
         g2 = -1.0 / (2.0 * F_scalar * np.tan(np.radians(qlat))) * (
-            k_unit + ((self.RE + np.float64(height))
+            k_unit + ((self.RE + np.asarray(height))
                       / (self.RE + self.refh)) * d2 / cos_mag_inc)
         g3 = k_unit * F_scalar
         f3 = np.cross(g1.T, g2.T).T
