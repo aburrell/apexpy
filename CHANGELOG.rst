@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.1.0 (2024-12-XX)
+2.1.0 (2024-12-31)
 ------------------
 * Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
 * Updated docs to reflect missing command-line executable
