@@ -2,7 +2,7 @@ graft docs
 graft fortranapex
 graft .github
 
-recursive-include apexpy *.txt meson.build
+recursive-include apexpy *.txt apexsh.dat meson.build
 
 include *.rst
 include *.md
