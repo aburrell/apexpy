@@ -1334,7 +1334,7 @@ class TestApexMapMethods(object):
         # Set the base input and output values
         eshape = list(arr_shape)
         eshape.insert(0, 3)
-        edata = np.array([[1, 2, 3]] * np.product(arr_shape)).transpose()
+        edata = np.array([[1, 2, 3]] * np.prod(arr_shape)).transpose()
         in_args = [60, 15, 100, 500, edata.reshape(tuple(eshape))]
 
         # Update inputs for one vectorized value if this is a location input
