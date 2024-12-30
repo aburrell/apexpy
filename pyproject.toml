@@ -58,8 +58,8 @@ classifiers = [
     "Operating System :: MacOS",
 ]
 
-[tool.project.scripts]
-apexpy = {reference = 'apexpy.__main__:main', type = 'console'}
+[project.scripts]
+apexpy = 'apexpy.__main__:main'
 
 [project.optional-dependencies]
 test = [
@@ -81,3 +81,19 @@ source = "https://github.com/aburrell/apexpy"
 documentation = "https://apexpy.readthedocs.io/en/latest/"
 tracker = "https://github.com/aburrell/apexpy/issues"
 download = "https://github.com/aburrell/apexpy/releases"
+
+[tool.setuptools.package-data]
+mypkg = [
+  "apexsh.dat",
+  "igrf14coeffs.txt"
+]
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+parallel = true
+include = "*/site-packages/apexpy/*"
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
