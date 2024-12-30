@@ -1,5 +1,5 @@
-Reference
-=========
+PackageStructure
+================
 
 The :py:class:`apexpy.Apex` class is used for all the main functionality
 (converting between coordinate systems, field line mapping, and calculating
@@ -41,7 +41,7 @@ You can get help on the command by running ``python -m apexpy -h``.
 
 .. code::
 
-    $ python -m apexpy -h
+    $ apexpy -h
     usage: apexpy [-h] [--height HEIGHT] [--refh REFH] [-i FILE_IN]
                   [-o FILE_OUT] SOURCE DEST DATE
 
