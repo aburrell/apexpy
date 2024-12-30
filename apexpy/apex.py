@@ -65,7 +65,7 @@ class Apex(object):
 
     Notes
     -----
-    The calculations use IGRF-13 with coefficients from 1900 to 2025 [1]_.
+    The calculations use IGRF-14 with coefficients from 1900 to 2030 [1]_.
 
     The geodetic reference ellipsoid is WGS84.
 
@@ -87,7 +87,8 @@ class Apex(object):
         self.set_refh(refh)  # Reference height in km
 
         if date is None:
-            self.year = helpers.toYearFraction(dt.datetime.utcnow())
+            self.year = helpers.toYearFraction(dt.datetime.now(
+                tz=dt.timezone.utc))
         else:
             try:
                 # Convert date/datetime object to decimal year

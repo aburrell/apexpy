@@ -5,6 +5,9 @@ Changelog
 2.1.0 (2024-12-XX)
 ------------------
 * Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
+* Updated package to be compliant and installable with numpy 2.0+
+* Added tests for Python 3.12 and NEP29
+* Fixed link to logo in the README
 
 2.0.2 (2024-11-12)
 ------------------
