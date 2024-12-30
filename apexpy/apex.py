@@ -101,8 +101,7 @@ class Apex(object):
         # If datafile is not specified, use the package default, otherwise
         # check that the provided file exists
         if datafile is None:
-            datafile = str(resources.path(__package__,
-                                          'apexsh.dat').__enter__())
+            datafile = os.path.join(resources.files(__package__), 'apexsh.dat')
         else:
             if not os.path.isfile(datafile):
                 raise IOError('Data file does not exist: {}'.format(datafile))
@@ -120,8 +119,8 @@ class Apex(object):
         self.fortranlib = fortranlib
 
         # Set the IGRF coefficient text file name
-        self.igrf_fn = str(resources.path(__package__,
-                                          'igrf14coeffs.txt').__enter__())
+        self.igrf_fn = os.path.join(resources.files(__package__),
+                                    'igrf14coeffs.txt')
 
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)
@@ -565,7 +564,10 @@ class Apex(object):
                 alat[alat == -9999] = np.nan
 
         # If array is returned, dtype is object, so convert to float
-        return np.float64(alat), np.float64(alon)
+        alat = helpers.set_array_float(alat)
+        alon = helpers.set_array_float(np.float64)
+
+        return alat, alon
 
     def apex2geo(self, alat, alon, height, precision=1e-10):
         """Converts modified apex to geodetic coordinates.
@@ -634,6 +636,9 @@ class Apex(object):
         qlat, qlon = self._geo2qd(glat, glon, height)
 
         # If array is returned, dtype is object, so convert to float
+        qlat = helpers.set_array_float(qlat)
+        qlon = helpers.set_array_float(qlon)
+
         return np.float64(qlat), np.float64(qlon)
 
     def qd2geo(self, qlat, qlon, height, precision=1e-10):
@@ -674,7 +679,11 @@ class Apex(object):
         glat, glon, error = self._qd2geo(qlat, qlon, height, precision)
 
         # If array is returned, dtype is object, so convert to float
-        return np.float64(glat), np.float64(glon), np.float64(error)
+        glat = helpers.set_array_float(glat)
+        glon = helpers.set_array_float(glon)
+        error = helpers.set_array_float(error)
+
+        return glat, glon, error
 
     def apex2qd(self, alat, alon, height):
         """Converts modified apex to quasi-dipole coordinates.
@@ -706,7 +715,10 @@ class Apex(object):
         qlat, qlon = self._apex2qd(alat, alon, height)
 
         # If array is returned, the dtype is object, so convert to float
-        return np.float64(qlat), np.float64(qlon)
+        qlat = helpers.set_array_float(qlat)
+        qlon = helpers.set_array_float(qlon)
+
+        return qlat, qlon
 
     def qd2apex(self, qlat, qlon, height):
         """Converts quasi-dipole to modified apex coordinates.
@@ -737,7 +749,10 @@ class Apex(object):
         alat, alon = self._qd2apex(qlat, qlon, height)
 
         # If array is returned, the dtype is object, so convert to float
-        return np.float64(alat), np.float64(alon)
+        alat = helpers.set_array_float(alat)
+        alon = helpers.set_array_float(alon)
+
+        return alat, alon
 
     def mlon2mlt(self, mlon, dtime, ssheight=318550):
         """Computes the magnetic local time at the specified magnetic longitude
@@ -1264,7 +1279,9 @@ class Apex(object):
         babs = self._get_babs(glat, glon, height)
 
         # If array is returned, the dtype is object, so convert to float
-        return np.float64(babs)
+        babs = helpers.set_array_float(babs)
+
+        return babs
 
     def bvectors_apex(self, lat, lon, height, coords='geo', precision=1e-10):
         """Returns the magnetic field vectors in apex coordinates.

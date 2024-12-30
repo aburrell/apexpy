@@ -14,6 +14,7 @@ These results are expected to change when IGRF is updated.
 
 from numpy.testing import assert_allclose
 from importlib import resources
+import os
 import pytest
 
 import apexpy
@@ -25,7 +26,7 @@ class TestFortranApex(object):
 
     def setup_method(self):
         """Initialize each test."""
-        datafile = str(resources.path(apexpy, 'apexsh.dat').__enter__())
+        datafile = os.path.join(resources.files(apexpy), 'apexsh.dat')
         fa.loadapxsh(datafile, 2000)
 
         # Set the inputs
