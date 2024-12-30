@@ -69,7 +69,12 @@ test = [
   "pytest-cov",
   "pytest-xdist"
   ]
-doc = ["pyproject_parser", "sphinx>=1.3", "sphinx-rtd-theme"]
+doc = [
+  "pyproject_parser",
+  "sphinx>=1.3",
+  "sphinx-autoapi",
+  "sphinx-rtd-theme"
+]
 
 [project.urls]
 source = "https://github.com/aburrell/apexpy"
