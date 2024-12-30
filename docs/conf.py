@@ -3,7 +3,6 @@
 import json
 import os
 from pyproject_parser import PyProject
-import re
 
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
