@@ -7,6 +7,28 @@ import numpy as np
 import time
 
 
+def set_array_float(in_val):
+    """Set array data type to float.
+
+    Parameters
+    ----------
+    in_val : any
+        Input value, only modified if it has the `dtype` attribute.
+
+    Returns
+    -------
+    out_val : any
+        Output value, if `in_val` was an array, `out_val` will be an array of
+        type `np.float64`.
+
+    """
+
+    if hasattr(in_val, 'dtype'):
+        out_val = in_val.astype(np.float64)
+
+    return out_val
+
+
 def checklat(lat, name='lat'):
     """Makes sure the latitude is inside [-90, 90], clipping close values
     (tolerance 1e-4).
