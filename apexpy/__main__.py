@@ -64,7 +64,7 @@ def main():
                                   args.dest, args.height, datetime=in_time)
 
     # Save the output to a file
-    np.savetxt(args.file_out, np.column_stack((lats, lons)), fmt='%.8f')
+    np.savetxt(args.file_out.name, np.column_stack((lats, lons)), fmt='%.8f')
 
     return
 
