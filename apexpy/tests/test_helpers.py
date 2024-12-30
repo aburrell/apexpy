@@ -68,6 +68,44 @@ class TestHelpers(object):
         assert np.asarray(self.calc_val).shape == self.in_shape
         return
 
+    @pytest.mark.parametrize('val', [90, np.nan, None, [20.0], True])
+    def test_check_set_array_float_no_modify(self, val):
+        """Test `set_array_float` with inputs that won't be modified.
+
+        Parameters
+        ----------
+        val : any but np.array
+            Value without a 'dtype' attribute
+
+        """
+        self.calc_val = helpers.set_array_float(val)
+
+        if np.isnan(val):
+            assert np.isnan(self.calc_val)
+        else:
+            assert self.calc_val == val
+        return
+
+    @pytest.mark.parametrize('dtype', [int, float, bool, str, object])
+    def test_check_set_array_float_success(self, dtype):
+        """Test `set_array_float` modifies array inputs.
+
+        Parameters
+        ----------
+        dtype : dtype
+            Data type to use when creating input array
+
+        """
+        self.test_val = np.ones(shape=(2,), dtype=dtype)
+        self.calc_val = helpers.set_array_float(self.test_val)
+
+        # Test that the output dtype is as expected
+        assert self.calc_val.dtype == np.float64
+
+        # Validate values
+        self.eval_output()
+        return
+
     @pytest.mark.parametrize('lat', [90, 0, -90, np.nan])
     def test_checklat_scalar(self, lat):
         """Test good latitude check with scalars.
