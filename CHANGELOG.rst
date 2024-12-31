@@ -5,10 +5,14 @@ Changelog
 2.1.0 (2024-12-31)
 ------------------
 * Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
-* Updated docs to reflect missing command-line executable
 * Updated package to be compliant and installable with numpy 2.0+
 * Added tests for Python 3.12 and NEP29
 * Fixed link to logo in the README
+* Updated pyproject.toml to include most metadata instead of setup.cfg
+* Added a citation section to the docs
+* Fixed the command-line executable
+* Updated code to address deprecation warnings around np.float64 use
+* Updated code to remove use of datetime `utcnow`
 
 2.0.2 (2024-11-12)
 ------------------
