@@ -12,6 +12,7 @@ Contents
    contributing
    maintenance
    authors
+   citing
    changelog
 
 Indices and tables
