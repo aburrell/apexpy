@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """This module contains helper functions used by :class:`~apexpy.Apex`."""
 
 import datetime as dt
