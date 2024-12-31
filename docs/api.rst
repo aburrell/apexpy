@@ -1,5 +1,5 @@
-PackageStructure
-================
+Package Structure
+=================
 
 The :py:class:`apexpy.Apex` class is used for all the main functionality
 (converting between coordinate systems, field line mapping, and calculating
