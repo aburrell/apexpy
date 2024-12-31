@@ -795,6 +795,9 @@ class Apex(object):
         # Ensure lists are converted to arrays
         mlt = (180 + np.asarray(mlon) - ssalon) / 15 % 24
 
+        if mlt.shape == ():
+            mlt = np.float64(mlt)
+
         return mlt
 
     def mlt2mlon(self, mlt, dtime, ssheight=318550):
@@ -835,6 +838,9 @@ class Apex(object):
         # Calculate the magnetic longitude (0-360 h range) from MLT.
         # Ensure lists are converted to arrays
         mlon = (15 * np.asarray(mlt) - 180 + ssalon + 360) % 360
+
+        if mlon.shape == ():
+            mlon = np.float64(mlon)
 
         return mlon
 
@@ -1169,7 +1175,7 @@ class Apex(object):
         return out
 
     def get_apex(self, lat, height=None):
-        """ Calculate apex height
+        """Calculate the apex height along a field line.
 
         Parameters
         ----------
