@@ -13,6 +13,7 @@ Changelog
 * Fixed the command-line executable
 * Updated code to address deprecation warnings around np.float64 use
 * Updated code to remove use of datetime `utcnow`
+* Updated meson build requirements to include ninja for Windows builds instead of python-dev-tools
 
 2.0.2 (2024-11-12)
 ------------------
