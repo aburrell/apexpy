@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.1.0 (2024-12-31)
+2.1.0 (2025-01-07)
 ------------------
 * Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
 * Updated package to be compliant and installable with numpy 2.0+
