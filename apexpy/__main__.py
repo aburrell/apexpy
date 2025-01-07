@@ -63,8 +63,12 @@ def main():
     lats, lons = apex_obj.convert(arg_array[:, 0], arg_array[:, 1], args.source,
                                   args.dest, args.height, datetime=in_time)
 
-    # Save the output to a file
-    np.savetxt(args.file_out, np.column_stack((lats, lons)), fmt='%.8f')
+    # Save the output to a file.  Use the name for non-stdout inputs
+    if args.file_out.name.lower().find('stdout') >= 0:
+        fout_name = args.file_out
+    else:
+        fout_name = args.file_out.name
+    np.savetxt(fout_name, np.column_stack((lats, lons)), fmt='%.8f')
 
     return
 

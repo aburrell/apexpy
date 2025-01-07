@@ -15,30 +15,31 @@ Updating IGRF
 
 The `International Geomagnetic Reference Field <https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html>`_
 is regularly updated to reflect the most recent changes to the Terrestrial
-magnetic field. apexpy currently uses IRGF-13 coefficients, which are provided
-in the ``apexpy/apexpy/igrf13coeff.txt`` file. To change or update the
+magnetic field. apexpy currently uses IRGF-14 coefficients, which are provided
+in the ``apexpy/apexpy/igrf14coeff.txt`` file. To change or update the
 magnetic field coefficients used by apexpy, you need to update the python code,
 then rerun the fortran program that builds ``apexpy/apexpy/apexsh.dat``. This 
-is what makes apexpy performant.   For more details, see Emmert et al. [2010] [1]_.
+is what makes apexpy performant. For more details, see Emmert et al. [2010] [1]_.
 
 Assuming your new coefficient file has the same format, the process is simple:
 
 1. Clone the repository or your fork of the repository (see :ref:`contributing`).
 2. Update ``apexpy/apexpy/apex.py`` variable ``igrf_fn`` by setting
-   it equal to the new IGRF coefficient filename (``igrf13coeff.txt``, for example).
+   it equal to the new IGRF coefficient filename (``igrf14coeff.txt``, for
+   example).
 3. In ``apexpy/fortranapex/checkapexsh.f90``, update the variable ``igrffilein``
    to the new IGRF coefficent filename.  Relative paths are allowed.
 4. Modify ``checkapexsh.f90`` by adding the next 5 year epoch to the
    ``epochgrid`` variable and updating the ``nepochgrid`` variable as
-   necessary. For example, if the newest IGRF coefficients are good up to 2025
-   and ``epochgrid`` only has up to the year 2020, then add 2025 to
+   necessary. For example, if the newest IGRF coefficients are good up to 2030
+   and ``epochgrid`` only has up to the year 2025, then add 2030 to
    ``epochgrid`` and then increment ``nepochgrid`` by 1.
 5. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file.
 6. Update the unit tests in the class ``TestApexMethodExtrapolateIGRF`` in 
-   ``apexpy/apexpy/tests/test_Apex.py`` so that they check the methods are working
-   correctly with dates after the latest IGRF epoch (i.e., if the latest epoch is
-   2020, set the test to initialize with the year 2025).  You will have to update
-   the hard-coded confirmation values used by these tests.
+   ``apexpy/apexpy/tests/test_Apex.py`` so that they check the methods are
+   working correctly with dates after the latest IGRF epoch (i.e., if the
+   latest epoch is 2025, set the test to initialize with the year 2030).  You
+   will have to update the hard-coded confirmation values used by these tests.
 7. Commit all changes and create a pull request on GitHub to integrate your 
    branch with updated IGRF into the main repository.
 
@@ -52,12 +53,13 @@ be done within the ``apexpy/fortranapex`` directory.
 2. Build the ``apextest`` binary by running the ``make`` command.
 3. Execute the ``apextext`` binary.
 4. Confirm the output printed to the screen matches the test output shown in
-   the comment block at the bottom of ``checkapexsh.f90``. The output may not match 
-   the test output exactly due to floating point errors and improvements in the 
-   precision of the calculation.
-5. If the modifications involved adding or removing fortran source files, modify the 
-   list of extension sources in ``setup.cfg``.
-6. Rebuild and install apexpy following the instructions in :ref:`installation-build`.
+   the comment block at the bottom of ``checkapexsh.f90``. The output may not
+   match the test output exactly due to floating point errors and improvements
+   in the precision of the calculation.
+5. If the modifications involved adding or removing fortran source files, modify
+   the list of extension sources in ``setup.cfg``.
+6. Rebuild and install apexpy following the instructions in
+   :ref:`installation-build`.
 
 Updating tests and style standards
 -----------------------------------

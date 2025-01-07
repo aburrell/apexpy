@@ -11,10 +11,15 @@ This python wrapper is made by:
 * Gregory Starr
 * Ashton Reimer
 * Achim Morschhauser
+* Ingo Michaelis
+* Jeff Klenzing
 
 Fortran code by Emmert et al. [2010] [1]_. Quasi-dipole and modified
 apex coordinates are defined by Richmond [1995] [2]_. The code uses
-IGRF-12 with coefficients valid through 2020 [Thébault et al., 2015] [3]_.
+IGRF-14 with coefficients valid through 2030. A special issue on IGRF-14 is
+currently accepting
+`submissions <https://www.springeropen.com/collections/IGRF14>`_.  A reference
+for IGRF-12 is [Thébault et al., 2015] [3]_.
 
 .. [1] Emmert, J. T., A. D. Richmond, and D. P. Drob (2010),
        A computationally compact representation of Magnetic-Apex

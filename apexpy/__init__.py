@@ -1,3 +1,5 @@
+"""Conversion functions between geodetic and apex magnetic coordinates."""
+from importlib import metadata
 from sys import stderr
 
 # Below try..catch required for autodoc to work on readthedocs
@@ -12,5 +14,9 @@ from apexpy.apex import Apex, ApexHeightError  # noqa F401
 from apexpy import helpers  # noqa F401
 
 # Define the global variables
-__version__ = "2.0.1"
+try:
+    __version__ = metadata.version('apexpy')
+except metadata.PackageNotFoundError:
+    # Windows installation is not finding the version automatically
+    __version__ = "2.1.0"
 __all__ = ['Apex', 'fortranapex', 'helpers', 'ApexHeightError']

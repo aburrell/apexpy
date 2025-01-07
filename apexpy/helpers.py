@@ -1,10 +1,33 @@
 # -*- coding: utf-8 -*-
-
 """This module contains helper functions used by :class:`~apexpy.Apex`."""
 
 import datetime as dt
 import numpy as np
 import time
+
+
+def set_array_float(in_val):
+    """Set array data type to float.
+
+    Parameters
+    ----------
+    in_val : any
+        Input value, only modified if it is a np.ndarray
+
+    Returns
+    -------
+    out_val : any
+        Output value, if `in_val` was an array, `out_val` will be an array of
+        type `np.float64`.
+
+    """
+
+    if isinstance(in_val, np.ndarray):
+        out_val = in_val.astype(np.float64)
+    else:
+        out_val = in_val
+
+    return out_val
 
 
 def checklat(lat, name='lat'):

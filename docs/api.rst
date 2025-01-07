@@ -1,5 +1,5 @@
-Reference
-=========
+Package Structure
+=================
 
 The :py:class:`apexpy.Apex` class is used for all the main functionality
 (converting between coordinate systems, field line mapping, and calculating
@@ -29,12 +29,15 @@ Command-line interface
 
 .. highlight:: none
 
-When you install this package you will get a command called ``apexpy``, which
-is an interface to the :py:meth:`~apexpy.Apex.convert` method. See the
-documentation for this method for a more thorough explanation of arguments and
-behaviour.
+When you install this package you used to get a command called ``apexpy``, which
+is an interface to the :py:meth:`~apexpy.Apex.convert` method. If this
+interface is missing (may be caused by the installation path not being a part
+of your path), you may use ``python -m apexpy`` instead.
 
-You can get help on the command by running ``apexpy -h``.
+See the documentation for this method for a more thorough explanation of
+arguments and behaviour.
+
+You can get help on the command by running ``python -m apexpy -h``.
 
 .. code::
 

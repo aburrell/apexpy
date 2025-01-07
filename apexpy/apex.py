@@ -65,7 +65,7 @@ class Apex(object):
 
     Notes
     -----
-    The calculations use IGRF-13 with coefficients from 1900 to 2025 [1]_.
+    The calculations use IGRF-14 with coefficients from 1900 to 2030 [1]_.
 
     The geodetic reference ellipsoid is WGS84.
 
@@ -87,7 +87,8 @@ class Apex(object):
         self.set_refh(refh)  # Reference height in km
 
         if date is None:
-            self.year = helpers.toYearFraction(dt.datetime.utcnow())
+            self.year = helpers.toYearFraction(dt.datetime.now(
+                tz=dt.timezone.utc))
         else:
             try:
                 # Convert date/datetime object to decimal year
@@ -100,8 +101,7 @@ class Apex(object):
         # If datafile is not specified, use the package default, otherwise
         # check that the provided file exists
         if datafile is None:
-            datafile = str(resources.path(__package__,
-                                          'apexsh.dat').__enter__())
+            datafile = os.path.join(resources.files(__package__), 'apexsh.dat')
         else:
             if not os.path.isfile(datafile):
                 raise IOError('Data file does not exist: {}'.format(datafile))
@@ -119,8 +119,8 @@ class Apex(object):
         self.fortranlib = fortranlib
 
         # Set the IGRF coefficient text file name
-        self.igrf_fn = str(resources.path(__package__,
-                                          'igrf13coeffs.txt').__enter__())
+        self.igrf_fn = os.path.join(resources.files(__package__),
+                                    'igrf14coeffs.txt')
 
         # Update the Fortran epoch using the year defined above
         self.set_epoch(self.year)
@@ -564,7 +564,10 @@ class Apex(object):
                 alat[alat == -9999] = np.nan
 
         # If array is returned, dtype is object, so convert to float
-        return np.float64(alat), np.float64(alon)
+        alat = helpers.set_array_float(alat)
+        alon = helpers.set_array_float(alon)
+
+        return alat, alon
 
     def apex2geo(self, alat, alon, height, precision=1e-10):
         """Converts modified apex to geodetic coordinates.
@@ -633,7 +636,10 @@ class Apex(object):
         qlat, qlon = self._geo2qd(glat, glon, height)
 
         # If array is returned, dtype is object, so convert to float
-        return np.float64(qlat), np.float64(qlon)
+        qlat = helpers.set_array_float(qlat)
+        qlon = helpers.set_array_float(qlon)
+
+        return qlat, qlon
 
     def qd2geo(self, qlat, qlon, height, precision=1e-10):
         """Converts quasi-dipole to geodetic coordinates.
@@ -673,7 +679,11 @@ class Apex(object):
         glat, glon, error = self._qd2geo(qlat, qlon, height, precision)
 
         # If array is returned, dtype is object, so convert to float
-        return np.float64(glat), np.float64(glon), np.float64(error)
+        glat = helpers.set_array_float(glat)
+        glon = helpers.set_array_float(glon)
+        error = helpers.set_array_float(error)
+
+        return glat, glon, error
 
     def apex2qd(self, alat, alon, height):
         """Converts modified apex to quasi-dipole coordinates.
@@ -705,7 +715,10 @@ class Apex(object):
         qlat, qlon = self._apex2qd(alat, alon, height)
 
         # If array is returned, the dtype is object, so convert to float
-        return np.float64(qlat), np.float64(qlon)
+        qlat = helpers.set_array_float(qlat)
+        qlon = helpers.set_array_float(qlon)
+
+        return qlat, qlon
 
     def qd2apex(self, qlat, qlon, height):
         """Converts quasi-dipole to modified apex coordinates.
@@ -736,7 +749,10 @@ class Apex(object):
         alat, alon = self._qd2apex(qlat, qlon, height)
 
         # If array is returned, the dtype is object, so convert to float
-        return np.float64(alat), np.float64(alon)
+        alat = helpers.set_array_float(alat)
+        alon = helpers.set_array_float(alon)
+
+        return alat, alon
 
     def mlon2mlt(self, mlon, dtime, ssheight=318550):
         """Computes the magnetic local time at the specified magnetic longitude
@@ -776,8 +792,11 @@ class Apex(object):
         _, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # Calculate the magnetic local time (0-24 h range) from apex longitude.
-        # np.float64 will ensure lists are converted to arrays
-        mlt = (180 + np.float64(mlon) - ssalon) / 15 % 24
+        # Ensure lists are converted to arrays
+        mlt = (180 + np.asarray(mlon) - ssalon) / 15 % 24
+
+        if mlt.shape == ():
+            mlt = np.float64(mlt)
 
         return mlt
 
@@ -817,8 +836,11 @@ class Apex(object):
         _, ssalon = self.geo2apex(ssglat, ssglon, ssheight)
 
         # Calculate the magnetic longitude (0-360 h range) from MLT.
-        # np.float64 will ensure lists are converted to arrays
-        mlon = (15 * np.float64(mlt) - 180 + ssalon + 360) % 360
+        # Ensure lists are converted to arrays
+        mlon = (15 * np.asarray(mlt) - 180 + ssalon + 360) % 360
+
+        if mlon.shape == ():
+            mlon = np.float64(mlon)
 
         return mlon
 
@@ -1129,10 +1151,10 @@ class Apex(object):
         k_unit = np.array([0, 0, 1], dtype=np.float64).reshape((3, 1))
 
         # Calculate the remaining quasi-dipole base vectors
-        g1 = ((self.RE + np.float64(height))
+        g1 = ((self.RE + np.asarray(height))
               / (self.RE + self.refh)) ** (3 / 2) * d1 / F_scalar
         g2 = -1.0 / (2.0 * F_scalar * np.tan(np.radians(qlat))) * (
-            k_unit + ((self.RE + np.float64(height))
+            k_unit + ((self.RE + np.asarray(height))
                       / (self.RE + self.refh)) * d2 / cos_mag_inc)
         g3 = k_unit * F_scalar
         f3 = np.cross(g1.T, g2.T).T
@@ -1153,7 +1175,7 @@ class Apex(object):
         return out
 
     def get_apex(self, lat, height=None):
-        """ Calculate apex height
+        """Calculate the apex height along a field line.
 
         Parameters
         ----------
@@ -1263,7 +1285,9 @@ class Apex(object):
         babs = self._get_babs(glat, glon, height)
 
         # If array is returned, the dtype is object, so convert to float
-        return np.float64(babs)
+        babs = helpers.set_array_float(babs)
+
+        return babs
 
     def bvectors_apex(self, lat, lon, height, coords='geo', precision=1e-10):
         """Returns the magnetic field vectors in apex coordinates.

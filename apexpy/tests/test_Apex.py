@@ -28,7 +28,7 @@ class TestApexInit(object):
     def setup_method(self):
         """Initialize all tests."""
         self.apex_out = None
-        self.test_date = dt.datetime.utcnow()
+        self.test_date = dt.datetime.now(tz=dt.timezone.utc)
         self.test_refh = 0
         self.bad_file = 'foo/path/to/datafile.blah'
         self.temp_file = None
@@ -345,7 +345,8 @@ class TestApexMethod(object):
 
     def test_apex_conversion_today(self):
         """Test Apex class conversion with today's date."""
-        self.apex_out = apexpy.Apex(date=dt.datetime.utcnow(), refh=300)
+        self.apex_out = apexpy.Apex(date=dt.datetime.now(tz=dt.timezone.utc),
+                                    refh=300)
         assert not np.isnan(self.apex_out.geo2apex(self.in_lat, self.in_lon,
                                                    self.in_alt)).any()
         return
@@ -1333,7 +1334,7 @@ class TestApexMapMethods(object):
         # Set the base input and output values
         eshape = list(arr_shape)
         eshape.insert(0, 3)
-        edata = np.array([[1, 2, 3]] * np.product(arr_shape)).transpose()
+        edata = np.array([[1, 2, 3]] * np.prod(arr_shape)).transpose()
         in_args = [60, 15, 100, 500, edata.reshape(tuple(eshape))]
 
         # Update inputs for one vectorized value if this is a location input
@@ -1809,11 +1810,11 @@ class TestApexMethodExtrapolateIGRF(object):
 
     def setup_method(self):
         """Initialize all tests."""
-        self.apex_out = apexpy.Apex(date=2025, refh=300)
+        self.apex_out = apexpy.Apex(date=2030, refh=300)
         self.in_lat = 60
         self.in_lon = 15
         self.in_alt = 100
-        self.in_time = dt.datetime(2024, 2, 3, 4, 5, 6)
+        self.in_time = dt.datetime(2029, 2, 3, 4, 5, 6)
         return
 
     def teardown_method(self):
@@ -1823,12 +1824,12 @@ class TestApexMethodExtrapolateIGRF(object):
 
     @pytest.mark.parametrize("method_name, out_comp",
                              [("geo2apex",
-                               (56.25343704223633, 92.04932403564453)),
+                               (56.30344009399414, 91.99834442138672)),
                               ("apex2geo",
-                               (53.84184265136719, -66.93045806884766,
-                                3.6222547805664362e-06)),
+                               (54.22148513793945, -67.09271240234375,
+                                4.268868451617891e-06)),
                               ("geo2qd",
-                               (56.82968521118164, 92.04932403564453)),
+                               (56.87860870361328, 91.99834442138672)),
                               ("apex2qd", (60.498401178276744, 15.0)),
                               ("qd2apex", (59.49138097045895, 15.0))])
     def test_method_scalar_input(self, method_name, out_comp):
@@ -1862,7 +1863,7 @@ class TestApexMethodExtrapolateIGRF(object):
         user_out = self.apex_out.mlon2mlt(self.in_lon, self.in_time)
 
         # Set comparison values
-        out_comp = 23.955474853515625
+        out_comp = 23.933631388346353
 
         # Evaluate user output
         np.testing.assert_allclose(user_out, out_comp, rtol=1e-5, atol=1e-5)

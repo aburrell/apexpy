@@ -61,11 +61,52 @@ class TestHelpers(object):
         del self.in_shape, self.calc_val, self.test_val
 
     def eval_output(self, rtol=1e-7, atol=0.0):
-        """Evaluate the values and shape of the calculated and expected output.
-        """
+        """Evaluate the values and shape of the calced and expected output."""
         np.testing.assert_allclose(self.calc_val, self.test_val, rtol=rtol,
                                    atol=atol)
         assert np.asarray(self.calc_val).shape == self.in_shape
+        return
+
+    @pytest.mark.parametrize('val', [90, np.nan, None, [20.0], True])
+    def test_check_set_array_float_no_modify(self, val):
+        """Test `set_array_float` with inputs that won't be modified.
+
+        Parameters
+        ----------
+        val : any but np.array
+            Value without a 'dtype' attribute
+
+        """
+        self.calc_val = helpers.set_array_float(val)
+
+        if val is None:
+            assert self.calc_val is None
+        elif np.isnan(val):
+            assert np.isnan(self.calc_val)
+        else:
+            assert self.calc_val == val
+        return
+
+    @pytest.mark.parametrize('dtype', [int, float, bool, object])
+    def test_check_set_array_float_success(self, dtype):
+        """Test `set_array_float` modifies array inputs.
+
+        Parameters
+        ----------
+        dtype : dtype
+            Data type to use when creating input array
+
+        """
+        self.in_shape = (2,)
+        self.calc_val = helpers.set_array_float(
+            np.ones(shape=self.in_shape, dtype=dtype))
+
+        # Test that the output dtype is as expected
+        assert self.calc_val.dtype == np.float64
+
+        # Ensure values are unity
+        self.test_val = np.ones(shape=self.in_shape, dtype=np.float64)
+        self.eval_output()
         return
 
     @pytest.mark.parametrize('lat', [90, 0, -90, np.nan])

@@ -1,28 +1,28 @@
 {
   "license": {
   "id": "MIT"
-  }, 
+  },
   "notes": "When referencing this package, please cite both the package DOI and the Apex Coordinates journal article: Emmert, J. T., A. D. Richmond, and D. P. Drob (2010), A computationally compact representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base vectors, J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.",
   "references": [
     "Emmert, J. T., A. D. Richmond, and D. P. Drob (2010), A computationally compact representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base vectors, J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326.",
     "Richmond, A. D. (1995), Ionospheric Electrodynamics Using Magnetic Apex Coordinates, Journal of geomagnetism and geoelectricity, 47(2), 191–212, doi:10.5636/jgg.47.191."
-  ], 
+  ],
   "keywords": [
     "Magnetic Apex Coordinates",
     "Quasi Dipole Coordinates",
-    "MLT", 
-    "Magnetic Local Time", 
-    "Conversion", 
-    "Coordinate Conversion", 
-    "Converting", 
-    "Ionosphere", 
-    "Magnetic Field", 
-    "Space Physics", 
+    "MLT",
+    "Magnetic Local Time",
+    "Conversion",
+    "Coordinate Conversion",
+    "Converting",
+    "Ionosphere",
+    "Magnetic Field",
+    "Space Physics",
     "Heliophysics"
-  ], 
+  ],
   "creators": [
     {
-      "orcid": "0000-0002-8043-0953", 
+      "orcid": "0000-0002-8043-0953",
       "name": "van der Meeren, Christer"
     },
     {
@@ -30,8 +30,8 @@
       "name": "Laundal, Karl M."
     },
     {
-      "orcid": "0000-0001-8875-9326", 
-      "affiliation": "Naval Research Laboratory", 
+      "orcid": "0000-0001-8875-9326",
+      "affiliation": "Naval Research Laboratory",
       "name": "Burrell, Angeline G."
     },
     {
@@ -50,6 +50,16 @@
       "orcid": "0000-0001-7955-4441",
       "affiliation": "GFZ German Research Centre for Geosciences",
       "name": "Morschhauser, Achim"
+    },
+    {
+      "orcid": "0000-0001-9741-4063",
+      "affiliation": "GFZ German Research Centre for Geosciences",
+      "name": "Michaelis, Ingo"
+    },
+    {
+      "orcid": "0000-0001-8321-6074",
+      "affiliation": "Goddard Space Flight Center",
+      "name": "Klenzing, Jeff"
     }
   ]
 }
