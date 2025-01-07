@@ -5,12 +5,13 @@ requires = [
 	 "meson-python>=0.12.0",
 	 "setuptools<60.0",  # Do not increase, 60.0 enables vendored distutils
 	 "Cython>=0.29.21",
-	 "python-dev-tools",
+   "ninja",
 	 "numpy"
 ]
 
 [project]
 name = "apexpy"
+version = "2.1.0"
 license = {file = "LICENSE"}
 description = "A Python wrapper for Apex coordinates"
 maintainers = [
@@ -56,10 +57,9 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: MacOS",
 ]
-dynamic = ['version']
 
-[tool.project.scripts]
-apexpy = {reference = 'apexpy.__main__:main', type = 'console'}
+[project.scripts]
+apexpy = 'apexpy.__main__:main'
 
 [project.optional-dependencies]
 test = [
@@ -69,10 +69,31 @@ test = [
   "pytest-cov",
   "pytest-xdist"
   ]
-doc = ["sphinx>=1.3", "sphinx-rtd-theme"]
+doc = [
+  "pyproject_parser",
+  "sphinx>=1.3",
+  "sphinx-autoapi",
+  "sphinx-rtd-theme"
+]
 
 [project.urls]
 source = "https://github.com/aburrell/apexpy"
 documentation = "https://apexpy.readthedocs.io/en/latest/"
 tracker = "https://github.com/aburrell/apexpy/issues"
 download = "https://github.com/aburrell/apexpy/releases"
+
+[tool.setuptools.package-data]
+mypkg = [
+  "apexsh.dat",
+  "igrf14coeffs.txt"
+]
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+parallel = true
+include = "*/site-packages/apexpy/*"
+
+[tool.coverage.report]
+show_missing = true
+precision = 2

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
+"""Configuration for apexpy documentation."""
 import json
 import os
-import re
+from pyproject_parser import PyProject
 
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
@@ -13,22 +13,18 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.extlinks',
               'autoapi.extension']
 
-# Define common elements
+# General information about the project.
+info = PyProject.load("../pyproject.toml")
 
+# Define common elements
 source_suffix = '.rst'
 master_doc = 'index'
 project = 'ApexPy'
-year = '2022'
+year = '2024'
 zenodo = json.loads(open('../.zenodo.json').read())
 author = ' and '.join([zcreator['name'] for zcreator in zenodo['creators']])
 copyright = ', '.join([year, author])
-
-# Get version number from __init__.py
-regex = r"(?<=__version__..\s)\S+"
-with open('../apexpy/__init__.py', 'r') as fin:
-    text = fin.read()
-match = re.findall(regex, text)
-version = release = match[0].strip("'")
+version = release = info.project['version'].base_version
 
 # Configure autoapi
 autoapi_type = 'python'
