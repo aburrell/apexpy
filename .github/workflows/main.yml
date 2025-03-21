@@ -9,7 +9,7 @@ on:
   pull_request:
   push:
   schedule:
-    - cron: "0 3 * * 1"  # Runs 03:00 UT on Mondays 
+    - cron: "0 3 * * 1"  # Runs 03:00 UT on Mondays
 
 jobs:
   build:
@@ -87,7 +87,7 @@ jobs:
           meson setup build
           ninja -j 2 -C build
           cd build
-          meson install --destdir=${{ env.Python3_ROOT_DIR }} 
+          meson install --destdir=${{ env.Python3_ROOT_DIR }}
 
     - name: Test PEP8 compliance
       run: flake8 . --count --show-source --statistics
@@ -120,18 +120,6 @@ jobs:
         flag-name: run=${{ join(matrix.*, '-') }}
         parallel: true
         format: cobertura
-
-    - name: Create a Windows wheel
-      if: ${{ matrix.os == 'windows-latest' }}
-      run: |
-           mkdir dist
-           pip wheel . -w dist
-
-    - name: Upload wheels
-      uses: actions/upload-artifact@v3
-      with:
-         path: dist/*.whl
-         if-no-files-found: warn
 
   finish:
     name: Finish Coverage Analysis
