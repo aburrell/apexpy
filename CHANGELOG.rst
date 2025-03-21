@@ -2,6 +2,10 @@
 Changelog
 =========
 
+2.1.1 (2025-XX-XX)
+------------------
+* Updated GitHub Actions versions and removed unused wheel upload
+
 2.1.0 (2025-01-07)
 ------------------
 * Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)
