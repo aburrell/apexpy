@@ -37,6 +37,9 @@ authors:
     given-names: "Jeff"
     affiliation: "Goddard Space Flight Center"
     orcid: "https://orcid.org/0000-0001-8321-6074"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.1214206
 keywords:
   - "Magnetic Apex Coordinates"
   - "Quasi Dipole Coordinates"
