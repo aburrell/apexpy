@@ -39,5 +39,5 @@ jobs:
     - name: Check documentation links
       run: sphinx-build -b linkcheck docs dist/docs
 
-    - name: Load .zenodo.json to check for errors
-      run: python -c "import json; json.loads(open('.zenodo.json').read())"
+    - name: Validate CITATION.cff
+      uses: dieghernan/cff-validator@v4
