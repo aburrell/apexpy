@@ -1,14 +1,11 @@
 Package Maintenance
 ===================
 
-Providing Wheels with Releases
-------------------------------
+Updating docs for version release
+---------------------------------
+Before release, the zenodo file can be auto-updated from the CITATION.cff file using cffconvert::
 
-The Continuous Integration (CI) now saves wheels created for each tested Python
-version and computer Operating System (OS) as artifacts. When preparing a new
-PyPi release, these wheels may be downloaded from the release candidate.  We
-currently don't include them, because the wheels only work when the installation
-environment mirrors the CI environment.
+   cffconvert -f zenodo -i CITATION.cff -o .zenodo.json
 
 Updating IGRF
 -------------
@@ -18,7 +15,7 @@ is regularly updated to reflect the most recent changes to the Terrestrial
 magnetic field. apexpy currently uses IRGF-14 coefficients, which are provided
 in the ``apexpy/apexpy/igrf14coeff.txt`` file. To change or update the
 magnetic field coefficients used by apexpy, you need to update the python code,
-then rerun the fortran program that builds ``apexpy/apexpy/apexsh.dat``. This 
+then rerun the fortran program that builds ``apexpy/apexpy/apexsh.dat``. This
 is what makes apexpy performant. For more details, see Emmert et al. [2010] [1]_.
 
 Assuming your new coefficient file has the same format, the process is simple:
@@ -35,12 +32,12 @@ Assuming your new coefficient file has the same format, the process is simple:
    and ``epochgrid`` only has up to the year 2025, then add 2030 to
    ``epochgrid`` and then increment ``nepochgrid`` by 1.
 5. Execute the ``apextest`` binary to generate the new ``apexsh.dat`` file.
-6. Update the unit tests in the class ``TestApexMethodExtrapolateIGRF`` in 
+6. Update the unit tests in the class ``TestApexMethodExtrapolateIGRF`` in
    ``apexpy/apexpy/tests/test_Apex.py`` so that they check the methods are
    working correctly with dates after the latest IGRF epoch (i.e., if the
    latest epoch is 2025, set the test to initialize with the year 2030).  You
    will have to update the hard-coded confirmation values used by these tests.
-7. Commit all changes and create a pull request on GitHub to integrate your 
+7. Commit all changes and create a pull request on GitHub to integrate your
    branch with updated IGRF into the main repository.
 
 Modifying Fortran Source
