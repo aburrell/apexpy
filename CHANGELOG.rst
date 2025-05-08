@@ -6,7 +6,8 @@ Changelog
 ------------------
 * Updated GitHub Actions versions and removed unused wheel upload
 * Fixed broken doc link
-* Replaced zenodo.json with CITATION.cff
+* Added CITATION.cff as primary reference file
+* Included info in maintenance doc on how to generate .zenodo.json from CITATION.cff
 
 2.1.0 (2025-01-07)
 ------------------
