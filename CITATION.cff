@@ -3,6 +3,7 @@ message: "When referencing this package, please cite both the package DOI and th
 title: apexpy
 version: 2.1.0
 license: MIT
+type: software
 repository-code: "https://github.com/aburrell/apexpy"
 authors:
   - family-names: "Meeren"
@@ -39,7 +40,7 @@ authors:
     orcid: "https://orcid.org/0000-0001-8321-6074"
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.1214206
+    value: "10.5281/zenodo.1214206"
 keywords:
   - "Magnetic Apex Coordinates"
   - "Quasi Dipole Coordinates"
@@ -54,7 +55,7 @@ keywords:
   - "Heliophysics"
 references:
   - authors:
-    - family-names: "Emmert",
+    - family-names: "Emmert"
       given-names: "J. T."
     - family-names: "Richmond"
       given-names: "A. D."
@@ -70,12 +71,13 @@ references:
     pages: "A08322"
     year: "2010"
   - authors:
-    - family-name: "Richmond"
+    - family-names: "Richmond"
       given-names: "A. D."
-    year: "1995"
-    title: "Ionospheric Electrodynamics Using Magnetic Apex Coordinates"
-    journal: "Journal of geomagnetism and geoelectricity"
-    volume: "47"
-    issue: "2",
-    pages: "191–212"
     doi: "10.5636/jgg.47.191"
+    title: "Ionospheric Electrodynamics Using Magnetic Apex Coordinates"
+    type: "article"
+    journal: "Journal of Geomagnetism and Geoelectricity"
+    volume: "47"
+    issue: "2"
+    pages: "191–212"
+    year: "1995"
