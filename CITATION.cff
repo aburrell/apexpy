@@ -1,7 +1,7 @@
-cff-version: 1.2.0
-message: "When referencing this package, please cite both the package DOI and the Apex Coordinates journal article: Emmert, J. T., A. D. Richmond, and D. P. Drob (2010), A computationally compact representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base vectors, J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326."
 title: apexpy
 version: 2.1.0
+cff-version: 1.2.0
+message: "When referencing this package, please cite both the package DOI and the Apex Coordinates journal article: Emmert, J. T., A. D. Richmond, and D. P. Drob (2010), A computationally compact representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base vectors, J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326."
 license: MIT
 type: software
 repository-code: "https://github.com/aburrell/apexpy"
@@ -36,7 +36,7 @@ authors:
     orcid: "https://orcid.org/0000-0001-9741-4063"
   - family-names: "Klenzing"
     given-names: "Jeff"
-    affiliation: "Goddard Space Flight Center"
+    affiliation: "Independent Researcher"
     orcid: "https://orcid.org/0000-0001-8321-6074"
 identifiers:
   - type: doi
