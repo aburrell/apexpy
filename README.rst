@@ -90,7 +90,7 @@ Badges
       - |docs|
     * - tests
       - | |ghactions|
-        | |coveralls| |codeclimate|
+        | |coveralls|
         | |scrutinizer| |codacy|
     * - package
       - | |version| |supported-versions|
@@ -111,10 +111,6 @@ Badges
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/7d4c1a6c60e747ca95cdf97746c39cda
    :alt: Codacy Badge
    :target: https://app.codacy.com/gh/aburrell/apexpy?utm_source=github.com&utm_medium=referral&utm_content=aburrell/apexpy&utm_campaign=Badge_Grade
-
-.. |codeclimate| image:: https://api.codeclimate.com/v1/badges/da1d972dee790da595f8/maintainability.svg
-   :target: https://codeclimate.com/github/aburrell/apexpy
-   :alt: CodeClimate Quality Status
 
 .. |version| image:: https://img.shields.io/pypi/v/apexpy.svg?style=flat
     :alt: PyPI Package latest release
