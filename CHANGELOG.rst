@@ -6,6 +6,7 @@ Changelog
 ------------------
 * Updated GitHub Actions versions and removed unused wheel upload
 * Fixed broken doc link
+* Added CITATION.cff as primary reference file, removed zenodo.json
 
 2.1.0 (2025-01-07)
 ------------------

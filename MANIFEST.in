@@ -7,6 +7,6 @@ recursive-include apexpy *.txt apexsh.dat meson.build
 include *.rst
 include *.md
 include LICENSE
-include .zenodo.json
+include CITATION.cff
 include pyproject.toml
 include .codeclimate.yml *.yml
