@@ -8,6 +8,5 @@ include *.rst
 include *.md
 include LICENSE
 include CITATION.cff
-include .zenodo.json
 include pyproject.toml
 include .codeclimate.yml *.yml

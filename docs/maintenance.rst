@@ -1,12 +1,6 @@
 Package Maintenance
 ===================
 
-Updating docs for version release
----------------------------------
-Before release, the zenodo file can be auto-updated from the CITATION.cff file using cffconvert::
-
-   cffconvert -f zenodo -i CITATION.cff -o .zenodo.json
-
 Updating IGRF
 -------------
 
