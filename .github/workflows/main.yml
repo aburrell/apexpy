@@ -76,11 +76,16 @@ jobs:
       run: pip install --upgrade-strategy only-if-needed .[test]
 
     - name: Install on MacOS-Latest
-      if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-26-intel'}}
+      if: ${{ matrix.os == 'macos-latest' }}
       run: |
           brew reinstall gcc@15
-          ls /opt/homebrew/bin/gcc*
           CC=/opt/homebrew/bin/gcc-15 pip install --upgrade-strategy only-if-needed .[test]
+
+    - name: Install on MacOS-Intel
+      if: ${{ matrix.os == 'macos-26-intel'}}
+      run: |
+          brew reinstall gcc@15
+          CC=/opt/local/bin/gcc-15 pip install --upgrade-strategy only-if-needed .[test]
 
     - name: Install on Windows
       if: ${{ matrix.os == 'windows-latest' }}
