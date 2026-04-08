@@ -26,7 +26,7 @@ Tested environments
 The package has been tested with the following setups (others might work, too):
 
 * Windows (64 bit Python), Linux (64 bit), and Mac (64 bit)
-* Python 3.9, 3.10, 3.11, and 3.12
+* Python 3.9-3.14
 
 
 Advanced Installation
