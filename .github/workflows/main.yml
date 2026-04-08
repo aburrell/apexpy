@@ -17,16 +17,16 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "windows-latest"]
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.12", "3.13", "3.14"]
         numpy_ver: ["latest"]
         test_config: ["latest"]
         include:
           # Support different GA Mac environmnets
           - python-version: "3.9"
-            os: "macos-13"
+            os: "macos-26-intel"
             numpy_ver: "latest"
           - python-version: "3.10"
-            os: "macos-13"
+            os: "macos-26-intel"
             numpy_ver: "latest"
           - python-version: "3.11"
             os: "macos-latest"
@@ -34,18 +34,24 @@ jobs:
           - python-version: "3.12"
             os: "macos-latest"
             numpy_ver: "latest"
+          - python-version: "3.13"
+            os: "macos-latest"
+            numpy_ver: "latest"
+          - python-version: "3.14"
+            os: "macos-latest"
+            numpy_ver: "latest"
           # NEP29 compliance settings
-          - python-version: "3.10"
-            numpy_ver: "1.25"
+          - python-version: "3.11"
+            numpy_ver: "2.0"
             os: "ubuntu-latest"
             test_config: "NEP29"
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }} with Numpy ${{ matrix.numpy_ver }}
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
         architecture: 'x64'
@@ -69,17 +75,11 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: pip install --upgrade-strategy only-if-needed .[test]
 
-    - name: Install on MacOS-13
-      if: ${{ matrix.os == 'macos-13' }}
-      run: |
-          brew reinstall gcc@14
-          CC=/usr/local/bin/gcc-14 pip install --upgrade-strategy only-if-needed .[test]
-
     - name: Install on MacOS-Latest
-      if: ${{ matrix.os == 'macos-latest' }}
+      if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-26-intel'}}
       run: |
-          brew reinstall gcc@14
-          CC=/opt/homebrew/bin/gcc-14 pip install --upgrade-strategy only-if-needed .[test]
+          brew reinstall gcc@15
+          CC=/opt/homebrew/bin/gcc-15 pip install --upgrade-strategy only-if-needed .[test]
 
     - name: Install on Windows
       if: ${{ matrix.os == 'windows-latest' }}
