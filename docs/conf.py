@@ -53,3 +53,7 @@ napoleon_use_rtype = False
 napoleon_use_param = False
 
 extlinks = {'doi': ('http://dx.doi.org/%s', 'doi:%s')}
+
+# Set up hyperlinks to not check in unit tests due to 403 errors
+linkcheck_ignore = [r'https://scrutinizer-ci.com',
+                    r'https://zenodo.org']

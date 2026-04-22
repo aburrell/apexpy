@@ -132,7 +132,7 @@ Badges
     :alt: Supported implementations
     :target: https://pypi.org/project/apexpy
 
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/quality/g/aburrell/apexpy/main.svg?style=flat
+.. |scrutinizer| image:: https://scrutinizer-ci.com/g/aburrell/apexpy/badges/quality-score.png?b=main
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/aburrell/apexpy/
 
