@@ -2,7 +2,7 @@
 Changelog
 =========
 
-2.1.1 (2025-XX-XX)
+2.1.1 (2026-06-18)
 ------------------
 * Updated GitHub Actions versions and removed unused wheel upload
 * Fixed broken doc link
