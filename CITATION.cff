@@ -1,5 +1,5 @@
 title: apexpy
-version: 2.1.0
+version: 2.1.1
 cff-version: 1.2.0
 message: "When referencing this package, please cite both the package DOI and the Apex Coordinates journal article: Emmert, J. T., A. D. Richmond, and D. P. Drob (2010), A computationally compact representation of Magnetic-Apex and Quasi-Dipole coordinates with smooth base vectors, J. Geophys. Res., 115(A8), A08322, doi:10.1029/2010JA015326."
 license: MIT
