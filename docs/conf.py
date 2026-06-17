@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Configuration for apexpy documentation."""
-import json
 import os
 from pyproject_parser import PyProject
 
@@ -21,8 +20,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 project = 'ApexPy'
 year = '2024'
-zenodo = json.loads(open('../.zenodo.json').read())
-author = ' and '.join([zcreator['name'] for zcreator in zenodo['creators']])
+author = 'the apexpy team'
 copyright = ', '.join([year, author])
 version = release = info.project['version'].base_version
 
@@ -55,3 +53,7 @@ napoleon_use_rtype = False
 napoleon_use_param = False
 
 extlinks = {'doi': ('http://dx.doi.org/%s', 'doi:%s')}
+
+# Set up hyperlinks to not check in unit tests due to 403 errors
+linkcheck_ignore = [r'https://scrutinizer-ci.com',
+                    r'https://zenodo.org']

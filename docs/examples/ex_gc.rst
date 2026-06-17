@@ -48,7 +48,7 @@ equation layed out in equation 3-28 of Snyder [2]_.
        gd_lat = np.arctan(np.tan(np.radians(gc_lat)) / (1.0 - e_sq))
        return np.degrees(gd_lat)
 
-       
+
 The function above requires the first eccentricity of the reference ellipsoid.
 This example uses the ``pyproj`` library [3]_ to get the WGS84 ellipsoid data,
 but the function shown will take any float.  This lets you decide the level of
@@ -70,7 +70,7 @@ then from apex to quasi-dipole.
 ::
 
    import apexpy
-   
+
    # Define the starting values
    year = 2015.3
    gc_lat = 45.0
@@ -85,9 +85,8 @@ then from apex to quasi-dipole.
 
 
 .. [1] Snay and Soler (1999) Modern Terrestrial Reference Systems (Part 1),
-       `Professional Surveyor <https://www.ngs.noaa.gov/CORS/Articles/
-       Reference-Systems-Part-1.pdf>`_.
+       `Professional Surveyor <https://prltap.org/eng/wp-content/uploads/2016/09/Modern-Terrestrial-Reference-Systems-Part-1-to-Part-4.pdf>`_.
 .. [2] Snyder, J. P. Map projections — A working manual. Professional Paper
        1395, U.S. Geological Survey, 1987.
        `doi:10.3133/pp1395 <https://pubs.er.usgs.gov/publication/pp1395>`_.
-.. [3] `pyproj GitHub page <https://github.com/pyproj4/pyproj>`_.      
+.. [3] `pyproj GitHub page <https://github.com/pyproj4/pyproj>`_.

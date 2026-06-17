@@ -2,6 +2,13 @@
 Changelog
 =========
 
+2.1.1 (2026-06-18)
+------------------
+* Updated GitHub Actions versions and removed unused wheel upload
+* Fixed a broken doc link
+* Added CITATION.cff as primary reference file, removed zenodo.json
+* Updated supported Python versions and NEP29 testing
+
 2.1.0 (2025-01-07)
 ------------------
 * Adapted codebase to read IRGF coefficients from a file (updated to IGRF-14)

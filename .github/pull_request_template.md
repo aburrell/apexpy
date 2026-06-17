@@ -46,4 +46,4 @@ Checklist
 - [ ] New and existing unit tests pass locally with my changes
 - [ ] Any dependent changes have been merged and published in downstream modules
 - [ ] Add a note to ``Changelog.rst``, summarising the changes
-- [ ] Add yourself to ``AUTHORS.rst`` and ``.zenodo.json``
+- [ ] Add yourself to ``AUTHORS.rst`` and ``CITATION.cff``

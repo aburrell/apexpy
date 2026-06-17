@@ -83,7 +83,7 @@ For merging, you should:
 1. Include passing tests for your changes
 2. Update/add documentation if relevant
 3. Add a note to ``CHANGELOG.rst`` about the changes
-4. Add yourself to ``AUTHORS.rst`` and ``.zenodo.json`` with your
+4. Add yourself to ``AUTHORS.rst`` and ``CITATION.cff`` with your
    `ORCiD <https://orcid.org/>`_
 
 Style Guidelines
